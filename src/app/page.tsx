@@ -1,6 +1,6 @@
 import { api, HydrateClient } from "~/trpc/server";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { WritingPad } from "./_components/writingPad";
+import { WritingPad } from "./_components/writingPad/writingPad";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
