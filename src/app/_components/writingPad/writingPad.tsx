@@ -3,34 +3,37 @@
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toolbarConfig } from "./config/configs";
-import { useForm } from "react-hook-form";
-
-const schema = yup.object({
-  content: yup.string().min(1).required("Content is required"),
-});
+import { useContentForm } from "./hooks/useContentForm";
+import { Controller } from "react-hook-form";
 
 export function WritingPad() {
-  const { register, handleSubmit, reset } = useForm({
-    resolver: yupResolver(schema),
-  });
+  const { handleSubmit, reset, control } = useContentForm();
 
-  const onSubmit = (data: string) => {
+  const onSubmit = (data: { content: string }) => {
     console.log(data);
   };
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-        <ReactQuill
-          modules={{
-            toolbar: toolbarConfig,
-          }}
-          placeholder="Write something..."
-          theme="snow"
-          className="min-h-20 w-full"
-          style={{
-            minHeight: "200px",
-          }}
-          {...register("content")}
+        <Controller
+          control={control}
+          name="content"
+          render={({ field }) => (
+            <ReactQuill
+              {...field}
+              modules={{
+                toolbar: toolbarConfig,
+              }}
+              placeholder="Write something..."
+              theme="snow"
+              className="min-h-20 w-full"
+              style={{
+                minHeight: "200px",
+              }}
+              onChange={field.onChange}
+              value={field.value}
+            />
+          )}
         />
         <button type="submit">Submit</button>
         <button type="button" onClick={() => reset()}>
