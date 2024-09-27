@@ -13,6 +13,8 @@ export default {
         "brand-secondary": "#F5F7FE",
         "font-secondary": "#4D5565",
         "font-primary": "#101828",
+        "font-tertiary": "#A5A5A5",
+        "font-gray": "#18181B",
       },
     },
   },

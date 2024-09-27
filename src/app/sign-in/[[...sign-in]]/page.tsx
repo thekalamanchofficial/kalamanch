@@ -1,6 +1,4 @@
-// src/app/sign-in/[[...sign-in]]/page.tsx
-
-"use client"; // Add this line to make the component a Client Component
+"use client";
 
 import { SignInButton, SignUpButton, useSignIn } from "@clerk/nextjs";
 import Link from "next/link";
@@ -12,75 +10,10 @@ const SignInPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!isLoaded) return;
-
-    try {
-      const response = await signIn.create({
-        identifier: email,
-        password: password,
-      });
-
-      if (response.status === "complete") {
-        window.location.href = "/editor"; // Redirect after sign-in
-      }
-    } catch (err) {
-      setError("Login failed. Please check your credentials.");
-    }
-  };
-
-  //   return (
-  //     <div className="sign-in-container">
-  //       <h2>Sign In</h2>
-  //       <form onSubmit={handleSignIn}>
-  //         <input
-  //           type="email"
-  //           placeholder="Email"
-  //           value={email}
-  //           onChange={(e) => setEmail(e.target.value)}
-  //           required
-  //         />
-  //         <input
-  //           type="password"
-  //           placeholder="Password"
-  //           value={password}
-  //           onChange={(e) => setPassword(e.target.value)}
-  //           required
-  //         />
-  //         <button type="submit">Sign In</button>
-  //       </form>
-
-  //       {error && <p className="error-message">{error}</p>}
-
-  //       <div className="social-sign-in">
-  //         <h3>Or sign in with:</h3>
-  //         <button
-  //           onClick={() =>
-  //             signIn.authenticateWithRedirect({ strategy: "oauth_google" })
-  //           }
-  //         >
-  //           Sign in with Google
-  //         </button>
-  //         <button
-  //           onClick={() =>
-  //             signIn.authenticateWithRedirect({ strategy: "oauth_github" })
-  //           }
-  //         >
-  //           Sign in with GitHub
-  //         </button>
-  //       </div>
-
-  //       <p>
-  //         Don’t have an account? <a href="/register">Register</a>
-  //       </p>
-  //     </div>
-  //   );
   return (
-    <div className="bg-brand-secondary flex h-full w-full items-center justify-center">
-      <div className="flex aspect-square h-auto max-h-[642px] w-full max-w-3xl flex-col items-center gap-y-16 rounded-lg bg-white px-6 py-14 shadow-lg md:aspect-auto">
-        <div className="flex w-full items-center justify-center gap-2">
+    <div className="flex h-full w-full items-center justify-center bg-brand-secondary">
+      <div className="flex aspect-square h-auto max-h-[642px] w-full max-w-3xl flex-col items-center gap-y-16 rounded-lg bg-white px-6 py-14 md:aspect-auto">
+        <div className="stepper flex w-full items-center justify-center gap-2">
           <svg
             width="39"
             height="38"
@@ -105,18 +38,18 @@ const SignInPage = () => {
               </clipPath>
             </defs>
           </svg>
-          <h1 className="text-brand-primary text-3xl font-semibold">
+          <h1 className="text-3xl font-semibold text-brand-primary">
             Kalamanch
           </h1>
         </div>
         <div className="flex w-full flex-col items-center justify-start gap-4">
           <span>
-            <h1 className="text-font-primary px-2 text-2xl font-medium">
+            <h1 className="px-2 text-2xl font-medium text-font-primary">
               Join Today, Start Writing
             </h1>
           </span>
           <button
-            className="bg-brand-primary flex w-1/2 items-center justify-center gap-4 rounded-md px-2 py-2 text-white"
+            className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-primary px-2 py-2 text-white"
             onClick={() => {
               if (!isLoaded) return;
               signIn.authenticateWithRedirect({
@@ -163,7 +96,7 @@ const SignInPage = () => {
             <h1 className="text-xl">Signup with Google</h1>
           </button>
           <SignUpButton>
-            <button className="bg-brand-secondary text-brand-primary flex w-1/2 items-center justify-center gap-4 rounded-md px-2 py-2">
+            <button className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary">
               <h1 className="text-xl font-semibold">Create my account </h1>
             </button>
           </SignUpButton>
@@ -173,7 +106,7 @@ const SignInPage = () => {
               {
                 <Link
                   href="/terms"
-                  className="text-brand-primary border-b-brand-primary border-b"
+                  className="border-b border-b-brand-primary text-brand-primary"
                 >
                   Terms of Service
                 </Link>
@@ -182,7 +115,7 @@ const SignInPage = () => {
               {
                 <Link
                   href="/terms"
-                  className="text-brand-primary border-b-brand-primary border-b"
+                  className="border-b border-b-brand-primary text-brand-primary"
                 >
                   Privacy Policy
                 </Link>
@@ -192,11 +125,11 @@ const SignInPage = () => {
           </div>
         </div>
         <div className="flex w-full flex-col items-center justify-start gap-3">
-          <h1 className="text-font-primary text-xl font-medium">
+          <h1 className="text-xl font-medium text-font-primary">
             Already have an account?
           </h1>
           <SignInButton>
-            <button className="bg-brand-secondary text-brand-primary flex w-1/2 items-center justify-center gap-4 rounded-md px-2 py-2">
+            <button className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary">
               <h1 className="text-xl font-semibold">Sign in </h1>
             </button>
           </SignInButton>
