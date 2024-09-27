@@ -4,7 +4,14 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -17,9 +24,14 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${GeistSans.variable}`}>
-        <body className="bg-blue-100 p-2">
+      <html lang="en" className={`${inter.className}`}>
+        <body className="h-screen w-full">
+          {/* <SignedOut>
+            <SignInButton />
+          </SignedOut>
+          <SignedIn> */}
           <TRPCReactProvider>{children}</TRPCReactProvider>
+          {/* </SignedIn> */}
         </body>
       </html>
     </ClerkProvider>
