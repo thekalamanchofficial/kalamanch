@@ -126,7 +126,6 @@ export default function Page() {
   };
 
   const onSubmit = (data: object) => {
-    console.log(data);
     finalSubmit();
   };
 
@@ -153,7 +152,8 @@ export default function Page() {
     if (!isLoaded) return;
 
     let emailAddress = getValues("email");
-    let password = "ABCDi1723yasdXAJH@";
+    let password = getValues("password");
+
     try {
       await signUp.create({
         emailAddress,
@@ -389,7 +389,7 @@ export default function Page() {
                   </label>
                   <div className="relative flex">
                     <input
-                      {...register("name", { required: true })}
+                      {...register("password", { required: true })}
                       type="password"
                       id="password"
                       className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
@@ -419,7 +419,7 @@ export default function Page() {
                   </label>
                   <div className="relative flex">
                     <input
-                      {...register("name", { required: true })}
+                      {...register("confirm-password", { required: true })}
                       type="password"
                       id="confirm-password"
                       className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
