@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, KeyboardEvent, ChangeEvent, FocusEvent } from "react";
 import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -10,7 +10,9 @@ export default function Page() {
   const [otp, setOtp] = useState(Array(6).fill(""));
   const inputRefs = useRef([]);
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (!e || !e.key || e.target) return;
+
     if (
       !/^[0-9]{1}$/.test(e.key) &&
       e.key !== "Backspace" &&
@@ -34,7 +36,7 @@ export default function Page() {
     }
   };
 
-  const handleInput = (e) => {
+  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const { target } = e;
     const index = inputRefs.current.indexOf(target);
     if (target.value) {
@@ -49,18 +51,8 @@ export default function Page() {
     }
   };
 
-  const handleFocus = (e) => {
+  const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
     e.target.select();
-  };
-
-  const handlePaste = (e) => {
-    e.preventDefault();
-    const text = e.clipboardData.getData("text");
-    if (!new RegExp(`^[0-9]{${otp.length}}$`).test(text)) {
-      return;
-    }
-    const digits = text.split("");
-    setOtp(digits);
   };
 
   const interestsIndex = [
@@ -226,7 +218,6 @@ export default function Page() {
                     onChange={handleInput}
                     onKeyDown={handleKeyDown}
                     onFocus={handleFocus}
-                    onPaste={handlePaste}
                     ref={(el) => (inputRefs.current[index] = el)}
                     className="shadow-xs border-stroke text-gray-5 dark:border-dark-3 flex w-[64px] items-center justify-center rounded-lg border bg-white p-2 text-center text-2xl font-medium outline-none sm:text-4xl dark:bg-white/5"
                   />
@@ -522,12 +513,16 @@ export default function Page() {
                       className="hidden" // Hides the actual input
                       accept="image/*"
                       onChange={(e) => {
-                        setValue("profile", e.target.files[0]);
+                        if (e.target.files && e.target.files.length > 0) {
+                          setValue("profile", e.target.files[0]);
+                        }
                       }}
                     />
                     <button
                       type="button"
-                      onClick={() => document.getElementById("profile").click()}
+                      onClick={() =>
+                        document.getElementById("profile")?.click()
+                      }
                     >
                       <svg
                         width="194"
@@ -557,7 +552,7 @@ export default function Page() {
                     </button>{" "}
                     {watch("profile") && (
                       <div className="text-font-primary">
-                        {watch("profile").name} {/* Display the file name */}
+                        {watch("profile").name}
                       </div>
                     )}
                     <svg
@@ -684,11 +679,12 @@ export default function Page() {
                     })}
                   />
 
-                  {errors.selectedRole && (
-                    <p className="text-red-500">
-                      {errors.selectedRole.message}
-                    </p>
-                  )}
+                  {errors.selectedRole?.message &&
+                    typeof errors.selectedRole.message === "string" && (
+                      <p className="text-red-500">
+                        {errors.selectedRole.message}
+                      </p>
+                    )}
 
                   <div className="mt-8 flex items-center justify-center">
                     <button
