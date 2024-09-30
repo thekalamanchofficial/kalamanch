@@ -1,9 +1,69 @@
 "use client";
 import { useState } from "react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+
+import { useSignUp } from "@clerk/nextjs";
 
 export default function Page() {
+  const [otp, setOtp] = useState(Array(6).fill(""));
+  const inputRefs = useRef([]);
+
+  const handleKeyDown = (e) => {
+    if (
+      !/^[0-9]{1}$/.test(e.key) &&
+      e.key !== "Backspace" &&
+      e.key !== "Delete" &&
+      e.key !== "Tab" &&
+      !e.metaKey
+    ) {
+      e.preventDefault();
+    }
+
+    if (e.key === "Delete" || e.key === "Backspace") {
+      const index = inputRefs.current.indexOf(e.target);
+      if (index > 0) {
+        setOtp((prevOtp) => [
+          ...prevOtp.slice(0, index - 1),
+          "",
+          ...prevOtp.slice(index),
+        ]);
+        inputRefs.current[index - 1].focus();
+      }
+    }
+  };
+
+  const handleInput = (e) => {
+    const { target } = e;
+    const index = inputRefs.current.indexOf(target);
+    if (target.value) {
+      setOtp((prevOtp) => [
+        ...prevOtp.slice(0, index),
+        target.value,
+        ...prevOtp.slice(index + 1),
+      ]);
+      if (index < otp.length - 1) {
+        inputRefs.current[index + 1].focus();
+      }
+    }
+  };
+
+  const handleFocus = (e) => {
+    e.target.select();
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text");
+    if (!new RegExp(`^[0-9]{${otp.length}}$`).test(text)) {
+      return;
+    }
+    const digits = text.split("");
+    setOtp(digits);
+  };
+
   const interestsIndex = [
     "Animals",
     "Art",
@@ -52,20 +112,23 @@ export default function Page() {
     watch,
   } = useForm();
 
-  const toggleInterest = (interest) => {
+  const router = useRouter();
+
+  const toggleInterest = (interest: String) => {
     const currentInterests = getValues("interests");
     if (currentInterests.includes(interest)) {
       setValue(
         "interests",
-        currentInterests.filter((item) => item !== interest),
+        currentInterests.filter((item: String) => item !== interest),
       );
     } else {
       setValue("interests", [...currentInterests, interest]);
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: object) => {
     console.log(data);
+    finalSubmit();
   };
 
   const next = () => {
@@ -84,13 +147,112 @@ export default function Page() {
   const formArray = [1, 2, 3];
   const [formNo, setFormNo] = useState(formArray[0]);
 
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const [verifying, setVerifying] = useState(false);
+
+  const finalSubmit = async () => {
+    if (!isLoaded) return;
+
+    let emailAddress = getValues("email");
+    let password = "ABCDi1723yasdXAJH@";
+    try {
+      await signUp.create({
+        emailAddress,
+        password,
+        unsafeMetadata: {
+          name: getValues("name"),
+          birthdate: getValues("birthdate"),
+          interests: getValues("interests"),
+        },
+      });
+
+      // Send the user an email with the verification code
+      await signUp.prepareEmailAddressVerification({
+        strategy: "email_code",
+      });
+
+      setVerifying(true);
+    } catch (err: any) {
+      console.error(JSON.stringify(err, null, 2));
+    }
+  };
+
+  const handleVerify = async (e: React.FormEvent) => {
+    if (!isLoaded) return;
+    let code = otp.join("");
+    try {
+      const signUpAttempt = await signUp.attemptEmailAddressVerification({
+        code,
+      });
+
+      if (signUpAttempt.status === "complete") {
+        await setActive({ session: signUpAttempt.createdSessionId });
+        router.push("/");
+      } else {
+        console.error(JSON.stringify(signUpAttempt, null, 2));
+      }
+    } catch (err: any) {
+      console.error("Error:", JSON.stringify(err, null, 2));
+    }
+  };
+
+  if (verifying) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center bg-brand-secondary py-3">
+        <h1 className="mb-4 mt-4 text-4xl font-semibold text-font-primary">
+          Verify your email
+        </h1>
+        <div className="flex h-[450px] w-full max-w-2xl flex-col items-center gap-y-12 rounded-lg bg-white px-6 py-2 md:aspect-auto">
+          <div className="my-3 flex h-full w-full flex-col items-center justify-center gap-3">
+            <form
+              onSubmit={handleVerify}
+              className="flex flex-col items-center justify-center"
+            >
+              <label
+                id="code"
+                className="mb-2 block text-base font-bold text-font-gray"
+              >
+                Enter your verification code
+              </label>
+              <p className="mb-4 text-sm font-light">
+                Please enter the 6 digit code we sent to your email address
+              </p>
+              <div className="mb-6 flex gap-2">
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={handleInput}
+                    onKeyDown={handleKeyDown}
+                    onFocus={handleFocus}
+                    onPaste={handlePaste}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    className="shadow-xs border-stroke text-gray-5 dark:border-dark-3 flex w-[64px] items-center justify-center rounded-lg border bg-white p-2 text-center text-2xl font-medium outline-none sm:text-4xl dark:bg-white/5"
+                  />
+                ))}
+              </div>
+              <button
+                type="submit"
+                className="w-1/2 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
+              >
+                Verify
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center bg-brand-secondary">
-      <h1 className="mb-4 text-4xl font-semibold text-font-primary">
+    <div className="flex h-full w-full flex-col items-center justify-center bg-brand-secondary py-3">
+      <h1 className="mb-4 mt-4 text-4xl font-semibold text-font-primary">
         Let's get started
       </h1>
-      <div className="flex aspect-square h-auto max-h-[760px] w-full max-w-3xl flex-col items-center gap-y-16 rounded-lg bg-white px-6 py-6 md:aspect-auto">
-        <div className="stepper flex w-full items-center justify-center gap-2">
+      <div className="flex aspect-square h-auto max-h-[950px] w-full max-w-3xl flex-col items-center gap-y-12 rounded-lg bg-white px-6 py-4 md:aspect-auto">
+        <div className="stepper flex w-full items-center justify-center gap-1">
           <div className="w-full px-24 py-4">
             <div className="relative flex w-full items-center justify-between">
               <div className="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 bg-gray-300"></div>
@@ -185,7 +347,7 @@ export default function Page() {
             </div>
           </div>
         </div>
-        <div className="flex w-full flex-col items-center justify-start gap-4">
+        <div className="flex w-full flex-col items-center justify-start gap-3">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             {formNo === 1 && (
               <div className="w-full px-10">
@@ -205,6 +367,68 @@ export default function Page() {
                       placeholder="Write your name"
                     />{" "}
                     {errors.name && <span>This field is required</span>}
+                    <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
+                      <svg
+                        width="30"
+                        height="30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 2.25C10.0716 2.25 8.18657 2.82183 6.58319 3.89317C4.97982 4.96451 3.73013 6.48726 2.99218 8.26884C2.25422 10.0504 2.06114 12.0108 2.43735 13.9021C2.81355 15.7934 3.74215 17.5307 5.10571 18.8943C6.46928 20.2579 8.20656 21.1865 10.0979 21.5627C11.9892 21.9389 13.9496 21.7458 15.7312 21.0078C17.5127 20.2699 19.0355 19.0202 20.1068 17.4168C21.1782 15.8134 21.75 13.9284 21.75 12C21.7473 9.41498 20.7192 6.93661 18.8913 5.10872C17.0634 3.28084 14.585 2.25273 12 2.25ZM6.945 18.5156C7.48757 17.6671 8.23501 16.9688 9.11843 16.4851C10.0019 16.0013 10.9928 15.7478 12 15.7478C13.0072 15.7478 13.9982 16.0013 14.8816 16.4851C15.765 16.9688 16.5124 17.6671 17.055 18.5156C15.6097 19.6397 13.831 20.2499 12 20.2499C10.169 20.2499 8.39032 19.6397 6.945 18.5156ZM9 11.25C9 10.6567 9.17595 10.0766 9.5056 9.58329C9.83524 9.08994 10.3038 8.70542 10.852 8.47836C11.4001 8.2513 12.0033 8.19189 12.5853 8.30764C13.1672 8.4234 13.7018 8.70912 14.1213 9.12868C14.5409 9.54824 14.8266 10.0828 14.9424 10.6647C15.0581 11.2467 14.9987 11.8499 14.7716 12.3981C14.5446 12.9462 14.1601 13.4148 13.6667 13.7444C13.1734 14.0741 12.5933 14.25 12 14.25C11.2044 14.25 10.4413 13.9339 9.87868 13.3713C9.31607 12.8087 9 12.0456 9 11.25ZM18.165 17.4759C17.3285 16.2638 16.1524 15.3261 14.7844 14.7806C15.5192 14.2019 16.0554 13.4085 16.3184 12.5108C16.5815 11.6132 16.5582 10.6559 16.252 9.77207C15.9457 8.88825 15.3716 8.12183 14.6096 7.5794C13.8475 7.03696 12.9354 6.74548 12 6.74548C11.0646 6.74548 10.1525 7.03696 9.39044 7.5794C8.62839 8.12183 8.05432 8.88825 7.74805 9.77207C7.44179 10.6559 7.41855 11.6132 7.68157 12.5108C7.94459 13.4085 8.4808 14.2019 9.21563 14.7806C7.84765 15.3261 6.67147 16.2638 5.835 17.4759C4.77804 16.2873 4.0872 14.8185 3.84567 13.2464C3.60415 11.6743 3.82224 10.0658 4.47368 8.61478C5.12512 7.16372 6.18213 5.93192 7.51745 5.06769C8.85276 4.20346 10.4094 3.74367 12 3.74367C13.5906 3.74367 15.1473 4.20346 16.4826 5.06769C17.8179 5.93192 18.8749 7.16372 19.5263 8.61478C20.1778 10.0658 20.3959 11.6743 20.1543 13.2464C19.9128 14.8185 19.222 16.2873 18.165 17.4759Z"
+                          fill="#4D5565"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <label
+                    htmlFor="password"
+                    className="mb-2 block text-base font-bold text-font-gray"
+                  >
+                    Password
+                  </label>
+                  <div className="relative flex">
+                    <input
+                      {...register("name", { required: true })}
+                      type="password"
+                      id="password"
+                      className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
+                      placeholder="Enter password"
+                    />{" "}
+                    {errors.password && <span>This field is required</span>}
+                    <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
+                      <svg
+                        width="30"
+                        height="30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 2.25C10.0716 2.25 8.18657 2.82183 6.58319 3.89317C4.97982 4.96451 3.73013 6.48726 2.99218 8.26884C2.25422 10.0504 2.06114 12.0108 2.43735 13.9021C2.81355 15.7934 3.74215 17.5307 5.10571 18.8943C6.46928 20.2579 8.20656 21.1865 10.0979 21.5627C11.9892 21.9389 13.9496 21.7458 15.7312 21.0078C17.5127 20.2699 19.0355 19.0202 20.1068 17.4168C21.1782 15.8134 21.75 13.9284 21.75 12C21.7473 9.41498 20.7192 6.93661 18.8913 5.10872C17.0634 3.28084 14.585 2.25273 12 2.25ZM6.945 18.5156C7.48757 17.6671 8.23501 16.9688 9.11843 16.4851C10.0019 16.0013 10.9928 15.7478 12 15.7478C13.0072 15.7478 13.9982 16.0013 14.8816 16.4851C15.765 16.9688 16.5124 17.6671 17.055 18.5156C15.6097 19.6397 13.831 20.2499 12 20.2499C10.169 20.2499 8.39032 19.6397 6.945 18.5156ZM9 11.25C9 10.6567 9.17595 10.0766 9.5056 9.58329C9.83524 9.08994 10.3038 8.70542 10.852 8.47836C11.4001 8.2513 12.0033 8.19189 12.5853 8.30764C13.1672 8.4234 13.7018 8.70912 14.1213 9.12868C14.5409 9.54824 14.8266 10.0828 14.9424 10.6647C15.0581 11.2467 14.9987 11.8499 14.7716 12.3981C14.5446 12.9462 14.1601 13.4148 13.6667 13.7444C13.1734 14.0741 12.5933 14.25 12 14.25C11.2044 14.25 10.4413 13.9339 9.87868 13.3713C9.31607 12.8087 9 12.0456 9 11.25ZM18.165 17.4759C17.3285 16.2638 16.1524 15.3261 14.7844 14.7806C15.5192 14.2019 16.0554 13.4085 16.3184 12.5108C16.5815 11.6132 16.5582 10.6559 16.252 9.77207C15.9457 8.88825 15.3716 8.12183 14.6096 7.5794C13.8475 7.03696 12.9354 6.74548 12 6.74548C11.0646 6.74548 10.1525 7.03696 9.39044 7.5794C8.62839 8.12183 8.05432 8.88825 7.74805 9.77207C7.44179 10.6559 7.41855 11.6132 7.68157 12.5108C7.94459 13.4085 8.4808 14.2019 9.21563 14.7806C7.84765 15.3261 6.67147 16.2638 5.835 17.4759C4.77804 16.2873 4.0872 14.8185 3.84567 13.2464C3.60415 11.6743 3.82224 10.0658 4.47368 8.61478C5.12512 7.16372 6.18213 5.93192 7.51745 5.06769C8.85276 4.20346 10.4094 3.74367 12 3.74367C13.5906 3.74367 15.1473 4.20346 16.4826 5.06769C17.8179 5.93192 18.8749 7.16372 19.5263 8.61478C20.1778 10.0658 20.3959 11.6743 20.1543 13.2464C19.9128 14.8185 19.222 16.2873 18.165 17.4759Z"
+                          fill="#4D5565"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <label
+                    htmlFor="confirm-password"
+                    className="mb-2 block text-base font-bold text-font-gray"
+                  >
+                    Confirm Password
+                  </label>
+                  <div className="relative flex">
+                    <input
+                      {...register("name", { required: true })}
+                      type="password"
+                      id="confirm-password"
+                      className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
+                      placeholder="Enter password"
+                    />
+                    {errors.confirmPassword && (
+                      <span>This field is required</span>
+                    )}
                     <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
                       <svg
                         width="30"
@@ -261,7 +485,7 @@ export default function Page() {
                   </label>
                   <div className="relative flex">
                     <input
-                      type="text"
+                      type="date"
                       {...register("birthdate", { required: true })}
                       id="birthdate"
                       className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
@@ -484,267 +708,3 @@ export default function Page() {
     </div>
   );
 }
-
-// export default function App() {
-//   const formArray = [1, 2, 3];
-//   const [formNo, setFormNo] = useState(formArray[0]);
-//   const [state, setState] = useState({
-//     name: "",
-//     birthdate: "",
-//     profile: "",
-//     interests: [],
-//     role: "",
-//   });
-//   const inputHandle = (e) => {
-//     setState({
-//       ...state,
-//       [e.target.name]: e.target.value,
-//     });
-//   };
-//   const next = () => {
-//     if (formNo === 1 && state.name && state.birthdate && state.profile) {
-//       setFormNo(formNo + 1);
-//     } else if (formNo === 2 && state.interests.length > 0) {
-//       setFormNo(formNo + 1);
-//     } else if (formNo === 3 && state.role) {
-//       setFormNo(formNo + 1);
-//     } else {
-//       alert("Fill the form properly");
-//     }
-//   };
-//   const pre = () => {
-//     formNo && formNo > 1 && setFormNo(formNo - 1);
-//   };
-
-//   return (
-//     <div className="flex h-screen w-screen items-center justify-center bg-slate-300">
-//       <div className="card w-[370px] rounded-md bg-white p-5 shadow-md">
-//         <div className="flex items-center justify-center">
-//           {formArray.map((v, i) => (
-//             <>
-//               <div
-//                 className={`my-3 w-[35px] rounded-full text-white ${formNo && (formNo - 1 === i || formNo - 1 === i + 1 || formNo === formArray.length) ? "bg-blue-500" : "bg-slate-400"} flex h-[35px] items-center justify-center`}
-//               >
-//                 {v}
-//               </div>
-//               {i !== formArray.length - 1 && (
-//                 <div
-//                   className={`h-[2px] w-[85px] ${formNo === i + 2 || formNo === formArray.length ? "bg-blue-500" : "bg-slate-400"}`}
-//                 ></div>
-//               )}
-//             </>
-//           ))}
-//         </div>
-//         {formNo === 1 && (
-//           <div>
-//             <div className="mb-2 flex flex-col">
-//               <label
-//                 htmlFor="website-admin"
-//                 className="mb-2 block text-sm font-medium text-gray-900"
-//               >
-//                 Username
-//               </label>
-//               <div className="flex">
-//                 <span className="inline-flex items-center rounded-s-md border border-e-0 border-gray-300 bg-gray-200 px-3 text-sm text-gray-900">
-//                   <svg
-//                     className="h-4 w-4 text-gray-500"
-//                     aria-hidden="true"
-//                     xmlns="http://www.w3.org/2000/svg"
-//                     fill="currentColor"
-//                     viewBox="0 0 20 20"
-//                   >
-//                     <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" />
-//                   </svg>
-//                 </span>
-//                 <input
-//                   type="text"
-//                   id="website-admin"
-//                   className="block w-full min-w-0 flex-1 rounded-none rounded-e-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-//                   placeholder="Bonnie Green"
-//                 />
-//               </div>
-//               <div className="mb-2 flex flex-col">
-//                 <label
-//                   htmlFor="website-admin"
-//                   className="mb-2 block text-sm font-medium text-gray-900"
-//                 >
-//                   Username
-//                 </label>
-//                 <div className="flex">
-//                   <span className="inline-flex items-center rounded-s-md border border-e-0 border-gray-300 bg-gray-200 px-3 text-sm text-gray-900">
-//                     <svg
-//                       className="h-4 w-4 text-gray-500"
-//                       aria-hidden="true"
-//                       xmlns="http://www.w3.org/2000/svg"
-//                       fill="currentColor"
-//                       viewBox="0 0 20 20"
-//                     >
-//                       <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" />
-//                     </svg>
-//                   </span>
-//                   <input
-//                     type="text"
-//                     id="website-admin"
-//                     className="block w-full min-w-0 flex-1 rounded-none rounded-e-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-//                     placeholder="Bonnie Green"
-//                   />
-//                 </div>
-//               </div>
-//               <div className="mb-2 flex flex-col">
-//                 <label
-//                   htmlFor="website-admin"
-//                   className="mb-2 block text-sm font-medium text-gray-900"
-//                 >
-//                   Username
-//                 </label>
-//                 <div className="flex">
-//                   <span className="inline-flex items-center rounded-s-md border border-e-0 border-gray-300 bg-gray-200 px-3 text-sm text-gray-900">
-//                     <svg
-//                       className="h-4 w-4 text-gray-500"
-//                       aria-hidden="true"
-//                       xmlns="http://www.w3.org/2000/svg"
-//                       fill="currentColor"
-//                       viewBox="0 0 20 20"
-//                     >
-//                       <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" />
-//                     </svg>
-//                   </span>
-//                   <input
-//                     type="text"
-//                     id="website-admin"
-//                     className="block w-full min-w-0 flex-1 rounded-none rounded-e-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-//                     placeholder="Bonnie Green"
-//                   />
-//                 </div>
-//               </div>
-//               <div className="mt-4 flex items-center justify-center">
-//                 <button
-//                   onClick={next}
-//                   className="w-full rounded-md bg-blue-500 px-3 py-2 text-lg text-white"
-//                 >
-//                   Next
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         )}
-
-//         {formNo === 2 && (
-//           <div>
-//             <div className="mb-2 flex flex-col">
-//               <label className="text-slate-500" htmlFor="varsity">
-//                 Varsity
-//               </label>
-//               <input
-//                 value={state.varsity}
-//
-//                 className="mt-1 rounded-md border border-slate-400 p-2 text-slate-500 outline-0 focus:border-blue-500"
-//                 type="text"
-//                 name="varsity"
-//                 placeholder="varsity name"
-//                 id="varsity"
-//               />
-//             </div>
-//             <div className="mb-2 flex flex-col">
-//               <label className="text-slate-500" htmlFor="session">
-//                 session
-//               </label>
-//               <input
-//                 value={state.session}
-//
-//                 className="mt-1 rounded-md border border-slate-400 p-2 text-slate-500 outline-0 focus:border-blue-500"
-//                 type="text"
-//                 name="session"
-//                 placeholder="session"
-//                 id="session"
-//               />
-//             </div>
-//             <div className="mb-2 flex flex-col">
-//               <label className="text-slate-500" htmlFor="address">
-//                 Address
-//               </label>
-//               <textarea
-//                 value={state.address}
-//
-//                 row="10"
-//                 className="mt-1 rounded-md border border-slate-400 p-2 text-slate-500 outline-0 focus:border-blue-500"
-//                 type="number"
-//                 name="address"
-//                 placeholder="address"
-//               ></textarea>
-//             </div>
-//             <div className="mt-4 flex items-center justify-center gap-3">
-//               <button
-//                 onClick={pre}
-//                 className="w-full rounded-md bg-blue-500 px-3 py-2 text-lg text-white"
-//               >
-//                 Previous
-//               </button>
-//               <button
-//                 onClick={next}
-//                 className="w-full rounded-md bg-blue-500 px-3 py-2 text-lg text-white"
-//               >
-//                 Next
-//               </button>
-//             </div>
-//           </div>
-//         )}
-
-//         {formNo === 3 && (
-//           <div>
-//             <div className="mb-2 flex flex-col">
-//               <label htmlFor="district">District</label>
-//               <input
-//                 value={state.district}
-//
-//                 className="mt-1 rounded-md border border-slate-400 p-2 outline-0 focus:border-blue-500"
-//                 type="text"
-//                 name="district"
-//                 placeholder="district name"
-//                 id="district"
-//               />
-//             </div>
-//             <div className="mb-2 flex flex-col">
-//               <label htmlFor="thana">Thana</label>
-//               <input
-//                 value={state.thana}
-//
-//                 className="mt-1 rounded-md border border-slate-400 p-2 outline-0 focus:border-blue-500"
-//                 type="text"
-//                 name="thana"
-//                 placeholder="thana"
-//                 id="thana"
-//               />
-//             </div>
-//             <div className="mb-2 flex flex-col">
-//               <label htmlFor="post">Post</label>
-//               <input
-//                 value={state.post}
-//
-//                 className="mt-1 rounded-md border border-slate-400 p-2 outline-0 focus:border-blue-500"
-//                 type="text"
-//                 name="post"
-//                 placeholder="post"
-//                 id="post"
-//               />
-//             </div>
-//             <div className="mt-4 flex items-center justify-center gap-3">
-//               <button
-//                 onClick={pre}
-//                 className="w-full rounded-md bg-blue-500 px-3 py-2 text-lg text-white"
-//               >
-//                 Previous
-//               </button>
-//               <button
-//                 onClick={finalSubmit}
-//                 className="w-full rounded-md bg-blue-500 px-3 py-2 text-lg text-white"
-//               >
-//                 Submit
-//               </button>
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
