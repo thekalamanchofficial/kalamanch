@@ -6,9 +6,6 @@ import { useState } from "react";
 
 const SignInPage = () => {
   const { signIn, isLoaded } = useSignIn();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   return (
     <div className="flex h-full w-full items-center justify-center bg-brand-secondary">

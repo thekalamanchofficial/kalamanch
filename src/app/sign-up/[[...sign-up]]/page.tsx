@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
 
 import { useSignUp } from "@clerk/nextjs";
 
