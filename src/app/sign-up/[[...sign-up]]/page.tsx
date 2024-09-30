@@ -3,8 +3,11 @@ import { useState, KeyboardEvent, ChangeEvent, FocusEvent } from "react";
 import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-
 import { useSignUp } from "@clerk/nextjs";
+
+import { trpc } from "~/server/client";
+import { get } from "http";
+import { sign } from "crypto";
 
 export default function Page() {
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -138,7 +141,35 @@ export default function Page() {
   const [formNo, setFormNo] = useState(formArray[0]);
 
   const { isLoaded, signUp, setActive } = useSignUp();
+
   const [verifying, setVerifying] = useState(false);
+  const mutation = trpc.user.addUser.useMutation();
+
+  const formatDateToYYYYMMDD = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so add 1
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const addUserToDB = async () => {
+    const data = {
+      email: getValues("email"),
+      name: getValues("name"),
+      birthdate: new Date(getValues("birthdate")).toISOString(),
+      profilePicture: "",
+      interests: getValues("interests"),
+      role: "A",
+    };
+    console.log("Data:", data);
+
+    try {
+      const user = await mutation.mutateAsync(data);
+      console.log("User created:", user);
+    } catch (error) {
+      console.error("Error creating user:", error);
+    }
+  };
 
   const finalSubmit = async () => {
     if (!isLoaded) return;
@@ -169,6 +200,8 @@ export default function Page() {
   };
 
   const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!isLoaded) return;
     let code = otp.join("");
     try {
@@ -177,8 +210,14 @@ export default function Page() {
       });
 
       if (signUpAttempt.status === "complete") {
-        await setActive({ session: signUpAttempt.createdSessionId });
-        router.push("/");
+        try {
+          console.log("I am here", signUpAttempt);
+          await setActive({ session: signUpAttempt.createdSessionId });
+          await addUserToDB();
+          router.push("/");
+        } catch (error) {
+          console.error("Error during the signup process:", error);
+        }
       } else {
         console.error(JSON.stringify(signUpAttempt, null, 2));
       }
