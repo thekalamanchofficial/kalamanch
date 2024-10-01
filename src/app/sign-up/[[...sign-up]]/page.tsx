@@ -4,10 +4,9 @@ import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useSignUp } from "@clerk/nextjs";
-
 import { trpc } from "~/server/client";
-import { get } from "http";
-import { sign } from "crypto";
+import { validateStep1 } from "~/app/_utils/formValidate";
+import { toast } from "react-toastify";
 
 export default function Page() {
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -126,10 +125,26 @@ export default function Page() {
 
   const next = () => {
     const formData = getValues();
-    if (formNo === 1 && formData.name && formData.email && formData.birthdate) {
-      setFormNo(formNo + 1);
-    } else if (formNo === 2 && formData.interests.length > 0) {
-      setFormNo(formNo + 1);
+    if (formNo === 1) {
+      const data = {
+        email: getValues("email"),
+        name: getValues("name"),
+        password: getValues("password"),
+        confirmPassword: getValues("confirm-password"),
+        birthdate: getValues("birthdate")
+          ? new Date(getValues("birthdate")).toISOString()
+          : "",
+      };
+      const { isValid, errors } = validateStep1(data);
+      if (isValid) setFormNo(formNo + 1);
+      else {
+        toast.error(errors.firstError);
+      }
+    } else if (formNo === 2) {
+      if (getValues("interests").length > 0) setFormNo(formNo + 1);
+      else {
+        toast.error("Please select at least one interest");
+      }
     } else if (formNo === 3) {
       // finalSubmit();
     } else {
@@ -145,13 +160,6 @@ export default function Page() {
   const [verifying, setVerifying] = useState(false);
   const mutation = trpc.user.addUser.useMutation();
 
-  const formatDateToYYYYMMDD = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so add 1
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
   const addUserToDB = async () => {
     const data = {
       email: getValues("email"),
@@ -159,7 +167,7 @@ export default function Page() {
       birthdate: new Date(getValues("birthdate")).toISOString(),
       profilePicture: "",
       interests: getValues("interests"),
-      role: "A",
+      role: getValues("selectedRole"),
     };
     console.log("Data:", data);
 
@@ -642,7 +650,7 @@ export default function Page() {
                         onClick={() => toggleInterest(interest)}
                         className={`pill inline-block rounded-full bg-gray-200 px-4 py-2 text-sm text-gray-800 ${
                           watch("interests")?.includes(interest)
-                            ? "border border-brand-primary bg-[#F5F7FE] text-brand-primary"
+                            ? "border border-brand-primary bg-[#fafbff] text-brand-primary"
                             : "bg-gray-100 text-font-primary"
                         }`}
                       >
