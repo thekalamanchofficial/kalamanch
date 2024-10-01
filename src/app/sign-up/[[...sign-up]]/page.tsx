@@ -219,10 +219,18 @@ export default function Page() {
 
       if (signUpAttempt.status === "complete") {
         try {
-          console.log("I am here", signUpAttempt);
-          await setActive({ session: signUpAttempt.createdSessionId });
-          await addUserToDB();
-          router.push("/");
+          toast.promise(
+            (async () => {
+              await setActive({ session: signUpAttempt.createdSessionId });
+              await addUserToDB();
+              router.push("/"); // Redirect after successful registration
+            })(),
+            {
+              pending: "Request in progress, please wait...", // Message while the promise is pending
+              success: "Signup successful! Redirecting...", // Message on success
+              error: "An error occurred during the signup process.", // Message on error
+            },
+          );
         } catch (error) {
           console.error("Error during the signup process:", error);
         }
