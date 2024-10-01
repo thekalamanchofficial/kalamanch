@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const SignInPage = () => {
   const {
@@ -12,7 +13,6 @@ const SignInPage = () => {
     handleSubmit,
     formState: { errors },
     getValues,
-    watch,
   } = useForm();
 
   const [isSignUp, setIsSignUp] = useState(false);
@@ -32,23 +32,32 @@ const SignInPage = () => {
     let email = getValues("email");
     let password = getValues("password");
 
-    try {
-      const signInAttempt = await signIn.create({
-        identifier: email,
-        password,
+    toast
+      .promise(
+        (async () => {
+          const signInAttempt = await signIn.create({
+            identifier: email,
+            password,
+          });
+
+          if (signInAttempt.status === "complete") {
+            await setActive({ session: signInAttempt.createdSessionId });
+            router.push("/"); // Redirect after successful login
+          } else {
+            console.error(JSON.stringify(signInAttempt, null, 2));
+            throw new Error("Login attempt was not completed successfully."); // Throw an error to trigger the error toast
+          }
+        })(),
+        {
+          pending: "Logging in, please wait...", // Message while the promise is pending
+          success: "Login successful! Redirecting...", // Message on success
+          error: "Login failed. Please check your credentials.", // Message on error
+        },
+      )
+      .catch((error) => {
+        console.error("Error during the login process:", error);
       });
-
-      if (signInAttempt.status === "complete") {
-        await setActive({ session: signInAttempt.createdSessionId });
-        router.push("/");
-      } else {
-        console.error(JSON.stringify(signInAttempt, null, 2));
-      }
-    } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
-    }
   };
-
   return (
     <div className="flex h-full w-full items-center justify-center bg-brand-secondary">
       {!isSignUp ? (
@@ -254,7 +263,7 @@ const SignInPage = () => {
                 fill="#EA4335"
               />
             </svg>
-            <h1 className="text-xl">Signup with Google</h1>
+            <h1 className="text-xl">Signin with Google</h1>
           </button>
           <span className="my-4 flex w-full items-center justify-center gap-4">
             <div className="h-1 w-[100px] border-t border-font-tertiary"></div>
