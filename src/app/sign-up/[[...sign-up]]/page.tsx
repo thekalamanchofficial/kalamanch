@@ -1,25 +1,27 @@
 "use client";
 import { useState, KeyboardEvent, ChangeEvent, FocusEvent } from "react";
 import React, { useRef } from "react";
-import { set, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useSignUp } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
 import { toast } from "react-toastify";
+
+import Details from "~/app/_components/SignUp/Details";
+import Role from "~/app/_components/SignUp/Role";
+import Interests from "~/app/_components/SignUp/Interests";
 import {
   useContentFormDetails,
   useContentFormInterest,
   useContentFormRole,
 } from "~/app/_utils/Hooks/useContentForm";
-import { Controller } from "react-hook-form";
-import {
-  CalendarSVG,
-  EmailSVG,
-  PasswordSVG,
-  UploadSVG,
-} from "~/assets/svg/svg";
 
 export default function Page() {
+  const { getValues: getValuesDetails } = useContentFormDetails();
+  const { getValues: getValuesInterest } = useContentFormInterest();
+
+  const { getValues: getValuesRole } = useContentFormRole();
+
   const [otp, setOtp] = useState(Array(6).fill(""));
   const inputRefs = useRef([]);
 
@@ -68,74 +70,15 @@ export default function Page() {
     e.target.select();
   };
 
-  const interestsIndex = [
-    "Animals",
-    "Art",
-    "Books",
-    "Comedy",
-    "Culture",
-    "Education",
-    "Food",
-    "Health",
-    "History",
-    "Music",
-    "Nature",
-    "News",
-    "Politics",
-    "Science",
-    "Sports",
-    "Technology",
-    "Travel",
-    "TV",
-    "Video Games",
-  ];
-  const information = [
-    {
-      title: " Turn Your writings into a Legacy",
-      desc: "Write, sell, or buy poems with complete ownership and make your words last forever.",
-      role: "A",
-    },
-    {
-      title: "A Place Where Every Poem is Valued",
-      desc: "Join a community where you can share, sell, or invest in poetry that touches hearts.",
-      role: "B",
-    },
-    {
-      title: "Buy and Sell Poetry Easily",
-      desc: "Support poets or own a poem—trade poetry with ease and make it a valuable asset.",
-      role: "C",
-    },
-  ];
-
-  const {
-    register: registerDetails,
-    handleSubmit: handleSubmitDetails,
-    trigger: triggerDetails,
-    control: controlDetails,
-    getValues: getValuesDetails,
-    watch: watchDetails,
-    setValue: setValueDetails,
-  } = useContentFormDetails();
-
-  const {
-    register: registerInterest,
-    handleSubmit: handleSubmitInterest,
-    trigger: triggerInterest,
-    getValues: getValuesInterest,
-    watch: watchInterest,
-    setValue: setValueInterest,
-    control: controlInterest,
-  } = useContentFormInterest();
-
-  const {
-    register: registerRole,
-    handleSubmit: handleSubmitRole,
-    trigger: triggerRole,
-    getValues: getValuesRole,
-    watch: watchRoles,
-    setValue: setValueRole,
-    control: controlRole,
-  } = useContentFormRole();
+  const [formData, setFormData] = useState({
+    name: "",
+    password: "",
+    email: "",
+    birthdate: "",
+    profile: "",
+    interests: [],
+    role: "",
+  });
 
   const router = useRouter();
 
@@ -147,41 +90,21 @@ export default function Page() {
   const [verifying, setVerifying] = useState(false);
   const mutation = trpc.user.addUser.useMutation();
 
-  const toggleInterest = (interest: String) => {
-    const currentInterests = getValuesInterest("interests");
-    if (currentInterests.includes(interest)) {
-      setValueInterest(
-        "interests",
-        currentInterests.filter((item: String) => item !== interest),
-      );
-    } else {
-      setValueInterest("interests", [...currentInterests, interest]);
-    }
-  };
-
-  const handleNext = async (e: React.FormEvent) => {
-    if (formNo === 1) {
-      const isValid = await triggerDetails();
-      if (isValid && formNo !== undefined) setFormNo(formNo + 1);
-    } else if (formNo === 2) {
-      const isValid = await triggerInterest();
-      if (isValid && formNo !== undefined) setFormNo(formNo + 1);
-    } else if (formNo === 3) {
-      const isValid = await triggerRole();
-      if (isValid && formNo !== undefined) finalSubmit();
-    }
+  const handleNext = (data) => {
+    setFormData((prev) => ({ ...prev, ...data }));
+    setFormNo((formNo ?? 0) + 1);
+    if (formNo == 3) finalSubmit();
   };
 
   const addUserToDB = async () => {
     const data = {
-      email: getValuesDetails("email"),
-      name: getValuesDetails("name"),
-      birthdate: new Date(getValuesDetails("birthdate")).toISOString(),
-      profilePicture: "",
-      interests: getValuesInterest("interests"),
-      role: getValuesRole("role"),
+      email: formData.email,
+      name: formData.name,
+      birthdate: formData.birthdate,
+      profile: formData.profile,
+      interests: formData.interests,
+      role: formData.role,
     };
-    console.log("Data:", data);
 
     try {
       const user = await mutation.mutateAsync(data);
@@ -194,17 +117,19 @@ export default function Page() {
   const finalSubmit = async () => {
     if (!isLoaded) return;
 
-    let emailAddress = getValuesDetails("email");
-    let password = getValuesDetails("password");
+    let emailAddress = formData.email;
+    let password = formData.password;
 
     try {
       await signUp.create({
         emailAddress,
         password,
         unsafeMetadata: {
-          name: getValuesDetails("name"),
-          birthdate: getValuesDetails("birthdate"),
-          interests: getValuesInterest("interests"),
+          name: formData.name,
+          birthdate: formData.birthdate,
+          profile: formData?.profile,
+          interests: formData.interests,
+          role: formData.role,
         },
       });
 
@@ -405,362 +330,11 @@ export default function Page() {
           </div>
         </div>
         <div className="flex w-full flex-col items-center justify-start gap-3">
-          {formNo === 1 && (
-            <form onSubmit={handleSubmitDetails(handleNext)} className="w-full">
-              <div className="w-full px-10">
-                <div className="mb-3 flex flex-col">
-                  <label
-                    htmlFor="name"
-                    className="mb-2 block text-base font-bold text-font-gray"
-                  >
-                    Your name
-                  </label>
+          {formNo === 1 ? <Details onNext={handleNext} /> : null}
 
-                  <Controller
-                    control={controlDetails}
-                    name="name"
-                    render={({ field, fieldState }) => (
-                      <div className="relative flex">
-                        <input
-                          {...registerDetails("name", { required: true })}
-                          type="text"
-                          id="name"
-                          className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                          placeholder="Write your name"
-                        />
-                        {fieldState.error && (
-                          <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                            {fieldState.error.message}
-                          </span>
-                        )}
-                        <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                          <svg
-                            width="30"
-                            height="30"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M12 2.25C10.0716 2.25 8.18657 2.82183 6.58319 3.89317C4.97982 4.96451 3.73013 6.48726 2.99218 8.26884C2.25422 10.0504 2.06114 12.0108 2.43735 13.9021C2.81355 15.7934 3.74215 17.5307 5.10571 18.8943C6.46928 20.2579 8.20656 21.1865 10.0979 21.5627C11.9892 21.9389 13.9496 21.7458 15.7312 21.0078C17.5127 20.2699 19.0355 19.0202 20.1068 17.4168C21.1782 15.8134 21.75 13.9284 21.75 12C21.7473 9.41498 20.7192 6.93661 18.8913 5.10872C17.0634 3.28084 14.585 2.25273 12 2.25ZM6.945 18.5156C7.48757 17.6671 8.23501 16.9688 9.11843 16.4851C10.0019 16.0013 10.9928 15.7478 12 15.7478C13.0072 15.7478 13.9982 16.0013 14.8816 16.4851C15.765 16.9688 16.5124 17.6671 17.055 18.5156C15.6097 19.6397 13.831 20.2499 12 20.2499C10.169 20.2499 8.39032 19.6397 6.945 18.5156ZM9 11.25C9 10.6567 9.17595 10.0766 9.5056 9.58329C9.83524 9.08994 10.3038 8.70542 10.852 8.47836C11.4001 8.2513 12.0033 8.19189 12.5853 8.30764C13.1672 8.4234 13.7018 8.70912 14.1213 9.12868C14.5409 9.54824 14.8266 10.0828 14.9424 10.6647C15.0581 11.2467 14.9987 11.8499 14.7716 12.3981C14.5446 12.9462 14.1601 13.4148 13.6667 13.7444C13.1734 14.0741 12.5933 14.25 12 14.25C11.2044 14.25 10.4413 13.9339 9.87868 13.3713C9.31607 12.8087 9 12.0456 9 11.25ZM18.165 17.4759C17.3285 16.2638 16.1524 15.3261 14.7844 14.7806C15.5192 14.2019 16.0554 13.4085 16.3184 12.5108C16.5815 11.6132 16.5582 10.6559 16.252 9.77207C15.9457 8.88825 15.3716 8.12183 14.6096 7.5794C13.8475 7.03696 12.9354 6.74548 12 6.74548C11.0646 6.74548 10.1525 7.03696 9.39044 7.5794C8.62839 8.12183 8.05432 8.88825 7.74805 9.77207C7.44179 10.6559 7.41855 11.6132 7.68157 12.5108C7.94459 13.4085 8.4808 14.2019 9.21563 14.7806C7.84765 15.3261 6.67147 16.2638 5.835 17.4759C4.77804 16.2873 4.0872 14.8185 3.84567 13.2464C3.60415 11.6743 3.82224 10.0658 4.47368 8.61478C5.12512 7.16372 6.18213 5.93192 7.51745 5.06769C8.85276 4.20346 10.4094 3.74367 12 3.74367C13.5906 3.74367 15.1473 4.20346 16.4826 5.06769C17.8179 5.93192 18.8749 7.16372 19.5263 8.61478C20.1778 10.0658 20.3959 11.6743 20.1543 13.2464C19.9128 14.8185 19.222 16.2873 18.165 17.4759Z"
-                              fill="#4D5565"
-                            />
-                          </svg>
-                        </span>
-                      </div>
-                    )}
-                  />
-                  <label
-                    htmlFor="password"
-                    className="mb-2 block text-base font-bold text-font-gray"
-                  >
-                    Password
-                  </label>
-                  <Controller
-                    control={controlDetails}
-                    name="password"
-                    render={({ field, fieldState }) => (
-                      <div className="relative flex">
-                        <input
-                          {...field}
-                          type="password"
-                          id="password"
-                          className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                          placeholder="Enter password"
-                        />
-                        {fieldState.error && (
-                          <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                            {fieldState.error.message}
-                          </span>
-                        )}
-                        <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                          <PasswordSVG />
-                        </span>
-                      </div>
-                    )}
-                  />
-                  <label
-                    htmlFor="confirmPassword"
-                    className="mb-2 block text-base font-bold text-font-gray"
-                  >
-                    Confirm Password
-                  </label>
-                  <Controller
-                    control={controlDetails}
-                    name="confirmPassword"
-                    render={({ field, fieldState }) => (
-                      <div className="relative flex">
-                        <input
-                          {...field}
-                          type="password"
-                          id="confirmPassword"
-                          className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                          placeholder="Enter password"
-                        />
-                        {fieldState.error && (
-                          <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                            {fieldState.error.message}
-                          </span>
-                        )}
-                        <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                          <PasswordSVG />
-                        </span>
-                      </div>
-                    )}
-                  />
+          {formNo === 2 ? <Interests onNext={handleNext} /> : null}
 
-                  <label
-                    htmlFor="email"
-                    className="mb-2 block text-base font-bold text-font-gray"
-                  >
-                    Your email
-                  </label>
-                  <Controller
-                    control={controlDetails}
-                    name="email"
-                    render={({ field, fieldState }) => (
-                      <div className="relative flex">
-                        <input
-                          type="email"
-                          {...registerDetails("email", { required: true })}
-                          id="email"
-                          className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                          placeholder="Enter your email"
-                        />
-                        {fieldState.error && (
-                          <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                            {fieldState.error.message}
-                          </span>
-                        )}
-                        <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                          <EmailSVG />
-                        </span>
-                      </div>
-                    )}
-                  />
-
-                  <label
-                    htmlFor="birthdate"
-                    className="mb-2 block text-base font-bold text-font-gray"
-                  >
-                    Your birthdate
-                  </label>
-                  <Controller
-                    control={controlDetails}
-                    name="birthdate"
-                    render={({ field, fieldState }) => (
-                      <div className="relative flex">
-                        <input
-                          type="date"
-                          {...registerDetails("birthdate", { required: true })}
-                          id="birthdate"
-                          className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                          placeholder="Enter your birthdate"
-                        />
-                        {fieldState.error && (
-                          <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                            {fieldState.error.message}
-                          </span>
-                        )}
-                        <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                          <CalendarSVG />
-                        </span>
-                      </div>
-                    )}
-                  />
-
-                  <label
-                    htmlFor="profile"
-                    className="mb-2 block text-base font-bold text-font-gray"
-                  >
-                    Your profile picture
-                  </label>
-                  <div className="relative flex flex-col items-start justify-center">
-                    <input
-                      type="file"
-                      id="profile"
-                      {...registerDetails("profile", {
-                        required: "Profile picture is required",
-                      })} // Validation for profile picture
-                      className="hidden" // Hides the actual input
-                      accept="image/*"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0) {
-                          setValueDetails("profile", e.target.files[0]);
-                        }
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        document.getElementById("profile")?.click()
-                      }
-                    >
-                      <UploadSVG />
-                    </button>
-                    {watchDetails("profile") && (
-                      <div className="text-font-primary">
-                        {(watchDetails("profile") as unknown as File)?.name}
-                      </div>
-                    )}
-                    <svg
-                      width="190"
-                      height="2"
-                      viewBox="0 0 190 2"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="my-4"
-                    >
-                      <path d="M0 1H190" stroke="#E0DEE6" />
-                    </svg>
-                    <button
-                      type="button"
-                      className="mb-4 ml-3 border-b border-b-brand-primary text-brand-primary"
-                    >
-                      <h1>Choose from avatars</h1>
-                    </button>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-center">
-                    <button
-                      type="submit"
-                      className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          )}
-
-          {formNo === 2 && (
-            <form
-              onSubmit={handleSubmitInterest(handleNext)}
-              className="w-full"
-            >
-              <div className="w-full px-10">
-                <div className="mb-3 flex flex-col">
-                  <h1 className="text-3xl font-medium text-font-primary">
-                    What are your interests?
-                  </h1>
-                  <h1 className="text-lg font-medium text-font-secondary">
-                    We will use this to help customize the experience
-                  </h1>
-                  <div className="relative mb-[200px] mt-6 flex h-auto w-full flex-wrap gap-2">
-                    <Controller
-                      name="interests"
-                      control={controlInterest}
-                      defaultValue={[]}
-                      render={({ field: { onChange, value }, fieldState }) => (
-                        <>
-                          {interestsIndex.map((interest) => (
-                            <button
-                              key={interest}
-                              type="button"
-                              onClick={() => {
-                                const newValue = value.includes(interest)
-                                  ? value.filter((item) => item !== interest)
-                                  : [...value, interest];
-                                onChange(newValue);
-                              }}
-                              className={`pill inline-block rounded-full bg-gray-200 px-4 py-2 text-sm text-gray-800 ${
-                                value.includes(interest)
-                                  ? "border border-brand-primary bg-[#fafbff] text-brand-primary"
-                                  : "bg-gray-100 text-font-primary"
-                              }`}
-                            >
-                              {interest} {value.includes(interest) && "✕"}
-                            </button>
-                          ))}
-                          {fieldState.error && (
-                            <span className="absolute -bottom-20 -right-10 text-red-500">
-                              {fieldState.error.message}
-                            </span>
-                          )}
-                        </>
-                      )}
-                    />
-                  </div>
-                  <div className="mt-4 flex items-center justify-center">
-                    <button
-                      type="submit" // Use type="submit" for form submission
-                      className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          )}
-
-          {formNo === 3 && (
-            <form onSubmit={handleSubmitRole(handleNext)} className="w-full">
-              <div className="w-full px-10">
-                <div className="relative mb-3 flex flex-col gap-2">
-                  <h1 className="text-3xl font-medium text-font-primary">
-                    You are ready to go!
-                  </h1>
-                  <h1 className="mb-4 text-lg font-medium text-font-secondary">
-                    We hope that you will have a wonderful time at Kalamanch.
-                  </h1>
-
-                  <Controller
-                    name="role"
-                    control={controlRole}
-                    rules={{ required: "Please select a role" }}
-                    render={({ field, fieldState }) => (
-                      <>
-                        {information.map((info) => (
-                          <div
-                            key={info.role}
-                            className="mb-2 flex h-20 w-full cursor-pointer gap-6"
-                            onClick={() => field.onChange(info.role)}
-                          >
-                            <div
-                              className={`flex w-1/12 items-center justify-start`}
-                            >
-                              <span
-                                className={`block h-14 w-14 rounded-full ${
-                                  field.value === info.role
-                                    ? "bg-brand-primary"
-                                    : "bg-brand-secondary"
-                                }`}
-                              ></span>
-                            </div>
-
-                            <div className="flex w-11/12 flex-col items-start justify-start">
-                              <h1 className="text-lg font-semibold text-font-primary">
-                                {info.title}
-                              </h1>
-                              <h1 className="text-base text-font-secondary">
-                                {info.desc}
-                              </h1>
-                            </div>
-                          </div>
-                        ))}
-                        {fieldState.error && (
-                          <span className="absolute -right-10 top-0 text-red-500">
-                            {fieldState.error.message}
-                          </span>
-                        )}
-                      </>
-                    )}
-                  />
-
-                  <div className="mt-8 flex items-center justify-center">
-                    <button
-                      type="submit"
-                      className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
-                    >
-                      Submit
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          )}
+          {formNo === 3 ? <Role onNext={handleNext} /> : null}
         </div>
       </div>
     </div>
