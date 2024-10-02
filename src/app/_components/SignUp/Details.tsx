@@ -8,9 +8,10 @@ import {
   EmailSVG,
   UserSVG,
 } from "~/assets/svg/svg";
+import { FormDataDetails } from "~/app/_utils/Types/formTypes";
 
 interface DetailsFormProps {
-  onNext: () => void; // Expecting a function as a prop
+  onNext: (data: FormDataDetails) => Promise<void>;
 }
 
 const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
@@ -24,7 +25,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
     setValue: setValueDetails,
   } = useContentFormDetails();
 
-  const handleNext = async (data) => {
+  const handleNext = async (data: FormDataDetails) => {
     const isValid = await triggerDetails();
     if (isValid) {
       onNext(data);
@@ -32,7 +33,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
   };
 
   return (
-    <form onSubmit={handleSubmitDetails(onNext)} className="w-full">
+    <form onSubmit={handleSubmitDetails(handleNext)} className="w-full">
       <div className="w-full px-10">
         <div className="mb-3 flex flex-col">
           <label

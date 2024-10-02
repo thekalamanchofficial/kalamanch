@@ -1,106 +1,42 @@
 "use client";
+import React from "react";
 import { useState, KeyboardEvent, ChangeEvent, FocusEvent } from "react";
-import React, { useRef } from "react";
-import { FormProvider, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useSignUp } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
 import { toast } from "react-toastify";
+import OtpInput from "react-otp-input";
 
 import Details from "~/app/_components/SignUp/Details";
 import Role from "~/app/_components/SignUp/Role";
 import Interests from "~/app/_components/SignUp/Interests";
-import {
-  useContentFormDetails,
-  useContentFormInterest,
-  useContentFormRole,
-} from "~/app/_utils/Hooks/useContentForm";
+
+import { FormData, FormDataPartial } from "~/app/_utils/Types/formTypes";
 
 export default function Page() {
-  const { getValues: getValuesDetails } = useContentFormDetails();
-  const { getValues: getValuesInterest } = useContentFormInterest();
-
-  const { getValues: getValuesRole } = useContentFormRole();
-
-  const [otp, setOtp] = useState(Array(6).fill(""));
-  const inputRefs = useRef([]);
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (!e || !e.key || e.target) return;
-
-    if (
-      !/^[0-9]{1}$/.test(e.key) &&
-      e.key !== "Backspace" &&
-      e.key !== "Delete" &&
-      e.key !== "Tab" &&
-      !e.metaKey
-    ) {
-      e.preventDefault();
-    }
-
-    if (e.key === "Delete" || e.key === "Backspace") {
-      const index = inputRefs.current.indexOf(e.target);
-      if (index > 0) {
-        setOtp((prevOtp) => [
-          ...prevOtp.slice(0, index - 1),
-          "",
-          ...prevOtp.slice(index),
-        ]);
-        inputRefs.current[index - 1].focus();
-      }
-    }
-  };
-
-  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const { target } = e;
-    const index = inputRefs.current.indexOf(target);
-    if (target.value) {
-      setOtp((prevOtp) => [
-        ...prevOtp.slice(0, index),
-        target.value,
-        ...prevOtp.slice(index + 1),
-      ]);
-      if (index < otp.length - 1) {
-        inputRefs.current[index + 1].focus();
-      }
-    }
-  };
-
-  const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
-    e.target.select();
-  };
-
-  const [formData, setFormData] = useState({
-    name: "",
-    password: "",
-    email: "",
-    birthdate: "",
-    profile: "",
-    interests: [],
-    role: "",
-  });
-
   const router = useRouter();
+  const [otp, setOtp] = useState("");
+
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const [verifying, setVerifying] = useState(false);
 
   const formArray = [1, 2, 3];
   const [formNo, setFormNo] = useState(formArray[0]);
+  const [formData, setFormData] = useState<FormData>({} as FormData);
 
-  const { isLoaded, signUp, setActive } = useSignUp();
-
-  const [verifying, setVerifying] = useState(false);
   const mutation = trpc.user.addUser.useMutation();
 
-  const handleNext = (data) => {
+  const handleNext = async (data: FormDataPartial): Promise<void> => {
     setFormData((prev) => ({ ...prev, ...data }));
     setFormNo((formNo ?? 0) + 1);
-    if (formNo == 3) finalSubmit();
+    if (formNo == 3) await finalSubmit();
   };
 
   const addUserToDB = async () => {
     const data = {
       email: formData.email,
       name: formData.name,
-      birthdate: formData.birthdate,
+      birthdate: formData.birthdate.toString(),
       profile: formData.profile,
       interests: formData.interests,
       role: formData.role,
@@ -148,7 +84,7 @@ export default function Page() {
     e.preventDefault();
 
     if (!isLoaded) return;
-    let code = otp.join("");
+    let code = otp;
     try {
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code,
@@ -201,19 +137,19 @@ export default function Page() {
                 Please enter the 6 digit code we sent to your email address
               </p>
               <div className="mb-6 flex gap-2">
-                {otp.map((digit, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    maxLength={1}
-                    value={digit}
-                    onChange={handleInput}
-                    onKeyDown={handleKeyDown}
-                    onFocus={handleFocus}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    className="shadow-xs border-stroke text-gray-5 dark:border-dark-3 flex w-[64px] items-center justify-center rounded-lg border bg-white p-2 text-center text-2xl font-medium outline-none sm:text-4xl dark:bg-white/5"
-                  />
-                ))}
+                <OtpInput
+                  value={otp}
+                  onChange={setOtp}
+                  numInputs={6}
+                  inputStyle={{ width: "2.5rem" }}
+                  renderSeparator={<span className="mx-2 text-xl"> </span>}
+                  renderInput={(props) => (
+                    <input
+                      {...props}
+                      className="h-12 rounded-md border-2 border-gray-300 text-center text-2xl transition duration-150 ease-in-out"
+                    />
+                  )}
+                />
               </div>
               <button
                 type="submit"

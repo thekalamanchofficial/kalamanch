@@ -1,10 +1,12 @@
 import React from "react";
 import { useContentFormRole } from "~/app/_utils/Hooks/useContentForm";
 import { Controller } from "react-hook-form";
+import { FormDataRole } from "~/app/_utils/Types/formTypes";
 
 interface RoleFormProps {
-  onNext: () => void; // Expecting a function as a prop
+  onNext: (data: FormDataRole) => Promise<void>;
 }
+
 const information = [
   {
     title: " Turn Your writings into a Legacy",
@@ -34,7 +36,7 @@ const Interests: React.FC<RoleFormProps> = ({ onNext }) => {
     control: controlRole,
   } = useContentFormRole();
 
-  const handleNext = async (data) => {
+  const handleNext = async (data: FormDataRole) => {
     const isValid = await triggerRole();
     if (isValid) {
       onNext(data);
@@ -42,7 +44,7 @@ const Interests: React.FC<RoleFormProps> = ({ onNext }) => {
   };
 
   return (
-    <form onSubmit={handleSubmitRole(onNext)} className="w-full">
+    <form onSubmit={handleSubmitRole(handleNext)} className="w-full">
       <div className="w-full px-10">
         <div className="relative mb-3 flex flex-col gap-2">
           <h1 className="text-3xl font-medium text-font-primary">

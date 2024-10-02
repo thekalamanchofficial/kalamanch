@@ -1,9 +1,10 @@
 import React from "react";
 import { useContentFormInterest } from "~/app/_utils/Hooks/useContentForm";
 import { Controller } from "react-hook-form";
+import { FormDataInterest } from "~/app/_utils/Types/formTypes";
 
 interface InterestsFormProps {
-  onNext: () => void; // Expecting a function as a prop
+  onNext: (data: FormDataInterest) => Promise<void>;
 }
 
 const interestsIndex = [
@@ -39,7 +40,7 @@ const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
     control: controlInterest,
   } = useContentFormInterest();
 
-  const handleNext = async (data) => {
+  const handleNext = async (data: FormDataInterest) => {
     const isValid = await triggerInterest();
     if (isValid) {
       onNext(data);
@@ -47,7 +48,7 @@ const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
   };
 
   return (
-    <form onSubmit={handleSubmitInterest(onNext)} className="w-full">
+    <form onSubmit={handleSubmitInterest(handleNext)} className="w-full">
       <div className="w-full px-10">
         <div className="mb-3 flex flex-col">
           <h1 className="text-3xl font-medium text-font-primary">
