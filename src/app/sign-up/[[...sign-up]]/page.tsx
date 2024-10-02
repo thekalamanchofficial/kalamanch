@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useState, KeyboardEvent, ChangeEvent, FocusEvent } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSignUp } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
