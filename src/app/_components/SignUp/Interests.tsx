@@ -2,41 +2,16 @@ import React from "react";
 import { useContentFormInterest } from "~/app/_utils/Hooks/useContentForm";
 import { Controller } from "react-hook-form";
 import { FormDataInterest } from "~/app/_utils/Types/formTypes";
+import { interestsArray } from "~/assets/static";
 
 interface InterestsFormProps {
   onNext: (data: FormDataInterest) => Promise<void>;
 }
 
-const interestsIndex = [
-  "Animals",
-  "Art",
-  "Books",
-  "Comedy",
-  "Culture",
-  "Education",
-  "Food",
-  "Health",
-  "History",
-  "Music",
-  "Nature",
-  "News",
-  "Politics",
-  "Science",
-  "Sports",
-  "Technology",
-  "Travel",
-  "TV",
-  "Video Games",
-];
-
 const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
   const {
-    register: registerInterest,
     handleSubmit: handleSubmitInterest,
     trigger: triggerInterest,
-    getValues: getValuesInterest,
-    watch: watchInterest,
-    setValue: setValueInterest,
     control: controlInterest,
   } = useContentFormInterest();
 
@@ -64,7 +39,7 @@ const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
               defaultValue={[]}
               render={({ field: { onChange, value }, fieldState }) => (
                 <>
-                  {interestsIndex.map((interest) => (
+                  {interestsArray.map((interest) => (
                     <button
                       key={interest}
                       type="button"

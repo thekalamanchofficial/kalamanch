@@ -99,7 +99,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
               href="/sign-up"
               className="cursor-pointer text-center text-font-secondary"
             >
-              Need an account?
+              Need an account?&nbsp;
               <span className="text-font-primary underline">Sign up here.</span>
             </a>
           </div>

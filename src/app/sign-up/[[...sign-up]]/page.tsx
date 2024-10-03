@@ -4,13 +4,17 @@ import { useRouter } from "next/navigation";
 import { useSignUp } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
 import { toast } from "react-toastify";
-import OtpInput from "react-otp-input";
 
 import Details from "~/app/_components/SignUp/Details";
 import Role from "~/app/_components/SignUp/Role";
 import Interests from "~/app/_components/SignUp/Interests";
 
 import { FormData, FormDataPartial } from "~/app/_utils/Types/formTypes";
+
+import { signUpFormStages } from "~/assets/static";
+import OTPVerification from "~/app/_components/SignUp/OtpForm";
+
+import { signUpFormStatus } from "~/assets/static";
 
 export default function Page() {
   const router = useRouter();
@@ -19,23 +23,30 @@ export default function Page() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [verifying, setVerifying] = useState(false);
 
-  const formArray = [1, 2, 3];
-  const [formNo, setFormNo] = useState(formArray[0]);
   const [formData, setFormData] = useState<FormData>({} as FormData);
+
+  const [formStep, setFormStep] = useState<signUpFormStages>(
+    signUpFormStages.DETAILS,
+  );
 
   const mutation = trpc.user.addUser.useMutation();
 
   const handleNext = async (data: FormDataPartial): Promise<void> => {
     setFormData((prev) => ({ ...prev, ...data }));
-    setFormNo((formNo ?? 0) + 1);
-    if (formNo == 3) await finalSubmit();
+    if (formStep === signUpFormStages.DETAILS) {
+      setFormStep(signUpFormStages.INTEREST);
+    } else if (formStep === signUpFormStages.INTEREST) {
+      setFormStep(signUpFormStages.ROLE);
+    } else if (formStep === signUpFormStages.ROLE) {
+      finalSubmit();
+    }
   };
 
   const addUserToDB = async () => {
     const data = {
       email: formData.email,
       name: formData.name,
-      birthdate: formData.birthdate.toString(),
+      birthdate: formData.birthdate.toISOString(),
       profile: formData.profile,
       interests: formData.interests,
       role: formData.role,
@@ -46,6 +57,40 @@ export default function Page() {
       console.log("User created:", user);
     } catch (error) {
       console.error("Error creating user:", error);
+    }
+  };
+
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isLoaded) return;
+    try {
+      const signUpAttempt = await signUp.attemptEmailAddressVerification({
+        code: otp,
+      });
+
+      if (signUpAttempt.status === signUpFormStatus.complete) {
+        try {
+          toast.promise(
+            (async () => {
+              await setActive({ session: signUpAttempt.createdSessionId });
+              await addUserToDB();
+              router.push("/");
+            })(),
+            {
+              pending: "Request in progress, please wait...",
+              success: "Signup successful! Redirecting...",
+              error: "An error occurred during the signup process.",
+            },
+          );
+        } catch (error) {
+          console.error("Error during the signup process:", error);
+        }
+      } else {
+        console.error(JSON.stringify(signUpAttempt, null, 2));
+      }
+    } catch (err: any) {
+      console.error("Error:", JSON.stringify(err, null, 2));
     }
   };
 
@@ -79,87 +124,9 @@ export default function Page() {
     }
   };
 
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!isLoaded) return;
-    let code = otp;
-    try {
-      const signUpAttempt = await signUp.attemptEmailAddressVerification({
-        code,
-      });
-
-      if (signUpAttempt.status === "complete") {
-        try {
-          toast.promise(
-            (async () => {
-              await setActive({ session: signUpAttempt.createdSessionId });
-              await addUserToDB();
-              router.push("/"); // Redirect after successful registration
-            })(),
-            {
-              pending: "Request in progress, please wait...", // Message while the promise is pending
-              success: "Signup successful! Redirecting...", // Message on success
-              error: "An error occurred during the signup process.", // Message on error
-            },
-          );
-        } catch (error) {
-          console.error("Error during the signup process:", error);
-        }
-      } else {
-        console.error(JSON.stringify(signUpAttempt, null, 2));
-      }
-    } catch (err: any) {
-      console.error("Error:", JSON.stringify(err, null, 2));
-    }
-  };
-
   if (verifying) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center bg-brand-secondary py-3">
-        <h1 className="mb-4 mt-4 text-4xl font-semibold text-font-primary">
-          Verify your email
-        </h1>
-        <div className="flex h-[450px] w-full max-w-2xl flex-col items-center gap-y-12 rounded-lg bg-white px-6 py-2 md:aspect-auto">
-          <div className="my-3 flex h-full w-full flex-col items-center justify-center gap-3">
-            <form
-              onSubmit={handleVerify}
-              className="flex flex-col items-center justify-center"
-            >
-              <label
-                id="code"
-                className="mb-2 block text-base font-bold text-font-gray"
-              >
-                Enter your verification code
-              </label>
-              <p className="mb-4 text-sm font-light">
-                Please enter the 6 digit code we sent to your email address
-              </p>
-              <div className="mb-6 flex gap-2">
-                <OtpInput
-                  value={otp}
-                  onChange={setOtp}
-                  numInputs={6}
-                  inputStyle={{ width: "2.5rem" }}
-                  renderSeparator={<span className="mx-2 text-xl"> </span>}
-                  renderInput={(props) => (
-                    <input
-                      {...props}
-                      className="h-12 rounded-md border-2 border-gray-300 text-center text-2xl transition duration-150 ease-in-out"
-                    />
-                  )}
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-1/2 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
-              >
-                Verify
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      <OTPVerification otp={otp} setOtp={setOtp} onVerify={handleVerify} />
     );
   }
 
@@ -265,11 +232,17 @@ export default function Page() {
           </div>
         </div>
         <div className="flex w-full flex-col items-center justify-start gap-3">
-          {formNo === 1 ? <Details onNext={handleNext} /> : null}
+          {formStep === signUpFormStages.DETAILS ? (
+            <Details onNext={handleNext} />
+          ) : null}
 
-          {formNo === 2 ? <Interests onNext={handleNext} /> : null}
+          {formStep === signUpFormStages.INTEREST ? (
+            <Interests onNext={handleNext} />
+          ) : null}
 
-          {formNo === 3 ? <Role onNext={handleNext} /> : null}
+          {formStep === signUpFormStages.ROLE ? (
+            <Role onNext={handleNext} />
+          ) : null}
         </div>
       </div>
     </div>

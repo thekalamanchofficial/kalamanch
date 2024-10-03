@@ -2,37 +2,16 @@ import React from "react";
 import { useContentFormRole } from "~/app/_utils/Hooks/useContentForm";
 import { Controller } from "react-hook-form";
 import { FormDataRole } from "~/app/_utils/Types/formTypes";
+import { rolesInformation } from "~/assets/static";
 
 interface RoleFormProps {
   onNext: (data: FormDataRole) => Promise<void>;
 }
 
-const information = [
-  {
-    title: " Turn Your writings into a Legacy",
-    desc: "Write, sell, or buy poems with complete ownership and make your words last forever.",
-    role: "A",
-  },
-  {
-    title: "A Place Where Every Poem is Valued",
-    desc: "Join a community where you can share, sell, or invest in poetry that touches hearts.",
-    role: "B",
-  },
-  {
-    title: "Buy and Sell Poetry Easily",
-    desc: "Support poets or own a poem—trade poetry with ease and make it a valuable asset.",
-    role: "C",
-  },
-];
-
 const Interests: React.FC<RoleFormProps> = ({ onNext }) => {
   const {
-    register: registerRole,
     handleSubmit: handleSubmitRole,
     trigger: triggerRole,
-    getValues: getValuesRole,
-    watch: watchRoles,
-    setValue: setValueRole,
     control: controlRole,
   } = useContentFormRole();
 
@@ -60,7 +39,7 @@ const Interests: React.FC<RoleFormProps> = ({ onNext }) => {
             rules={{ required: "Please select a role" }}
             render={({ field, fieldState }) => (
               <>
-                {information.map((info) => (
+                {rolesInformation.map((info) => (
                   <div
                     key={info.role}
                     className="mb-2 flex h-20 w-full cursor-pointer gap-6"

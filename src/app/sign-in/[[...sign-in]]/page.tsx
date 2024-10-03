@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { GoogleSVG, LogoSVG } from "~/assets/svg/svg";
 import SignInForm from "~/app/_components/SignIn/SignInForm";
 import { FormDataSignIn } from "~/app/_utils/Types/formTypes";
+import { appTitle, appDescription } from "~/assets/static";
 
 const SignInPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -70,13 +71,13 @@ const SignInPage = () => {
           <div className="stepper flex w-full items-center justify-center gap-2">
             <LogoSVG />
             <h1 className="text-3xl font-semibold text-brand-primary">
-              Kalamanch
+              {appTitle}
             </h1>
           </div>
           <div className="flex w-full flex-col items-center justify-start gap-4">
             <span>
               <h1 className="px-2 text-2xl font-medium text-font-primary">
-                Join Today, Start Writing
+                {appDescription}
               </h1>
             </span>
             <button
@@ -104,7 +105,7 @@ const SignInPage = () => {
                     Terms of Service
                   </Link>
                 }
-                &nbsp; and&nbsp;
+                &nbsp;and&nbsp;
                 {
                   <Link
                     href="/terms"
@@ -136,7 +137,7 @@ const SignInPage = () => {
           <div className="stepper flex w-full items-center justify-center gap-2">
             <LogoSVG />
             <h1 className="text-3xl font-semibold text-brand-primary">
-              Kalamanch
+              {appTitle}
             </h1>
           </div>
           <button
