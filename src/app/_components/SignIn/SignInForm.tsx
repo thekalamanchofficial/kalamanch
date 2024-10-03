@@ -2,7 +2,6 @@ import React, { FormEvent, ReactEventHandler } from "react";
 import { useContentFormSignIn } from "~/app/_utils/Hooks/useContentForm";
 import { Controller } from "react-hook-form";
 import { PasswordSVG, EmailSVG } from "~/assets/svg/svg";
-import { toast } from "react-toastify";
 import { FormDataSignIn } from "~/app/_utils/Types/formTypes";
 // interface SignInFormProps {
 //   onNext: (data: FormDataDetails) => Promise<void>;

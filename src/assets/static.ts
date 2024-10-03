@@ -12,6 +12,11 @@ export const enum signUpFormStatus {
   complete = "complete",
 }
 
+export const enum signInFormStages {
+  withEmail = "withEmail",
+  withGoogle = "withGoogle",
+}
+
 export const interestsArray = [
   "Technology",
   "Science",

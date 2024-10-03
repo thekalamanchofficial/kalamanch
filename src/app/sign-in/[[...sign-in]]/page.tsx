@@ -9,9 +9,10 @@ import { GoogleSVG, LogoSVG } from "~/assets/svg/svg";
 import SignInForm from "~/app/_components/SignIn/SignInForm";
 import { FormDataSignIn } from "~/app/_utils/Types/formTypes";
 import { appTitle, appDescription } from "~/assets/static";
+import { signInFormStages } from "~/assets/static";
 
 const SignInPage = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [signInState, setSignInState] = useState(signInFormStages.withGoogle);
   const { isLoaded, signIn, setActive } = useSignIn();
 
   const router = useRouter();
@@ -66,7 +67,7 @@ const SignInPage = () => {
 
   return (
     <div className="flex h-full w-full items-center justify-center bg-brand-secondary">
-      {!isSignUp ? (
+      {signInState === signInFormStages.withGoogle ? (
         <div className="flex aspect-square h-auto max-h-[642px] w-full max-w-3xl flex-col items-center gap-y-16 rounded-lg bg-white px-6 py-14 md:aspect-auto">
           <div className="stepper flex w-full items-center justify-center gap-2">
             <LogoSVG />
@@ -125,7 +126,7 @@ const SignInPage = () => {
             <button
               className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary"
               onClick={() => {
-                setIsSignUp(true);
+                setSignInState(signInFormStages.withEmail);
               }}
             >
               <h1 className="text-xl font-semibold">Sign in </h1>

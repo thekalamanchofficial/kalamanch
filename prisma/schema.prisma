@@ -19,7 +19,7 @@ model User {
   email         String   @unique
   name          String
   birthdate     DateTime
-  profilePicture String?
+  profile String?
   interests     String[]
   role          String
 }

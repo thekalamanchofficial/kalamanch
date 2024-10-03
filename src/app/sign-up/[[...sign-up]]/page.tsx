@@ -47,7 +47,7 @@ export default function Page() {
       email: formData.email,
       name: formData.name,
       birthdate: formData.birthdate.toISOString(),
-      profile: formData.profile,
+      profilePicture: formData.profile,
       interests: formData.interests,
       role: formData.role,
     };

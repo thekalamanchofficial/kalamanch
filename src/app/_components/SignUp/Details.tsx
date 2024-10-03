@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useContentFormDetails } from "~/app/_utils/Hooks/useContentForm";
 import { Controller } from "react-hook-form";
 import {
@@ -164,25 +164,28 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={controlDetails}
             name="birthdate"
-            render={({ field, fieldState }) => (
-              <div className="relative flex">
-                <input
-                  type="date"
-                  {...registerDetails("birthdate", { required: true })}
-                  id="birthdate"
-                  className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                  placeholder="Enter your birthdate"
-                />
-                {fieldState.error && (
-                  <span className="absolute right-0 top-2/3 mb-3 mt-1 text-right text-red-500">
-                    {fieldState.error.message}
-                  </span>
-                )}
-                <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <CalendarSVG />
-                </span>
-              </div>
-            )}
+            render={({ field, fieldState }) => {
+              const inputRef = useRef(null);
+
+              return (
+                <div className="relative flex">
+                  <input
+                    type="date"
+                    {...registerDetails("birthdate", { required: true })}
+                    id="birthdate"
+                    className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
+                  />
+                  {fieldState.error && (
+                    <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
+                      {fieldState.error.message}
+                    </span>
+                  )}
+                  {/* <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
+                    <CalendarSVG />
+                  </span> */}
+                </div>
+              );
+            }}
           />
 
           <label
