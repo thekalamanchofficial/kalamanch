@@ -1,14 +1,11 @@
 import React, { useRef } from "react";
 import { useContentFormDetails } from "~/app/_utils/Hooks/useContentForm";
 import { Controller } from "react-hook-form";
-import {
-  UploadSVG,
-  CalendarSVG,
-  PasswordSVG,
-  EmailSVG,
-  UserSVG,
-} from "~/assets/svg/svg";
+import { PasswordSVG, EmailSVG, UserSVG } from "~/assets/svg/svg";
 import { FormDataDetails } from "~/app/_utils/Types/formTypes";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import dayjs from "dayjs";
 
 interface DetailsFormProps {
   onNext: (data: FormDataDetails) => Promise<void>;
@@ -26,6 +23,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
   } = useContentFormDetails();
 
   const handleNext = async (data: FormDataDetails) => {
+    console.log(getValuesDetails());
     const isValid = await triggerDetails();
     if (isValid) {
       onNext(data);
@@ -46,12 +44,14 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={controlDetails}
             name="name"
-            render={({ field, fieldState }) => (
+            defaultValue=""
+            render={({ field: { value, onChange }, fieldState }) => (
               <div className="relative flex">
                 <input
-                  {...registerDetails("name", { required: true })}
                   type="text"
                   id="name"
+                  value={value}
+                  onChange={onChange}
                   className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
                   placeholder="Write your name"
                 />
@@ -75,11 +75,13 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={controlDetails}
             name="password"
-            render={({ field, fieldState }) => (
+            defaultValue=""
+            render={({ field: { value, onChange }, fieldState }) => (
               <div className="relative flex">
                 <input
-                  {...field}
                   type="password"
+                  value={value}
+                  onChange={onChange}
                   id="password"
                   className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
                   placeholder="Enter password"
@@ -104,11 +106,13 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={controlDetails}
             name="confirmPassword"
-            render={({ field, fieldState }) => (
+            defaultValue=""
+            render={({ field: { value, onChange }, fieldState }) => (
               <div className="relative flex">
                 <input
-                  {...field}
                   type="password"
+                  value={value}
+                  onChange={onChange}
                   id="confirmPassword"
                   className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
                   placeholder="Enter password"
@@ -134,11 +138,13 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={controlDetails}
             name="email"
-            render={({ field, fieldState }) => (
+            defaultValue=""
+            render={({ field: { value, onChange }, fieldState }) => (
               <div className="relative flex">
                 <input
                   type="email"
-                  {...registerDetails("email", { required: true })}
+                  value={value}
+                  onChange={onChange}
                   id="email"
                   className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
                   placeholder="Enter your email"
@@ -164,17 +170,26 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={controlDetails}
             name="birthdate"
-            render={({ field, fieldState }) => {
-              const inputRef = useRef(null);
-
+            defaultValue={undefined}
+            render={({ field: { onChange, value }, fieldState }) => {
               return (
                 <div className="relative flex">
-                  <input
+                  {/* <input
                     type="date"
-                    {...registerDetails("birthdate", { required: true })}
+                    value={dayjs(value).format("DD/MM/YYYY")}
+                    onChange={onChange}
                     id="birthdate"
                     className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
+                  /> */}
+                  <DatePicker
+                    onChange={onChange}
+                    placeholderText="Select a date"
+                    value={value ? dayjs(value).format("DD-MM-YYYY") : ""}
+                    dateFormat={"dd/MM/yyyy"}
+                    selected={value}
+                    className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900"
                   />
+
                   {fieldState.error && (
                     <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
                       {fieldState.error.message}
@@ -194,11 +209,10 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           >
             Your profile picture
           </label>
-          <div className="relative flex flex-col items-start justify-center">
+          {/* <div className="relative flex flex-col items-start justify-center">
             <input
               type="file"
-              id="profile"
-              {...registerDetails("profile", {
+              id="profile"              
                 required: "Profile picture is required",
               })} // Validation for profile picture
               className="hidden" // Hides the actual input
@@ -241,7 +255,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
             >
               <h1>Choose from avatars</h1>
             </button>
-          </div>
+          </div> */}
 
           <div className="mt-4 flex items-center justify-center">
             <button

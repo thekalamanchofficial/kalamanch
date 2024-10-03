@@ -43,6 +43,7 @@ const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
                     <button
                       key={interest}
                       type="button"
+                      value={value}
                       onClick={() => {
                         const newValue = value.includes(interest)
                           ? value.filter((item) => item !== interest)

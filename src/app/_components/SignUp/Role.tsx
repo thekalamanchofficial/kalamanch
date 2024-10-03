@@ -37,18 +37,18 @@ const Interests: React.FC<RoleFormProps> = ({ onNext }) => {
             name="role"
             control={controlRole}
             rules={{ required: "Please select a role" }}
-            render={({ field, fieldState }) => (
+            render={({ field: { value, onChange }, fieldState }) => (
               <>
                 {rolesInformation.map((info) => (
                   <div
                     key={info.role}
                     className="mb-2 flex h-20 w-full cursor-pointer gap-6"
-                    onClick={() => field.onChange(info.role)}
+                    onClick={() => onChange(info.role)}
                   >
                     <div className={`flex w-1/12 items-center justify-start`}>
                       <span
                         className={`block h-14 w-14 rounded-full ${
-                          field.value === info.role
+                          value === info.role
                             ? "bg-brand-primary"
                             : "bg-brand-secondary"
                         }`}

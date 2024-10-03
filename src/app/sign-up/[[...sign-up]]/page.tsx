@@ -46,7 +46,7 @@ export default function Page() {
     const data = {
       email: formData.email,
       name: formData.name,
-      birthdate: formData.birthdate.toISOString(),
+      birthdate: formData.birthdate,
       profilePicture: formData.profile,
       interests: formData.interests,
       role: formData.role,
