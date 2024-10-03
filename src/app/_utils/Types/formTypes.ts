@@ -17,5 +17,9 @@ export type FormDataRole = {
 
 export type FormData = FormDataDetails & FormDataInterest & FormDataRole;
 
-// Define a union type for the form data
 export type FormDataPartial = FormDataDetails | FormDataInterest | FormDataRole;
+
+export type FormDataSignIn = {
+  email: string;
+  password: string;
+};

@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { type UseFormReturn, useForm } from "react-hook-form";
 import {
+  signInFormSchema,
   signUpFormSchemaDetails,
   signUpFormSchemaInterest,
   signUpFormSchemaRole,
@@ -23,6 +24,11 @@ type FormDataRole = {
   role: string;
 };
 
+type FormDataSignIn = {
+  email: string;
+  password: string;
+};
+
 export const useContentFormDetails = (): UseFormReturn<FormDataDetails> =>
   useForm({ mode: "onChange", resolver: yupResolver(signUpFormSchemaDetails) });
 
@@ -34,3 +40,6 @@ export const useContentFormInterest = (): UseFormReturn<FormDataInterest> =>
 
 export const useContentFormRole = (): UseFormReturn<FormDataRole> =>
   useForm({ mode: "onChange", resolver: yupResolver(signUpFormSchemaRole) });
+
+export const useContentFormSignIn = (): UseFormReturn<FormDataSignIn> =>
+  useForm({ mode: "onChange", resolver: yupResolver(signInFormSchema) });

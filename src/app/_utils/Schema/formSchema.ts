@@ -1,4 +1,3 @@
-import { profile } from "console";
 import * as Yup from "yup";
 
 export const signUpFormSchemaDetails = Yup.object().shape({
@@ -23,8 +22,7 @@ export const signUpFormSchemaDetails = Yup.object().shape({
   birthdate: Yup.date()
     .max(new Date(), "Date of birth can't be in the future")
     .required("Birthdate is required"),
-  // profile is not required
-  profile: Yup.string(),
+  profile: Yup.string().default(""),
 });
 
 export const signUpFormSchemaInterest = Yup.object().shape({
@@ -35,4 +33,11 @@ export const signUpFormSchemaInterest = Yup.object().shape({
 
 export const signUpFormSchemaRole = Yup.object().shape({
   role: Yup.string().required("Select a Role to continue"),
+});
+
+export const signInFormSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: Yup.string().required("Password is required"),
 });
