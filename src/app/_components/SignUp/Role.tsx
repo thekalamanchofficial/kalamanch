@@ -1,29 +1,25 @@
 import React from "react";
-import { useContentFormRole } from "~/app/_utils/Hooks/useContentForm";
+import { useContentFormRole } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
-import { FormDataRole } from "~/app/_utils/Types/formTypes";
-import { rolesInformation } from "~/assets/static";
+import { type FormDataRole } from "~/app/sign-up/_types/types";
+import { ROLES_INFORMATION } from "~/app/sign-up/_config/config";
 
 interface RoleFormProps {
   onNext: (data: FormDataRole) => Promise<void>;
 }
 
 const Interests: React.FC<RoleFormProps> = ({ onNext }) => {
-  const {
-    handleSubmit: handleSubmitRole,
-    trigger: triggerRole,
-    control: controlRole,
-  } = useContentFormRole();
+  const { handleSubmit, trigger, control } = useContentFormRole();
 
   const handleNext = async (data: FormDataRole) => {
-    const isValid = await triggerRole();
+    const isValid = await trigger();
     if (isValid) {
-      onNext(data);
+      await onNext(data);
     }
   };
 
   return (
-    <form onSubmit={handleSubmitRole(handleNext)} className="w-full">
+    <form onSubmit={handleSubmit(handleNext)} className="w-full">
       <div className="w-full px-10">
         <div className="relative mb-3 flex flex-col gap-2">
           <h1 className="text-3xl font-medium text-font-primary">
@@ -35,11 +31,11 @@ const Interests: React.FC<RoleFormProps> = ({ onNext }) => {
 
           <Controller
             name="role"
-            control={controlRole}
+            control={control}
             rules={{ required: "Please select a role" }}
             render={({ field: { value, onChange }, fieldState }) => (
               <>
-                {rolesInformation.map((info) => (
+                {ROLES_INFORMATION.map((info) => (
                   <div
                     key={info.role}
                     className="mb-2 flex h-20 w-full cursor-pointer gap-6"

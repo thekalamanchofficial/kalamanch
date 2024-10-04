@@ -1,29 +1,25 @@
 import React from "react";
-import { useContentFormInterest } from "~/app/_utils/Hooks/useContentForm";
+import { useContentFormInterest } from "~/app/_utils/hooks/useContentForm";
 import { Controller } from "react-hook-form";
-import { FormDataInterest } from "~/app/_utils/Types/formTypes";
-import { interestsArray } from "~/assets/static";
+import { type FormDataInterest } from "~/app/sign-up/_types/types";
+import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
 
 interface InterestsFormProps {
   onNext: (data: FormDataInterest) => Promise<void>;
 }
 
 const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
-  const {
-    handleSubmit: handleSubmitInterest,
-    trigger: triggerInterest,
-    control: controlInterest,
-  } = useContentFormInterest();
+  const { handleSubmit, trigger, control } = useContentFormInterest();
 
   const handleNext = async (data: FormDataInterest) => {
-    const isValid = await triggerInterest();
+    const isValid = await trigger();
     if (isValid) {
-      onNext(data);
+      await onNext(data);
     }
   };
 
   return (
-    <form onSubmit={handleSubmitInterest(handleNext)} className="w-full">
+    <form onSubmit={handleSubmit(handleNext)} className="w-full">
       <div className="w-full px-10">
         <div className="mb-3 flex flex-col">
           <h1 className="text-3xl font-medium text-font-primary">
@@ -35,11 +31,11 @@ const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
           <div className="relative mb-[200px] mt-6 flex h-auto w-full flex-wrap gap-2">
             <Controller
               name="interests"
-              control={controlInterest}
+              control={control}
               defaultValue={[]}
               render={({ field: { onChange, value }, fieldState }) => (
                 <>
-                  {interestsArray.map((interest) => (
+                  {INTEREST_ARRAY.map((interest) => (
                     <button
                       key={interest}
                       type="button"

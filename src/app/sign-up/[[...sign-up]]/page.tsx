@@ -9,12 +9,15 @@ import Details from "~/app/_components/SignUp/Details";
 import Role from "~/app/_components/SignUp/Role";
 import Interests from "~/app/_components/SignUp/Interests";
 
-import { FormData, FormDataPartial } from "~/app/_utils/Types/formTypes";
+import {
+  type FormData,
+  type FormDataPartial,
+} from "~/app/sign-up/_types/types";
 
-import { signUpFormStages } from "~/assets/static";
+import { SignUpFormStages } from "~/app/sign-up/_config/config";
 import OTPVerification from "~/app/_components/SignUp/OtpForm";
 
-import { signUpFormStatus } from "~/assets/static";
+import { SignUpFormStatus } from "~/app/sign-up/_config/config";
 
 export default function Page() {
   const router = useRouter();
@@ -25,20 +28,20 @@ export default function Page() {
 
   const [formData, setFormData] = useState<FormData>({} as FormData);
 
-  const [formStep, setFormStep] = useState<signUpFormStages>(
-    signUpFormStages.DETAILS,
+  const [formStep, setFormStep] = useState<SignUpFormStages>(
+    SignUpFormStages.DETAILS,
   );
 
   const mutation = trpc.user.addUser.useMutation();
 
   const handleNext = async (data: FormDataPartial): Promise<void> => {
     setFormData((prev) => ({ ...prev, ...data }));
-    if (formStep === signUpFormStages.DETAILS) {
-      setFormStep(signUpFormStages.INTEREST);
-    } else if (formStep === signUpFormStages.INTEREST) {
-      setFormStep(signUpFormStages.ROLE);
-    } else if (formStep === signUpFormStages.ROLE) {
-      finalSubmit();
+    if (formStep === SignUpFormStages.DETAILS) {
+      setFormStep(SignUpFormStages.INTEREST);
+    } else if (formStep === SignUpFormStages.INTEREST) {
+      setFormStep(SignUpFormStages.ROLE);
+    } else if (formStep === SignUpFormStages.ROLE) {
+      await finalSubmit();
     }
   };
 
@@ -69,9 +72,9 @@ export default function Page() {
         code: otp,
       });
 
-      if (signUpAttempt.status === signUpFormStatus.complete) {
+      if (signUpAttempt.status === SignUpFormStatus.complete) {
         try {
-          toast.promise(
+          await toast.promise(
             (async () => {
               await setActive({ session: signUpAttempt.createdSessionId });
               await addUserToDB();
@@ -89,7 +92,7 @@ export default function Page() {
       } else {
         console.error(JSON.stringify(signUpAttempt, null, 2));
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error:", JSON.stringify(err, null, 2));
     }
   };
@@ -97,8 +100,8 @@ export default function Page() {
   const finalSubmit = async () => {
     if (!isLoaded) return;
 
-    let emailAddress = formData.email;
-    let password = formData.password;
+    const emailAddress = formData.email;
+    const password = formData.password;
 
     try {
       await signUp.create({
@@ -119,7 +122,7 @@ export default function Page() {
       });
 
       setVerifying(true);
-    } catch (err: any) {
+    } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
   };
@@ -133,7 +136,7 @@ export default function Page() {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-brand-secondary py-3">
       <h1 className="mb-4 mt-4 text-4xl font-semibold text-font-primary">
-        Let's get started
+        Let&apos;s get started
       </h1>
       <div className="flex aspect-square h-auto max-h-[950px] w-full max-w-3xl flex-col items-center gap-y-12 rounded-lg bg-white px-6 py-4 md:aspect-auto">
         <div className="stepper flex w-full items-center justify-center gap-1">
@@ -232,15 +235,15 @@ export default function Page() {
           </div>
         </div>
         <div className="flex w-full flex-col items-center justify-start gap-3">
-          {formStep === signUpFormStages.DETAILS ? (
+          {formStep === SignUpFormStages.DETAILS ? (
             <Details onNext={handleNext} />
           ) : null}
 
-          {formStep === signUpFormStages.INTEREST ? (
+          {formStep === SignUpFormStages.INTEREST ? (
             <Interests onNext={handleNext} />
           ) : null}
 
-          {formStep === signUpFormStages.ROLE ? (
+          {formStep === SignUpFormStages.ROLE ? (
             <Role onNext={handleNext} />
           ) : null}
         </div>

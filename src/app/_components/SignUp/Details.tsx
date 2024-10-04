@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
-import { useContentFormDetails } from "~/app/_utils/Hooks/useContentForm";
+import React from "react";
+import { useContentFormDetails } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
 import { PasswordSVG, EmailSVG, UserSVG } from "~/assets/svg/svg";
-import { FormDataDetails } from "~/app/_utils/Types/formTypes";
+import { type FormDataDetails } from "~/app/sign-up/_types/types";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
@@ -12,26 +12,18 @@ interface DetailsFormProps {
 }
 
 const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
-  const {
-    register: registerDetails,
-    handleSubmit: handleSubmitDetails,
-    trigger: triggerDetails,
-    control: controlDetails,
-    getValues: getValuesDetails,
-    watch: watchDetails,
-    setValue: setValueDetails,
-  } = useContentFormDetails();
+  const { handleSubmit, trigger, control, getValues } = useContentFormDetails();
 
   const handleNext = async (data: FormDataDetails) => {
-    console.log(getValuesDetails());
-    const isValid = await triggerDetails();
+    console.log(getValues());
+    const isValid = await trigger();
     if (isValid) {
-      onNext(data);
+      await onNext(data);
     }
   };
 
   return (
-    <form onSubmit={handleSubmitDetails(handleNext)} className="w-full">
+    <form onSubmit={handleSubmit(handleNext)} className="w-full">
       <div className="w-full px-10">
         <div className="mb-3 flex flex-col">
           <label
@@ -42,7 +34,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           </label>
 
           <Controller
-            control={controlDetails}
+            control={control}
             name="name"
             defaultValue=""
             render={({ field: { value, onChange }, fieldState }) => (
@@ -73,7 +65,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
             Password
           </label>
           <Controller
-            control={controlDetails}
+            control={control}
             name="password"
             defaultValue=""
             render={({ field: { value, onChange }, fieldState }) => (
@@ -104,7 +96,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
             Confirm Password
           </label>
           <Controller
-            control={controlDetails}
+            control={control}
             name="confirmPassword"
             defaultValue=""
             render={({ field: { value, onChange }, fieldState }) => (
@@ -136,7 +128,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
             Your email
           </label>
           <Controller
-            control={controlDetails}
+            control={control}
             name="email"
             defaultValue=""
             render={({ field: { value, onChange }, fieldState }) => (
@@ -168,7 +160,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
             Your birthdate
           </label>
           <Controller
-            control={controlDetails}
+            control={control}
             name="birthdate"
             defaultValue={undefined}
             render={({ field: { onChange, value }, fieldState }) => {
@@ -220,7 +212,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
               onChange={(e) => {
                 if (e.target.files && e.target.files.length > 0) {
                   if (e.target.files && e.target.files[0]) {
-                    setValueDetails(
+                    setValue(
                       "profile",
                       URL.createObjectURL(e.target.files[0]),
                     );
@@ -234,9 +226,9 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
             >
               <UploadSVG />
             </button>
-            {watchDetails("profile") && (
+            {watch("profile") && (
               <div className="text-font-primary">
-                {(watchDetails("profile") as unknown as File)?.name}
+                {(watch("profile") as unknown as File)?.name}
               </div>
             )}
             <svg
