@@ -1,5 +1,5 @@
 import React from "react";
-import { useContentFormInterest } from "~/app/_utils/hooks/useContentForm";
+import { useContentFormInterest } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
 import { type FormDataInterest } from "~/app/sign-up/_types/types";
 import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";

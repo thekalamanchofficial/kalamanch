@@ -6,8 +6,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { GoogleSVG, LogoSVG } from "~/assets/svg/svg";
-import { appTitle, appDescription } from "~/assets/static";
-import SignInForm from "~/app/_components/SignIn/SignInForm";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import SignInForm from "~/app/_components/signIn/SignInForm";
 import { type FormDataSignIn } from "~/app/sign-in/_types/types";
 import { SignInFormStages } from "~/app/sign-in/_config/config";
 
@@ -72,13 +72,13 @@ const SignInPage = () => {
           <div className="stepper flex w-full items-center justify-center gap-2">
             <LogoSVG />
             <h1 className="text-3xl font-semibold text-brand-primary">
-              {appTitle}
+              {STATIC_TEXTS.APP_TITLE}
             </h1>
           </div>
           <div className="flex w-full flex-col items-center justify-start gap-4">
             <span>
               <h1 className="px-2 text-2xl font-medium text-font-primary">
-                {appDescription}
+                {STATIC_TEXTS.APP_DESCRIPTION}
               </h1>
             </span>
             <button
@@ -138,7 +138,7 @@ const SignInPage = () => {
           <div className="stepper flex w-full items-center justify-center gap-2">
             <LogoSVG />
             <h1 className="text-3xl font-semibold text-brand-primary">
-              {appTitle}
+              {STATIC_TEXTS.APP_TITLE}
             </h1>
           </div>
           <button

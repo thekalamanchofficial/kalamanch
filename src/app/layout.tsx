@@ -4,7 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 const inter = Inter({
   subsets: ["latin"],

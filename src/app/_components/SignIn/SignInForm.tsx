@@ -1,25 +1,22 @@
-import React, { FormEvent, ReactEventHandler } from "react";
-import { useContentFormSignIn } from "~/app/_utils/Hooks/useContentForm";
+import React, { type FormEvent } from "react";
+import { useContentFormSignIn } from "~/app/sign-in/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
 import { PasswordSVG, EmailSVG } from "~/assets/svg/svg";
-import { FormDataSignIn } from "~/app/_utils/Types/formTypes";
-// interface SignInFormProps {
-//   onNext: (data: FormDataDetails) => Promise<void>;
-// }
+import { type FormDataSignIn } from "~/app/sign-in/_types/types";
 
 interface SignInFormProps {
   onSubmit: (data: FormDataSignIn) => void;
 }
+
 const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
-  const { register, handleSubmit, trigger, control, getValues } =
-    useContentFormSignIn();
+  const { handleSubmit, trigger, control } = useContentFormSignIn();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     const isValid = await trigger();
     console.log(isValid);
     if (isValid) {
-      handleSubmit(onSubmit)();
+      await handleSubmit(onSubmit)();
     }
   };
 
@@ -36,11 +33,13 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
           <Controller
             control={control}
             name="email"
-            render={({ field, fieldState }) => (
+            defaultValue=""
+            render={({ field: { onChange, value }, fieldState }) => (
               <div className="relative flex">
                 <input
                   type="email"
-                  {...register("email", { required: true })}
+                  value={value}
+                  onAbort={onChange}
                   id="email"
                   className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
                   placeholder="Enter your email"
@@ -66,10 +65,12 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
           <Controller
             control={control}
             name="password"
-            render={({ field, fieldState }) => (
+            defaultValue=""
+            render={({ field: { onChange, value }, fieldState }) => (
               <div className="relative flex">
                 <input
-                  {...field}
+                  onChange={onChange}
+                  value={value}
                   type="password"
                   id="password"
                   className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"

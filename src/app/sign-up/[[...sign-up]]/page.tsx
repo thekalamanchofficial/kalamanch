@@ -5,9 +5,9 @@ import { useSignUp } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
 import { toast } from "react-toastify";
 
-import Details from "~/app/_components/SignUp/Details";
-import Role from "~/app/_components/SignUp/Role";
-import Interests from "~/app/_components/SignUp/Interests";
+import Details from "~/app/_components/signUp/Details";
+import Role from "~/app/_components/signUp/Role";
+import Interests from "~/app/_components/signUp/Interests";
 
 import {
   type FormData,
@@ -15,9 +15,10 @@ import {
 } from "~/app/sign-up/_types/types";
 
 import { SignUpFormStages } from "~/app/sign-up/_config/config";
-import OTPVerification from "~/app/_components/SignUp/OtpForm";
+import OTPVerification from "~/app/_components/signUp/OtpForm";
 
 import { SignUpFormStatus } from "~/app/sign-up/_config/config";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 export default function Page() {
   const router = useRouter();
@@ -136,7 +137,7 @@ export default function Page() {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-brand-secondary py-3">
       <h1 className="mb-4 mt-4 text-4xl font-semibold text-font-primary">
-        Let&apos;s get started
+        {STATIC_TEXTS.FORM_HEADING}
       </h1>
       <div className="flex aspect-square h-auto max-h-[950px] w-full max-w-3xl flex-col items-center gap-y-12 rounded-lg bg-white px-6 py-4 md:aspect-auto">
         <div className="stepper flex w-full items-center justify-center gap-1">
@@ -169,7 +170,7 @@ export default function Page() {
 
                 <div className="absolute -bottom-[2rem] w-max text-center">
                   <h6 className="block font-sans text-base font-semibold leading-relaxed tracking-normal text-gray-700 antialiased">
-                    Create Profile
+                    {STATIC_TEXTS.FORM_STEP1}
                   </h6>
                 </div>
               </div>
@@ -198,7 +199,7 @@ export default function Page() {
 
                 <div className="absolute -bottom-[2rem] w-max text-center">
                   <h6 className="block font-sans text-base font-semibold leading-relaxed tracking-normal text-gray-700 antialiased">
-                    Add Interests
+                    {STATIC_TEXTS.FORM_STEP2}
                   </h6>
                 </div>
               </div>
@@ -227,7 +228,7 @@ export default function Page() {
 
                 <div className="absolute -bottom-[2rem] w-max text-center">
                   <h6 className="block font-sans text-base font-semibold leading-relaxed tracking-normal text-gray-700 antialiased">
-                    Ready To Go
+                    {STATIC_TEXTS.FORM_STEP3}
                   </h6>
                 </div>
               </div>
