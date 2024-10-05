@@ -1,14 +1,23 @@
 import React from "react";
 import { useContentFormInterest } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
-import { type FormDataInterest } from "~/app/sign-up/_types/types";
+import {
+  type FormDataPartial,
+  type FormDataInterest,
+} from "~/app/sign-up/_types/types";
 import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
 
 interface InterestsFormProps {
   onNext: (data: FormDataInterest) => Promise<void>;
+  onPrev: () => void;
+  data: FormDataPartial;
 }
 
-const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
+const Interests: React.FC<InterestsFormProps> = ({
+  onNext,
+  onPrev,
+  data: interestData,
+}) => {
   const { handleSubmit, trigger, control } = useContentFormInterest();
 
   const handleNext = async (data: FormDataInterest) => {
@@ -32,14 +41,17 @@ const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
             <Controller
               name="interests"
               control={control}
-              defaultValue={[]}
+              defaultValue={
+                interestData && "interests" in interestData
+                  ? interestData.interests
+                  : []
+              }
               render={({ field: { onChange, value }, fieldState }) => (
                 <>
                   {INTEREST_ARRAY.map((interest) => (
                     <button
                       key={interest}
                       type="button"
-                      value={value}
                       onClick={() => {
                         const newValue = value.includes(interest)
                           ? value.filter((item) => item !== interest)
@@ -64,9 +76,16 @@ const Interests: React.FC<InterestsFormProps> = ({ onNext }) => {
               )}
             />
           </div>
-          <div className="mt-4 flex items-center justify-center">
+          <div className="mt-4 flex items-center justify-center gap-12">
             <button
-              type="submit" // Use type="submit" for form submission
+              type="button"
+              className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
+              onClick={onPrev}
+            >
+              Back
+            </button>
+            <button
+              type="submit"
               className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
             >
               Next

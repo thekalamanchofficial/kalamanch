@@ -1,26 +1,37 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useContentFormDetails } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
-import { PasswordSVG, EmailSVG, UserSVG } from "~/assets/svg/svg";
-import { type FormDataDetails } from "~/app/sign-up/_types/types";
+import {
+  PasswordSVG,
+  EmailSVG,
+  UserSVG,
+  ProfilePhotoPlaceholderSVG,
+  UploadIconSVG,
+} from "~/assets/svg/svg";
+import {
+  type FormDataPartial,
+  type FormDataDetails,
+} from "~/app/sign-up/_types/types";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
 
-interface DetailsFormProps {
+type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
-}
+  onPrev: () => void;
+  data: FormDataPartial | undefined;
+};
 
-const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
-  const { handleSubmit, trigger, control, getValues } = useContentFormDetails();
+const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
+  const { handleSubmit, trigger, control } = useContentFormDetails();
 
   const handleNext = async (data: FormDataDetails) => {
-    console.log(getValues());
     const isValid = await trigger();
     if (isValid) {
       await onNext(data);
     }
   };
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <form onSubmit={handleSubmit(handleNext)} className="w-full">
@@ -36,7 +47,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={control}
             name="name"
-            defaultValue=""
+            defaultValue={data && "name" in data ? data.name : ""}
             render={({ field: { value, onChange }, fieldState }) => (
               <div className="relative flex">
                 <input
@@ -67,7 +78,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={control}
             name="password"
-            defaultValue=""
+            defaultValue={data && "password" in data ? data.password : ""}
             render={({ field: { value, onChange }, fieldState }) => (
               <div className="relative flex">
                 <input
@@ -98,7 +109,9 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={control}
             name="confirmPassword"
-            defaultValue=""
+            defaultValue={
+              data && "confirmPassword" in data ? data.confirmPassword : ""
+            }
             render={({ field: { value, onChange }, fieldState }) => (
               <div className="relative flex">
                 <input
@@ -130,7 +143,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={control}
             name="email"
-            defaultValue=""
+            defaultValue={data && "email" in data ? data.email : ""}
             render={({ field: { value, onChange }, fieldState }) => (
               <div className="relative flex">
                 <input
@@ -162,7 +175,9 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           <Controller
             control={control}
             name="birthdate"
-            defaultValue={undefined}
+            defaultValue={
+              data && "birthdate" in data ? data.birthdate : undefined
+            }
             render={({ field: { onChange, value }, fieldState }) => {
               return (
                 <div className="relative flex">
@@ -201,55 +216,82 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext }) => {
           >
             Your profile picture
           </label>
-          {/* <div className="relative flex flex-col items-start justify-center">
-            <input
-              type="file"
-              id="profile"              
-                required: "Profile picture is required",
-              })} // Validation for profile picture
-              className="hidden" // Hides the actual input
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  if (e.target.files && e.target.files[0]) {
-                    setValue(
-                      "profile",
-                      URL.createObjectURL(e.target.files[0]),
-                    );
-                  }
-                }
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => document.getElementById("profile")?.click()}
-            >
-              <UploadSVG />
-            </button>
-            {watch("profile") && (
-              <div className="text-font-primary">
-                {(watch("profile") as unknown as File)?.name}
-              </div>
-            )}
-            <svg
-              width="190"
-              height="2"
-              viewBox="0 0 190 2"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="my-4"
-            >
-              <path d="M0 1H190" stroke="#E0DEE6" />
-            </svg>
-            <button
-              type="button"
-              className="mb-4 ml-3 border-b border-b-brand-primary text-brand-primary"
-            >
-              <h1>Choose from avatars</h1>
-            </button>
-          </div> */}
+          <div className="relative flex flex-col items-start justify-center">
+            <div>
+              <Controller
+                name="profile"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-5">
+                    {/* Image Preview Container */}
+                    <div className="group">
+                      {!field.value ? (
+                        <span
+                          className="flex size-20 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 border-dotted border-gray-300 text-gray-400 hover:bg-gray-50 group-has-[div]:hidden dark:border-neutral-700 dark:text-neutral-600 dark:hover:bg-neutral-700/50"
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          <ProfilePhotoPlaceholderSVG />
+                        </span>
+                      ) : (
+                        <div className="size-20">
+                          <img
+                            className="h-[90px] w-[90px] rounded-full object-cover"
+                            src={URL.createObjectURL(field.value[0])}
+                            alt="Profile Preview"
+                          />
+                        </div>
+                      )}
+                    </div>
 
-          <div className="mt-4 flex items-center justify-center">
+                    {/* Upload and Delete Buttons */}
+                    <div className="grow">
+                      <div className="flex items-center gap-x-2">
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-brand-primary px-3 py-2 text-xs font-medium text-white hover:bg-[#110eb9] focus:bg-blue-700 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                          onClick={() => fileInputRef.current?.click()} // Triggering file input on click
+                        >
+                          <UploadIconSVG />
+                          Upload photo
+                        </button>
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-500 shadow-sm hover:bg-gray-50 focus:bg-gray-50 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                          onClick={() => field.onChange(null)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    {fieldState.error && (
+                      <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
+                        {fieldState.error.message}
+                      </span>
+                    )}
+
+                    {/* Hidden File Input */}
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      ref={fileInputRef} // Reference the input
+                      onChange={(e) => field.onChange(e.target.files)}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="mt-10 flex w-full items-center justify-center gap-8">
+            <button
+              type="button"
+              className="w-1/3 rounded-sm bg-brand-primary px-6 py-2 text-lg text-white"
+              onClick={onPrev}
+            >
+              Back
+            </button>
             <button
               type="submit"
               className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"

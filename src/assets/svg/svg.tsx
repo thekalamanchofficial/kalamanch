@@ -164,3 +164,45 @@ export const UploadSVG = () => {
     </svg>
   );
 };
+
+export const ProfilePhotoPlaceholderSVG = () => {
+  return (
+    <svg
+      className="size-7 shrink-0"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10"></circle>
+      <circle cx="12" cy="10" r="3"></circle>
+      <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path>
+    </svg>
+  );
+};
+
+export const UploadIconSVG = () => {
+  return (
+    <svg
+      className="size-4 shrink-0"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="17 8 12 3 7 8"></polyline>
+      <line x1="12" y1="3" x2="12" y2="15"></line>
+    </svg>
+  );
+};

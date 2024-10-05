@@ -45,13 +45,22 @@ export default function Page() {
       await finalSubmit();
     }
   };
+  const handlePrev = async () => {
+    if (formStep === SignUpFormStages.DETAILS) {
+      router.push("/");
+    } else if (formStep === SignUpFormStages.INTEREST) {
+      setFormStep(SignUpFormStages.DETAILS);
+    } else if (formStep === SignUpFormStages.ROLE) {
+      setFormStep(SignUpFormStages.INTEREST);
+    }
+  };
 
   const addUserToDB = async () => {
     const data = {
       email: formData.email,
       name: formData.name,
       birthdate: formData.birthdate,
-      profilePicture: formData.profile,
+      profile: formData.profile,
       interests: formData.interests,
       role: formData.role,
     };
@@ -111,7 +120,7 @@ export default function Page() {
         unsafeMetadata: {
           name: formData.name,
           birthdate: formData.birthdate,
-          profile: formData?.profile,
+          profile: formData.profile,
           interests: formData.interests,
           role: formData.role,
         },
@@ -237,15 +246,19 @@ export default function Page() {
         </div>
         <div className="flex w-full flex-col items-center justify-start gap-3">
           {formStep === SignUpFormStages.DETAILS ? (
-            <Details onNext={handleNext} />
+            <Details onNext={handleNext} onPrev={handlePrev} data={formData} />
           ) : null}
 
           {formStep === SignUpFormStages.INTEREST ? (
-            <Interests onNext={handleNext} />
+            <Interests
+              onNext={handleNext}
+              onPrev={handlePrev}
+              data={formData}
+            />
           ) : null}
 
           {formStep === SignUpFormStages.ROLE ? (
-            <Role onNext={handleNext} />
+            <Role onNext={handleNext} onPrev={handlePrev} data={formData} />
           ) : null}
         </div>
       </div>

@@ -1,14 +1,19 @@
 import React from "react";
 import { useContentFormRole } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
-import { type FormDataRole } from "~/app/sign-up/_types/types";
+import {
+  type FormDataPartial,
+  type FormDataRole,
+} from "~/app/sign-up/_types/types";
 import { ROLES_INFORMATION } from "~/app/sign-up/_config/config";
 
 interface RoleFormProps {
   onNext: (data: FormDataRole) => Promise<void>;
+  onPrev: () => void;
+  data: FormDataPartial;
 }
 
-const Interests: React.FC<RoleFormProps> = ({ onNext }) => {
+const Interests: React.FC<RoleFormProps> = ({ onNext, onPrev }) => {
   const { handleSubmit, trigger, control } = useContentFormRole();
 
   const handleNext = async (data: FormDataRole) => {
@@ -70,7 +75,14 @@ const Interests: React.FC<RoleFormProps> = ({ onNext }) => {
             )}
           />
 
-          <div className="mt-8 flex items-center justify-center">
+          <div className="mt-8 flex items-center justify-center gap-12">
+            <button
+              type="submit"
+              onClick={onPrev}
+              className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
+            >
+              Back
+            </button>
             <button
               type="submit"
               className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
