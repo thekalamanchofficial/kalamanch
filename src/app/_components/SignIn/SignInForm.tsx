@@ -4,9 +4,9 @@ import { Controller } from "react-hook-form";
 import { PasswordSVG, EmailSVG } from "~/assets/svg/svg";
 import { type FormDataSignIn } from "~/app/sign-in/_types/types";
 
-interface SignInFormProps {
+type SignInFormProps = {
   onSubmit: (data: FormDataSignIn) => void;
-}
+};
 
 const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
   const { handleSubmit, trigger, control } = useContentFormSignIn();

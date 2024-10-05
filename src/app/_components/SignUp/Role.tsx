@@ -7,11 +7,11 @@ import {
 } from "~/app/sign-up/_types/types";
 import { ROLES_INFORMATION } from "~/app/sign-up/_config/config";
 
-interface RoleFormProps {
+type RoleFormProps = {
   onNext: (data: FormDataRole) => Promise<void>;
   onPrev: () => void;
   data: FormDataPartial;
-}
+};
 
 const Interests: React.FC<RoleFormProps> = ({ onNext, onPrev }) => {
   const { handleSubmit, trigger, control } = useContentFormRole();

@@ -2,11 +2,11 @@
 import React from "react";
 import OtpInput from "react-otp-input";
 
-interface OTPVerificationProps {
+type OTPVerificationProps = {
   otp: string;
   setOtp: (otp: string) => void;
   onVerify: (e: React.FormEvent) => Promise<void>;
-}
+};
 
 const OTPVerification: React.FC<OTPVerificationProps> = ({
   otp,

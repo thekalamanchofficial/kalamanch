@@ -7,11 +7,11 @@ import {
 } from "~/app/sign-up/_types/types";
 import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
 
-interface InterestsFormProps {
+type InterestsFormProps = {
   onNext: (data: FormDataInterest) => Promise<void>;
   onPrev: () => void;
   data: FormDataPartial;
-}
+};
 
 const Interests: React.FC<InterestsFormProps> = ({
   onNext,
