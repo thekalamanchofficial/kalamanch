@@ -1,4 +1,3 @@
-// OTPVerification.tsx
 import React from "react";
 import OtpInput from "react-otp-input";
 
@@ -6,12 +5,14 @@ type OTPVerificationProps = {
   otp: string;
   setOtp: (otp: string) => void;
   onVerify: (e: React.FormEvent) => Promise<void>;
+  verifying: boolean;
 };
 
 const OTPVerification: React.FC<OTPVerificationProps> = ({
   otp,
   setOtp,
   onVerify,
+  verifying,
 }) => {
   const handleVerify = async (e: React.FormEvent) => {
     await onVerify(e);
@@ -54,7 +55,8 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
             </div>
             <button
               type="submit"
-              className="w-1/2 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
+              className={`w-1/2 rounded-sm px-3 py-2 text-lg text-white ${verifying ? "bg-[#6F74E1]" : "bg-brand-primary"}`}
+              disabled={verifying}
             >
               Verify
             </button>

@@ -1,6 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useContentFormDetails } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
+import {
+  type FormDataPartial,
+  type FormDataDetails,
+} from "~/app/sign-up/_types/types";
 
 import Password from "~/assets/svg/Password.svg";
 import Email from "~/assets/svg/Email.svg";
@@ -8,22 +12,32 @@ import User from "~/assets/svg/User.svg";
 import ProfilePhoto from "~/assets/svg/ProfilePhoto.svg";
 import UploadIcon from "~/assets/svg/UploadIcon.svg";
 
-import {
-  type FormDataPartial,
-  type FormDataDetails,
-} from "~/app/sign-up/_types/types";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
+
+import "react-datepicker/dist/react-datepicker.css";
+
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
   onPrev: () => void;
   data: FormDataPartial | undefined;
+  profileFile: File | undefined;
+  setProfileFile: (file: File | undefined) => void;
+  imagePreview: string | null;
+  setImagePreview: (preview: string | null) => void;
 };
 
-const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
+const DetailsForm: React.FC<DetailsFormProps> = ({
+  onNext,
+  onPrev,
+  data,
+  profileFile,
+  setProfileFile,
+  imagePreview,
+  setImagePreview,
+}) => {
   const { handleSubmit, trigger, control } = useContentFormDetails();
 
   const handleNext = async (data: FormDataDetails) => {
@@ -66,6 +80,37 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                 )}
                 <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
                   <User />
+                </span>
+              </div>
+            )}
+          />
+          <label
+            htmlFor="email"
+            className="mb-2 block text-base font-bold text-font-gray"
+          >
+            {STATIC_TEXTS.DETAILS_FORM.LABELS.EMAIL}
+          </label>
+          <Controller
+            control={control}
+            name="email"
+            defaultValue={data && "email" in data ? data.email : ""}
+            render={({ field: { value, onChange }, fieldState }) => (
+              <div className="relative flex">
+                <input
+                  type="email"
+                  value={value}
+                  onChange={onChange}
+                  id="email"
+                  className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
+                  placeholder="Enter your email"
+                />
+                {fieldState.error && (
+                  <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
+                    {fieldState.error.message}
+                  </span>
+                )}
+                <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
+                  <Email />
                 </span>
               </div>
             )}
@@ -136,38 +181,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
           />
 
           <label
-            htmlFor="email"
-            className="mb-2 block text-base font-bold text-font-gray"
-          >
-            {STATIC_TEXTS.DETAILS_FORM.LABELS.EMAIL}
-          </label>
-          <Controller
-            control={control}
-            name="email"
-            defaultValue={data && "email" in data ? data.email : ""}
-            render={({ field: { value, onChange }, fieldState }) => (
-              <div className="relative flex">
-                <input
-                  type="email"
-                  value={value}
-                  onChange={onChange}
-                  id="email"
-                  className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                  placeholder="Enter your email"
-                />
-                {fieldState.error && (
-                  <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                    {fieldState.error.message}
-                  </span>
-                )}
-                <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <Email />
-                </span>
-              </div>
-            )}
-          />
-
-          <label
             htmlFor="birthdate"
             className="mb-2 block text-base font-bold text-font-gray"
           >
@@ -183,12 +196,16 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
               return (
                 <div className="relative flex">
                   <DatePicker
-                    month
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
                     onChange={onChange}
+                    yearDropdownItemNumber={90}
                     placeholderText="Select a date"
                     value={value ? dayjs(value).format("DD-MM-YYYY") : ""}
                     dateFormat={"dd/MM/yyyy"}
                     selected={value}
+                    maxDate={new Date()}
                     className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900"
                   />
 
@@ -216,10 +233,12 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                 render={({ field: { value, onChange }, fieldState }) => (
                   <div className="flex flex-wrap items-center gap-3 sm:gap-5">
                     <div className="group">
-                      {!value ? (
+                      {!imagePreview ? (
                         <span
                           className="flex size-20 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 border-dotted border-gray-300 text-gray-400 hover:bg-gray-50 group-has-[div]:hidden dark:border-neutral-700 dark:text-neutral-600 dark:hover:bg-neutral-700/50"
-                          onClick={() => fileInputRef.current?.click()}
+                          onClick={() => {
+                            fileInputRef.current?.click();
+                          }}
                         >
                           <ProfilePhoto />
                         </span>
@@ -227,7 +246,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                         <div className="size-24">
                           <img
                             className="h-[90px] w-[90px] rounded-full object-cover"
-                            src={URL.createObjectURL(value[0])}
+                            src={imagePreview}
                             alt="Profile Preview"
                           />
                         </div>
@@ -265,7 +284,28 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                       accept="image/*"
                       style={{ display: "none" }}
                       ref={fileInputRef}
-                      onChange={(e) => onChange(e.target.files)}
+                      onChange={(e) => {
+                        const files = e.target.files;
+
+                        if (files?.[0]) {
+                          console.log(files[0]);
+
+                          onChange(files);
+                          setProfileFile(files[0]);
+
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            console.log(reader.result);
+
+                            setImagePreview(reader.result as string);
+                          };
+                          reader.readAsDataURL(files[0]);
+                        }
+                        console.log(files);
+
+                        console.log(imagePreview);
+                        console.log(profileFile);
+                      }}
                     />
                   </div>
                 )}

@@ -20,25 +20,32 @@ import OTPVerification from "~/app/_components/signUp/OtpForm";
 import { SignUpFormStatus } from "~/app/sign-up/_config/config";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
-import FormStepper from "~/assets/svg/FormStepper.svg";
+import Check from "~/assets/svg/Check.svg";
+import CheckColored from "~/assets/svg/CheckColored.svg";
 
 export default function Page() {
   const router = useRouter();
   const [otp, setOtp] = useState("");
 
   const { isLoaded, signUp, setActive } = useSignUp();
+  const [verifyStarted, setVerifyStarted] = useState(false);
   const [verifying, setVerifying] = useState(false);
-
   const [formData, setFormData] = useState<FormData>({} as FormData);
+
+  const [profileFile, setProfileFile] = useState<File | undefined>(undefined);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [formStep, setFormStep] = useState<SignUpFormStages>(
     SignUpFormStages.DETAILS,
   );
+  const [formStepNumber, setFormStepNumber] = useState<number>(0);
 
   const mutation = trpc.user.addUser.useMutation();
 
   const handleNext = async (data: FormDataPartial): Promise<void> => {
+    setFormStepNumber((prev) => prev + 1);
     setFormData((prev) => ({ ...prev, ...data }));
+
     if (formStep === SignUpFormStages.DETAILS) {
       setFormStep(SignUpFormStages.INTEREST);
     } else if (formStep === SignUpFormStages.INTEREST) {
@@ -48,6 +55,7 @@ export default function Page() {
     }
   };
   const handlePrev = async () => {
+    setFormStepNumber((prev) => prev - 1);
     if (formStep === SignUpFormStages.DETAILS) {
       router.push("/");
     } else if (formStep === SignUpFormStages.INTEREST) {
@@ -77,9 +85,9 @@ export default function Page() {
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!isLoaded) return;
     try {
+      setVerifying(true);
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code: otp,
       });
@@ -90,7 +98,6 @@ export default function Page() {
             (async () => {
               await setActive({ session: signUpAttempt.createdSessionId });
               const res = await addUserToDB();
-              console.log(res);
 
               if (res != undefined) router.push("/");
               else throw new Error("Error creating user");
@@ -109,6 +116,8 @@ export default function Page() {
       }
     } catch (err) {
       console.error("Error:", JSON.stringify(err, null, 2));
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -136,15 +145,20 @@ export default function Page() {
         strategy: "email_code",
       });
 
-      setVerifying(true);
+      setVerifyStarted(true);
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
   };
 
-  if (verifying) {
+  if (verifyStarted) {
     return (
-      <OTPVerification otp={otp} setOtp={setOtp} onVerify={handleVerify} />
+      <OTPVerification
+        otp={otp}
+        setOtp={setOtp}
+        onVerify={handleVerify}
+        verifying={verifying}
+      />
     );
   }
 
@@ -159,36 +173,40 @@ export default function Page() {
             <div className="relative flex w-full items-center justify-between">
               <div className="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 bg-gray-300"></div>
               <div className="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 transition-all duration-500"></div>
-              <div className="relative z-10 grid h-10 w-10 place-items-center rounded-full font-bold text-white transition-all duration-300">
-                <FormStepper />
-                <div className="absolute -bottom-[2rem] w-max text-center">
-                  <h6 className="block font-sans text-base font-semibold leading-relaxed tracking-normal text-gray-700 antialiased">
-                    {STATIC_TEXTS.FORM_STEP1}
-                  </h6>
-                </div>
-              </div>
-              <div className="relative z-10 grid h-10 w-10 place-items-center rounded-full font-bold text-white transition-all duration-300">
-                <FormStepper />
-                <div className="absolute -bottom-[2rem] w-max text-center">
-                  <h6 className="block font-sans text-base font-semibold leading-relaxed tracking-normal text-gray-700 antialiased">
-                    {STATIC_TEXTS.FORM_STEP2}
-                  </h6>
-                </div>
-              </div>
-              <div className="relative z-10 grid h-10 w-10 place-items-center rounded-full font-bold text-gray-900 transition-all duration-300">
-                <FormStepper />
-                <div className="absolute -bottom-[2rem] w-max text-center">
-                  <h6 className="block font-sans text-base font-semibold leading-relaxed tracking-normal text-gray-700 antialiased">
-                    {STATIC_TEXTS.FORM_STEP3}
-                  </h6>
-                </div>
-              </div>
+              {STATIC_TEXTS.FORM_STEPS.map((step, index) => {
+                const isActivated = formStep.toString() == step.keyName;
+                const isBehind = formStepNumber > index;
+
+                return (
+                  <div
+                    key={index}
+                    className={`relative z-10 grid h-10 w-10 place-items-center rounded-full border border-brand-primary font-bold transition-all duration-300 ${isActivated || isBehind ? "bg-brand-primary text-white" : "bg-white text-brand-primary"} }`}
+                  >
+                    {isActivated || isBehind ? <Check /> : <CheckColored />}
+                    <div className="absolute -bottom-[2rem] w-max text-center">
+                      <h6
+                        className={`block text-base leading-relaxed tracking-normal text-gray-700 antialiased ${isActivated ? "font-extrabold" : "font-medium"}`}
+                      >
+                        {step.value}
+                      </h6>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
         <div className="flex w-full flex-col items-center justify-start gap-3">
           {formStep === SignUpFormStages.DETAILS ? (
-            <Details onNext={handleNext} onPrev={handlePrev} data={formData} />
+            <Details
+              onNext={handleNext}
+              onPrev={handlePrev}
+              data={formData}
+              profileFile={profileFile}
+              setProfileFile={setProfileFile}
+              imagePreview={imagePreview}
+              setImagePreview={setImagePreview}
+            />
           ) : null}
 
           {formStep === SignUpFormStages.INTEREST ? (
