@@ -92,6 +92,8 @@ export const STATIC_TEXTS = {
       SUCCESS: "Login successful! Redirecting...",
       ERROR: "Login failed. Please check your credentials.",
       ERROR_LOGIN: "Login attempt was not completed successfully.",
+      SIGNIN_NOT_LOADED:
+        "We’re having trouble loading the sign-in process. Please refresh the page and try again.",
     },
     LINKS_TEXT: {
       NEED_ACCOUNT: "Need an account?",

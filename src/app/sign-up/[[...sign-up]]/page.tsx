@@ -22,6 +22,7 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 import Check from "~/assets/svg/Check.svg";
 import CheckColored from "~/assets/svg/CheckColored.svg";
+import { handleClerkError, handleError } from "~/app/_utils/handleError";
 
 export default function Page() {
   const router = useRouter();
@@ -98,9 +99,7 @@ export default function Page() {
             (async () => {
               await setActive({ session: signUpAttempt.createdSessionId });
               const res = await addUserToDB();
-
               if (res != undefined) router.push("/");
-              else throw new Error("Error creating user");
             })(),
             {
               pending: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
@@ -109,13 +108,13 @@ export default function Page() {
             },
           );
         } catch (error) {
-          console.error("Error during the signup process:", error);
+          handleClerkError(error);
         }
       } else {
-        console.error(JSON.stringify(signUpAttempt, null, 2));
+        handleError("Error verifying email address");
       }
     } catch (err) {
-      console.error("Error:", JSON.stringify(err, null, 2));
+      handleClerkError(err);
     } finally {
       setVerifying(false);
     }
@@ -146,8 +145,8 @@ export default function Page() {
       });
 
       setVerifyStarted(true);
-    } catch (err) {
-      console.error(JSON.stringify(err, null, 2));
+    } catch (err: unknown) {
+      handleClerkError(err);
     }
   };
 

@@ -11,6 +11,7 @@ import { type FormDataSignIn } from "~/app/sign-in/_types/types";
 import { SignInFormStages } from "~/app/sign-in/_config/config";
 import PenNibSVG from "~/assets/svg/PenNib.svg";
 import GoogleLogo from "~/assets/svg/GoogleLogo.svg";
+import { handleClerkError, handleError } from "~/app/_utils/handleError";
 
 const SignInPage = () => {
   const [signInState, setSignInState] = useState(SignInFormStages.WITH_GOOGLE);
@@ -30,7 +31,10 @@ const SignInPage = () => {
       .promise(
         (async () => {
           if (!signIn) {
-            throw new Error("Sign In is not loaded");
+            handleError(STATIC_TEXTS.SIGNIN_FORM.MESSAGES.SIGNIN_NOT_LOADED);
+            throw new Error(
+              STATIC_TEXTS.SIGNIN_FORM.MESSAGES.SIGNIN_NOT_LOADED,
+            );
           }
 
           const signInAttempt = await signIn.create({
@@ -42,8 +46,7 @@ const SignInPage = () => {
             await setActive({ session: signInAttempt.createdSessionId });
             router.push("/");
           } else {
-            console.error(JSON.stringify(signInAttempt, null, 2));
-            throw new Error(STATIC_TEXTS.SIGNIN_FORM.MESSAGES.ERROR_LOGIN);
+            handleError(STATIC_TEXTS.SIGNIN_FORM.MESSAGES.ERROR_LOGIN);
           }
         })(),
         {
@@ -53,7 +56,7 @@ const SignInPage = () => {
         },
       )
       .catch((error) => {
-        console.error("Error during the login process:", error);
+        handleClerkError(error);
       });
   };
 

@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import Image from "next/image";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
@@ -288,23 +289,15 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                         const files = e.target.files;
 
                         if (files?.[0]) {
-                          console.log(files[0]);
-
                           onChange(files);
                           setProfileFile(files[0]);
 
                           const reader = new FileReader();
                           reader.onloadend = () => {
-                            console.log(reader.result);
-
                             setImagePreview(reader.result as string);
                           };
                           reader.readAsDataURL(files[0]);
                         }
-                        console.log(files);
-
-                        console.log(imagePreview);
-                        console.log(profileFile);
                       }}
                     />
                   </div>
