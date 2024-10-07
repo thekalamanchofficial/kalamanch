@@ -12,8 +12,10 @@ export function WritingPad() {
   const onSubmit = (data: { content: string }) => {
     console.log(data);
   };
+
   return (
     <div className="w-full">
+      {/* <h1>{JSON.stringify(users.data)}</h1> */}
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
         <Controller
           control={control}
