@@ -171,8 +171,12 @@ export default function Page() {
         <div className="stepper flex w-full items-center justify-center gap-1">
           <div className="w-full px-24 py-4">
             <div className="relative flex w-full items-center justify-between">
-              <div className="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 bg-gray-300"></div>
-              <div className="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 transition-all duration-500"></div>
+              <div
+                className={`absolute left-0 top-2/4 h-0.5 w-1/2 -translate-y-2/4 transition-all duration-500 ${formStep == SignUpFormStages.INTEREST || formStep == SignUpFormStages.ROLE ? "bg-brand-primary" : "bg-gray-300"}`}
+              ></div>
+              <div
+                className={`absolute right-0 top-2/4 h-0.5 w-1/2 -translate-y-2/4 transition-all duration-500 ${formStep == SignUpFormStages.ROLE ? "bg-brand-primary" : "bg-gray-300"}`}
+              ></div>
               {STATIC_TEXTS.FORM_STEPS.map((step, index) => {
                 const isActivated = formStep.toString() == step.keyName;
                 const isBehind = formStepNumber > index;
