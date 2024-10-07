@@ -16,7 +16,6 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     const isValid = await trigger();
-    console.log(isValid);
     if (isValid) {
       await handleSubmit(onSubmit)();
     }

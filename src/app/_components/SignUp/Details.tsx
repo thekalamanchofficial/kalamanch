@@ -183,6 +183,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
               return (
                 <div className="relative flex">
                   <DatePicker
+                    month
                     onChange={onChange}
                     placeholderText="Select a date"
                     value={value ? dayjs(value).format("DD-MM-YYYY") : ""}

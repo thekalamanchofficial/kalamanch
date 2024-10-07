@@ -69,7 +69,7 @@ export default function Page() {
 
     try {
       const user = await mutation.mutateAsync(data);
-      console.log("User created:", user);
+      return user;
     } catch (error) {
       console.error("Error creating user:", error);
     }
@@ -90,6 +90,8 @@ export default function Page() {
             (async () => {
               await setActive({ session: signUpAttempt.createdSessionId });
               const res = await addUserToDB();
+              console.log(res);
+
               if (res != undefined) router.push("/");
               else throw new Error("Error creating user");
             })(),
