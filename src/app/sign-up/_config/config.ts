@@ -29,20 +29,8 @@ export const INTEREST_ARRAY = [
   "Education",
 ];
 
-export const ROLES_INFORMATION = [
-  {
-    title: " Turn Your writings into a Legacy",
-    desc: "Write, sell, or buy poems with complete ownership and make your words last forever.",
-    role: "A",
-  },
-  {
-    title: "A Place Where Every Poem is Valued",
-    desc: "Join a community where you can share, sell, or invest in poetry that touches hearts.",
-    role: "B",
-  },
-  {
-    title: "Buy and Sell Poetry Easily",
-    desc: "Support poets or own a poem—trade poetry with ease and make it a valuable asset.",
-    role: "C",
-  },
-];
+export const ROLES = {
+  A: "Reader",
+  B: "Writer",
+  C: "Seller",
+};

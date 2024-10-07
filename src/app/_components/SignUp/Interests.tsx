@@ -6,6 +6,7 @@ import {
   type FormDataInterest,
 } from "~/app/sign-up/_types/types";
 import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
+import { STATIC_TEXTS } from "../static/staticText";
 
 type InterestsFormProps = {
   onNext: (data: FormDataInterest) => Promise<void>;
@@ -32,10 +33,10 @@ const Interests: React.FC<InterestsFormProps> = ({
       <div className="w-full px-10">
         <div className="mb-3 flex flex-col">
           <h1 className="text-3xl font-medium text-font-primary">
-            What are your interests?
+            {STATIC_TEXTS.INTEREST_FORM.FORM_HEADING}
           </h1>
           <h1 className="text-lg font-medium text-font-secondary">
-            We will use this to help customize the experience
+            {STATIC_TEXTS.INTEREST_FORM.FORM_DESCRIPTION}
           </h1>
           <div className="relative mb-[200px] mt-6 flex h-auto w-full flex-wrap gap-2">
             <Controller
@@ -76,19 +77,19 @@ const Interests: React.FC<InterestsFormProps> = ({
               )}
             />
           </div>
-          <div className="mt-4 flex items-center justify-center gap-12">
+          <div className="mt-4 flex items-center justify-between gap-12">
             <button
               type="button"
               className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
               onClick={onPrev}
             >
-              Back
+              {STATIC_TEXTS.NAVIGATION.BACK}
             </button>
             <button
               type="submit"
               className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
             >
-              Next
+              {STATIC_TEXTS.NAVIGATION.NEXT}
             </button>
           </div>
         </div>

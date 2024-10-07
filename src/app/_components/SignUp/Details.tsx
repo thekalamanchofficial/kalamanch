@@ -1,13 +1,13 @@
 import React, { useRef } from "react";
 import { useContentFormDetails } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
-import {
-  PasswordSVG,
-  EmailSVG,
-  UserSVG,
-  ProfilePhotoPlaceholderSVG,
-  UploadIconSVG,
-} from "~/assets/svg/svg";
+
+import Password from "~/assets/svg/Password.svg";
+import Email from "~/assets/svg/Email.svg";
+import User from "~/assets/svg/User.svg";
+import ProfilePhoto from "~/assets/svg/ProfilePhoto.svg";
+import UploadIcon from "~/assets/svg/UploadIcon.svg";
+
 import {
   type FormDataPartial,
   type FormDataDetails,
@@ -15,6 +15,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
@@ -41,7 +42,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
             htmlFor="name"
             className="mb-2 block text-base font-bold text-font-gray"
           >
-            Your name
+            {STATIC_TEXTS.DETAILS_FORM.LABELS.NAME}
           </label>
 
           <Controller
@@ -64,7 +65,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                   </span>
                 )}
                 <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <UserSVG />
+                  <User />
                 </span>
               </div>
             )}
@@ -73,7 +74,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
             htmlFor="password"
             className="mb-2 block text-base font-bold text-font-gray"
           >
-            Password
+            {STATIC_TEXTS.DETAILS_FORM.LABELS.PASSWORD}
           </label>
           <Controller
             control={control}
@@ -95,7 +96,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                   </span>
                 )}
                 <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <PasswordSVG />
+                  <Password />
                 </span>
               </div>
             )}
@@ -104,7 +105,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
             htmlFor="confirmPassword"
             className="mb-2 block text-base font-bold text-font-gray"
           >
-            Confirm Password
+            {STATIC_TEXTS.DETAILS_FORM.LABELS.CONFIRM_PASSWORD}
           </label>
           <Controller
             control={control}
@@ -128,7 +129,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                   </span>
                 )}
                 <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <PasswordSVG />
+                  <Password />
                 </span>
               </div>
             )}
@@ -138,7 +139,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
             htmlFor="email"
             className="mb-2 block text-base font-bold text-font-gray"
           >
-            Your email
+            {STATIC_TEXTS.DETAILS_FORM.LABELS.EMAIL}
           </label>
           <Controller
             control={control}
@@ -160,7 +161,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                   </span>
                 )}
                 <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <EmailSVG />
+                  <Email />
                 </span>
               </div>
             )}
@@ -170,7 +171,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
             htmlFor="birthdate"
             className="mb-2 block text-base font-bold text-font-gray"
           >
-            Your birthdate
+            {STATIC_TEXTS.DETAILS_FORM.LABELS.BIRTHDATE}
           </label>
           <Controller
             control={control}
@@ -181,13 +182,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
             render={({ field: { onChange, value }, fieldState }) => {
               return (
                 <div className="relative flex">
-                  {/* <input
-                    type="date"
-                    value={dayjs(value).format("DD/MM/YYYY")}
-                    onChange={onChange}
-                    id="birthdate"
-                    className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                  /> */}
                   <DatePicker
                     onChange={onChange}
                     placeholderText="Select a date"
@@ -202,9 +196,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                       {fieldState.error.message}
                     </span>
                   )}
-                  {/* <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                    <CalendarSVG />
-                  </span> */}
                 </div>
               );
             }}
@@ -214,52 +205,50 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
             htmlFor="profile"
             className="mb-2 block text-base font-bold text-font-gray"
           >
-            Your profile picture
+            {STATIC_TEXTS.DETAILS_FORM.LABELS.PROFILE}
           </label>
           <div className="relative flex flex-col items-start justify-center">
             <div>
               <Controller
                 name="profile"
                 control={control}
-                render={({ field, fieldState }) => (
+                render={({ field: { value, onChange }, fieldState }) => (
                   <div className="flex flex-wrap items-center gap-3 sm:gap-5">
-                    {/* Image Preview Container */}
                     <div className="group">
-                      {!field.value ? (
+                      {!value ? (
                         <span
                           className="flex size-20 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 border-dotted border-gray-300 text-gray-400 hover:bg-gray-50 group-has-[div]:hidden dark:border-neutral-700 dark:text-neutral-600 dark:hover:bg-neutral-700/50"
                           onClick={() => fileInputRef.current?.click()}
                         >
-                          <ProfilePhotoPlaceholderSVG />
+                          <ProfilePhoto />
                         </span>
                       ) : (
-                        <div className="size-20">
+                        <div className="size-24">
                           <img
                             className="h-[90px] w-[90px] rounded-full object-cover"
-                            src={URL.createObjectURL(field.value[0])}
+                            src={URL.createObjectURL(value[0])}
                             alt="Profile Preview"
                           />
                         </div>
                       )}
                     </div>
 
-                    {/* Upload and Delete Buttons */}
                     <div className="grow">
                       <div className="flex items-center gap-x-2">
                         <button
                           type="button"
-                          className="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-brand-primary px-3 py-2 text-xs font-medium text-white hover:bg-[#110eb9] focus:bg-blue-700 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                          onClick={() => fileInputRef.current?.click()} // Triggering file input on click
+                          className="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-brand-primary px-3 py-2 text-xs font-medium text-white hover:bg-[#110eb9] focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                          onClick={() => fileInputRef.current?.click()}
                         >
-                          <UploadIconSVG />
-                          Upload photo
+                          <UploadIcon />
+                          {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.UPLOAD_BUTTON}
                         </button>
                         <button
                           type="button"
                           className="inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-500 shadow-sm hover:bg-gray-50 focus:bg-gray-50 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                          onClick={() => field.onChange(null)}
+                          onClick={() => onChange("")}
                         >
-                          Delete
+                          {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.DELETE_BUTTON}
                         </button>
                       </div>
                     </div>
@@ -269,14 +258,13 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
                       </span>
                     )}
 
-                    {/* Hidden File Input */}
                     <input
                       id="fileInput"
                       type="file"
                       accept="image/*"
                       style={{ display: "none" }}
-                      ref={fileInputRef} // Reference the input
-                      onChange={(e) => field.onChange(e.target.files)}
+                      ref={fileInputRef}
+                      onChange={(e) => onChange(e.target.files)}
                     />
                   </div>
                 )}
@@ -284,19 +272,19 @@ const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
             </div>
           </div>
 
-          <div className="mt-10 flex w-full items-center justify-center gap-8">
+          <div className="mt-10 flex w-full items-center justify-between gap-8">
             <button
               type="button"
               className="w-1/3 rounded-sm bg-brand-primary px-6 py-2 text-lg text-white"
               onClick={onPrev}
             >
-              Back
+              {STATIC_TEXTS.NAVIGATION.BACK}
             </button>
             <button
               type="submit"
               className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
             >
-              Next
+              {STATIC_TEXTS.NAVIGATION.NEXT}
             </button>
           </div>
         </div>

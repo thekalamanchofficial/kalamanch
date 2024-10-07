@@ -6,22 +6,11 @@ import {
   signUpFormSchemaRole,
 } from "../_schema/schema";
 
-type FormDataDetails = {
-  name: string;
-  password: string;
-  confirmPassword: string;
-  email: string;
-  birthdate: Date;
-  profile: string;
-};
-
-type FormDataInterest = {
-  interests: string[];
-};
-
-type FormDataRole = {
-  role: string;
-};
+import {
+  type FormDataDetails,
+  type FormDataInterest,
+  type FormDataRole,
+} from "../_types/types";
 
 export const useContentFormDetails = (): UseFormReturn<FormDataDetails> =>
   useForm({ mode: "onChange", resolver: yupResolver(signUpFormSchemaDetails) });

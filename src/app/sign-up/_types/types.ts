@@ -3,7 +3,7 @@ export type FormDataDetails = {
   password: string;
   confirmPassword: string;
   email: string;
-  profile: string;
+  profile?: string;
   birthdate: Date;
 };
 

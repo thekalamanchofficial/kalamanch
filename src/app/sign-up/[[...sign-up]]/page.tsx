@@ -20,6 +20,8 @@ import OTPVerification from "~/app/_components/signUp/OtpForm";
 import { SignUpFormStatus } from "~/app/sign-up/_config/config";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
+import FormStepper from "~/assets/svg/FormStepper.svg";
+
 export default function Page() {
   const router = useRouter();
   const [otp, setOtp] = useState("");
@@ -87,13 +89,14 @@ export default function Page() {
           await toast.promise(
             (async () => {
               await setActive({ session: signUpAttempt.createdSessionId });
-              await addUserToDB();
-              router.push("/");
+              const res = await addUserToDB();
+              if (res != undefined) router.push("/");
+              else throw new Error("Error creating user");
             })(),
             {
-              pending: "Request in progress, please wait...",
-              success: "Signup successful! Redirecting...",
-              error: "An error occurred during the signup process.",
+              pending: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
+              success: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.SUCCESS}`,
+              error: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.ERROR}`,
             },
           );
         } catch (error) {
@@ -155,28 +158,7 @@ export default function Page() {
               <div className="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 bg-gray-300"></div>
               <div className="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 transition-all duration-500"></div>
               <div className="relative z-10 grid h-10 w-10 place-items-center rounded-full font-bold text-white transition-all duration-300">
-                <svg
-                  width="40"
-                  height="40"
-                  viewBox="0 0 28 28"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0.75 14C0.75 6.68223 6.68223 0.75 14 0.75C21.3178 0.75 27.25 6.68223 27.25 14C27.25 21.3178 21.3178 27.25 14 27.25C6.68223 27.25 0.75 21.3178 0.75 14Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M0.75 14C0.75 6.68223 6.68223 0.75 14 0.75C21.3178 0.75 27.25 6.68223 27.25 14C27.25 21.3178 21.3178 27.25 14 27.25C6.68223 27.25 0.75 21.3178 0.75 14Z"
-                    stroke="#4F46E5"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M20.3535 9.85403L12.3535 17.854C12.3071 17.9005 12.252 17.9374 12.1913 17.9626C12.1306 17.9877 12.0655 18.0007 11.9998 18.0007C11.9341 18.0007 11.869 17.9877 11.8083 17.9626C11.7476 17.9374 11.6925 17.9005 11.646 17.854L8.14604 14.354C8.05222 14.2602 7.99951 14.133 7.99951 14.0003C7.99951 13.8676 8.05222 13.7403 8.14604 13.6465C8.23986 13.5527 8.36711 13.5 8.49979 13.5C8.63247 13.5 8.75972 13.5527 8.85354 13.6465L11.9998 16.7934L19.646 9.14653C19.7399 9.05271 19.8671 9 19.9998 9C20.1325 9 20.2597 9.05271 20.3535 9.14653C20.4474 9.24035 20.5001 9.3676 20.5001 9.50028C20.5001 9.63296 20.4474 9.76021 20.3535 9.85403Z"
-                    fill="#260EB9"
-                  />
-                </svg>
-
+                <FormStepper />
                 <div className="absolute -bottom-[2rem] w-max text-center">
                   <h6 className="block font-sans text-base font-semibold leading-relaxed tracking-normal text-gray-700 antialiased">
                     {STATIC_TEXTS.FORM_STEP1}
@@ -184,28 +166,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="relative z-10 grid h-10 w-10 place-items-center rounded-full font-bold text-white transition-all duration-300">
-                <svg
-                  width="40"
-                  height="40"
-                  viewBox="0 0 28 28"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0.75 14C0.75 6.68223 6.68223 0.75 14 0.75C21.3178 0.75 27.25 6.68223 27.25 14C27.25 21.3178 21.3178 27.25 14 27.25C6.68223 27.25 0.75 21.3178 0.75 14Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M0.75 14C0.75 6.68223 6.68223 0.75 14 0.75C21.3178 0.75 27.25 6.68223 27.25 14C27.25 21.3178 21.3178 27.25 14 27.25C6.68223 27.25 0.75 21.3178 0.75 14Z"
-                    stroke="#4F46E5"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M20.3535 9.85403L12.3535 17.854C12.3071 17.9005 12.252 17.9374 12.1913 17.9626C12.1306 17.9877 12.0655 18.0007 11.9998 18.0007C11.9341 18.0007 11.869 17.9877 11.8083 17.9626C11.7476 17.9374 11.6925 17.9005 11.646 17.854L8.14604 14.354C8.05222 14.2602 7.99951 14.133 7.99951 14.0003C7.99951 13.8676 8.05222 13.7403 8.14604 13.6465C8.23986 13.5527 8.36711 13.5 8.49979 13.5C8.63247 13.5 8.75972 13.5527 8.85354 13.6465L11.9998 16.7934L19.646 9.14653C19.7399 9.05271 19.8671 9 19.9998 9C20.1325 9 20.2597 9.05271 20.3535 9.14653C20.4474 9.24035 20.5001 9.3676 20.5001 9.50028C20.5001 9.63296 20.4474 9.76021 20.3535 9.85403Z"
-                    fill="#260EB9"
-                  />
-                </svg>
-
+                <FormStepper />
                 <div className="absolute -bottom-[2rem] w-max text-center">
                   <h6 className="block font-sans text-base font-semibold leading-relaxed tracking-normal text-gray-700 antialiased">
                     {STATIC_TEXTS.FORM_STEP2}
@@ -213,28 +174,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="relative z-10 grid h-10 w-10 place-items-center rounded-full font-bold text-gray-900 transition-all duration-300">
-                <svg
-                  width="40"
-                  height="40"
-                  viewBox="0 0 28 28"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0.75 14C0.75 6.68223 6.68223 0.75 14 0.75C21.3178 0.75 27.25 6.68223 27.25 14C27.25 21.3178 21.3178 27.25 14 27.25C6.68223 27.25 0.75 21.3178 0.75 14Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M0.75 14C0.75 6.68223 6.68223 0.75 14 0.75C21.3178 0.75 27.25 6.68223 27.25 14C27.25 21.3178 21.3178 27.25 14 27.25C6.68223 27.25 0.75 21.3178 0.75 14Z"
-                    stroke="#4F46E5"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M20.3535 9.85403L12.3535 17.854C12.3071 17.9005 12.252 17.9374 12.1913 17.9626C12.1306 17.9877 12.0655 18.0007 11.9998 18.0007C11.9341 18.0007 11.869 17.9877 11.8083 17.9626C11.7476 17.9374 11.6925 17.9005 11.646 17.854L8.14604 14.354C8.05222 14.2602 7.99951 14.133 7.99951 14.0003C7.99951 13.8676 8.05222 13.7403 8.14604 13.6465C8.23986 13.5527 8.36711 13.5 8.49979 13.5C8.63247 13.5 8.75972 13.5527 8.85354 13.6465L11.9998 16.7934L19.646 9.14653C19.7399 9.05271 19.8671 9 19.9998 9C20.1325 9 20.2597 9.05271 20.3535 9.14653C20.4474 9.24035 20.5001 9.3676 20.5001 9.50028C20.5001 9.63296 20.4474 9.76021 20.3535 9.85403Z"
-                    fill="#260EB9"
-                  />
-                </svg>
-
+                <FormStepper />
                 <div className="absolute -bottom-[2rem] w-max text-center">
                   <h6 className="block font-sans text-base font-semibold leading-relaxed tracking-normal text-gray-700 antialiased">
                     {STATIC_TEXTS.FORM_STEP3}

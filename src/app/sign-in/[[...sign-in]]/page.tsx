@@ -1,15 +1,16 @@
 "use client";
 
-import { SignUpButton, useSignIn } from "@clerk/nextjs";
+import { useSignIn } from "@clerk/nextjs";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { GoogleSVG, LogoSVG } from "~/assets/svg/svg";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import SignInForm from "~/app/_components/signIn/SignInForm";
 import { type FormDataSignIn } from "~/app/sign-in/_types/types";
 import { SignInFormStages } from "~/app/sign-in/_config/config";
+import PenNibSVG from "~/assets/svg/PenNib.svg";
+import GoogleLogo from "~/assets/svg/GoogleLogo.svg";
 
 const SignInPage = () => {
   const [signInState, setSignInState] = useState(SignInFormStages.WITH_GOOGLE);
@@ -29,7 +30,7 @@ const SignInPage = () => {
       .promise(
         (async () => {
           if (!signIn) {
-            throw new Error("SignIn is not loaded");
+            throw new Error("Sign In is not loaded");
           }
 
           const signInAttempt = await signIn.create({
@@ -39,16 +40,16 @@ const SignInPage = () => {
 
           if (signInAttempt.status === "complete") {
             await setActive({ session: signInAttempt.createdSessionId });
-            router.push("/"); // Redirect after successful login
+            router.push("/");
           } else {
             console.error(JSON.stringify(signInAttempt, null, 2));
-            throw new Error("Login attempt was not completed successfully."); // Throw an error to trigger the error toast
+            throw new Error(STATIC_TEXTS.SIGNIN_FORM.MESSAGES.ERROR_LOGIN);
           }
         })(),
         {
-          pending: "Logging in, please wait...", // Message while the promise is pending
-          success: "Login successful! Redirecting...", // Message on success
-          error: "Login failed. Please check your credentials.", // Message on error
+          pending: `${STATIC_TEXTS.SIGNIN_FORM.MESSAGES.PENDING}...`,
+          success: `${STATIC_TEXTS.SIGNIN_FORM.MESSAGES.SUCCESS}`,
+          error: `${STATIC_TEXTS.SIGNIN_FORM.MESSAGES.ERROR}`,
         },
       )
       .catch((error) => {
@@ -70,7 +71,7 @@ const SignInPage = () => {
       {signInState === SignInFormStages.WITH_GOOGLE ? (
         <div className="flex aspect-square h-auto max-h-[642px] w-full max-w-3xl flex-col items-center gap-y-16 rounded-lg bg-white px-6 py-14 md:aspect-auto">
           <div className="stepper flex w-full items-center justify-center gap-2">
-            <LogoSVG />
+            <PenNibSVG />
             <h1 className="text-3xl font-semibold text-brand-primary">
               {STATIC_TEXTS.APP_TITLE}
             </h1>
@@ -85,34 +86,38 @@ const SignInPage = () => {
               className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-primary px-2 py-2 text-white"
               onClick={handleGoogleLogin}
             >
-              <GoogleSVG />
+              <GoogleLogo />
 
-              <h1 className="text-xl">Signup with Google</h1>
+              <h1 className="text-xl">{STATIC_TEXTS.SIGNUP_GOOGLE}</h1>
             </button>
-            <SignUpButton>
-              <button className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary">
-                <h1 className="text-xl font-semibold">Create my account </h1>
-              </button>
-            </SignUpButton>
+            <button
+              className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary"
+              onClick={() => {
+                router.replace("/sign-up");
+              }}
+            >
+              <h1 className="text-xl font-semibold">
+                {STATIC_TEXTS.CREATE_ACCOUNT}{" "}
+              </h1>
+            </button>
             <div className="w-1/2">
               <p className="w-full text-center text-sm text-[#666476]">
-                By logging in or creating an account, you agree to
-                Kalamanch&nbsp;
+                {STATIC_TEXTS.DISCLAIMER}&nbsp;
                 {
                   <Link
                     href="/terms"
                     className="border-b border-b-brand-primary text-brand-primary"
                   >
-                    Terms of Service
+                    {STATIC_TEXTS.SIGNIN_FORM.LINKS_TEXT.TERMS_OF_SERVICE}
                   </Link>
                 }
-                &nbsp;and&nbsp;
+                &nbsp;{STATIC_TEXTS.AND}&nbsp;
                 {
                   <Link
                     href="/terms"
                     className="border-b border-b-brand-primary text-brand-primary"
                   >
-                    Privacy Policy
+                    {STATIC_TEXTS.SIGNIN_FORM.LINKS_TEXT.PRIVACY_POLICY}
                   </Link>
                 }
                 .
@@ -121,7 +126,7 @@ const SignInPage = () => {
           </div>
           <div className="flex w-full flex-col items-center justify-start gap-3">
             <h1 className="text-xl font-medium text-font-primary">
-              Already have an account?
+              {STATIC_TEXTS.SIGNIN_FORM.LINKS_TEXT.HAVE_ACCOUNT}
             </h1>
             <button
               className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary"
@@ -129,14 +134,14 @@ const SignInPage = () => {
                 setSignInState(SignInFormStages.WITH_EMAIL);
               }}
             >
-              <h1 className="text-xl font-semibold">Sign in </h1>
+              <h1 className="text-xl font-semibold">{STATIC_TEXTS.SIGNIN} </h1>
             </button>
           </div>
         </div>
       ) : (
         <div className="flex aspect-square h-auto max-h-[642px] w-full max-w-3xl flex-col items-center gap-y-2 rounded-lg bg-white px-6 py-14 md:aspect-auto">
           <div className="stepper flex w-full items-center justify-center gap-2">
-            <LogoSVG />
+            <PenNibSVG />
             <h1 className="text-3xl font-semibold text-brand-primary">
               {STATIC_TEXTS.APP_TITLE}
             </h1>
@@ -145,8 +150,8 @@ const SignInPage = () => {
             className="mt-6 flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-primary px-2 py-2 text-white"
             onClick={handleGoogleLogin}
           >
-            <GoogleSVG />
-            <h1 className="text-xl">Signin with Google</h1>
+            <GoogleLogo />
+            <h1 className="text-xl">{STATIC_TEXTS.SIGNIN_GOOGLE}</h1>
           </button>
           <span className="my-4 flex w-full items-center justify-center gap-4">
             <div className="h-1 w-[100px] border-t border-font-tertiary"></div>

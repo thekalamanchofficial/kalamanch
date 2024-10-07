@@ -5,7 +5,8 @@ import {
   type FormDataPartial,
   type FormDataRole,
 } from "~/app/sign-up/_types/types";
-import { ROLES_INFORMATION } from "~/app/sign-up/_config/config";
+// import { ROLES } from "~/app/sign-up/_config/config";
+import { STATIC_TEXTS } from "../static/staticText";
 
 type RoleFormProps = {
   onNext: (data: FormDataRole) => Promise<void>;
@@ -22,25 +23,23 @@ const Interests: React.FC<RoleFormProps> = ({ onNext, onPrev }) => {
       await onNext(data);
     }
   };
-
   return (
     <form onSubmit={handleSubmit(handleNext)} className="w-full">
       <div className="w-full px-10">
         <div className="relative mb-3 flex flex-col gap-2">
           <h1 className="text-3xl font-medium text-font-primary">
-            You are ready to go!
+            {STATIC_TEXTS.ROLE_FORM.FORM_HEADING}
           </h1>
           <h1 className="mb-4 text-lg font-medium text-font-secondary">
-            We hope that you will have a wonderful time at Kalamanch.
+            {STATIC_TEXTS.ROLE_FORM.FORM_DESCRIPTION}
           </h1>
 
           <Controller
             name="role"
             control={control}
-            rules={{ required: "Please select a role" }}
             render={({ field: { value, onChange }, fieldState }) => (
               <>
-                {ROLES_INFORMATION.map((info) => (
+                {STATIC_TEXTS.ROLE_FORM.ROLES_INFORMATION.map((info) => (
                   <div
                     key={info.role}
                     className="mb-2 flex h-20 w-full cursor-pointer gap-6"
@@ -61,7 +60,7 @@ const Interests: React.FC<RoleFormProps> = ({ onNext, onPrev }) => {
                         {info.title}
                       </h1>
                       <h1 className="text-base text-font-secondary">
-                        {info.desc}
+                        {info.description}
                       </h1>
                     </div>
                   </div>
@@ -75,19 +74,19 @@ const Interests: React.FC<RoleFormProps> = ({ onNext, onPrev }) => {
             )}
           />
 
-          <div className="mt-8 flex items-center justify-center gap-12">
+          <div className="mt-8 flex items-center justify-between gap-12">
             <button
               type="submit"
               onClick={onPrev}
               className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
             >
-              Back
+              {STATIC_TEXTS.NAVIGATION.BACK}
             </button>
             <button
               type="submit"
               className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
             >
-              Submit
+              {STATIC_TEXTS.NAVIGATION.SUBMIT}
             </button>
           </div>
         </div>

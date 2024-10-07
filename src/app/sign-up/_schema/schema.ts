@@ -22,7 +22,7 @@ export const signUpFormSchemaDetails = Yup.object().shape({
   birthdate: Yup.date()
     .max(new Date(), "Date of birth can't be in the future")
     .required("Birthdate is required"),
-  profile: Yup.string().default(""),
+  profile: Yup.string().optional(),
 });
 
 export const signUpFormSchemaInterest = Yup.object().shape({

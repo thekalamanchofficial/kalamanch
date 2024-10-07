@@ -1,8 +1,10 @@
 import React, { type FormEvent } from "react";
 import { useContentFormSignIn } from "~/app/sign-in/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
-import { PasswordSVG, EmailSVG } from "~/assets/svg/svg";
+import Password from "~/assets/svg/Password.svg";
+import Email from "~/assets/svg/Email.svg";
 import { type FormDataSignIn } from "~/app/sign-in/_types/types";
+import { STATIC_TEXTS } from "../static/staticText";
 
 type SignInFormProps = {
   onSubmit: (data: FormDataSignIn) => void;
@@ -28,7 +30,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
             htmlFor="email"
             className="mb-2 block text-base font-bold text-font-gray"
           >
-            Your email
+            {STATIC_TEXTS.SIGNIN_FORM.LABELS.EMAIL}
           </label>
           <Controller
             control={control}
@@ -39,7 +41,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
                 <input
                   type="email"
                   value={value}
-                  onAbort={onChange}
+                  onChange={onChange}
                   id="email"
                   className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
                   placeholder="Enter your email"
@@ -50,7 +52,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
                   </span>
                 )}
                 <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <EmailSVG />
+                  <Email />
                 </span>
               </div>
             )}
@@ -60,7 +62,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
             htmlFor="password"
             className="mb-2 block text-base font-bold text-font-gray"
           >
-            Password
+            {STATIC_TEXTS.SIGNIN_FORM.LABELS.PASSWORD}
           </label>
           <Controller
             control={control}
@@ -82,7 +84,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
                   </span>
                 )}
                 <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <PasswordSVG />
+                  <Password />
                 </span>
               </div>
             )}
@@ -93,14 +95,16 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
               onClick={handleLogin}
               className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
             >
-              Submit
+              {STATIC_TEXTS.NAVIGATION.SUBMIT}
             </button>
             <a
               href="/sign-up"
               className="cursor-pointer text-center text-font-secondary"
             >
-              Need an account?&nbsp;
-              <span className="text-font-primary underline">Sign up here.</span>
+              {STATIC_TEXTS.SIGNIN_FORM.LINKS_TEXT.NEED_ACCOUNT}&nbsp;
+              <span className="text-font-primary underline">
+                {STATIC_TEXTS.SIGNUP}.
+              </span>
             </a>
           </div>
         </div>
