@@ -288,23 +288,15 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                         const files = e.target.files;
 
                         if (files?.[0]) {
-                          console.log(files[0]);
-
                           onChange(files);
                           setProfileFile(files[0]);
 
                           const reader = new FileReader();
                           reader.onloadend = () => {
-                            console.log(reader.result);
-
                             setImagePreview(reader.result as string);
                           };
                           reader.readAsDataURL(files[0]);
                         }
-                        console.log(files);
-
-                        console.log(imagePreview);
-                        console.log(profileFile);
                       }}
                     />
                   </div>
