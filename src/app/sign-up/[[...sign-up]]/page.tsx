@@ -22,6 +22,7 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 import Check from "~/assets/svg/Check.svg";
 import CheckColored from "~/assets/svg/CheckColored.svg";
+import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 
 export default function Page() {
   const router = useRouter();
@@ -93,29 +94,26 @@ export default function Page() {
       });
 
       if (signUpAttempt.status === SignUpFormStatus.complete) {
-        try {
-          await toast.promise(
-            (async () => {
-              await setActive({ session: signUpAttempt.createdSessionId });
-              const res = await addUserToDB();
+        // try {
+        await toast.promise(
+          (async () => {
+            await setActive({ session: signUpAttempt.createdSessionId });
+            const res = await addUserToDB();
 
-              if (res != undefined) router.push("/");
-              else throw new Error("Error creating user");
-            })(),
-            {
-              pending: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
-              success: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.SUCCESS}`,
-              error: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.ERROR}`,
-            },
-          );
-        } catch (error) {
-          console.error("Error during the signup process:", error);
-        }
-      } else {
-        console.error(JSON.stringify(signUpAttempt, null, 2));
+            if (res != undefined) router.push("/");
+            else throw new Error("Error creating user");
+          })(),
+          {
+            pending: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
+            success: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.SUCCESS}`,
+            error: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.ERROR}`,
+          },
+        );
       }
     } catch (err) {
-      console.error("Error:", JSON.stringify(err, null, 2));
+      if (isClerkAPIResponseError(err)) {
+        toast.error(err?.errors?.[0]?.message);
+      }
     } finally {
       setVerifying(false);
     }
@@ -139,15 +137,15 @@ export default function Page() {
           role: formData.role,
         },
       });
-
       // Send the user an email with the verification code
       await signUp.prepareEmailAddressVerification({
         strategy: "email_code",
       });
-
       setVerifyStarted(true);
     } catch (err) {
-      console.error(JSON.stringify(err, null, 2));
+      if (isClerkAPIResponseError(err)) {
+        toast.error(err?.errors?.[0]?.message);
+      }
     }
   };
 
