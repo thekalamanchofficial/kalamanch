@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { useContentFormDetails } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
 import {
@@ -23,9 +23,9 @@ import Image from "next/image";
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
   onPrev: () => void;
-  data: FormDataPartial | undefined;
-  profileFile: File | undefined;
-  setProfileFile: (file: File | undefined) => void;
+  data?: FormDataPartial;
+  profileFile?: File;
+  setProfileFile: (file?: File) => void;
   imagePreview: string | null;
   setImagePreview: (preview: string | null) => void;
 };
@@ -34,7 +34,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   onNext,
   onPrev,
   data,
-  profileFile,
   setProfileFile,
   imagePreview,
   setImagePreview,
@@ -231,7 +230,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
               <Controller
                 name="profile"
                 control={control}
-                render={({ field: { value, onChange }, fieldState }) => (
+                render={({ field: { onChange }, fieldState }) => (
                   <div className="flex flex-wrap items-center gap-3 sm:gap-5">
                     <div className="group">
                       {!imagePreview ? (
@@ -245,10 +244,12 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                         </span>
                       ) : (
                         <div className="size-24">
-                          <img
+                          <Image
                             className="h-[90px] w-[90px] rounded-full object-cover"
                             src={imagePreview}
                             alt="Profile Preview"
+                            width={90}
+                            height={90}
                           />
                         </div>
                       )}
@@ -267,7 +268,10 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                         <button
                           type="button"
                           className="inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-500 shadow-sm hover:bg-gray-50 focus:bg-gray-50 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                          onClick={() => onChange("")}
+                          onClick={() => {
+                            setProfileFile(undefined);
+                            setImagePreview(null);
+                          }}
                         >
                           {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.DELETE_BUTTON}
                         </button>

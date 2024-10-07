@@ -1,6 +1,6 @@
 "use client";
 
-import { useSignIn } from "@clerk/nextjs";
+import { useSignIn, useSignUp } from "@clerk/nextjs";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -11,15 +11,16 @@ import { type FormDataSignIn } from "~/app/sign-in/_types/types";
 import { SignInFormStages } from "~/app/sign-in/_config/config";
 import PenNibSVG from "~/assets/svg/PenNib.svg";
 import GoogleLogo from "~/assets/svg/GoogleLogo.svg";
-import { handleClerkError, handleError } from "~/app/_utils/handleError";
+import { handleError } from "~/app/_utils/handleError";
 
 const SignInPage = () => {
   const [signInState, setSignInState] = useState(SignInFormStages.WITH_GOOGLE);
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { isLoaded: isLoadedSignin, signIn, setActive } = useSignIn();
+  const { isLoaded: isLoadedSignup, signUp } = useSignUp();
 
   const router = useRouter();
 
-  const onSubmit = async (data: FormDataSignIn) => {
+  const handleLogin = async (data: FormDataSignIn) => {
     await login(data);
   };
 
@@ -52,21 +53,37 @@ const SignInPage = () => {
         {
           pending: `${STATIC_TEXTS.SIGNIN_FORM.MESSAGES.PENDING}...`,
           success: `${STATIC_TEXTS.SIGNIN_FORM.MESSAGES.SUCCESS}`,
-          error: `${STATIC_TEXTS.SIGNIN_FORM.MESSAGES.ERROR}`,
         },
       )
       .catch((error) => {
-        handleClerkError(error);
+        handleError(error);
       });
   };
 
-  const handleGoogleLogin = async () => {
-    if (!isLoaded) return;
-    await signIn.authenticateWithRedirect({
-      strategy: "oauth_google",
-      redirectUrl: "/",
-      redirectUrlComplete: "/",
-    });
+  const handleGoogleSignUp = async () => {
+    if (!isLoadedSignup) return;
+    try {
+      await signUp.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/",
+        redirectUrlComplete: "/",
+      });
+    } catch (signupError) {
+      handleError(signupError);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    if (!isLoadedSignin) return;
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/",
+        redirectUrlComplete: "/",
+      });
+    } catch (signinError) {
+      handleError(signinError);
+    }
   };
 
   return (
@@ -85,9 +102,10 @@ const SignInPage = () => {
                 {STATIC_TEXTS.APP_DESCRIPTION}
               </h1>
             </span>
+
             <button
               className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-primary px-2 py-2 text-white"
-              onClick={handleGoogleLogin}
+              onClick={handleGoogleSignUp}
             >
               <GoogleLogo />
 
@@ -131,6 +149,7 @@ const SignInPage = () => {
             <h1 className="text-xl font-medium text-font-primary">
               {STATIC_TEXTS.SIGNIN_FORM.LINKS_TEXT.HAVE_ACCOUNT}
             </h1>
+
             <button
               className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary"
               onClick={() => {
@@ -151,7 +170,7 @@ const SignInPage = () => {
           </div>
           <button
             className="mt-6 flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-primary px-2 py-2 text-white"
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleSignIn}
           >
             <GoogleLogo />
             <h1 className="text-xl">{STATIC_TEXTS.SIGNIN_GOOGLE}</h1>
@@ -162,7 +181,7 @@ const SignInPage = () => {
             <div className="h-1 w-[100px] border-t border-font-tertiary"></div>
           </span>
 
-          <SignInForm onSubmit={onSubmit} />
+          <SignInForm onSubmit={handleLogin} />
         </div>
       )}
     </div>

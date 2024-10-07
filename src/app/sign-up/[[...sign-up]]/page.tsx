@@ -22,7 +22,7 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 import Check from "~/assets/svg/Check.svg";
 import CheckColored from "~/assets/svg/CheckColored.svg";
-import { handleClerkError, handleError } from "~/app/_utils/handleError";
+import { handleError } from "~/app/_utils/handleError";
 
 export default function Page() {
   const router = useRouter();
@@ -80,7 +80,7 @@ export default function Page() {
       const user = await mutation.mutateAsync(data);
       return user;
     } catch (error) {
-      console.error("Error creating user:", error);
+      handleError(error);
     }
   };
 
@@ -94,27 +94,20 @@ export default function Page() {
       });
 
       if (signUpAttempt.status === SignUpFormStatus.complete) {
-        try {
-          await toast.promise(
-            (async () => {
-              await setActive({ session: signUpAttempt.createdSessionId });
-              const res = await addUserToDB();
-              if (res != undefined) router.push("/");
-            })(),
-            {
-              pending: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
-              success: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.SUCCESS}`,
-              error: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.ERROR}`,
-            },
-          );
-        } catch (error) {
-          handleClerkError(error);
-        }
-      } else {
-        handleError("Error verifying email address");
+        await toast.promise(
+          (async () => {
+            await setActive({ session: signUpAttempt.createdSessionId });
+            const res = await addUserToDB();
+            if (res != undefined) router.push("/");
+          })(),
+          {
+            pending: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
+            success: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.SUCCESS}`,
+          },
+        );
       }
     } catch (err) {
-      handleClerkError(err);
+      handleError(err);
     } finally {
       setVerifying(false);
     }
@@ -138,15 +131,13 @@ export default function Page() {
           role: formData.role,
         },
       });
-
       // Send the user an email with the verification code
       await signUp.prepareEmailAddressVerification({
         strategy: "email_code",
       });
-
       setVerifyStarted(true);
     } catch (err: unknown) {
-      handleClerkError(err);
+      handleError(err);
     }
   };
 
