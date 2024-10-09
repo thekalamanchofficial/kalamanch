@@ -19,6 +19,7 @@ import Image from "next/image";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import Image from "next/image";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;

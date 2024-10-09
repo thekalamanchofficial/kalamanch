@@ -19,13 +19,13 @@ const handleGeneralError = (error: unknown) => {
   toast.error(`Error: ${errorMessage}`);
 };
 
-// Combined error handler that first checks Clerk errors and then falls back to general errors
 const handleError = (error: unknown) => {
+  console.log("Error", error);
+
   if (isClerkAPIResponseError(error)) {
     handleClerkError(error.errors[0]);
   } else {
-    handleGeneralError(error); // Fallback for non-Clerk errors
+    handleGeneralError(error); // Fallback for non-Clerk errors } };
   }
 };
-
 export { handleClerkError, handleGeneralError, handleError };
