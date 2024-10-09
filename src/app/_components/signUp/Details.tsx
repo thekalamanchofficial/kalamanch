@@ -248,6 +248,8 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                             className="h-[90px] w-[90px] rounded-full object-cover"
                             src={imagePreview}
                             alt="Profile Preview"
+                            width={90}
+                            height={90}
                           />
                         </div>
                       )}
@@ -266,7 +268,10 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                         <button
                           type="button"
                           className="inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-500 shadow-sm hover:bg-gray-50 focus:bg-gray-50 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                          onClick={() => onChange("")}
+                          onClick={() => {
+                            setProfileFile(undefined);
+                            setImagePreview(null);
+                          }}
                         >
                           {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.DELETE_BUTTON}
                         </button>

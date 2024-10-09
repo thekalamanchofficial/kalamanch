@@ -131,7 +131,7 @@ export default function Page() {
           role: formData.role,
         },
       });
-      // Send the user an email with the verification code
+
       await signUp.prepareEmailAddressVerification({
         strategy: "email_code",
       });

@@ -11,10 +11,8 @@ const handleGeneralError = (error: unknown) => {
   let errorMessage = "An unexpected error occurred.";
 
   if (error instanceof Error) {
-    // Handle standard JavaScript Error
     errorMessage = error.message;
   } else if (typeof error === "string") {
-    // Handle string-based errors
     errorMessage = error;
   }
 
