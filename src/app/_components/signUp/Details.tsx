@@ -243,7 +243,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                         </span>
                       ) : (
                         <div className="size-24">
-                          <Image
+                          <img
                             className="h-[90px] w-[90px] rounded-full object-cover"
                             src={imagePreview}
                             alt="Profile Preview"

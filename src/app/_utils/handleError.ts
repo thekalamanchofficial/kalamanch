@@ -1,6 +1,5 @@
 import { toast } from "react-toastify";
 
-// Clerk-specific error types
 type subClerkError = {
   code: string;
   message: string;
@@ -17,7 +16,6 @@ type clerkErrorType = {
   errors: Array<subClerkError>;
 };
 
-// Type guard to check if the error is a Clerk error
 const isClerkError = (error: unknown): error is clerkErrorType => {
   return (
     typeof error === "object" &&
@@ -27,7 +25,6 @@ const isClerkError = (error: unknown): error is clerkErrorType => {
   );
 };
 
-// Handle Clerk-specific errors
 const handleClerkError = (error: unknown) => {
   if (isClerkError(error)) {
     const errorMessage =
