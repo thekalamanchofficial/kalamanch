@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import Image from "next/image";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
@@ -243,10 +244,12 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                         </span>
                       ) : (
                         <div className="size-24">
-                          <img
+                          <Image
                             className="h-[90px] w-[90px] rounded-full object-cover"
                             src={imagePreview}
                             alt="Profile Preview"
+                            width={90}
+                            height={90}
                           />
                         </div>
                       )}

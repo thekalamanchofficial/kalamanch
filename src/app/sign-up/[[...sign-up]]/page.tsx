@@ -22,11 +22,7 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 import Check from "~/assets/svg/Check.svg";
 import CheckColored from "~/assets/svg/CheckColored.svg";
-import {
-  handleClerkError,
-  handleError,
-  handleGeneralError,
-} from "~/app/_utils/handleError";
+import { handleError } from "~/app/_utils/handleError";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 
 export default function Page() {
@@ -85,7 +81,7 @@ export default function Page() {
       const user = await mutation.mutateAsync(data);
       return user;
     } catch (error) {
-      handleGeneralError(error);
+      handleError(error);
     }
   };
 
@@ -113,7 +109,7 @@ export default function Page() {
             },
           );
         } catch (error) {
-          handleClerkError(error);
+          handleError(error);
         }
       } else {
         handleError("Error verifying email address");
@@ -151,7 +147,7 @@ export default function Page() {
       });
       setVerifyStarted(true);
     } catch (err: unknown) {
-      handleClerkError(err);
+      handleError(err);
     }
   };
 

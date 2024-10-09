@@ -57,7 +57,7 @@ const SignInPage = () => {
         },
       )
       .catch((error) => {
-        handleClerkError(error);
+        handleError(error);
       });
   };
 
