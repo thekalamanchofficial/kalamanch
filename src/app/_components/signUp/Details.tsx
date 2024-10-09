@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { useContentFormDetails } from "~/app/sign-up/_hooks/useContentForm";
 import { Controller } from "react-hook-form";
 import {
@@ -18,14 +18,13 @@ import dayjs from "dayjs";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import Image from "next/image";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
   onPrev: () => void;
-  data: FormDataPartial | undefined;
-  profileFile: File | undefined;
-  setProfileFile: (file: File | undefined) => void;
+  data?: FormDataPartial;
+  profileFile?: File;
+  setProfileFile: (file?: File) => void;
   imagePreview: string | null;
   setImagePreview: (preview: string | null) => void;
 };
@@ -34,7 +33,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   onNext,
   onPrev,
   data,
-  profileFile,
   setProfileFile,
   imagePreview,
   setImagePreview,
@@ -231,7 +229,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
               <Controller
                 name="profile"
                 control={control}
-                render={({ field: { value, onChange }, fieldState }) => (
+                render={({ field: { onChange }, fieldState }) => (
                   <div className="flex flex-wrap items-center gap-3 sm:gap-5">
                     <div className="group">
                       {!imagePreview ? (
@@ -245,7 +243,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                         </span>
                       ) : (
                         <div className="size-24">
-                          <img
+                          <Image
                             className="h-[90px] w-[90px] rounded-full object-cover"
                             src={imagePreview}
                             alt="Profile Preview"

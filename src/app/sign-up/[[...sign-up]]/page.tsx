@@ -23,6 +23,7 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import Check from "~/assets/svg/Check.svg";
 import CheckColored from "~/assets/svg/CheckColored.svg";
 import { handleClerkError, handleError } from "~/app/_utils/handleError";
+import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 
 export default function Page() {
   const router = useRouter();
@@ -114,7 +115,9 @@ export default function Page() {
         handleError("Error verifying email address");
       }
     } catch (err) {
-      handleClerkError(err);
+      if (isClerkAPIResponseError(err)) {
+        toast.error(err?.errors?.[0]?.message);
+      }
     } finally {
       setVerifying(false);
     }
@@ -138,12 +141,10 @@ export default function Page() {
           role: formData.role,
         },
       });
-
       // Send the user an email with the verification code
       await signUp.prepareEmailAddressVerification({
         strategy: "email_code",
       });
-
       setVerifyStarted(true);
     } catch (err: unknown) {
       handleClerkError(err);
