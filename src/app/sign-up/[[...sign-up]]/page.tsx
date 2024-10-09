@@ -22,7 +22,7 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 import Check from "~/assets/svg/Check.svg";
 import CheckColored from "~/assets/svg/CheckColored.svg";
-import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
+import { handleError } from "~/app/_utils/handleError";
 
 export default function Page() {
   const router = useRouter();
@@ -80,7 +80,7 @@ export default function Page() {
       const user = await mutation.mutateAsync(data);
       return user;
     } catch (error) {
-      console.error("Error creating user:", error);
+      handleError(error);
     }
   };
 
@@ -94,26 +94,20 @@ export default function Page() {
       });
 
       if (signUpAttempt.status === SignUpFormStatus.complete) {
-        // try {
         await toast.promise(
           (async () => {
             await setActive({ session: signUpAttempt.createdSessionId });
             const res = await addUserToDB();
-
             if (res != undefined) router.push("/");
-            else throw new Error("Error creating user");
           })(),
           {
             pending: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
             success: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.SUCCESS}`,
-            error: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.ERROR}`,
           },
         );
       }
     } catch (err) {
-      if (isClerkAPIResponseError(err)) {
-        toast.error(err?.errors?.[0]?.message);
-      }
+      handleError(err);
     } finally {
       setVerifying(false);
     }
@@ -137,15 +131,12 @@ export default function Page() {
           role: formData.role,
         },
       });
-      // Send the user an email with the verification code
       await signUp.prepareEmailAddressVerification({
         strategy: "email_code",
       });
       setVerifyStarted(true);
-    } catch (err) {
-      if (isClerkAPIResponseError(err)) {
-        toast.error(err?.errors?.[0]?.message);
-      }
+    } catch (err: unknown) {
+      handleError(err);
     }
   };
 
