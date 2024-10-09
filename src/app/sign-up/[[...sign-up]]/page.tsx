@@ -22,7 +22,11 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 import Check from "~/assets/svg/Check.svg";
 import CheckColored from "~/assets/svg/CheckColored.svg";
-import { handleClerkError, handleError } from "~/app/_utils/handleError";
+import {
+  handleClerkError,
+  handleError,
+  handleGeneralError,
+} from "~/app/_utils/handleError";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 
 export default function Page() {
@@ -81,7 +85,7 @@ export default function Page() {
       const user = await mutation.mutateAsync(data);
       return user;
     } catch (error) {
-      console.error("Error creating user:", error);
+      handleGeneralError(error);
     }
   };
 

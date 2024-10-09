@@ -2,6 +2,7 @@ import { publicProcedure, router } from "../trpc";
 import prisma from "~/server/db";
 
 import * as yup from "yup";
+import { handleClerkError, handleGeneralError } from "~/app/_utils/handleError";
 
 const userSchema = yup.object({
   email: yup.string().email().required(),
@@ -18,7 +19,7 @@ export const userRouter = router({
       const users = await prisma.user.findMany();
       return users;
     } catch (error) {
-      console.error(error);
+      handleGeneralError(error);
       return [];
     }
   }),
