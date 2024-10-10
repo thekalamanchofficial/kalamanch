@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { type ClerkAPIError } from "@clerk/types";
+import { TRPCClientError } from "@trpc/client";
 
 const handleClerkError = (error: ClerkAPIError | undefined) => {
   const errorMessage = error?.longMessage ?? "Unknown Clerk error occurred.";
@@ -16,16 +17,29 @@ const handleGeneralError = (error: unknown) => {
     errorMessage = error;
   }
 
-  toast.error(`Error: ${errorMessage}`);
+  toast.error(errorMessage);
+};
+
+const handleTRPCError = (error: unknown) => {
+  if (
+    error instanceof TRPCClientError &&
+    error.message.includes(
+      "Unique constraint failed on the constraint: `User_email_key`",
+    )
+  ) {
+    toast.error(
+      "This email is already registered. Please use a different email or login.",
+    );
+  }
 };
 
 const handleError = (error: unknown) => {
-  console.log("Error", error);
-
   if (isClerkAPIResponseError(error)) {
     handleClerkError(error.errors[0]);
+  } else if (error instanceof TRPCClientError) {
+    handleTRPCError(error);
   } else {
-    handleGeneralError(error); // Fallback for non-Clerk errors } };
+    handleGeneralError(error);
   }
 };
 export { handleClerkError, handleGeneralError, handleError };

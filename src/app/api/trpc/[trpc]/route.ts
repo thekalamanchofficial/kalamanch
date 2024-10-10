@@ -3,13 +3,6 @@ import { type NextRequest } from "next/server";
 
 import { env } from "~/env";
 import { appRouter } from "~/server/index";
-// import { createTRPCContext } from "~/server/trpc";
-
-// const createContext = async (req: NextRequest) => {
-//   return createTRPCContext({
-//     headers: req.headers,
-//   });
-// };
 
 const handler = (req: NextRequest) =>
   fetchRequestHandler({
