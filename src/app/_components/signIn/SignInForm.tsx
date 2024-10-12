@@ -1,5 +1,5 @@
 import React, { type FormEvent } from "react";
-import { useContentFormSignIn } from "~/app/sign-in/_hooks/useContentForm";
+import { useSignInForm } from "~/app/sign-in/_hooks/useSignInForm";
 import { Controller } from "react-hook-form";
 import Password from "~/assets/svg/Password.svg";
 import Email from "~/assets/svg/Email.svg";
@@ -11,7 +11,7 @@ type SignInFormProps = {
 };
 
 const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
-  const { handleSubmit, trigger, control } = useContentFormSignIn();
+  const { handleSubmit, trigger, control } = useSignInForm();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();

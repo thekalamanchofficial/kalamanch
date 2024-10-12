@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useContentFormDetails } from "~/app/sign-up/_hooks/useContentForm";
+import { useSignUpDetailsForm } from "~/app/sign-up/_hooks/useSignUpForm";
 import { Controller } from "react-hook-form";
 import {
   type FormDataPartial,
@@ -38,7 +38,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   imagePreview,
   setImagePreview,
 }) => {
-  const { handleSubmit, trigger, control } = useContentFormDetails();
+  const { handleSubmit, trigger, control } = useSignUpDetailsForm();
 
   const handleNext = async (data: FormDataDetails) => {
     const isValid = await trigger();

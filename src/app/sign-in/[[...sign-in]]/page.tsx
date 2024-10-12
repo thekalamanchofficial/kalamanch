@@ -1,89 +1,22 @@
 "use client";
 
-import { useSignIn, useSignUp } from "@clerk/nextjs";
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import SignInForm from "~/app/_components/signIn/SignInForm";
-import { type FormDataSignIn } from "~/app/sign-in/_types/types";
 import { SignInFormStages } from "~/app/sign-in/_config/config";
 import PenNibSVG from "~/assets/svg/PenNib.svg";
 import GoogleLogo from "~/assets/svg/GoogleLogo.svg";
-import { handleError } from "~/app/_utils/handleError";
+import { useSignInPage } from "../_hooks/useSignInPage";
+
 const SignInPage = () => {
-  const [signInState, setSignInState] = useState(SignInFormStages.WITH_GOOGLE);
-  const { isLoaded: isLoadedSignin, signIn, setActive } = useSignIn();
-  const { isLoaded: isLoadedSignup, signUp } = useSignUp();
-
-  const router = useRouter();
-
-  const handleLogin = async (data: FormDataSignIn) => {
-    await login(data);
-  };
-
-  const login = async (data: FormDataSignIn) => {
-    const email = data.email;
-    const password = data.password;
-
-    toast
-      .promise(
-        (async () => {
-          if (!signIn) {
-            handleError(STATIC_TEXTS.SIGNIN_FORM.MESSAGES.SIGNIN_NOT_LOADED);
-            throw new Error(
-              STATIC_TEXTS.SIGNIN_FORM.MESSAGES.SIGNIN_NOT_LOADED,
-            );
-          }
-
-          const signInAttempt = await signIn.create({
-            identifier: email,
-            password,
-          });
-
-          if (signInAttempt.status === "complete") {
-            await setActive({ session: signInAttempt.createdSessionId });
-            router.push("/");
-          } else {
-            handleError(STATIC_TEXTS.SIGNIN_FORM.MESSAGES.ERROR_LOGIN);
-          }
-        })(),
-        {
-          pending: `${STATIC_TEXTS.SIGNIN_FORM.MESSAGES.PENDING}...`,
-          success: `${STATIC_TEXTS.SIGNIN_FORM.MESSAGES.SUCCESS}`,
-        },
-      )
-      .catch((error) => {
-        handleError(error);
-      });
-  };
-
-  const handleGoogleSignUp = async () => {
-    if (!isLoadedSignup) return;
-    try {
-      await signUp.authenticateWithRedirect({
-        strategy: "oauth_google",
-        redirectUrl: "/",
-        redirectUrlComplete: "/",
-      });
-    } catch (signupError) {
-      handleError(signupError);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    if (!isLoadedSignin) return;
-    try {
-      await signIn.authenticateWithRedirect({
-        strategy: "oauth_google",
-        redirectUrl: "/",
-        redirectUrlComplete: "/",
-      });
-    } catch (signinError) {
-      handleError(signinError);
-    }
-  };
+  const {
+    signInState,
+    setSignInState,
+    handleLogin,
+    handleGoogleSignUp,
+    handleGoogleSignIn,
+    handleCreateAccount,
+  } = useSignInPage();
 
   return (
     <div className="flex h-full w-full items-center justify-center bg-brand-secondary">
@@ -112,9 +45,7 @@ const SignInPage = () => {
             </button>
             <button
               className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary"
-              onClick={() => {
-                router.replace("/sign-up");
-              }}
+              onClick={handleCreateAccount}
             >
               <h1 className="text-xl font-semibold">
                 {STATIC_TEXTS.CREATE_ACCOUNT}{" "}

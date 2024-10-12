@@ -1,151 +1,36 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSignUp } from "@clerk/nextjs";
-import { trpc } from "~/server/client";
-import { toast } from "react-toastify";
+import React from "react";
 
 import Details from "~/app/_components/signUp/Details";
 import Role from "~/app/_components/signUp/Role";
 import Interests from "~/app/_components/signUp/Interests";
 
-import {
-  type FormData,
-  type FormDataPartial,
-} from "~/app/sign-up/_types/types";
-
 import { SignUpFormStages } from "~/app/sign-up/_config/config";
 import OTPVerification from "~/app/_components/signUp/OtpForm";
 
-import { SignUpFormStatus } from "~/app/sign-up/_config/config";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 import Check from "~/assets/svg/Check.svg";
 import CheckColored from "~/assets/svg/CheckColored.svg";
-import { handleError } from "~/app/_utils/handleError";
+import { useSignUpPage } from "../_hooks/useSignUpPage";
 
 export default function Page() {
-  const router = useRouter();
-  const [otp, setOtp] = useState("");
-
-  const { isLoaded, signUp, setActive } = useSignUp();
-  const [verifyStarted, setVerifyStarted] = useState(false);
-  const [verifying, setVerifying] = useState(false);
-  const [formData, setFormData] = useState<FormData>({} as FormData);
-
-  const [profileFile, setProfileFile] = useState<File | undefined>(undefined);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-  const [formStep, setFormStep] = useState<SignUpFormStages>(
-    SignUpFormStages.DETAILS,
-  );
-  const [formStepNumber, setFormStepNumber] = useState<number>(0);
-
-  const mutation = trpc.user.addUser.useMutation();
-
-  const handleNext = async (data: FormDataPartial): Promise<void> => {
-    setFormStepNumber((prev) => prev + 1);
-    setFormData((prev) => ({ ...prev, ...data }));
-
-    if (formStep === SignUpFormStages.DETAILS) {
-      setFormStep(SignUpFormStages.INTEREST);
-    } else if (formStep === SignUpFormStages.INTEREST) {
-      setFormStep(SignUpFormStages.ROLE);
-    } else if (formStep === SignUpFormStages.ROLE) {
-      await finalSubmit();
-    }
-  };
-  const handlePrev = async () => {
-    setFormStepNumber((prev) => prev - 1);
-    if (formStep === SignUpFormStages.DETAILS) {
-      router.push("/");
-    } else if (formStep === SignUpFormStages.INTEREST) {
-      setFormStep(SignUpFormStages.DETAILS);
-    } else if (formStep === SignUpFormStages.ROLE) {
-      setFormStep(SignUpFormStages.INTEREST);
-    }
-  };
-
-  const addUserToDB = async () => {
-    const data = {
-      email: formData.email,
-      name: formData.name,
-      birthdate: formData.birthdate,
-      profile: formData.profile,
-      interests: formData.interests,
-      role: formData.role,
-    };
-
-    try {
-      const user = await mutation.mutateAsync(data);
-      return user;
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded) return;
-    try {
-      setVerifying(true);
-      const signUpAttempt = await signUp.attemptEmailAddressVerification({
-        code: otp,
-      });
-
-      if (signUpAttempt.status === SignUpFormStatus.complete) {
-        const toastId = toast.loading(
-          `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
-        );
-
-        setActive({ session: signUpAttempt.createdSessionId })
-          .then(async () => {
-            const res = await addUserToDB();
-            if (res != undefined) {
-              toast.success(`${STATIC_TEXTS.DETAILS_FORM.MESSAGES.SUCCESS}`);
-              router.push("/");
-            }
-          })
-          .catch((err) => {
-            handleError(err);
-          })
-          .finally(() => {
-            toast.dismiss(toastId);
-            setVerifying(false);
-          });
-      }
-    } catch (err) {
-      handleError(err);
-      setVerifying(false);
-    }
-  };
-
-  const finalSubmit = async () => {
-    if (!isLoaded) return;
-
-    const emailAddress = formData.email;
-    const password = formData.password;
-
-    try {
-      await signUp.create({
-        emailAddress,
-        password,
-        unsafeMetadata: {
-          name: formData.name,
-          birthdate: formData.birthdate,
-          profile: formData.profile,
-          interests: formData.interests,
-          role: formData.role,
-        },
-      });
-      await signUp.prepareEmailAddressVerification({
-        strategy: "email_code",
-      });
-      setVerifyStarted(true);
-    } catch (err: unknown) {
-      handleError(err);
-    }
-  };
+  const {
+    handleVerify,
+    formData,
+    profileFile,
+    setProfileFile,
+    imagePreview,
+    setImagePreview,
+    formStep,
+    formStepNumber,
+    handleNext,
+    handlePrev,
+    otp,
+    setOtp,
+    verifyStarted,
+    verifying,
+  } = useSignUpPage();
 
   if (verifyStarted) {
     return (

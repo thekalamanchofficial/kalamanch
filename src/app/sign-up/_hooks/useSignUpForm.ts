@@ -12,14 +12,14 @@ import {
   type FormDataRole,
 } from "../_types/types";
 
-export const useContentFormDetails = (): UseFormReturn<FormDataDetails> =>
+export const useSignUpDetailsForm = (): UseFormReturn<FormDataDetails> =>
   useForm({ mode: "onChange", resolver: yupResolver(signUpFormSchemaDetails) });
 
-export const useContentFormInterest = (): UseFormReturn<FormDataInterest> =>
+export const useSignUpInterestForm = (): UseFormReturn<FormDataInterest> =>
   useForm({
     mode: "onChange",
     resolver: yupResolver(signUpFormSchemaInterest),
   });
 
-export const useContentFormRole = (): UseFormReturn<FormDataRole> =>
+export const useSignUpRoleForm = (): UseFormReturn<FormDataRole> =>
   useForm({ mode: "onChange", resolver: yupResolver(signUpFormSchemaRole) });
