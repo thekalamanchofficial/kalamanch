@@ -12,7 +12,6 @@ import { SignInFormStages } from "~/app/sign-in/_config/config";
 import PenNibSVG from "~/assets/svg/PenNib.svg";
 import GoogleLogo from "~/assets/svg/GoogleLogo.svg";
 import { handleError } from "~/app/_utils/handleError";
-
 const SignInPage = () => {
   const [signInState, setSignInState] = useState(SignInFormStages.WITH_GOOGLE);
   const { isLoaded: isLoadedSignin, signIn, setActive } = useSignIn();

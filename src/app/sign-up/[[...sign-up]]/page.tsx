@@ -94,21 +94,28 @@ export default function Page() {
       });
 
       if (signUpAttempt.status === SignUpFormStatus.complete) {
-        await toast.promise(
-          (async () => {
-            await setActive({ session: signUpAttempt.createdSessionId });
-            const res = await addUserToDB();
-            if (res != undefined) router.push("/");
-          })(),
-          {
-            pending: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
-            success: `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.SUCCESS}`,
-          },
+        const toastId = toast.loading(
+          `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
         );
+
+        setActive({ session: signUpAttempt.createdSessionId })
+          .then(async () => {
+            const res = await addUserToDB();
+            if (res != undefined) {
+              toast.success(`${STATIC_TEXTS.DETAILS_FORM.MESSAGES.SUCCESS}`);
+              router.push("/");
+            }
+          })
+          .catch((err) => {
+            handleError(err);
+          })
+          .finally(() => {
+            toast.dismiss(toastId);
+            setVerifying(false);
+          });
       }
     } catch (err) {
       handleError(err);
-    } finally {
       setVerifying(false);
     }
   };
