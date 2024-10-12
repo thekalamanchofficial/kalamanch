@@ -5,6 +5,8 @@ import "react-quill/dist/quill.snow.css";
 import { toolbarConfig } from "./config/configs";
 import { useContentForm } from "./hooks/useContentForm";
 import { Controller } from "react-hook-form";
+import { FormattedMessage } from "react-intl";
+import { I18nKeys } from "~/app/_i18n/keys";
 
 export function WritingPad() {
   const { handleSubmit, reset, control } = useContentForm();
@@ -37,7 +39,9 @@ export function WritingPad() {
             />
           )}
         />
-        <button type="submit">Submit</button>
+        <button type="submit">
+          <FormattedMessage id={I18nKeys.Submit} />
+        </button>
         <button type="button" onClick={() => reset()}>
           Draft
         </button>
