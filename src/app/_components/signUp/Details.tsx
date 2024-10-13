@@ -19,6 +19,8 @@ import Image from "next/image";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { FormattedMessage } from "react-intl";
+import { I18nKeys } from "~/app/_i18n/keys";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
@@ -316,7 +318,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
               className="w-1/3 rounded-sm bg-brand-primary px-6 py-2 text-lg text-white"
               onClick={onPrev}
             >
-              {STATIC_TEXTS.NAVIGATION.BACK}
+              <FormattedMessage id={I18nKeys.Back} />
             </button>
             <button
               type="submit"
