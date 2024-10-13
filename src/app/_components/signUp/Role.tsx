@@ -1,5 +1,5 @@
 import React from "react";
-import { useContentFormRole } from "~/app/sign-up/_hooks/useContentForm";
+import { useSignUpRoleForm } from "~/app/sign-up/_hooks/useSignUpForm";
 import { Controller } from "react-hook-form";
 import {
   type FormDataPartial,
@@ -15,7 +15,7 @@ type RoleFormProps = {
 };
 
 const Interests: React.FC<RoleFormProps> = ({ onNext, onPrev }) => {
-  const { handleSubmit, trigger, control } = useContentFormRole();
+  const { handleSubmit, trigger, control } = useSignUpRoleForm();
 
   const handleNext = async (data: FormDataRole) => {
     const isValid = await trigger();

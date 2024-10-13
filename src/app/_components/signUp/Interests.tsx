@@ -1,5 +1,5 @@
 import React from "react";
-import { useContentFormInterest } from "~/app/sign-up/_hooks/useContentForm";
+import { useSignUpInterestForm } from "~/app/sign-up/_hooks/useSignUpForm";
 import { Controller } from "react-hook-form";
 import {
   type FormDataPartial,
@@ -19,7 +19,7 @@ const Interests: React.FC<InterestsFormProps> = ({
   onPrev,
   data: interestData,
 }) => {
-  const { handleSubmit, trigger, control } = useContentFormInterest();
+  const { handleSubmit, trigger, control } = useSignUpInterestForm();
 
   const handleNext = async (data: FormDataInterest) => {
     const isValid = await trigger();
