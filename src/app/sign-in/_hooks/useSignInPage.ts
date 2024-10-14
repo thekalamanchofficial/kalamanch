@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { type FormDataSignIn } from "../_types/types";
 import { handleError } from "~/app/_utils/handleError";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
+import { useSignIn } from "@clerk/nextjs";
 import { SignInFormStages } from "../_config/config";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -13,15 +13,11 @@ type UseSignInPageReturn = {
   signInState: SignInFormStages;
   setSignInState: React.Dispatch<React.SetStateAction<SignInFormStages>>;
   handleLogin: (data: FormDataSignIn) => Promise<void>;
-  handleGoogleSignUp: () => Promise<void>;
-  handleGoogleSignIn: () => Promise<void>;
-  handleCreateAccount: () => Promise<void>;
 };
 
 export const useSignInPage: UseSignInPage = () => {
   const [signInState, setSignInState] = useState(SignInFormStages.WITH_GOOGLE);
-  const { isLoaded: isLoadedSignin, signIn, setActive } = useSignIn();
-  const { isLoaded: isLoadedSignup, signUp } = useSignUp();
+  const { signIn, setActive } = useSignIn();
 
   const router = useRouter();
 
@@ -64,42 +60,9 @@ export const useSignInPage: UseSignInPage = () => {
       });
   };
 
-  const handleGoogleSignUp = async () => {
-    if (!isLoadedSignup) return;
-    try {
-      await signUp.authenticateWithRedirect({
-        strategy: "oauth_google",
-        redirectUrl: "/",
-        redirectUrlComplete: "/",
-      });
-    } catch (signupError) {
-      handleError(signupError);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    if (!isLoadedSignin) return;
-    try {
-      await signIn.authenticateWithRedirect({
-        strategy: "oauth_google",
-        redirectUrl: "/",
-        redirectUrlComplete: "/",
-      });
-    } catch (signinError) {
-      handleError(signinError);
-    }
-  };
-
-  const handleCreateAccount = async () => {
-    router.replace("/sign-up");
-  };
-
   return {
     signInState,
     setSignInState,
     handleLogin,
-    handleGoogleSignUp,
-    handleGoogleSignIn,
-    handleCreateAccount,
   };
 };
