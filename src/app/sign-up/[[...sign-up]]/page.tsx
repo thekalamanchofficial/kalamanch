@@ -5,7 +5,7 @@ import Details from "~/app/_components/signUp/Details";
 import Role from "~/app/_components/signUp/Role";
 import Interests from "~/app/_components/signUp/Interests";
 
-import { SignUpFormStages } from "~/app/sign-up/_config/config";
+import { SignUpFormStages, STEPS } from "~/app/sign-up/_config/config";
 import OTPVerification from "~/app/_components/signUp/OtpForm";
 
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
@@ -13,6 +13,7 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import Check from "~/assets/svg/Check.svg";
 import CheckColored from "~/assets/svg/CheckColored.svg";
 import { useSignUpPage } from "../_hooks/useSignUpPage";
+import { Step, StepLabel, Stepper } from "@mui/material";
 
 export default function Page() {
   const {
@@ -44,14 +45,14 @@ export default function Page() {
   }
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center bg-brand-secondary py-3">
+    <div className="flex w-full flex-col items-center justify-center bg-brand-secondary py-3">
       <h1 className="mb-4 mt-4 text-4xl font-semibold text-font-primary">
         {STATIC_TEXTS.FORM_HEADING}
       </h1>
-      <div className="flex aspect-square h-auto max-h-[950px] w-full max-w-3xl flex-col items-center gap-y-12 rounded-lg bg-white px-6 py-4 md:aspect-auto">
-        <div className="stepper flex w-full items-center justify-center gap-1">
-          <div className="w-full px-24 py-4">
-            <div className="relative flex w-full items-center justify-between">
+      <div className="flex max-h-[950px] w-full max-w-3xl flex-col items-center gap-y-12 rounded-lg bg-white px-6 py-4 md:aspect-auto">
+        <div className="stepper flex h-full w-full items-center justify-center gap-1">
+          <div className="h-full w-full px-24 py-4">
+            {/* <div className="relative flex h-full w-full items-center justify-between">
               <div
                 className={`absolute left-0 top-2/4 h-0.5 w-1/2 -translate-y-2/4 transition-all duration-500 ${formStep == SignUpFormStages.INTEREST || formStep == SignUpFormStages.ROLE ? "bg-brand-primary" : "bg-gray-300"}`}
               ></div>
@@ -78,7 +79,14 @@ export default function Page() {
                   </div>
                 );
               })}
-            </div>
+            </div> */}
+            <Stepper>
+              {STEPS.map((step, index) => (
+                <Step key={index}>
+                  <StepLabel>{step.label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
           </div>
         </div>
         <div className="flex w-full flex-col items-center justify-start gap-3">

@@ -22,7 +22,7 @@ export const STATIC_TEXTS = {
   SIGNIN: "Sign in",
   SIGNUP: "Sign up",
   SIGNIN_GOOGLE: "Sign in with Google",
-  SIGNUP_GOOGLE: "Sign up with Google",
+  SIGNUP_GOOGLE: "Continue with Google",
   CREATE_ACCOUNT: "Create my account",
   AND: "and",
   DISCLAIMER: "  By logging in or creating an account, you agree to Kalamanch",

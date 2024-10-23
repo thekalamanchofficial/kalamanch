@@ -3,19 +3,42 @@ import * as Clerk from "@clerk/elements/common";
 import * as SignIn from "@clerk/elements/sign-in";
 import { useSignInPage } from "../_hooks/useSignInPage";
 import { SignInFormStages } from "../_config/config";
-import PenNibSVG from "~/assets/svg/PenNib.svg";
+import OwlSVG from "~/assets/svg/owl.svg";
 import GoogleLogo from "~/assets/svg/GoogleLogo.svg";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import Link from "next/link";
 import SignInForm from "~/app/_components/signIn/SignInForm";
 import { Icons } from "react-toastify";
+import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
 
 const SignInPage = () => {
   const { signInState, setSignInState, handleLogin } = useSignInPage();
   return (
-    <div className="flex h-full w-full items-center justify-center bg-brand-secondary">
+    <Grid
+      sx={{
+        height: "100vh",
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "secondary.main",
+        px: 6,
+        py: 14,
+      }}
+      container
+      spacing={2}
+    >
       {signInState === SignInFormStages.WITH_GOOGLE ? (
-        <div className="flex aspect-square h-auto max-h-[642px] w-full max-w-3xl flex-col items-center gap-y-16 rounded-lg bg-white px-6 py-14 md:aspect-auto">
+        <Grid
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            maxWidth: "824px",
+            backgroundColor: "common.white",
+            borderRadius: 3,
+            py: 5,
+            px: 26,
+          }}
+        >
           <SignIn.Root>
             <Clerk.Loading>
               {(isGlobalLoading) =>
@@ -24,59 +47,81 @@ const SignInPage = () => {
                 ) : (
                   <SignIn.Step
                     name="start"
-                    className="flex w-full flex-col items-center justify-center gap-4"
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "60px",
+                    }}
                   >
-                    <Clerk.Connection
-                      name="google"
-                      disabled={isGlobalLoading}
-                      className="flex w-full flex-col items-center justify-center gap-4"
+                    <Box display="flex" alignItems="center">
+                      <OwlSVG />
+                      <Typography
+                        variant="h4"
+                        fontWeight="bold"
+                        color="primary"
+                      >
+                        {STATIC_TEXTS.APP_TITLE}
+                      </Typography>
+                    </Box>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      flexDirection="column"
+                      width="100%"
                     >
-                      <Clerk.Loading scope="provider:google">
-                        {(isLoading) =>
-                          isLoading ? (
-                            <Icons.spinner />
-                          ) : (
-                            <>
-                              <div className="stepper flex w-full items-center justify-center gap-2">
-                                <PenNibSVG />
-                                <h1 className="text-3xl font-semibold text-brand-primary">
-                                  {STATIC_TEXTS.APP_TITLE}
-                                </h1>
-                              </div>
-                              <div className="flex w-full flex-col items-center justify-start gap-4">
-                                <span>
-                                  <h1 className="px-2 text-2xl font-medium text-font-primary">
-                                    {STATIC_TEXTS.APP_DESCRIPTION}
-                                  </h1>
-                                </span>
-                              </div>
-                              <Link
-                                className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-primary px-2 py-2 text-white"
-                                href="#"
+                      <Typography variant="h5" mb={4}>
+                        {STATIC_TEXTS.APP_DESCRIPTION}
+                      </Typography>
+                      <Clerk.Connection
+                        name="google"
+                        disabled={isGlobalLoading}
+                        style={{ padding: "0px", border: "0px", width: "100%" }}
+                      >
+                        <Clerk.Loading scope="provider:google">
+                          {(isLoading) =>
+                            isLoading ? (
+                              <Icons.spinner />
+                            ) : (
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<GoogleLogo />}
+                                sx={{ width: "100%", maxWidth: "400px" }}
                               >
-                                <GoogleLogo />
-
-                                <h1 className="text-xl">
+                                <Typography variant="h6">
                                   {STATIC_TEXTS.SIGNUP_GOOGLE}
-                                </h1>
-                              </Link>
-                            </>
-                          )
-                        }
-                      </Clerk.Loading>
-                    </Clerk.Connection>
-                    <Link
-                      href="/sign-up"
-                      className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary"
-                    >
-                      <h1 className="text-xl font-semibold">
-                        {STATIC_TEXTS.CREATE_ACCOUNT}
-                      </h1>
-                    </Link>
-                    <div className="w-1/2">
-                      <p className="w-full text-center text-sm text-[#666476]">
-                        {STATIC_TEXTS.DISCLAIMER}&nbsp;
-                        {
+                                </Typography>
+                              </Button>
+                            )
+                          }
+                        </Clerk.Loading>
+                      </Clerk.Connection>
+                      <Link
+                        href="/sign-up"
+                        color="secondary"
+                        style={{
+                          width: "100%",
+                          maxWidth: "400px",
+                          marginTop: "16px",
+                          textAlign: "center",
+                          textDecoration: "none",
+                          backgroundColor: "#F5F7FE",
+                          borderRadius: "4px",
+                          height: "56px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography variant="h6" color="primary">
+                          {STATIC_TEXTS.CREATE_ACCOUNT}
+                        </Typography>
+                      </Link>
+                      <Box mt={4} textAlign="center">
+                        <Typography variant="subtitle1" color="textSecondary">
+                          {STATIC_TEXTS.DISCLAIMER}&nbsp;
                           <Link
                             href="/terms"
                             className="border-b border-b-brand-primary text-brand-primary"
@@ -86,41 +131,45 @@ const SignInPage = () => {
                                 .TERMS_OF_SERVICE
                             }
                           </Link>
-                        }
-                        &nbsp;{STATIC_TEXTS.AND}&nbsp;
-                        {
-                          <Link
-                            href="/terms"
-                            className="border-b border-b-brand-primary text-brand-primary"
-                          >
-                            {STATIC_TEXTS.SIGNIN_FORM.LINKS_TEXT.PRIVACY_POLICY}
-                          </Link>
-                        }
-                        .
-                      </p>
-                    </div>
-                    <div className="mt-10 flex w-full flex-col items-center justify-start gap-3">
-                      <h1 className="text-xl font-medium text-font-primary">
+                          &nbsp;{STATIC_TEXTS.AND}&nbsp;
+                          {
+                            <Link
+                              href="/terms"
+                              className="border-b border-b-brand-primary text-brand-primary"
+                            >
+                              {
+                                STATIC_TEXTS.SIGNIN_FORM.LINKS_TEXT
+                                  .PRIVACY_POLICY
+                              }
+                            </Link>
+                          }
+                          .
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box width="100%" textAlign="center">
+                      <Typography variant="h6" mb={1}>
                         {STATIC_TEXTS.SIGNIN_FORM.LINKS_TEXT.HAVE_ACCOUNT}
-                      </h1>
-
-                      <button
-                        className="flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-secondary px-2 py-2 text-brand-primary"
+                      </Typography>
+                      <Button
                         onClick={() => {
                           setSignInState(SignInFormStages.WITH_EMAIL);
                         }}
+                        variant="contained"
+                        color="secondary"
+                        fullWidth
                       >
-                        <h1 className="text-xl font-semibold">
-                          {STATIC_TEXTS.SIGNIN}{" "}
-                        </h1>
-                      </button>
-                    </div>
+                        <Typography variant="h6" color="primary">
+                          {STATIC_TEXTS.SIGNIN}
+                        </Typography>
+                      </Button>
+                    </Box>
                   </SignIn.Step>
                 )
               }
             </Clerk.Loading>
           </SignIn.Root>
-        </div>
+        </Grid>
       ) : null}
       {signInState === SignInFormStages.WITH_EMAIL ? (
         <div className="flex aspect-square h-auto max-h-[642px] w-full max-w-3xl flex-col items-center gap-y-2 rounded-lg bg-white px-6 py-14 md:aspect-auto">
@@ -130,7 +179,7 @@ const SignInPage = () => {
               className="flex w-full flex-col items-center justify-center gap-4"
             >
               <div className="stepper flex w-full items-center justify-center gap-2">
-                <PenNibSVG />
+                <OwlSVG />
                 <h1 className="text-3xl font-semibold text-brand-primary">
                   {STATIC_TEXTS.APP_TITLE}
                 </h1>
@@ -170,7 +219,7 @@ const SignInPage = () => {
           <SignInForm onSubmit={handleLogin} />
         </div>
       ) : null}
-    </div>
+    </Grid>
   );
 };
 

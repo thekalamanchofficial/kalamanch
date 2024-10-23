@@ -34,3 +34,15 @@ export const ROLES = {
   B: "Writer",
   C: "Seller",
 };
+
+export const STEPS = [
+  {
+    label: "Create Profile",
+  },
+  {
+    title: "Add Interests",
+  },
+  {
+    title: "Ready to go",
+  },
+];
