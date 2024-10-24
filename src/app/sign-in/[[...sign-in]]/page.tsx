@@ -9,7 +9,7 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import Link from "next/link";
 import SignInForm from "~/app/_components/signIn/SignInForm";
 import { Icons } from "react-toastify";
-import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid2 as Grid, Typography } from "@mui/material";
 
 const SignInPage = () => {
   const { signInState, setSignInState, handleLogin } = useSignInPage();
@@ -172,52 +172,76 @@ const SignInPage = () => {
         </Grid>
       ) : null}
       {signInState === SignInFormStages.WITH_EMAIL ? (
-        <div className="flex aspect-square h-auto max-h-[642px] w-full max-w-3xl flex-col items-center gap-y-2 rounded-lg bg-white px-6 py-14 md:aspect-auto">
+        <Grid
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            maxWidth: "824px",
+            backgroundColor: "common.white",
+            borderRadius: 3,
+            py: 5,
+            px: 26,
+            flexDirection: "column",
+            width: "100%",
+          }}
+        >
           <SignIn.Root>
             <SignIn.Step
               name="start"
-              className="flex w-full flex-col items-center justify-center gap-4"
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+              }}
             >
-              <div className="stepper flex w-full items-center justify-center gap-2">
+              <Box display="flex" alignItems="center">
                 <OwlSVG />
-                <h1 className="text-3xl font-semibold text-brand-primary">
+                <Typography variant="h4" fontWeight="bold" color="primary">
                   {STATIC_TEXTS.APP_TITLE}
-                </h1>
-              </div>
-              <Clerk.GlobalError className="block text-sm text-rose-400" />
+                </Typography>
+              </Box>
+              <Clerk.GlobalError style={{ display: "block", color: "red" }} />
               <Clerk.Connection
                 name="google"
-                className="flex w-full flex-col items-center justify-center gap-4"
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: 0,
+                  border: 0,
+                  margin: "32px 0",
+                }}
               >
                 <Clerk.Loading scope="provider:google">
                   {(isLoading) =>
                     isLoading ? (
                       <Icons.spinner />
                     ) : (
-                      <>
-                        <Link
-                          className="mt-6 flex w-1/2 items-center justify-center gap-4 rounded-md bg-brand-primary px-2 py-2 text-white"
-                          href="#"
-                        >
-                          <GoogleLogo />
-                          <h1 className="text-xl">
-                            {STATIC_TEXTS.SIGNIN_GOOGLE}
-                          </h1>
-                        </Link>
-                      </>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<GoogleLogo />}
+                        fullWidth
+                      >
+                        <Typography variant="h6">
+                          {STATIC_TEXTS.SIGNIN_GOOGLE}
+                        </Typography>
+                      </Button>
                     )
                   }
                 </Clerk.Loading>
               </Clerk.Connection>
-              <span className="my-4 flex w-full items-center justify-center gap-4">
-                <div className="h-1 w-[100px] border-t border-font-tertiary"></div>
-                <p className="text-base font-normal">or</p>
-                <div className="h-1 w-[100px] border-t border-font-tertiary"></div>
-              </span>
+              <Divider orientation="horizontal" color="common.black" flexItem>
+                or
+              </Divider>
             </SignIn.Step>
           </SignIn.Root>
           <SignInForm onSubmit={handleLogin} />
-        </div>
+        </Grid>
       ) : null}
     </Grid>
   );

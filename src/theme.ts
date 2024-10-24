@@ -17,6 +17,7 @@ const theme = createTheme({
     },
     common: {
       white: "#fff",
+      black: "#101828",
     },
   },
   shape: {
