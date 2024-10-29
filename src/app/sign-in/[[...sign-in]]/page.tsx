@@ -16,7 +16,7 @@ const SignInPage = () => {
   return (
     <Grid
       sx={{
-        height: "100vh",
+        minHeight: "100vh",
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
@@ -32,11 +32,14 @@ const SignInPage = () => {
           sx={{
             display: "flex",
             alignItems: "center",
+            justifyContent: "center",
             maxWidth: "824px",
             backgroundColor: "common.white",
             borderRadius: 3,
             py: 5,
             px: 26,
+            width: "100%",
+            minHeight: "100%",
           }}
         >
           <SignIn.Root>
@@ -176,6 +179,7 @@ const SignInPage = () => {
           sx={{
             display: "flex",
             alignItems: "center",
+            justifyContent: "center",
             maxWidth: "824px",
             backgroundColor: "common.white",
             borderRadius: 3,
@@ -183,6 +187,7 @@ const SignInPage = () => {
             px: 26,
             flexDirection: "column",
             width: "100%",
+            minHeight: "100%",
           }}
         >
           <SignIn.Root>

@@ -18,3 +18,14 @@ export type FormDataRole = {
 export type FormData = FormDataDetails & FormDataInterest & FormDataRole;
 
 export type FormDataPartial = FormDataDetails | FormDataInterest | FormDataRole;
+
+export type SignUpFormData = {
+  name: string;
+  password: string;
+  confirmPassword: string;
+  email: string;
+  profile?: string;
+  birthdate: Date;
+  interests: string[];
+  role: string;
+};

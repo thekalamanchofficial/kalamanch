@@ -19,6 +19,15 @@ const theme = createTheme({
       white: "#fff",
       black: "#101828",
     },
+    text: {
+      primary: "#101828",
+      secondary: "#4D5565",
+      disabled: "#A5A5A5",
+    },
+    background: {
+      default: "#F5F7FE",
+      paper: "#fff",
+    },
   },
   shape: {
     borderRadius: 4,
@@ -52,6 +61,26 @@ const theme = createTheme({
           },
         },
         disableElevation: true,
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiTextField-input:-webkit-autofill": {
+            "-webkit-text-fill-color": "black",
+            "-webkit-box-shadow": "0 0 0px 1000px white inset",
+          },
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          "& .MuiInputBase-input:-webkit-autofill": {
+            "-webkit-text-fill-color": "black",
+            "-webkit-box-shadow": "0 0 0px 1000px white inset",
+          },
+        },
       },
     },
   },

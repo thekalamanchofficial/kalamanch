@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useSignUpDetailsForm } from "~/app/sign-up/_hooks/useSignUpForm";
 import { Controller } from "react-hook-form";
 import {
@@ -6,19 +6,23 @@ import {
   type FormDataDetails,
 } from "~/app/sign-up/_types/types";
 
-import Password from "~/assets/svg/Password.svg";
-import Email from "~/assets/svg/Email.svg";
-import User from "~/assets/svg/User.svg";
-import ProfilePhoto from "~/assets/svg/ProfilePhoto.svg";
 import UploadIcon from "~/assets/svg/UploadIcon.svg";
-
-import DatePicker from "react-datepicker";
-import dayjs from "dayjs";
-import Image from "next/image";
-
-import "react-datepicker/dist/react-datepicker.css";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import {
+  FormControl,
+  Grid2 as Grid,
+  TextField,
+  Button,
+  Typography,
+  Avatar,
+  Box,
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
@@ -38,7 +42,15 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   imagePreview,
   setImagePreview,
 }) => {
-  const { handleSubmit, trigger, control } = useSignUpDetailsForm();
+  const {
+    handleSubmit,
+    trigger,
+    control,
+    formState: { errors },
+  } = useSignUpDetailsForm();
+  const [openDatePicker, setOpenDatePicker] = useState(false);
+  const datepicekrAnchor = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleNext = async (data: FormDataDetails) => {
     const isValid = await trigger();
@@ -46,288 +58,246 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
       await onNext(data);
     }
   };
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const onDatepickerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    datepicekrAnchor.current = e.currentTarget;
+    setOpenDatePicker((open) => !open);
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef?.current?.click();
+  };
+
+  const handleDeleteImage = () => {
+    setProfileFile(undefined);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const date = dayjs().format("DD/MM/YYYY");
   return (
-    <form onSubmit={handleSubmit(handleNext)} className="w-full">
-      <div className="w-full px-10">
-        <div className="mb-3 flex flex-col">
-          <label
-            htmlFor="name"
-            className="mb-2 block text-base font-bold text-font-gray"
-          >
-            {STATIC_TEXTS.DETAILS_FORM.LABELS.NAME}
-          </label>
-
-          <Controller
-            control={control}
-            name="name"
-            defaultValue={data && "name" in data ? data.name : ""}
-            render={({ field: { value, onChange }, fieldState }) => (
-              <div className="relative flex">
-                <input
-                  type="text"
-                  id="name"
-                  value={value}
-                  onChange={onChange}
-                  className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                  placeholder="Write your name"
-                />
-                {fieldState.error && (
-                  <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                    {fieldState.error.message}
-                  </span>
-                )}
-                <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <User />
-                </span>
-              </div>
-            )}
-          />
-          <label
-            htmlFor="email"
-            className="mb-2 block text-base font-bold text-font-gray"
-          >
-            {STATIC_TEXTS.DETAILS_FORM.LABELS.EMAIL}
-          </label>
-          <Controller
-            control={control}
-            name="email"
-            defaultValue={data && "email" in data ? data.email : ""}
-            render={({ field: { value, onChange }, fieldState }) => (
-              <div className="relative flex">
-                <input
-                  type="email"
-                  value={value}
-                  onChange={onChange}
-                  id="email"
-                  className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                  placeholder="Enter your email"
-                />
-                {fieldState.error && (
-                  <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                    {fieldState.error.message}
-                  </span>
-                )}
-                <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <Email />
-                </span>
-              </div>
-            )}
-          />
-          <label
-            htmlFor="password"
-            className="mb-2 block text-base font-bold text-font-gray"
-          >
-            {STATIC_TEXTS.DETAILS_FORM.LABELS.PASSWORD}
-          </label>
-          <Controller
-            control={control}
-            name="password"
-            defaultValue={data && "password" in data ? data.password : ""}
-            render={({ field: { value, onChange }, fieldState }) => (
-              <div className="relative flex">
-                <input
-                  type="password"
-                  value={value}
-                  onChange={onChange}
-                  id="password"
-                  className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                  placeholder="Enter password"
-                />
-                {fieldState.error && (
-                  <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                    {fieldState.error.message}
-                  </span>
-                )}
-                <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <Password />
-                </span>
-              </div>
-            )}
-          />
-          <label
-            htmlFor="confirmPassword"
-            className="mb-2 block text-base font-bold text-font-gray"
-          >
-            {STATIC_TEXTS.DETAILS_FORM.LABELS.CONFIRM_PASSWORD}
-          </label>
-          <Controller
-            control={control}
-            name="confirmPassword"
-            defaultValue={
-              data && "confirmPassword" in data ? data.confirmPassword : ""
-            }
-            render={({ field: { value, onChange }, fieldState }) => (
-              <div className="relative flex">
-                <input
-                  type="password"
-                  value={value}
-                  onChange={onChange}
-                  id="confirmPassword"
-                  className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900 placeholder:text-font-tertiary"
-                  placeholder="Enter password"
-                />
-                {fieldState.error && (
-                  <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                    {fieldState.error.message}
-                  </span>
-                )}
-                <span className="absolute right-0 top-2 inline-flex items-center rounded-s-md px-3 text-sm text-gray-900">
-                  <Password />
-                </span>
-              </div>
-            )}
-          />
-
-          <label
-            htmlFor="birthdate"
-            className="mb-2 block text-base font-bold text-font-gray"
-          >
-            {STATIC_TEXTS.DETAILS_FORM.LABELS.BIRTHDATE}
-          </label>
-          <Controller
-            control={control}
-            name="birthdate"
-            defaultValue={
-              data && "birthdate" in data ? data.birthdate : undefined
-            }
-            render={({ field: { onChange, value }, fieldState }) => {
-              return (
-                <div className="relative flex">
-                  <DatePicker
-                    showMonthDropdown
-                    showYearDropdown
-                    scrollableYearDropdown
-                    onChange={onChange}
-                    yearDropdownItemNumber={90}
-                    placeholderText="Select a date"
-                    value={value ? dayjs(value).format("DD-MM-YYYY") : ""}
-                    dateFormat={"dd/MM/yyyy"}
-                    selected={value}
-                    maxDate={new Date()}
-                    className="mb-5 block w-full min-w-0 flex-1 rounded-md border border-gray-200 p-3 text-base font-light text-gray-900"
-                  />
-
-                  {fieldState.error && (
-                    <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                      {fieldState.error.message}
-                    </span>
-                  )}
-                </div>
-              );
-            }}
-          />
-
-          <label
-            htmlFor="profile"
-            className="mb-2 block text-base font-bold text-font-gray"
-          >
-            {STATIC_TEXTS.DETAILS_FORM.LABELS.PROFILE}
-          </label>
-          <div className="relative flex flex-col items-start justify-center">
-            <div>
-              <Controller
-                name="profile"
-                control={control}
-                render={({ field: { onChange }, fieldState }) => (
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-5">
-                    <div className="group">
-                      {!imagePreview ? (
-                        <span
-                          className="flex size-20 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 border-dotted border-gray-300 text-gray-400 hover:bg-gray-50 group-has-[div]:hidden dark:border-neutral-700 dark:text-neutral-600 dark:hover:bg-neutral-700/50"
-                          onClick={() => {
-                            fileInputRef.current?.click();
-                          }}
-                        >
-                          <ProfilePhoto />
-                        </span>
-                      ) : (
-                        <div className="size-24">
-                          <Image
-                            className="h-[90px] w-[90px] rounded-full object-cover"
-                            src={imagePreview}
-                            alt="Profile Preview"
-                            width={90}
-                            height={90}
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="grow">
-                      <div className="flex items-center gap-x-2">
-                        <button
-                          type="button"
-                          className="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-brand-primary px-3 py-2 text-xs font-medium text-white hover:bg-[#110eb9] focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          <UploadIcon />
-                          {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.UPLOAD_BUTTON}
-                        </button>
-                        <button
-                          type="button"
-                          className="inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-500 shadow-sm hover:bg-gray-50 focus:bg-gray-50 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                          onClick={() => {
-                            setProfileFile(undefined);
-                            setImagePreview(null);
-                          }}
-                        >
-                          {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.DELETE_BUTTON}
-                        </button>
-                      </div>
-                    </div>
-                    {fieldState.error && (
-                      <span className="absolute right-0 top-2/3 mb-3 mt-1 text-red-500">
-                        {fieldState.error.message}
-                      </span>
-                    )}
-
-                    <input
-                      id="fileInput"
-                      type="file"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      ref={fileInputRef}
-                      onChange={(e) => {
-                        const files = e.target.files;
-
-                        if (files?.[0]) {
-                          onChange(files);
-                          setProfileFile(files[0]);
-
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setImagePreview(reader.result as string);
-                          };
-                          reader.readAsDataURL(files[0]);
-                        }
-                      }}
-                    />
-                  </div>
-                )}
+    <Grid container width="100%" px={10}>
+      <Grid display="flex" width="100%" flexDirection="column" mb={3}>
+        <Controller
+          control={control}
+          name="name"
+          defaultValue={data && "name" in data ? data.name : ""}
+          render={({ field: { value, onChange } }) => (
+            <FormControl fullWidth>
+              <TextField
+                type="text"
+                value={value}
+                onChange={onChange}
+                id="name"
+                label={STATIC_TEXTS.DETAILS_FORM.LABELS.NAME}
+                placeholder="Enter your name"
+                helperText={errors?.name?.message}
+                error={!!errors?.name?.message}
+                variant="outlined"
+                fullWidth
+                sx={{ mb: 2 }}
               />
-            </div>
-          </div>
+            </FormControl>
+          )}
+        />
+        <Controller
+          control={control}
+          name="email"
+          defaultValue={data && "email" in data ? data.email : ""}
+          render={({ field: { value, onChange } }) => (
+            <FormControl fullWidth>
+              <TextField
+                type="email"
+                value={value}
+                onChange={onChange}
+                id="email"
+                label={STATIC_TEXTS.DETAILS_FORM.LABELS.EMAIL}
+                placeholder="Enter your email"
+                helperText={errors?.email?.message}
+                error={!!errors?.email?.message}
+                variant="outlined"
+                fullWidth
+                sx={{ mb: 2 }}
+              />
+            </FormControl>
+          )}
+        />
+        <Controller
+          control={control}
+          name="password"
+          defaultValue={data && "password" in data ? data.password : ""}
+          render={({ field: { value, onChange } }) => (
+            <FormControl fullWidth>
+              <TextField
+                type="password"
+                value={value}
+                onChange={onChange}
+                id="password"
+                label={STATIC_TEXTS.DETAILS_FORM.LABELS.PASSWORD}
+                placeholder="Choose a password"
+                helperText={errors?.password?.message}
+                error={!!errors?.password?.message}
+                variant="outlined"
+                fullWidth
+                sx={{ mb: 2 }}
+              />
+            </FormControl>
+          )}
+        />
+        <Controller
+          control={control}
+          name="confirmPassword"
+          defaultValue={
+            data && "confirmPassword" in data ? data.confirmPassword : ""
+          }
+          render={({ field: { value, onChange } }) => (
+            <FormControl fullWidth>
+              <TextField
+                type="text"
+                value={value}
+                onChange={onChange}
+                id="confirmPassword"
+                label={STATIC_TEXTS.DETAILS_FORM.LABELS.CONFIRM_PASSWORD}
+                placeholder="Enter password"
+                helperText={errors?.confirmPassword?.message}
+                error={!!errors?.confirmPassword?.message}
+                variant="outlined"
+                fullWidth
+                sx={{ mb: 2 }}
+              />
+            </FormControl>
+          )}
+        />
+        <Controller
+          control={control}
+          name="birthdate"
+          defaultValue={(data as FormDataDetails)?.birthdate}
+          render={({ field: { onChange, value } }) => {
+            return (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  onChange={onChange}
+                  value={value}
+                  open={openDatePicker}
+                  onOpen={() => setOpenDatePicker(true)}
+                  onClose={() => setOpenDatePicker(false)}
+                  label={STATIC_TEXTS.DETAILS_FORM.LABELS.BIRTHDATE}
+                  disableFuture
+                  slotProps={{
+                    popper: {
+                      placement: "bottom-end",
+                    },
+                    textField: {
+                      helperText: errors?.birthdate?.message,
+                      error: !!errors?.birthdate?.message,
+                      onClick: () => setOpenDatePicker(true),
+                      onKeyDown: onDatepickerKeyDown,
+                      variant: "outlined",
+                      placeholder: "DD/MM/YYYY",
+                    },
+                  }}
+                  sx={{ mb: 2 }}
+                />
+              </LocalizationProvider>
+            );
+          }}
+        />
 
-          <div className="mt-10 flex w-full items-center justify-between gap-8">
-            <button
-              type="button"
-              className="w-1/3 rounded-sm bg-brand-primary px-6 py-2 text-lg text-white"
-              onClick={onPrev}
-            >
-              {STATIC_TEXTS.NAVIGATION.BACK}
-            </button>
-            <button
-              type="submit"
-              className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
-            >
-              {STATIC_TEXTS.NAVIGATION.NEXT}
-            </button>
+        <Typography variant="caption">
+          {STATIC_TEXTS.DETAILS_FORM.LABELS.PROFILE}
+        </Typography>
+        <div className="relative flex flex-col items-start justify-center">
+          <div>
+            <Controller
+              name="profile"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    maxWidth: 200,
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Avatar
+                    src={imagePreview ?? ""}
+                    alt="Profile Preview"
+                    sx={{ width: 90, height: 90, mb: 2 }}
+                  />
+                  <input
+                    accept="image/*"
+                    type="file"
+                    ref={fileInputRef} // Attach the ref to the input
+                    style={{ display: "none" }}
+                    onChange={(event) => {
+                      const file = event?.target?.files?.[0];
+                      if (file) {
+                        onChange(file);
+                        const reader = new FileReader();
+                        setProfileFile(file);
+                        reader.onloadend = () => {
+                          setImagePreview(reader?.result as string);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                  {!imagePreview ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<UploadIcon />}
+                      onClick={handleButtonClick}
+                      size="small"
+                      sx={{ minHeight: "32px" }}
+                    >
+                      {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.UPLOAD_BUTTON}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outlined"
+                      startIcon={<DeleteIcon color="disabled" />}
+                      onClick={handleDeleteImage}
+                      size="small"
+                      sx={{
+                        minHeight: "32px",
+                        backgroundColor: (theme) => theme.palette.grey[100],
+                        borderColor: (theme) => theme.palette.grey[300],
+                        color: (theme) => theme.palette.grey[700],
+                      }}
+                    >
+                      {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.DELETE_BUTTON}
+                    </Button>
+                  )}
+                </Box>
+              )}
+            />
           </div>
         </div>
-      </div>
-    </form>
+        <Grid justifyContent="space-between" display="flex" width="100%" mt={2}>
+          <Button
+            type="button"
+            onClick={onPrev}
+            variant="contained"
+            size="large"
+            sx={{ width: "150px" }}
+          >
+            <Typography variant="h6">{STATIC_TEXTS.NAVIGATION.BACK}</Typography>
+          </Button>
+          <Button
+            type="button"
+            variant="contained"
+            size="large"
+            sx={{ width: "150px" }}
+            onClick={handleSubmit(handleNext)}
+          >
+            <Typography variant="h6">{STATIC_TEXTS.NAVIGATION.NEXT}</Typography>
+          </Button>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 

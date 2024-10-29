@@ -70,7 +70,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
                 onChange={onChange}
                 id="password"
                 label={STATIC_TEXTS.SIGNIN_FORM.LABELS.PASSWORD}
-                placeholder="Enter your email"
+                placeholder="Enter your password"
                 helperText={errors?.password?.message}
                 error={!!errors?.password?.message}
                 variant="outlined"

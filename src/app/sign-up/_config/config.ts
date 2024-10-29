@@ -38,11 +38,14 @@ export const ROLES = {
 export const STEPS = [
   {
     label: "Create Profile",
+    stepNumber: 0,
   },
   {
     title: "Add Interests",
+    stepNumber: 1,
   },
   {
     title: "Ready to go",
+    stepNumber: 2,
   },
 ];
