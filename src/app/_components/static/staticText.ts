@@ -2,23 +2,8 @@ export const STATIC_TEXTS = {
   APP_TITLE: "Kalamanch",
   APP_DESCRIPTION: "Join Today, Start writing",
   FORM_HEADING: "Let's get started",
-  FORM_STEPS: [
-    {
-      keyName: "DETAILS",
-      value: "Create Profile",
-    },
-    {
-      keyName: "INTEREST",
-      value: "Add Interests",
-    },
-    {
-      keyName: "ROLE",
-      value: "Ready to go",
-    },
-  ],
   FORM_STEP1: "Create Profile",
   FORM_STEP2: "Select Interest",
-  FORM_STEP3: "Select Role",
   SIGNIN: "Sign in",
   SIGNUP: "Sign up",
   SIGNIN_GOOGLE: "Sign in with Google",
@@ -55,32 +40,6 @@ export const STATIC_TEXTS = {
   INTEREST_FORM: {
     FORM_HEADING: "What are your interests?",
     FORM_DESCRIPTION: "We will use this to help customize the experience",
-  },
-  ROLE_FORM: {
-    FORM_HEADING: "You are ready to go!",
-    FORM_DESCRIPTION:
-      "We hope that you will have a wonderful time at Kalamanch.",
-
-    ROLES_INFORMATION: [
-      {
-        role: "A",
-        title: "Turn Your writings into a Legacy",
-        description:
-          "Write, sell, or buy poems with complete ownership and make your words last forever.",
-      },
-      {
-        role: "B",
-        title: "A Place Where Every Poem is Valued",
-        description:
-          "Join a community where you can share, sell, or invest in poetry that touches hearts.",
-      },
-      {
-        role: "C",
-        title: "Buy and Sell Poetry Easily",
-        description:
-          "Support poets or own a poem—trade poetry with ease and make it a valuable asset.",
-      },
-    ],
   },
   SIGNIN_FORM: {
     LABELS: {

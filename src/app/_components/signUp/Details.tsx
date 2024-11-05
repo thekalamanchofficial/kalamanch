@@ -172,7 +172,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         <Controller
           control={control}
           name="birthdate"
-          defaultValue={(data as FormDataDetails)?.birthdate}
+          defaultValue={(data as FormDataDetails)?.birthdate ?? dayjs()}
           render={({ field: { onChange, value } }) => {
             return (
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -207,75 +207,71 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         <Typography variant="caption">
           {STATIC_TEXTS.DETAILS_FORM.LABELS.PROFILE}
         </Typography>
-        <div className="relative flex flex-col items-start justify-center">
-          <div>
-            <Controller
-              name="profile"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <Box
+        <Controller
+          name="profile"
+          control={control}
+          render={({ field: { onChange } }) => (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                maxWidth: 200,
+                justifyContent: "space-between",
+              }}
+            >
+              <Avatar
+                src={imagePreview ?? ""}
+                alt="Profile Preview"
+                sx={{ width: 90, height: 90, mb: 2 }}
+              />
+              <input
+                accept="image/*"
+                type="file"
+                ref={fileInputRef} // Attach the ref to the input
+                style={{ display: "none" }}
+                onChange={(event) => {
+                  const file = event?.target?.files?.[0];
+                  if (file) {
+                    onChange(file);
+                    const reader = new FileReader();
+                    setProfileFile(file);
+                    reader.onloadend = () => {
+                      setImagePreview(reader?.result as string);
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+              {!imagePreview ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<UploadIcon />}
+                  onClick={handleButtonClick}
+                  size="small"
+                  sx={{ minHeight: "32px" }}
+                >
+                  {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.UPLOAD_BUTTON}
+                </Button>
+              ) : (
+                <Button
+                  variant="outlined"
+                  startIcon={<DeleteIcon color="disabled" />}
+                  onClick={handleDeleteImage}
+                  size="small"
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    maxWidth: 200,
-                    justifyContent: "space-between",
+                    minHeight: "32px",
+                    backgroundColor: (theme) => theme.palette.grey[100],
+                    borderColor: (theme) => theme.palette.grey[300],
+                    color: (theme) => theme.palette.grey[700],
                   }}
                 >
-                  <Avatar
-                    src={imagePreview ?? ""}
-                    alt="Profile Preview"
-                    sx={{ width: 90, height: 90, mb: 2 }}
-                  />
-                  <input
-                    accept="image/*"
-                    type="file"
-                    ref={fileInputRef} // Attach the ref to the input
-                    style={{ display: "none" }}
-                    onChange={(event) => {
-                      const file = event?.target?.files?.[0];
-                      if (file) {
-                        onChange(file);
-                        const reader = new FileReader();
-                        setProfileFile(file);
-                        reader.onloadend = () => {
-                          setImagePreview(reader?.result as string);
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                  />
-                  {!imagePreview ? (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<UploadIcon />}
-                      onClick={handleButtonClick}
-                      size="small"
-                      sx={{ minHeight: "32px" }}
-                    >
-                      {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.UPLOAD_BUTTON}
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="outlined"
-                      startIcon={<DeleteIcon color="disabled" />}
-                      onClick={handleDeleteImage}
-                      size="small"
-                      sx={{
-                        minHeight: "32px",
-                        backgroundColor: (theme) => theme.palette.grey[100],
-                        borderColor: (theme) => theme.palette.grey[300],
-                        color: (theme) => theme.palette.grey[700],
-                      }}
-                    >
-                      {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.DELETE_BUTTON}
-                    </Button>
-                  )}
-                </Box>
+                  {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.DELETE_BUTTON}
+                </Button>
               )}
-            />
-          </div>
-        </div>
+            </Box>
+          )}
+        />
         <Grid justifyContent="space-between" display="flex" width="100%" mt={2}>
           <Button
             type="button"

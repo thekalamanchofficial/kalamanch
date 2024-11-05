@@ -33,7 +33,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Grid container width="100%" gap={2} mt={4}>
+    <Grid container width="100%" gap={2} mt={4} maxWidth="400px">
       <Grid width="100%">
         <Controller
           control={control}
@@ -87,7 +87,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
           variant="contained"
           size="large"
         >
-          <Typography variant="h6">{STATIC_TEXTS.NAVIGATION.SUBMIT}</Typography>
+          <Typography variant="h6">{STATIC_TEXTS.SIGNIN}</Typography>
         </Button>
       </Grid>
       <Grid

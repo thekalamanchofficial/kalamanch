@@ -2,7 +2,6 @@
 import React from "react";
 
 import Details from "~/app/_components/signUp/Details";
-import Role from "~/app/_components/signUp/Role";
 import Interests from "~/app/_components/signUp/Interests";
 
 import { SignUpFormStages, STEPS } from "~/app/sign-up/_config/config";
@@ -26,7 +25,6 @@ const StepperEndIcon = () => <CheckComplete />;
 
 export default function Page() {
   const {
-    handleVerify,
     formData,
     profileFile,
     setProfileFile,
@@ -38,20 +36,8 @@ export default function Page() {
     handlePrev,
     otp,
     setOtp,
-    verifyStarted,
     verifying,
   } = useSignUpPage();
-
-  if (verifyStarted) {
-    return (
-      <OTPVerification
-        otp={otp}
-        setOtp={setOtp}
-        onVerify={handleVerify}
-        verifying={verifying}
-      />
-    );
-  }
 
   return (
     <Grid
@@ -78,21 +64,26 @@ export default function Page() {
         py={4}
         flexDirection="column"
         sx={{
-          backgroundColor: "Background",
+          backgroundColor: "background.paper",
           justifyItems: "center",
           alignItems: "center",
         }}
         size={{ xs: 12 }}
       >
-        <Stepper sx={{ width: "100%", px: 3, py: 2, mb: 4 }}>
+        <Stepper
+          sx={{ width: "100%", mb: 4 }}
+          alternativeLabel
+          activeStep={formStepNumber}
+        >
           {STEPS.map((step, index) => {
             const isCompleted = step.stepNumber <= formStepNumber;
             return (
-              <Step key={index}>
+              <Step key={index} completed={isCompleted}>
                 <StepLabel
                   StepIconComponent={
                     isCompleted ? StepperEndIcon : StepperStartIcon
                   }
+                  sx={{ borderColor: "blue" }}
                 >
                   {step.label}
                 </StepLabel>
@@ -115,9 +106,14 @@ export default function Page() {
         {formStep === SignUpFormStages.INTEREST ? (
           <Interests onNext={handleNext} onPrev={handlePrev} data={formData} />
         ) : null}
-
-        {formStep === SignUpFormStages.ROLE ? (
-          <Role onNext={handleNext} onPrev={handlePrev} data={formData} />
+        {formStep === SignUpFormStages.OTP_VERIFICATION ? (
+          <OTPVerification
+            otp={otp}
+            setOtp={setOtp}
+            onNext={handleNext}
+            verifying={verifying}
+            onPrev={handlePrev}
+          />
         ) : null}
       </Grid>
     </Grid>

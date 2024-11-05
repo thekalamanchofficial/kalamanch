@@ -11,13 +11,9 @@ export type FormDataInterest = {
   interests: string[];
 };
 
-export type FormDataRole = {
-  role: string;
-};
+export type FormData = FormDataDetails & FormDataInterest;
 
-export type FormData = FormDataDetails & FormDataInterest & FormDataRole;
-
-export type FormDataPartial = FormDataDetails | FormDataInterest | FormDataRole;
+export type FormDataPartial = FormDataDetails | FormDataInterest;
 
 export type SignUpFormData = {
   name: string;
@@ -27,5 +23,4 @@ export type SignUpFormData = {
   profile?: string;
   birthdate: Date;
   interests: string[];
-  role: string;
 };

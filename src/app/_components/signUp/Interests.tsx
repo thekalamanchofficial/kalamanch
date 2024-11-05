@@ -7,6 +7,8 @@ import {
 } from "~/app/sign-up/_types/types";
 import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
 import { STATIC_TEXTS } from "../static/staticText";
+import { Button, Chip, Grid2 as Grid, Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 type InterestsFormProps = {
   onNext: (data: FormDataInterest) => Promise<void>;
@@ -19,7 +21,12 @@ const Interests: React.FC<InterestsFormProps> = ({
   onPrev,
   data: interestData,
 }) => {
-  const { handleSubmit, trigger, control } = useSignUpInterestForm();
+  const {
+    handleSubmit,
+    trigger,
+    control,
+    formState: { errors },
+  } = useSignUpInterestForm();
 
   const handleNext = async (data: FormDataInterest) => {
     const isValid = await trigger();
@@ -29,72 +36,100 @@ const Interests: React.FC<InterestsFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(handleNext)} className="w-full">
-      <div className="w-full px-10">
-        <div className="mb-3 flex flex-col">
-          <h1 className="text-3xl font-medium text-font-primary">
-            {STATIC_TEXTS.INTEREST_FORM.FORM_HEADING}
-          </h1>
-          <h1 className="text-lg font-medium text-font-secondary">
-            {STATIC_TEXTS.INTEREST_FORM.FORM_DESCRIPTION}
-          </h1>
-          <div className="relative mb-[200px] mt-6 flex h-auto w-full flex-wrap gap-2">
-            <Controller
-              name="interests"
-              control={control}
-              defaultValue={
-                interestData && "interests" in interestData
-                  ? interestData.interests
-                  : []
-              }
-              render={({ field: { onChange, value }, fieldState }) => (
-                <>
-                  {INTEREST_ARRAY.map((interest) => (
-                    <button
-                      key={interest}
-                      type="button"
-                      onClick={() => {
-                        const newValue = value.includes(interest)
-                          ? value.filter((item) => item !== interest)
-                          : [...value, interest];
+    <Grid container width="100%">
+      <Grid display="flex" width="100%" flexDirection="column" mb={3}>
+        <Typography
+          variant="h1"
+          fontSize="28px"
+          lineHeight="21px"
+          fontWeight="bold"
+        >
+          {STATIC_TEXTS.INTEREST_FORM.FORM_HEADING}
+        </Typography>
+        <Typography
+          variant="h5"
+          fontSize="20px"
+          lineHeight="22px"
+          fontWeight="medium"
+          color="text.secondary"
+          mt={2}
+        >
+          {STATIC_TEXTS.INTEREST_FORM.FORM_DESCRIPTION}
+        </Typography>
+        <Grid mb={25} mt={4} display="flex" width="100%" flexDirection="column">
+          <Controller
+            name="interests"
+            control={control}
+            defaultValue={
+              interestData && "interests" in interestData
+                ? interestData.interests
+                : []
+            }
+            render={({ field: { onChange, value }, fieldState }) => (
+              <Grid gap={2} display="flex" width="100%" flexWrap="wrap">
+                {INTEREST_ARRAY.map((interest) => (
+                  <Chip
+                    key={interest}
+                    label={interest}
+                    clickable
+                    onClick={() => {
+                      const newValue = value.includes(interest)
+                        ? value.filter((item) => item !== interest)
+                        : [...value, interest];
+                      onChange(newValue);
+                    }}
+                    {...(value.includes(interest) && {
+                      onDelete: () => {
+                        const newValue = value.filter(
+                          (item) => item !== interest,
+                        );
                         onChange(newValue);
-                      }}
-                      className={`pill inline-block rounded-full bg-gray-200 px-4 py-2 text-sm text-gray-800 ${
-                        value.includes(interest)
-                          ? "border border-brand-primary bg-[#fafbff] text-brand-primary"
-                          : "bg-gray-100 text-font-primary"
-                      }`}
-                    >
-                      {interest} {value.includes(interest) && "✕"}
-                    </button>
-                  ))}
-                  {fieldState.error && (
-                    <span className="absolute -bottom-20 -right-10 text-red-500">
-                      {fieldState.error.message}
-                    </span>
-                  )}
-                </>
-              )}
-            />
-          </div>
-          <div className="mt-4 flex items-center justify-between gap-12">
-            <button
-              type="button"
-              className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
-              onClick={onPrev}
-            >
-              {STATIC_TEXTS.NAVIGATION.BACK}
-            </button>
-            <button
-              type="submit"
-              className="w-1/3 rounded-sm bg-brand-primary px-3 py-2 text-lg text-white"
-            >
-              {STATIC_TEXTS.NAVIGATION.NEXT}
-            </button>
-          </div>
-        </div>
-      </div>
-    </form>
+                      },
+                      deleteIcon: <CloseIcon />,
+                    })}
+                    sx={{
+                      backgroundColor: value.includes(interest)
+                        ? "secondary.main"
+                        : "grey.300",
+                      color: value.includes(interest)
+                        ? "text.primary"
+                        : "primary.main",
+                      border: value.includes(interest) ? "1px solid" : "none",
+                      borderColor: value.includes(interest)
+                        ? "primary.main"
+                        : "solid grey.300",
+                    }}
+                  />
+                ))}
+              </Grid>
+            )}
+          />
+          <Typography color="error" fontSize="12px" mt={1}>
+            {errors?.interests?.message}
+          </Typography>
+        </Grid>
+        <Grid justifyContent="space-between" display="flex" width="100%" mt={2}>
+          <Button
+            type="button"
+            onClick={onPrev}
+            variant="contained"
+            size="large"
+            sx={{ width: "150px" }}
+          >
+            <Typography variant="h6">{STATIC_TEXTS.NAVIGATION.BACK}</Typography>
+          </Button>
+          <Button
+            type="button"
+            variant="contained"
+            size="large"
+            sx={{ width: "150px" }}
+            onClick={handleSubmit(handleNext)}
+          >
+            <Typography variant="h6">{STATIC_TEXTS.NAVIGATION.NEXT}</Typography>
+          </Button>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -19,13 +19,11 @@ export const metadata: Metadata = {
   description: "A Platform for Writers and Poets",
 };
 
-console.log("kljhgjhggjjghjjuyg", theme);
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider signInForceRedirectUrl="/" signUpForceRedirectUrl="/">
       <html lang="en">
         <body>
           <AppRouterCacheProvider options={{ key: "css" }}>

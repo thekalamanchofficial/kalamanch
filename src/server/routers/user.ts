@@ -10,7 +10,6 @@ const userSchema = yup.object({
   birthdate: yup.date().required(),
   profile: yup.string().optional(),
   interests: yup.array(yup.string()),
-  role: yup.string().required(),
 });
 
 export const userRouter = router({
@@ -32,7 +31,6 @@ export const userRouter = router({
         interests: input.interests?.filter(
           (interest): interest is string => interest !== undefined,
         ),
-        role: input.role,
       },
     });
     return user;

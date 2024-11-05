@@ -10,6 +10,7 @@ import Link from "next/link";
 import SignInForm from "~/app/_components/signIn/SignInForm";
 import { Icons } from "react-toastify";
 import { Box, Button, Divider, Grid2 as Grid, Typography } from "@mui/material";
+import theme from "~/theme";
 
 const SignInPage = () => {
   const { signInState, setSignInState, handleLogin } = useSignInPage();
@@ -80,23 +81,33 @@ const SignInPage = () => {
                       <Clerk.Connection
                         name="google"
                         disabled={isGlobalLoading}
-                        style={{ padding: "0px", border: "0px", width: "100%" }}
+                        style={{
+                          padding: "0px",
+                          border: "0px",
+                          width: "100%",
+                          maxWidth: "400px",
+                          height: "56px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          textAlign: "center",
+                          textDecoration: "none",
+                          backgroundColor: theme.palette.primary.main,
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
                       >
                         <Clerk.Loading scope="provider:google">
                           {(isLoading) =>
                             isLoading ? (
                               <Icons.spinner />
                             ) : (
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<GoogleLogo />}
-                                sx={{ width: "100%", maxWidth: "400px" }}
-                              >
-                                <Typography variant="h6">
+                              <Box display="flex" alignItems="center">
+                                <GoogleLogo />
+                                <Typography variant="h6" color="#fff" ml={2}>
                                   {STATIC_TEXTS.SIGNUP_GOOGLE}
                                 </Typography>
-                              </Button>
+                              </Box>
                             )
                           }
                         </Clerk.Loading>
@@ -123,7 +134,7 @@ const SignInPage = () => {
                         </Typography>
                       </Link>
                       <Box mt={4} textAlign="center">
-                        <Typography variant="subtitle1" color="textSecondary">
+                        <Typography variant="body2" color="textSecondary">
                           {STATIC_TEXTS.DISCLAIMER}&nbsp;
                           <Link
                             href="/terms"
@@ -211,13 +222,19 @@ const SignInPage = () => {
               <Clerk.Connection
                 name="google"
                 style={{
-                  display: "flex",
+                  padding: "0px",
+                  border: "0px",
                   width: "100%",
-                  flexDirection: "column",
+                  maxWidth: "400px",
+                  height: "56px",
+                  display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  padding: 0,
-                  border: 0,
+                  textAlign: "center",
+                  textDecoration: "none",
+                  backgroundColor: theme.palette.primary.main,
+                  borderRadius: "4px",
+                  cursor: "pointer",
                   margin: "32px 0",
                 }}
               >
@@ -226,16 +243,12 @@ const SignInPage = () => {
                     isLoading ? (
                       <Icons.spinner />
                     ) : (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<GoogleLogo />}
-                        fullWidth
-                      >
-                        <Typography variant="h6">
-                          {STATIC_TEXTS.SIGNIN_GOOGLE}
+                      <Box display="flex" alignItems="center">
+                        <GoogleLogo />
+                        <Typography variant="h6" color="#fff" ml={2}>
+                          {STATIC_TEXTS.SIGNUP_GOOGLE}
                         </Typography>
-                      </Button>
+                      </Box>
                     )
                   }
                 </Clerk.Loading>
