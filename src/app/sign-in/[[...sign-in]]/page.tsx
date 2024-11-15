@@ -47,7 +47,7 @@ const SignInPage = () => {
             backgroundColor: "common.white",
             borderRadius: 3,
             py: 5,
-            px: 26,
+            px: 2,
             width: "100%",
             minHeight: "100%",
           }}
@@ -59,6 +59,8 @@ const SignInPage = () => {
               alignItems: "center",
               justifyContent: "center",
               gap: "60px",
+              width: "100%",
+              maxWidth: "400px",
             }}
           >
             <Box display="flex" alignItems="center">
@@ -158,7 +160,7 @@ const SignInPage = () => {
             backgroundColor: "common.white",
             borderRadius: 3,
             py: 5,
-            px: 26,
+            px: 2,
             flexDirection: "column",
             width: "100%",
             minHeight: "100%",
@@ -171,6 +173,7 @@ const SignInPage = () => {
               justifyContent: "center",
               width: "100%",
               alignItems: "center",
+              maxWidth: "400px",
             }}
           >
             <Box display="flex" alignItems="center">
