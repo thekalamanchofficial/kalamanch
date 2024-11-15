@@ -75,9 +75,8 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const date = dayjs().format("DD/MM/YYYY");
   return (
-    <Grid container width="100%" px={10}>
+    <Grid container width="100%" px={2} maxWidth="568px">
       <Grid display="flex" width="100%" flexDirection="column" mb={3}>
         <Controller
           control={control}
