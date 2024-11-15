@@ -21,5 +21,4 @@ model User {
   birthdate     DateTime
   profile String?
   interests     String[]
-  role          String
 }

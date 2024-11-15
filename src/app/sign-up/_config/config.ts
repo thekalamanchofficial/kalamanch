@@ -1,7 +1,7 @@
 export const enum SignUpFormStages {
   DETAILS = "DETAILS",
   INTEREST = "INTEREST",
-  ROLE = "ROLE",
+  OTP_VERIFICATION = "OTP_VERIFICATION",
 }
 
 export const enum SignUpFormStatus {
@@ -29,8 +29,17 @@ export const INTEREST_ARRAY = [
   "Education",
 ];
 
-export const ROLES = {
-  A: "Reader",
-  B: "Writer",
-  C: "Seller",
-};
+export const STEPS = [
+  {
+    label: "Create Profile",
+    stepNumber: 0,
+  },
+  {
+    label: "Add Interests",
+    stepNumber: 1,
+  },
+  {
+    label: "Verification",
+    stepNumber: 2,
+  },
+];

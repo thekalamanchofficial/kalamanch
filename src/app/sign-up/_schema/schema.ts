@@ -30,7 +30,3 @@ export const signUpFormSchemaInterest = Yup.object().shape({
     .min(1, "Please select at least one interest")
     .required("Interests are required"),
 });
-
-export const signUpFormSchemaRole = Yup.object().shape({
-  role: Yup.string().required("Select a Role to continue"),
-});

@@ -5,6 +5,9 @@ import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { type Metadata } from "next";
+import { ThemeProvider } from "@mui/material/styles";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
+import theme from "../theme";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,22 +23,26 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" className={`${inter.className}`}>
-        <body className="h-screen w-full">
-          <ToastContainer
-            position="top-right"
-            autoClose={2500}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-          <Provider>{children}</Provider>
+    <ClerkProvider signInForceRedirectUrl="/" signUpForceRedirectUrl="/">
+      <html lang="en">
+        <body>
+          <AppRouterCacheProvider options={{ key: "css" }}>
+            <ThemeProvider theme={theme}>
+              <ToastContainer
+                position="top-right"
+                autoClose={2500}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+              />
+              <Provider>{children}</Provider>
+            </ThemeProvider>
+          </AppRouterCacheProvider>
         </body>
       </html>
     </ClerkProvider>
