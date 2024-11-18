@@ -61,4 +61,9 @@ export const STATIC_TEXTS = {
       HAVE_ACCOUNT: "Already have an account?",
     },
   },
+  USER_FEED: {
+    BUTTONS: {
+      WRITE: "Write Something",
+    },
+  },
 };

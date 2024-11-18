@@ -68,7 +68,7 @@ const theme = createTheme({
           boxShadow: "none",
           borderRadius: "4px",
           "&:hover": {
-            backgroundColor: "transparent",
+            // backgroundColor: "transparent",
             boxShadow: "none",
           },
           minHeight: "56px",
