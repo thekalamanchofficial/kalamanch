@@ -206,7 +206,7 @@ const PostsFeed = () => {
                 image="https://fastly.picsum.photos/id/609/200/300.jpg?hmac=jkFe_vvVM_tvHdIFYhYtG6uWYznjI6zHzJpfOWfHGiU"
                 alt="green iguana"
                 sx={{
-                  width: "30%",
+                  width: "80%",
                   height: "100%",
                 }}
               />
@@ -491,7 +491,7 @@ const PostsFeed = () => {
                 image="https://fastly.picsum.photos/id/609/200/300.jpg?hmac=jkFe_vvVM_tvHdIFYhYtG6uWYznjI6zHzJpfOWfHGiU"
                 alt="green iguana"
                 sx={{
-                  width: "30%",
+                  width: "80%",
                   height: "100%",
                 }}
               />
@@ -776,7 +776,7 @@ const PostsFeed = () => {
                 image="https://fastly.picsum.photos/id/609/200/300.jpg?hmac=jkFe_vvVM_tvHdIFYhYtG6uWYznjI6zHzJpfOWfHGiU"
                 alt="green iguana"
                 sx={{
-                  width: "30%",
+                  width: "80%",
                   height: "100%",
                 }}
               />
