@@ -93,7 +93,7 @@ const LeftSideBar = () => {
         }}
       >
         {MENU_ITEMS.map((item, index) => {
-          const IconComponent = ICONS_MAP[item.icon];
+          const IconComponent = ICONS_MAP[item.icon as keyof typeof ICONS_MAP];
 
           return (
             <Box
