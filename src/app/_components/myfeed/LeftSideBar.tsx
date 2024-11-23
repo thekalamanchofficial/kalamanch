@@ -1,3 +1,4 @@
+"use client";
 import { Box, Typography, Button, Grid2 as Grid } from "@mui/material";
 import React from "react";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
@@ -14,10 +15,13 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import userImage from "~/assets/images/user.jpeg";
-import { MENU_ITEMS } from "~/app/user-feed/_config/config";
+import { MENU_ITEMS } from "~/app/myfeed/_config/config";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const LeftSideBar = () => {
+  const router = useRouter();
+
   const ICONS_MAP = {
     HomeIcon: HomeOutlinedIcon,
     SearchIcon: SearchIcon,
@@ -28,6 +32,11 @@ const LeftSideBar = () => {
     ShoppingCartOutlinedIcon: ShoppingCartOutlinedIcon,
     SettingsOutlinedIcon: SettingsOutlinedIcon,
     AccountCircleOutlinedIcon: AccountCircleOutlinedIcon,
+  };
+
+  const handleTabChange = () => {
+    console.log("hello");
+    router.push("/myfeed/profile");
   };
 
   return (
@@ -105,6 +114,7 @@ const LeftSideBar = () => {
                 px: "2px",
                 py: "4px",
               }}
+              onClick={() => handleTabChange()}
             >
               <Button
                 startIcon={<IconComponent />}

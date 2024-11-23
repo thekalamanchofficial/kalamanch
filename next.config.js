@@ -6,6 +6,15 @@ await import("./src/env.js");
 
 /** @type {import('next').NextConfig} */
 const config = {
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/myfeed",
+        permanent: true, // Set to true if this is a permanent redirect
+      },
+    ];
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,

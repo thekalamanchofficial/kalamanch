@@ -18,12 +18,13 @@ const RightSideBar = () => {
           backgroundColor: "white",
           borderRadius: "5px",
           width: "100%",
-          height: "51%",
+          height: "50%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
           alignItems: "start",
           px: "12px",
+          py: "8px",
         }}
       >
         <Typography
@@ -31,7 +32,7 @@ const RightSideBar = () => {
             color: "text.primary",
             fontSize: "18px",
             fontWeight: "550",
-            py: "6px",
+            mt: "2px",
           }}
         >
           Featured Writings
@@ -452,12 +453,13 @@ const RightSideBar = () => {
           backgroundColor: "white",
           borderRadius: "5px",
           width: "100%",
-          height: "45%",
+          height: "46%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
           alignItems: "start",
           px: "12px",
+          py: "8px",
         }}
       >
         <Typography
@@ -465,7 +467,8 @@ const RightSideBar = () => {
             color: "text.primary",
             fontSize: "18px",
             fontWeight: "550",
-            py: "6px",
+            // py: "5px",
+            mt: "2px",
             marginBottom: "10px",
           }}
         >

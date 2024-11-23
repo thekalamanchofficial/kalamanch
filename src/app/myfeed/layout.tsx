@@ -1,11 +1,9 @@
-import * as React from "react";
+import React, { type ReactNode } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
+import LeftSideBar from "~/app/_components/myfeed/LeftSideBar";
+import RightSideBar from "~/app/_components/myfeed/RightSideBar";
 
-import PostsFeed from "../_components/userFeed/PostsFeed";
-import LeftSideBar from "../_components/userFeed/LeftSideBar";
-import RightSideBar from "../_components/userFeed/RightSideBar";
-
-const UserFeedPage = () => {
+const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <Box
       sx={{
@@ -21,11 +19,12 @@ const UserFeedPage = () => {
         container
         sx={{
           height: "100vh",
-          width: "90%",
+          width: "100%",
+          maxWidth: "1352px",
           justifyContent: "center",
           alignItems: "center",
-          px: 10,
-          py: 6,
+          px: 1,
+          py: "4px",
         }}
       >
         <Grid
@@ -44,12 +43,12 @@ const UserFeedPage = () => {
             backgroundColor: "white",
           }}
         >
-          <PostsFeed />
+          {children}
         </Grid>
         <Grid
           size={2}
           sx={{
-            height: "100%",
+            height: "90vh",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -64,4 +63,4 @@ const UserFeedPage = () => {
   );
 };
 
-export default UserFeedPage;
+export default Layout;

@@ -1,18 +1,12 @@
 import "~/styles/globals.css";
 import Provider from "./_components/Provider";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { type Metadata } from "next";
 import { ThemeProvider } from "@mui/material/styles";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import theme from "../theme";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Kalamanach",
