@@ -1,4 +1,11 @@
-import { Box, Typography, Button, Grid2 as Grid } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Grid2 as Grid,
+  MenuItem,
+  Menu,
+} from "@mui/material";
 import React from "react";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import OwlSVG from "~/assets/svg/owl.svg";
@@ -16,13 +23,18 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import userImage from "~/assets/images/user.jpeg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { type MenuItem } from "~/app/myfeed/types/types";
+import { type MenuItemList } from "~/app/myfeed/types/types";
+import { useClerk } from "@clerk/nextjs";
+import { toast } from "react-toastify";
+import { handleError } from "~/app/_utils/handleError";
 
 interface Props {
-  menuItems: MenuItem[];
+  menuItems: MenuItemList[];
 }
 
 const LeftSideBar: React.FC<Props> = ({ menuItems }) => {
+  const { signOut } = useClerk();
+
   const router = useRouter();
 
   const ICONS_MAP = {
@@ -42,6 +54,34 @@ const LeftSideBar: React.FC<Props> = ({ menuItems }) => {
     router.push("/myfeed/profile");
   };
 
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    toast
+      .promise(
+        (async () => {
+          await signOut({ redirectUrl: "/" });
+        })(),
+        {
+          pending: `${STATIC_TEXTS.LOGOUT_MESSAGES.PENDING}`,
+          success: `${STATIC_TEXTS.LOGOUT_MESSAGES.SUCCESS}`,
+        },
+      )
+      .catch((error) => {
+        handleError(error);
+      });
+
+    setAnchorEl(null);
+  };
   return (
     <Grid
       columns={1}
@@ -185,13 +225,29 @@ const LeftSideBar: React.FC<Props> = ({ menuItems }) => {
             Steve Jobs
           </Typography>
         </Box>
-        <Box>
+        <div>
           <Button
             startIcon={<MoreHorizOutlinedIcon />}
             sx={{ color: "text.secondary" }}
-            size="small"
-          ></Button>
-        </Box>
+            id="basic-button"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          >
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
+            </Menu>
+          </Button>
+        </div>
       </Box>
     </Grid>
   );

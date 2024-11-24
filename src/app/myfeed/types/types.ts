@@ -1,5 +1,5 @@
 export const followWriter = (writerName: string, writerProfileLink: string) => {
-  console.log(`followed writer ${writerName} `);
+  console.log(`followed writer ${writerName} ${writerProfileLink} `);
 };
 
 export interface FeaturedArticle {
@@ -17,7 +17,7 @@ export interface WriterToFollow {
   writerProfileLink: string;
 }
 
-export interface MenuItem {
+export interface MenuItemList {
   label: string;
   route: string;
   icon: React.ReactNode;
