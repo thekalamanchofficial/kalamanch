@@ -1,7 +1,10 @@
+"use client";
 import React, { type ReactNode } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
 import LeftSideBar from "~/app/_components/myfeed/LeftSideBar";
 import RightSideBar from "~/app/_components/myfeed/RightSideBar";
+import staticData from "./static/static";
+import { MENU_ITEMS } from "~/app/myfeed/static/menu";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
@@ -20,7 +23,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
         sx={{
           height: "100vh",
           width: "100%",
-          maxWidth: "1352px",
+          maxWidth: "1572px",
           justifyContent: "center",
           alignItems: "center",
           px: 1,
@@ -33,7 +36,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             height: "90vh",
           }}
         >
-          <LeftSideBar />
+          <LeftSideBar menuItems={MENU_ITEMS} />
         </Grid>
         <Grid
           size={7}
@@ -54,9 +57,13 @@ const Layout = ({ children }: { children: ReactNode }) => {
             justifyContent: "space-between",
             alignItems: "center",
             ml: 4,
+            gap: "12px",
           }}
         >
-          <RightSideBar />
+          <RightSideBar
+            writersToFollow={staticData.writersToFollow}
+            featuredArticles={staticData.featuredArticles}
+          />
         </Grid>
       </Grid>
     </Box>

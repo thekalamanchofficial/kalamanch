@@ -1,3 +1,4 @@
+"use client";
 import {
   Button,
   Typography,
@@ -8,9 +9,22 @@ import {
 import Image from "next/image";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import userImage from "~/assets/images/user.jpeg";
+import Link from "next/link";
+import {
+  type FeaturedArticle,
+  type WriterToFollow,
+} from "~/app/myfeed/types/types";
+import { followWriter } from "~/app/myfeed/types/types";
 
-const RightSideBar = () => {
+interface Props {
+  featuredArticles: FeaturedArticle[];
+  writersToFollow: WriterToFollow[];
+}
+
+const RightSideBar: React.FC<Props> = ({
+  featuredArticles,
+  writersToFollow,
+}) => {
   return (
     <>
       <Box
@@ -38,401 +52,101 @@ const RightSideBar = () => {
           Featured Writings
         </Typography>
         <Grid container spacing={1}>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Typography sx={{ color: "font.primary", fontWeight: "500" }}>
-                सपनों के परिंदे
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                  py: "8px",
-                }}
-              >
+          {featuredArticles.map((item, index) => {
+            return (
+              <Grid size={12} key={index}>
                 <Box
                   sx={{
+                    width: "100%",
                     display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    flexDirection: "column",
+                    justifyContent: "start",
+                    alignItems: "start",
+                    pt: "3px",
                   }}
                 >
-                  <Image
-                    alt="profile picture "
-                    src={userImage}
-                    width={25}
-                    height={25}
-                    style={{
-                      borderRadius: "100%",
-                    }}
-                  ></Image>
-                  <Typography
+                  <Link
+                    href={item.articleLink}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Typography
+                      sx={{ color: "font.primary", fontWeight: "500" }}
+                    >
+                      {item.articleName}
+                    </Typography>
+                  </Link>
+                  <Box
                     sx={{
-                      fontSize: "15px",
-                      fontWeight: "semibold",
-                      color: "text.secondary",
-                      marginLeft: "8px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
+                      py: "8px",
                     }}
                   >
-                    Steve Jobs
-                  </Typography>
+                    <Link
+                      href={item.writerProfileLink}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Image
+                          alt="profile picture "
+                          src={item.profilePicture}
+                          width={25}
+                          height={25}
+                          style={{
+                            borderRadius: "100%",
+                          }}
+                        ></Image>
+                        <Typography
+                          sx={{
+                            fontSize: "15px",
+                            fontWeight: "semibold",
+                            color: "text.secondary",
+                            marginLeft: "8px",
+                          }}
+                        >
+                          {item.writerName}
+                        </Typography>
+                      </Box>
+                    </Link>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <IconButton
+                        sx={{
+                          color: "text.secondary",
+                          width: "10px",
+                          height: "10px",
+                        }}
+                        size="small"
+                      >
+                        <FavoriteBorderIcon />
+                      </IconButton>
+                      <Typography
+                        sx={{
+                          marginLeft: "10px",
+                          fontSize: "15px",
+                          color: "text.secondary",
+                        }}
+                      >
+                        {item.likes}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconButton
-                    sx={{
-                      color: "text.secondary",
-                      width: "10px",
-                      height: "10px",
-                    }}
-                    size="small"
-                  >
-                    <FavoriteBorderIcon />
-                  </IconButton>
-                  <Typography
-                    sx={{
-                      marginLeft: "10px",
-                      fontSize: "15px",
-                      color: "text.secondary",
-                    }}
-                  >
-                    320
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Typography sx={{ color: "font.primary", fontWeight: "500" }}>
-                सपनों के परिंदे
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                  py: "8px",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Image
-                    alt="profile picture "
-                    src={userImage}
-                    width={25}
-                    height={25}
-                    style={{
-                      borderRadius: "100%",
-                    }}
-                  ></Image>
-                  <Typography
-                    sx={{
-                      fontSize: "15px",
-                      fontWeight: "semibold",
-                      color: "text.secondary",
-                      marginLeft: "8px",
-                    }}
-                  >
-                    Steve Jobs
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconButton
-                    sx={{
-                      color: "text.secondary",
-                      width: "10px",
-                      height: "10px",
-                    }}
-                    size="small"
-                  >
-                    <FavoriteBorderIcon />
-                  </IconButton>
-                  <Typography
-                    sx={{
-                      marginLeft: "10px",
-                      fontSize: "15px",
-                      color: "text.secondary",
-                    }}
-                  >
-                    320
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Typography sx={{ color: "font.primary", fontWeight: "500" }}>
-                सपनों के परिंदे
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                  py: "8px",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Image
-                    alt="profile picture "
-                    src={userImage}
-                    width={25}
-                    height={25}
-                    style={{
-                      borderRadius: "100%",
-                    }}
-                  ></Image>
-                  <Typography
-                    sx={{
-                      fontSize: "15px",
-                      fontWeight: "semibold",
-                      color: "text.secondary",
-                      marginLeft: "8px",
-                    }}
-                  >
-                    Steve Jobs
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconButton
-                    sx={{
-                      color: "text.secondary",
-                      width: "10px",
-                      height: "10px",
-                    }}
-                    size="small"
-                  >
-                    <FavoriteBorderIcon />
-                  </IconButton>
-                  <Typography
-                    sx={{
-                      marginLeft: "10px",
-                      fontSize: "15px",
-                      color: "text.secondary",
-                    }}
-                  >
-                    320
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Typography sx={{ color: "font.primary", fontWeight: "500" }}>
-                सपनों के परिंदे
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                  py: "8px",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Image
-                    alt="profile picture "
-                    src={userImage}
-                    width={25}
-                    height={25}
-                    style={{
-                      borderRadius: "100%",
-                    }}
-                  ></Image>
-                  <Typography
-                    sx={{
-                      fontSize: "15px",
-                      fontWeight: "semibold",
-                      color: "text.secondary",
-                      marginLeft: "8px",
-                    }}
-                  >
-                    Steve Jobs
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconButton
-                    sx={{
-                      color: "text.secondary",
-                      width: "10px",
-                      height: "10px",
-                    }}
-                    size="small"
-                  >
-                    <FavoriteBorderIcon />
-                  </IconButton>
-                  <Typography
-                    sx={{
-                      marginLeft: "10px",
-                      fontSize: "15px",
-                      color: "text.secondary",
-                    }}
-                  >
-                    320
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Typography sx={{ color: "font.primary", fontWeight: "500" }}>
-                सपनों के परिंदे
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                  py: "8px",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Image
-                    alt="profile picture "
-                    src={userImage}
-                    width={25}
-                    height={25}
-                    style={{
-                      borderRadius: "100%",
-                    }}
-                  ></Image>
-                  <Typography
-                    sx={{
-                      fontSize: "15px",
-                      fontWeight: "semibold",
-                      color: "text.secondary",
-                      marginLeft: "8px",
-                    }}
-                  >
-                    Steve Jobs
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconButton
-                    sx={{
-                      color: "text.secondary",
-                      width: "10px",
-                      height: "10px",
-                    }}
-                    size="small"
-                  >
-                    <FavoriteBorderIcon />
-                  </IconButton>
-                  <Typography
-                    sx={{
-                      marginLeft: "10px",
-                      fontSize: "15px",
-                      color: "text.secondary",
-                    }}
-                  >
-                    320
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
+              </Grid>
+            );
+          })}
         </Grid>
         <Button
           sx={{
@@ -453,7 +167,7 @@ const RightSideBar = () => {
           backgroundColor: "white",
           borderRadius: "5px",
           width: "100%",
-          height: "46%",
+          height: "48%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
@@ -475,276 +189,81 @@ const RightSideBar = () => {
           Top writers to follow
         </Typography>
         <Grid container spacing={2}>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Image
-                alt="profile picture "
-                src={userImage}
-                width={40}
-                height={40}
-                style={{
-                  borderRadius: "100%",
-                }}
-              ></Image>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  width: "100%",
-                }}
-              >
-                <Typography
+          {writersToFollow.map((item, index) => {
+            return (
+              <Grid size={12} key={index}>
+                <Box
                   sx={{
-                    fontSize: "15px",
-                    color: "text.primary",
-                    marginLeft: "8px",
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "start",
+                    alignItems: "start",
+                    pt: "3px",
                   }}
                 >
-                  Steve Jobs
-                </Typography>
-                <Button
-                  sx={{
-                    backgroundColor: "secondary.main",
-                    color: "primary.main",
-                    minHeight: "auto",
-                    height: "20px",
-                    padding: "3px 4px ",
-                    margin: "3px 5px ",
-                    fontSize: "15px",
-                  }}
-                >
-                  Follow
-                </Button>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Image
-                alt="profile picture "
-                src={userImage}
-                width={40}
-                height={40}
-                style={{
-                  borderRadius: "100%",
-                }}
-              ></Image>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  width: "100%",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "15px",
-                    color: "text.primary",
-                    marginLeft: "8px",
-                  }}
-                >
-                  Steve Jobs
-                </Typography>
-                <Button
-                  sx={{
-                    backgroundColor: "secondary.main",
-                    color: "primary.main",
-                    minHeight: "auto",
-                    height: "20px",
-                    padding: "3px 4px ",
-                    margin: "3px 5px ",
-                    fontSize: "15px",
-                  }}
-                >
-                  Follow
-                </Button>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Image
-                alt="profile picture "
-                src={userImage}
-                width={40}
-                height={40}
-                style={{
-                  borderRadius: "100%",
-                }}
-              ></Image>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  width: "100%",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "15px",
-                    color: "text.primary",
-                    marginLeft: "8px",
-                  }}
-                >
-                  Steve Jobs
-                </Typography>
-                <Button
-                  sx={{
-                    backgroundColor: "secondary.main",
-                    color: "primary.main",
-                    minHeight: "auto",
-                    height: "20px",
-                    padding: "3px 4px ",
-                    margin: "3px 5px ",
-                    fontSize: "15px",
-                  }}
-                >
-                  Follow
-                </Button>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Image
-                alt="profile picture "
-                src={userImage}
-                width={40}
-                height={40}
-                style={{
-                  borderRadius: "100%",
-                }}
-              ></Image>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  width: "100%",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "15px",
-                    color: "text.primary",
-                    marginLeft: "8px",
-                  }}
-                >
-                  Steve Jobs
-                </Typography>
-                <Button
-                  sx={{
-                    backgroundColor: "secondary.main",
-                    color: "primary.main",
-                    minHeight: "auto",
-                    height: "20px",
-                    padding: "3px 4px ",
-                    margin: "3px 5px ",
-                    fontSize: "15px",
-                  }}
-                >
-                  Follow
-                </Button>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid size={12}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "start",
-                alignItems: "start",
-                pt: "3px",
-              }}
-            >
-              <Image
-                alt="profile picture "
-                src={userImage}
-                width={40}
-                height={40}
-                style={{
-                  borderRadius: "100%",
-                }}
-              ></Image>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  width: "100%",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "15px",
-                    color: "text.primary",
-                    marginLeft: "8px",
-                  }}
-                >
-                  Steve Jobs
-                </Typography>
-                <Button
-                  sx={{
-                    backgroundColor: "secondary.main",
-                    color: "primary.main",
-                    minHeight: "auto",
-                    height: "20px",
-                    padding: "3px 4px ",
-                    margin: "3px 5px ",
-                    fontSize: "15px",
-                  }}
-                >
-                  Follow
-                </Button>
-              </Box>
-            </Box>
-          </Grid>
+                  <Link
+                    style={{
+                      textDecoration: "none",
+                    }}
+                    href={item.writerProfileLink}
+                  >
+                    <Image
+                      alt="profile picture "
+                      src={item.profilePicture}
+                      width={40}
+                      height={40}
+                      style={{
+                        borderRadius: "100%",
+                      }}
+                    ></Image>
+                  </Link>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "start",
+                      alignItems: "start",
+                      width: "100%",
+                    }}
+                  >
+                    <Link
+                      style={{
+                        textDecoration: "none",
+                      }}
+                      href={item.writerProfileLink}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: "15px",
+                          color: "text.primary",
+                          marginLeft: "8px",
+                        }}
+                      >
+                        {item.writerName}
+                      </Typography>
+                    </Link>
+                    <Button
+                      sx={{
+                        backgroundColor: "secondary.main",
+                        color: "primary.main",
+                        minHeight: "auto",
+                        height: "20px",
+                        padding: "3px 4px ",
+                        margin: "3px 5px ",
+                        fontSize: "15px",
+                      }}
+                      onClick={() => {
+                        followWriter(item.writerName, item.writerProfileLink);
+                      }}
+                    >
+                      Follow
+                    </Button>
+                  </Box>
+                </Box>
+              </Grid>
+            );
+          })}
         </Grid>
         <Button
           sx={{

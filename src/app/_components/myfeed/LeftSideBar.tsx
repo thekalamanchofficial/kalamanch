@@ -1,4 +1,3 @@
-"use client";
 import { Box, Typography, Button, Grid2 as Grid } from "@mui/material";
 import React from "react";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
@@ -15,11 +14,15 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import userImage from "~/assets/images/user.jpeg";
-import { MENU_ITEMS } from "~/app/myfeed/_config/config";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { type MenuItem } from "~/app/myfeed/types/types";
 
-const LeftSideBar = () => {
+interface Props {
+  menuItems: MenuItem[];
+}
+
+const LeftSideBar: React.FC<Props> = ({ menuItems }) => {
   const router = useRouter();
 
   const ICONS_MAP = {
@@ -101,7 +104,7 @@ const LeftSideBar = () => {
           marginTop: 2,
         }}
       >
-        {MENU_ITEMS.map((item, index) => {
+        {menuItems.map((item, index) => {
           const IconComponent = ICONS_MAP[item.icon as keyof typeof ICONS_MAP];
 
           return (

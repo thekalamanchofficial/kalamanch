@@ -2,7 +2,6 @@
 import { Grid2 as Grid, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
 import PostsFeed from "../_components/myfeed/PostsFeed";
-
 const MyFeed = () => {
   const [value, setValue] = useState(0);
 
