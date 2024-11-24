@@ -28,11 +28,11 @@ import { useClerk } from "@clerk/nextjs";
 import { toast } from "react-toastify";
 import { handleError } from "~/app/_utils/handleError";
 
-interface Props {
+interface LeftSideBarProps {
   menuItems: MenuItemList[];
 }
 
-const LeftSideBar: React.FC<Props> = ({ menuItems }) => {
+const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
   const { signOut } = useClerk();
 
   const router = useRouter();

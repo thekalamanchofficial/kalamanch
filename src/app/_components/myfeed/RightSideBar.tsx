@@ -10,21 +10,14 @@ import Image from "next/image";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Link from "next/link";
-import {
-  type FeaturedArticle,
-  type WriterToFollow,
-} from "~/app/myfeed/types/types";
 import { followWriter } from "~/app/myfeed/types/types";
 import UserNameProfile from "./UserNameProfile";
 
-interface Props {
-  featuredArticles: FeaturedArticle[];
-  writersToFollow: WriterToFollow[];
-}
+import { type RightSideBarProps } from "~/app/myfeed/types/types";
 
-const RightSideBar: React.FC<Props> = ({
-  featuredArticles,
-  writersToFollow,
+const RightSideBar: React.FC<RightSideBarProps> = ({
+  featuredArticles: featuredArticles,
+  writersToFollow: writersToFollow,
 }) => {
   return (
     <>

@@ -2,14 +2,6 @@
 import { createTheme } from "@mui/material/styles";
 
 declare module "@mui/material/styles" {
-  interface PaletteOptions {
-    chip?: {
-      lightGray?: string;
-    };
-  }
-}
-
-declare module "@mui/material/styles" {
   interface CommonColors {
     lightGray?: string;
   }

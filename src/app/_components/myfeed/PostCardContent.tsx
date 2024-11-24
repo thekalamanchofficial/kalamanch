@@ -1,7 +1,19 @@
 import { Box, Button, CardMedia, Chip, Typography } from "@mui/material";
 import React from "react";
-
-const PostCardContent = () => {
+interface PostCardContentProps {
+  articleTitle: string;
+  articleContent: string;
+  articleTags: string[];
+  articleImage?: string;
+  articleDescription: string;
+}
+const PostCardContent: React.FC<PostCardContentProps> = ({
+  articleTitle,
+  articleContent,
+  articleTags,
+  articleImage = "",
+  articleDescription,
+}) => {
   return (
     <>
       <Box
@@ -20,7 +32,7 @@ const PostCardContent = () => {
             py: "10px",
           }}
         >
-          The Forgotten Violion
+          {articleTitle}
         </Typography>
         <Typography
           sx={{
@@ -29,31 +41,27 @@ const PostCardContent = () => {
             marginBottom: "10px",
           }}
         >
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam
-          itaque labore quisquam repellendus rem nisi exercitationem minus
-          impedit non dolorem. Quasi, assumenda est? Pariatur reprehenderit
-          nesciunt atque veritatis numquam ipsum tempore ratione eaque sint quos
-          repellat, eos fuga cum obcaecati at beatae, ullam totam inventore
-          praesentium quo cumque commodi odio. Reiciendis tenetur rerum officia.
-          Fugit ea aliquid optio vero tenetur nostrum, eum ex illum officia,
-          neque quis? Itaque eveniet, odio error natus quaerat deserunt porro
-          et, quam quis magnam sapiente?
-          <Button
-            variant="text"
-            sx={{
-              minHeight: "auto",
-              height: "30px",
-              width: "auto",
-              color: "primary.main",
-              fontSize: "15px",
-              ":hover": {
-                backgroundColor: "transparent",
-              },
-            }}
-            disableTouchRipple
-          >
-            See more
-          </Button>
+          {articleContent.slice(0, 400)}
+          {articleContent.length > 400 ? " ..." : ""}
+
+          {articleContent.length > 400 && (
+            <Button
+              variant="text"
+              sx={{
+                minHeight: "auto",
+                height: "30px",
+                width: "auto",
+                color: "primary.main",
+                fontSize: "15px",
+                ":hover": {
+                  backgroundColor: "transparent",
+                },
+              }}
+              disableTouchRipple
+            >
+              See more
+            </Button>
+          )}
         </Typography>
       </Box>
       <Box
@@ -70,7 +78,9 @@ const PostCardContent = () => {
         <CardMedia
           component="img"
           height="140"
-          image="https://fastly.picsum.photos/id/609/200/300.jpg?hmac=jkFe_vvVM_tvHdIFYhYtG6uWYznjI6zHzJpfOWfHGiU"
+          image={
+            articleImage !== "" ? articleImage : "https://picsum.photos/200"
+          }
           alt="green iguana"
           sx={{
             width: "80%",
@@ -94,7 +104,7 @@ const PostCardContent = () => {
               py: "10px",
             }}
           >
-            The Forgotten Violion
+            {articleTitle}
           </Typography>
           <Typography
             sx={{
@@ -103,26 +113,26 @@ const PostCardContent = () => {
               marginBottom: "10px",
             }}
           >
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-            Repellendus quaerat, delectus in modi cumque unde sit nam vitae
-            assumenda enim pariatur, suscipit facere explicabo est deserunt
-            obcaecati accusantium commodi sapiente! asdasd
-            <Button
-              variant="text"
-              sx={{
-                minHeight: "auto",
-                width: "auto",
-                height: "10px",
-                color: "primary.main",
-                fontSize: "14px",
-                ":hover": {
-                  backgroundColor: "transparent",
-                },
-              }}
-              disableTouchRipple
-            >
-              See more
-            </Button>
+            {articleDescription.slice(0, 250)}
+            {articleDescription.length > 250 ? " ..." : ""}
+            {articleDescription.length > 250 && (
+              <Button
+                variant="text"
+                sx={{
+                  minHeight: "auto",
+                  width: "auto",
+                  height: "10px",
+                  color: "primary.main",
+                  fontSize: "14px",
+                  ":hover": {
+                    backgroundColor: "transparent",
+                  },
+                }}
+                disableTouchRipple
+              >
+                See more
+              </Button>
+            )}
           </Typography>
           <Box
             sx={{
@@ -130,22 +140,17 @@ const PostCardContent = () => {
               gap: "10px",
             }}
           >
-            <Chip
-              label="Memories"
-              variant="filled"
-              sx={{
-                color: "font.secondary",
-                backgroundColor: "common.lightGray",
-              }}
-            />
-            <Chip
-              label="Nostalgia"
-              variant="filled"
-              sx={{
-                color: "font.secondary",
-                backgroundColor: "common.lightGray",
-              }}
-            />
+            {articleTags.map((tag, index) => (
+              <Chip
+                key={index}
+                label={tag}
+                variant="filled"
+                sx={{
+                  color: "font.secondary",
+                  backgroundColor: "common.lightGray",
+                }}
+              />
+            ))}
           </Box>
         </Box>
       </Box>

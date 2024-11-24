@@ -3,7 +3,7 @@ import React, { type ReactNode } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
 import LeftSideBar from "~/app/_components/myfeed/LeftSideBar";
 import RightSideBar from "~/app/_components/myfeed/RightSideBar";
-import staticData from "./static/static";
+import staticData from "./myfeedMock/myfeedMock";
 import { MENU_ITEMS } from "~/app/myfeed/static/menu";
 
 const Layout = ({ children }: { children: ReactNode }) => {
@@ -43,6 +43,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           sx={{
             height: "90vh",
             overflow: "hidden",
+            pb: "50px",
             backgroundColor: "white",
           }}
         >

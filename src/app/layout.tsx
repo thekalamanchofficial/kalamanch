@@ -10,7 +10,7 @@ import theme from "../theme";
 
 export const metadata: Metadata = {
   title: "Kalamanach",
-  description: "A Platform for Writers and Poets",
+  description: "A platform for artists",
 };
 
 export default function RootLayout({

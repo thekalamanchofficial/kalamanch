@@ -6,7 +6,18 @@ import SendIcon from "@mui/icons-material/Send";
 import TollIcon from "@mui/icons-material/Toll";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
-const PostCardFooter = () => {
+interface PostCardFooterProps {
+  likes: number;
+  comments: number;
+  shares: number;
+  bids: number;
+}
+const PostCardFooter: React.FC<PostCardFooterProps> = ({
+  likes,
+  comments,
+  shares,
+  bids,
+}) => {
   return (
     <Box
       sx={{
@@ -26,7 +37,7 @@ const PostCardFooter = () => {
       >
         <Chip
           avatar={<FavoriteBorderIcon />}
-          label="320"
+          label={likes}
           sx={{
             padding: "4px ",
             backgroundColor: "common.lightGray",
@@ -36,7 +47,7 @@ const PostCardFooter = () => {
 
         <Chip
           avatar={<MessageIcon />}
-          label="24"
+          label={comments}
           sx={{
             padding: "4px ",
             backgroundColor: "common.lightGray",
@@ -45,7 +56,7 @@ const PostCardFooter = () => {
         />
         <Chip
           avatar={<TollIcon />}
-          label="24"
+          label={bids}
           sx={{
             padding: "4px ",
             backgroundColor: "common.lightGray",
@@ -54,7 +65,7 @@ const PostCardFooter = () => {
         />
         <Chip
           avatar={<SendIcon />}
-          label="24"
+          label={shares}
           sx={{
             padding: "4px ",
             fontSize: "14px",

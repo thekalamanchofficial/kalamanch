@@ -2,6 +2,7 @@
 import { Grid2 as Grid, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
 import PostsFeed from "../_components/myfeed/PostsFeed";
+import mockData from "./myfeedMock/myfeedMock";
 const MyFeed = () => {
   const [value, setValue] = useState(0);
 
@@ -60,7 +61,7 @@ const MyFeed = () => {
         }}
       >
         {value === 0 ? (
-          <PostsFeed />
+          <PostsFeed articlesList={mockData.articlesList} />
         ) : (
           <div
             style={{

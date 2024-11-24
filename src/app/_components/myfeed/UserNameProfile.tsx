@@ -1,19 +1,23 @@
 import { Box, Typography } from "@mui/material";
 import Image from "next/image";
-import userImage from "~/assets/images/user.jpeg";
 import React from "react";
 
-interface Props {
+interface UserNameProfileProps {
   ImageHeight?: number;
   ImageWidth?: number;
   NameFontSize?: number;
   NameFontWeight?: string;
+  AuthorName?: string;
+  AuthorProfileLink?: string;
+  AuthorImage?: string;
 }
-const UserNameProfile: React.FC<Props> = ({
+const UserNameProfile: React.FC<UserNameProfileProps> = ({
   ImageHeight = 50,
   ImageWidth = 50,
   NameFontSize = "17px",
   NameFontWeight = "bold",
+  AuthorImage = "https://picsum.photos/200",
+  AuthorName = "Joe",
 }) => {
   return (
     <Box
@@ -25,7 +29,7 @@ const UserNameProfile: React.FC<Props> = ({
     >
       <Image
         alt="profile picture "
-        src={userImage}
+        src={AuthorImage}
         width={ImageWidth}
         height={ImageHeight}
         style={{
@@ -40,7 +44,7 @@ const UserNameProfile: React.FC<Props> = ({
           marginLeft: "8px",
         }}
       >
-        Steve Jobs
+        {AuthorName}
       </Typography>
     </Box>
   );
