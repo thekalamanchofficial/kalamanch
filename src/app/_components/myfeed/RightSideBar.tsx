@@ -15,6 +15,7 @@ import {
   type WriterToFollow,
 } from "~/app/myfeed/types/types";
 import { followWriter } from "~/app/myfeed/types/types";
+import UserNameProfile from "./UserNameProfile";
 
 interface Props {
   featuredArticles: FeaturedArticle[];
@@ -88,33 +89,12 @@ const RightSideBar: React.FC<Props> = ({
                       href={item.writerProfileLink}
                       style={{ textDecoration: "none" }}
                     >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Image
-                          alt="profile picture "
-                          src={item.profilePicture}
-                          width={25}
-                          height={25}
-                          style={{
-                            borderRadius: "100%",
-                          }}
-                        ></Image>
-                        <Typography
-                          sx={{
-                            fontSize: "15px",
-                            fontWeight: "semibold",
-                            color: "text.secondary",
-                            marginLeft: "8px",
-                          }}
-                        >
-                          {item.writerName}
-                        </Typography>
-                      </Box>
+                      <UserNameProfile
+                        ImageHeight={25}
+                        ImageWidth={25}
+                        NameFontSize={15}
+                        NameFontWeight="400"
+                      />
                     </Link>
                     <Box
                       sx={{
