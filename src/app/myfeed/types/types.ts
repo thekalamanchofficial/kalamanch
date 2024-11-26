@@ -47,11 +47,19 @@ export interface PostsFeedProps {
   articlesList: ArticlesList[];
 }
 
-// import { currentUser } from "@clerk/nextjs/server";
+export interface PostCardFooterProps {
+  likes: number;
+  comments: number;
+  shares: number;
+  bids: number;
+}
 
-// const getUserInfo = async () => {
-//   const user = await currentUser();
-//   console.log(user);
-// };
-
-// export const data = await getUserInfo();
+export interface UserNameProfileProps {
+  ImageHeight?: number;
+  ImageWidth?: number;
+  NameFontSize?: number;
+  NameFontWeight?: string;
+  AuthorName?: string;
+  AuthorProfileLink?: string;
+  AuthorImage?: string;
+}

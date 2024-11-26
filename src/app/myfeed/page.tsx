@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import PostsFeed from "../_components/myfeed/PostsFeed";
 import mockData from "./myfeedMock/myfeedMock";
 const MyFeed = () => {
-  const [value, setValue] = useState(0);
+  const [tab, setTab] = useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const handleChange = (event: React.SyntheticEvent, newTab: number) => {
+    setTab(tab);
   };
 
   return (
@@ -24,7 +24,7 @@ const MyFeed = () => {
         }}
       >
         <Tabs
-          value={value}
+          value={tab}
           onChange={handleChange}
           sx={{
             borderColor: "divider",
@@ -60,7 +60,7 @@ const MyFeed = () => {
           mt: 1,
         }}
       >
-        {value === 0 ? (
+        {tab === 0 ? (
           <PostsFeed articlesList={mockData.articlesList} />
         ) : (
           <div

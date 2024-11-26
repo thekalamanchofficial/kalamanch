@@ -1,16 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import Image from "next/image";
 import React from "react";
+import { type UserNameProfileProps } from "~/app/myfeed/types/types";
 
-interface UserNameProfileProps {
-  ImageHeight?: number;
-  ImageWidth?: number;
-  NameFontSize?: number;
-  NameFontWeight?: string;
-  AuthorName?: string;
-  AuthorProfileLink?: string;
-  AuthorImage?: string;
-}
 const UserNameProfile: React.FC<UserNameProfileProps> = ({
   ImageHeight = 50,
   ImageWidth = 50,

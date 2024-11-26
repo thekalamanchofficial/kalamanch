@@ -6,12 +6,8 @@ import SendIcon from "@mui/icons-material/Send";
 import TollIcon from "@mui/icons-material/Toll";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
-interface PostCardFooterProps {
-  likes: number;
-  comments: number;
-  shares: number;
-  bids: number;
-}
+import { type PostCardFooterProps } from "~/app/myfeed/types/types";
+
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,
   comments,
