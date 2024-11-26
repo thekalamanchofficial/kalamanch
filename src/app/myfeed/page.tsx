@@ -6,8 +6,8 @@ import mockData from "./myfeedMock/myfeedMock";
 const MyFeed = () => {
   const [tab, setTab] = useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newTab: number) => {
-    setTab(tab);
+  const handleChange = (event: React.SyntheticEvent) => {
+    setTab(1 - tab);
   };
 
   return (
