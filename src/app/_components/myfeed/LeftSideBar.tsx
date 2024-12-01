@@ -1,16 +1,8 @@
-import {
-  Box,
-  Typography,
-  Button,
-  Grid2 as Grid,
-  MenuItem,
-  Menu,
-} from "@mui/material";
+import { Box, Typography, Button, Grid2 as Grid } from "@mui/material";
 import React from "react";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import OwlSVG from "~/assets/svg/owl.svg";
 import WriteLogo from "~/assets/svg/writeLogo.svg";
-import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
@@ -20,22 +12,18 @@ import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlin
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import userImage from "~/assets/images/user.jpeg";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { type MenuItemList } from "~/app/myfeed/types/types";
-import { useClerk } from "@clerk/nextjs";
-import { toast } from "react-toastify";
-import { handleError } from "~/app/_utils/handleError";
+import { type MenuItemList } from "~/app/(with-sidebar)/myfeed/types/types";
+import { usePathname, useRouter } from "next/navigation";
+import UserMenu from "./UserMenu";
 
 interface LeftSideBarProps {
   menuItems: MenuItemList[];
 }
 
 const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
-  const { signOut } = useClerk();
-
   const router = useRouter();
+
+  const pathname = usePathname();
 
   const ICONS_MAP = {
     HomeIcon: HomeOutlinedIcon,
@@ -49,39 +37,6 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
     AccountCircleOutlinedIcon: AccountCircleOutlinedIcon,
   };
 
-  const handleTabChange = () => {
-    console.log("hello");
-    router.push("/myfeed/profile");
-  };
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = async () => {
-    toast
-      .promise(
-        (async () => {
-          await signOut({ redirectUrl: "/" });
-        })(),
-        {
-          pending: `${STATIC_TEXTS.LOGOUT_MESSAGES.PENDING}`,
-          success: `${STATIC_TEXTS.LOGOUT_MESSAGES.SUCCESS}`,
-        },
-      )
-      .catch((error) => {
-        handleError(error);
-      });
-
-    setAnchorEl(null);
-  };
   return (
     <Grid
       columns={1}
@@ -146,6 +101,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
       >
         {menuItems.map((item, index) => {
           const IconComponent = ICONS_MAP[item.icon as keyof typeof ICONS_MAP];
+          const isActive = pathname === item.route;
 
           return (
             <Box
@@ -156,8 +112,9 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
                 alignItems: "center",
                 px: "2px",
                 py: "4px",
+                backgroundColor: isActive ? "secondary.main" : "white",
               }}
-              onClick={() => handleTabChange()}
+              onClick={() => router.push(item.route)}
             >
               <Button
                 startIcon={<IconComponent />}
@@ -169,8 +126,11 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
                   height: "40px",
                   justifyContent: "start",
                   alignItems: "center",
-                  color: "text.secondary",
+                  color: isActive ? "primary.main" : "text.secondary",
                   marginLeft: "4px",
+                  ":hover": {
+                    backgroundColor: "transparent",
+                  },
                 }}
               >
                 <Typography
@@ -178,7 +138,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
                   sx={{
                     fontSize: "18px",
                     fontWeight: "500",
-                    color: "text.secondary",
+                    color: isActive ? "primary.main" : "text.secondary",
                   }}
                 >
                   {item.label}
@@ -198,56 +158,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
           bottom: "0",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Image
-            alt="profile picture "
-            src={userImage}
-            width={50}
-            height={50}
-            style={{
-              borderRadius: "100%",
-            }}
-          ></Image>
-          <Typography
-            sx={{
-              fontSize: "17px",
-              fontWeight: "semibold",
-              color: "text.secondary",
-              marginLeft: "4px",
-            }}
-          >
-            Steve Jobs
-          </Typography>
-        </Box>
-        <div>
-          <Button
-            startIcon={<MoreHorizOutlinedIcon />}
-            sx={{ color: "text.secondary" }}
-            id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-          >
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
-            >
-              <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
-            </Menu>
-          </Button>
-        </div>
+        <UserMenu />
       </Box>
     </Grid>
   );

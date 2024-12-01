@@ -7,7 +7,14 @@ await import("./src/env.js");
 /** @type {import('next').NextConfig} */
 const config = {
   images: {
-    domains: ["picsum.photos"], // Add the hostname here
+    remotePatterns: [
+      {
+        hostname: "picsum.photos",
+      },
+      {
+        hostname: "img.clerk.com",
+      },
+    ],
   },
   async redirects() {
     return [

@@ -2,7 +2,7 @@ export const MENU_ITEMS = [
   {
     label: "Home",
     icon: "HomeIcon",
-    route: "/",
+    route: "/myfeed",
   },
   {
     label: "Search",

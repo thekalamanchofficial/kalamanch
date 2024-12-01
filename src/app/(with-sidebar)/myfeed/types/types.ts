@@ -2,32 +2,32 @@ export const followWriter = (writerName: string, writerProfileLink: string) => {
   console.log(`followed writer ${writerName} ${writerProfileLink} `);
 };
 
-interface FeaturedArticle {
+type FeaturedArticle = {
   profilePicture: string;
-  writerName: string;
+  authorName: string;
   articleName: string;
   articleLink: string;
-  writerProfileLink: string;
+  authorProfileLink: string;
   likes: number;
-}
+};
 
-interface WriterToFollow {
+type AuthorToFollow = {
   profilePicture: string;
-  writerName: string;
-  writerProfileLink: string;
-}
-export interface RightSideBarProps {
+  authorName: string;
+  authorProfileLink: string;
+};
+export type RightSideBarProps = {
   featuredArticles: FeaturedArticle[];
-  writersToFollow: WriterToFollow[];
-}
+  authorToFollow: AuthorToFollow[];
+};
 
-export interface MenuItemList {
+export type MenuItemList = {
   label: string;
   route: string;
   icon: React.ReactNode;
-}
+};
 
-interface ArticlesList {
+type ArticlesList = {
   authorName: string;
   authorImage: string;
   authorProfileLink: string;
@@ -41,25 +41,37 @@ interface ArticlesList {
   articleComments: number;
   articleShares: number;
   articlesBids: number;
-}
+};
 
-export interface PostsFeedProps {
+export type PostsFeedProps = {
   articlesList: ArticlesList[];
-}
+};
 
-export interface PostCardFooterProps {
+export type PostCardFooterProps = {
   likes: number;
   comments: number;
   shares: number;
   bids: number;
-}
+};
 
-export interface UserNameProfileProps {
+export type UserNameProfileProps = {
   ImageHeight?: number;
   ImageWidth?: number;
   NameFontSize?: number;
   NameFontWeight?: string;
-  AuthorName?: string;
-  AuthorProfileLink?: string;
-  AuthorImage?: string;
-}
+  AuthorName: string | null | undefined;
+  AuthorImage: string | undefined;
+};
+export type PostCardContentProps = {
+  articleTitle: string;
+  articleContent: string;
+  articleTags: string[];
+  articleImage?: string;
+  articleDescription: string;
+};
+
+export type FollowButtonProps = {
+  authorProfileLink: string;
+  yPadding?: string;
+  xPadding?: string;
+};

@@ -3,8 +3,8 @@ import React, { type ReactNode } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
 import LeftSideBar from "~/app/_components/myfeed/LeftSideBar";
 import RightSideBar from "~/app/_components/myfeed/RightSideBar";
-import staticData from "./myfeedMock/myfeedMock";
-import { MENU_ITEMS } from "~/app/myfeed/static/menu";
+import staticData from "~/app/(with-sidebar)/myfeed/myfeedMock/myfeedMock";
+import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
@@ -34,6 +34,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           size={2}
           sx={{
             height: "90vh",
+            borderRight: "1px solid #E0E0E0",
           }}
         >
           <LeftSideBar menuItems={MENU_ITEMS} />
@@ -62,7 +63,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           }}
         >
           <RightSideBar
-            writersToFollow={staticData.writersToFollow}
+            authorToFollow={staticData.authorToFollow}
             featuredArticles={staticData.featuredArticles}
           />
         </Grid>

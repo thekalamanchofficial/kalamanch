@@ -1,4 +1,4 @@
-import { Box, Chip, IconButton } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
@@ -6,7 +6,8 @@ import SendIcon from "@mui/icons-material/Send";
 import TollIcon from "@mui/icons-material/Toll";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
-import { type PostCardFooterProps } from "~/app/myfeed/types/types";
+import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import PostActionButton from "./PostActionButton";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,
@@ -14,6 +15,28 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   shares,
   bids,
 }) => {
+  const handleAction = (actionType: string) => {
+    switch (actionType) {
+      case "like":
+        console.log("like");
+        break;
+      case "comment":
+        console.log("comment");
+        break;
+      case "share":
+        console.log("share");
+        break;
+      case "bid":
+        console.log("bid");
+        break;
+      case "bookmark":
+        console.log("bookmark");
+        break;
+      default:
+        console.log("default");
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -31,42 +54,26 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           gap: "10px",
         }}
       >
-        <Chip
-          avatar={<FavoriteBorderIcon />}
+        <PostActionButton
+          icon={<FavoriteBorderIcon />}
           label={likes}
-          sx={{
-            padding: "4px ",
-            backgroundColor: "common.lightGray",
-            fontSize: "14px",
-          }}
+          onClick={() => handleAction("like")}
         />
 
-        <Chip
-          avatar={<MessageIcon />}
+        <PostActionButton
+          icon={<MessageIcon />}
           label={comments}
-          sx={{
-            padding: "4px ",
-            backgroundColor: "common.lightGray",
-            fontSize: "14px",
-          }}
+          onClick={() => handleAction("comment")}
         />
-        <Chip
-          avatar={<TollIcon />}
+        <PostActionButton
+          icon={<TollIcon />}
           label={bids}
-          sx={{
-            padding: "4px ",
-            backgroundColor: "common.lightGray",
-            fontSize: "14px",
-          }}
+          onClick={() => handleAction("share")}
         />
-        <Chip
-          avatar={<SendIcon />}
+        <PostActionButton
+          icon={<SendIcon />}
           label={shares}
-          sx={{
-            padding: "4px ",
-            fontSize: "14px",
-            backgroundColor: "common.lightGray",
-          }}
+          onClick={() => handleAction("bid")}
         />
       </Box>
       <Box>
@@ -75,6 +82,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
             backgroundColor: "common.lightGray",
           }}
           size="small"
+          onClick={() => handleAction("bookmark")}
         >
           <BookmarkBorderIcon />
         </IconButton>

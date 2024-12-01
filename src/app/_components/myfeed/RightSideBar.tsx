@@ -10,14 +10,14 @@ import Image from "next/image";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Link from "next/link";
-import { followWriter } from "~/app/myfeed/types/types";
 import UserNameProfile from "./UserNameProfile";
 
-import { type RightSideBarProps } from "~/app/myfeed/types/types";
+import { type RightSideBarProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import FollowButton from "~/app/_components/myfeed/FollowButton";
 
 const RightSideBar: React.FC<RightSideBarProps> = ({
-  featuredArticles: featuredArticles,
-  writersToFollow: writersToFollow,
+  featuredArticles,
+  authorToFollow,
 }) => {
   return (
     <>
@@ -79,7 +79,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                     }}
                   >
                     <Link
-                      href={item.writerProfileLink}
+                      href={item.authorProfileLink}
                       style={{ textDecoration: "none" }}
                     >
                       <UserNameProfile
@@ -87,6 +87,8 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                         ImageWidth={25}
                         NameFontSize={15}
                         NameFontWeight="400"
+                        AuthorName={item.authorName}
+                        AuthorImage={item.profilePicture}
                       />
                     </Link>
                     <Box
@@ -162,7 +164,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
           Top writers to follow
         </Typography>
         <Grid container spacing={2}>
-          {writersToFollow.map((item, index) => {
+          {authorToFollow.map((item, index) => {
             return (
               <Grid size={12} key={index}>
                 <Box
@@ -179,7 +181,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                     style={{
                       textDecoration: "none",
                     }}
-                    href={item.writerProfileLink}
+                    href={item.authorProfileLink}
                   >
                     <Image
                       alt="profile picture "
@@ -204,7 +206,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                       style={{
                         textDecoration: "none",
                       }}
-                      href={item.writerProfileLink}
+                      href={item.authorProfileLink}
                     >
                       <Typography
                         sx={{
@@ -213,25 +215,10 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                           marginLeft: "8px",
                         }}
                       >
-                        {item.writerName}
+                        {item.authorName}
                       </Typography>
                     </Link>
-                    <Button
-                      sx={{
-                        backgroundColor: "secondary.main",
-                        color: "primary.main",
-                        minHeight: "auto",
-                        height: "20px",
-                        padding: "3px 4px ",
-                        margin: "3px 5px ",
-                        fontSize: "15px",
-                      }}
-                      onClick={() => {
-                        followWriter(item.writerName, item.writerProfileLink);
-                      }}
-                    >
-                      Follow
-                    </Button>
+                    <FollowButton authorProfileLink={item.authorProfileLink} />
                   </Box>
                 </Box>
               </Grid>

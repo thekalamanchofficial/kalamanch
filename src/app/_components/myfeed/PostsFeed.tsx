@@ -5,7 +5,8 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PostCardFooter from "./PostCardFooter";
 import PostCardContent from "./PostCardContent";
 import UserNameProfile from "./UserNameProfile";
-import { type PostsFeedProps } from "~/app/myfeed/types/types";
+import { type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import FollowButton from "./FollowButton";
 
 const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
   return (
@@ -28,7 +29,7 @@ const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
               >
                 <UserNameProfile
                   AuthorName={article.authorName}
-                  AuthorProfileLink={article.authorProfileLink}
+                  AuthorImage={article.authorImage}
                 />
                 <Box
                   sx={{
@@ -37,19 +38,11 @@ const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
                     alignItems: "center",
                   }}
                 >
-                  <Button
-                    sx={{
-                      backgroundColor: "secondary.main",
-                      color: "primary.main",
-                      minHeight: "auto",
-                      height: "40px",
-                      padding: "2px 10px ",
-                      margin: "3px 5px ",
-                      fontSize: "15px",
-                    }}
-                  >
-                    Follow
-                  </Button>
+                  <FollowButton
+                    authorProfileLink={article.authorProfileLink}
+                    yPadding="16px"
+                    xPadding="20px"
+                  />
                   <Button
                     startIcon={<MoreHorizOutlinedIcon />}
                     sx={{ color: "text.secondary", minHeight: "auto" }}

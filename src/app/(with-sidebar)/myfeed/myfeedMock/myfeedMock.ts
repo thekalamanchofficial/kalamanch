@@ -1,83 +1,83 @@
 const FEATURED_ARTICLES = [
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
+    authorName: "Steve Jobs",
     articleName: "सपनों के परिंदे",
     articleLink: "/",
-    writerProfileLink: "/",
+    authorProfileLink: "/",
     likes: 320,
   },
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
+    authorName: "Steve Jobs",
     articleName: "सपनों के परिंदे",
     articleLink: "/",
-    writerProfileLink: "/",
+    authorProfileLink: "/",
     likes: 320,
   },
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
+    authorName: "Steve Jobs",
     articleName: "सपनों के परिंदे",
     articleLink: "/",
-    writerProfileLink: "/",
+    authorProfileLink: "/",
     likes: 320,
   },
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
+    authorName: "Steve Jobs",
     articleName: "सपनों के परिंदे",
     articleLink: "/",
-    writerProfileLink: "/",
+    authorProfileLink: "/",
     likes: 320,
   },
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
+    authorName: "Steve Jobs",
     articleName: "सपनों के परिंदे",
     articleLink: "/",
-    writerProfileLink: "/",
+    authorProfileLink: "/",
     likes: 320,
   },
 ];
 
-const WRITERS_TO_FOLLOW_MOCK = [
+const AUTHOR_TO_FOLLOW_MOCK = [
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
-    writerProfileLink: "/",
+    authorName: "Steve Jobs",
+    authorProfileLink: "/",
     onFollow: () => {
       console.log(`followed writer `);
     },
   },
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
-    writerProfileLink: "/",
+    authorName: "Steve Jobs",
+    authorProfileLink: "/",
     onFollow: () => {
       console.log(`followed writer `);
     },
   },
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
-    writerProfileLink: "/",
+    authorName: "Steve Jobs",
+    authorProfileLink: "/",
     onFollow: () => {
       console.log(`followed writer `);
     },
   },
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
-    writerProfileLink: "/",
+    authorName: "Steve Jobs",
+    authorProfileLink: "/",
     onFollow: () => {
       console.log(`followed writer `);
     },
   },
   {
     profilePicture: "https://picsum.photos/200",
-    writerName: "Steve Jobs",
-    writerProfileLink: "/",
+    authorName: "Steve Jobs",
+    authorProfileLink: "/",
     onFollow: () => {
       console.log(`followed writer `);
     },
@@ -141,7 +141,7 @@ const ARTICLES_LIST = [
 
 const staticData = {
   featuredArticles: FEATURED_ARTICLES,
-  writersToFollow: WRITERS_TO_FOLLOW_MOCK,
+  authorToFollow: AUTHOR_TO_FOLLOW_MOCK,
   articlesList: ARTICLES_LIST,
 };
 

@@ -1,12 +1,9 @@
-import { Box, Button, CardMedia, Chip, Typography } from "@mui/material";
+import { Box, CardMedia, Chip, Typography } from "@mui/material";
 import React from "react";
-interface PostCardContentProps {
-  articleTitle: string;
-  articleContent: string;
-  articleTags: string[];
-  articleImage?: string;
-  articleDescription: string;
-}
+import { type PostCardContentProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import myfeedConfig from "~/app/(with-sidebar)/myfeed/_config/config";
+import SeeMoreButton from "./SeeMoreButton";
+
 const PostCardContent: React.FC<PostCardContentProps> = ({
   articleTitle,
   articleContent,
@@ -41,26 +38,13 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
             marginBottom: "10px",
           }}
         >
-          {articleContent.slice(0, 400)}
-          {articleContent.length > 400 ? " ..." : ""}
-
-          {articleContent.length > 400 && (
-            <Button
-              variant="text"
-              sx={{
-                minHeight: "auto",
-                height: "30px",
-                width: "auto",
-                color: "primary.main",
-                fontSize: "15px",
-                ":hover": {
-                  backgroundColor: "transparent",
-                },
-              }}
-              disableTouchRipple
-            >
-              See more
-            </Button>
+          {articleContent.length > myfeedConfig.ARTICLE_READ_MORE_LENGTH ? (
+            <>
+              {`${articleContent.slice(0, myfeedConfig.ARTICLE_READ_MORE_LENGTH)} ...`}
+              <SeeMoreButton />
+            </>
+          ) : (
+            articleContent
           )}
         </Typography>
       </Box>
@@ -113,25 +97,14 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
               marginBottom: "10px",
             }}
           >
-            {articleDescription.slice(0, 250)}
-            {articleDescription.length > 250 ? " ..." : ""}
-            {articleDescription.length > 250 && (
-              <Button
-                variant="text"
-                sx={{
-                  minHeight: "auto",
-                  width: "auto",
-                  height: "10px",
-                  color: "primary.main",
-                  fontSize: "14px",
-                  ":hover": {
-                    backgroundColor: "transparent",
-                  },
-                }}
-                disableTouchRipple
-              >
-                See more
-              </Button>
+            {articleDescription.length >
+            myfeedConfig.SUMMARY_READ_MORE_LENGTH ? (
+              <>
+                {`${articleDescription.slice(0, myfeedConfig.SUMMARY_READ_MORE_LENGTH)} ...`}
+                <SeeMoreButton />
+              </>
+            ) : (
+              articleDescription
             )}
           </Typography>
           <Box
