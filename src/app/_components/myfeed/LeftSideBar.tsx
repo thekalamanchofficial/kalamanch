@@ -2,7 +2,7 @@ import { Box, Typography, Button, Grid2 as Grid, Divider } from "@mui/material";
 import React from "react";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import OwlSVG from "~/assets/svg/owl.svg";
-import WriteLogo from "~/assets/svg/writeLogo.svg";
+import WriteLogo from "~/assets/svg/WriteLogo.svg";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
