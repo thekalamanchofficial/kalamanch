@@ -5,15 +5,17 @@ import {
   Grid2 as Grid,
   Box,
   IconButton,
+  Chip,
 } from "@mui/material";
 import Image from "next/image";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Link from "next/link";
-import UserNameProfile from "./UserNameProfile";
+import UserNameProfile from "../UserNameProfile";
 
 import { type RightSideBarProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import FollowButton from "~/app/_components/myfeed/FollowButton";
+import FollowButton from "~/app/_components/FollowButton";
+import SeeMoreButton from "./SeeMoreButton";
 
 const RightSideBar: React.FC<RightSideBarProps> = ({
   featuredArticles,
@@ -61,10 +63,16 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                 >
                   <Link
                     href={item.articleLink}
-                    style={{ textDecoration: "none" }}
+                    style={{ textDecoration: "none", color: "text.primary" }}
                   >
                     <Typography
-                      sx={{ color: "font.primary", fontWeight: "500" }}
+                      sx={{
+                        color: "font.primary",
+                        fontWeight: "550",
+                        ":visited": {
+                          color: "font.primary",
+                        },
+                      }}
                     >
                       {item.articleName}
                     </Typography>
@@ -97,25 +105,13 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                         alignItems: "center",
                       }}
                     >
-                      <IconButton
+                      <Chip
+                        label={item.likes}
+                        icon={<FavoriteBorderIcon />}
                         sx={{
-                          color: "text.secondary",
-                          width: "10px",
-                          height: "10px",
+                          backgroundColor: "white",
                         }}
-                        size="small"
-                      >
-                        <FavoriteBorderIcon />
-                      </IconButton>
-                      <Typography
-                        sx={{
-                          marginLeft: "10px",
-                          fontSize: "15px",
-                          color: "text.secondary",
-                        }}
-                      >
-                        {item.likes}
-                      </Typography>
+                      />
                     </Box>
                   </Box>
                 </Box>
@@ -123,19 +119,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
             );
           })}
         </Grid>
-        <Button
-          sx={{
-            minHeight: "auto",
-            height: "30px",
-            width: "auto",
-            color: "primary.main",
-            fontWeight: "bold",
-            fontSize: "15px",
-            mt: "10px",
-          }}
-        >
-          See more
-        </Button>
+        <SeeMoreButton />
       </Box>
       <Box
         sx={{

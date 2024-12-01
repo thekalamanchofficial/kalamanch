@@ -75,3 +75,6 @@ export type FollowButtonProps = {
   yPadding?: string;
   xPadding?: string;
 };
+export interface LeftSideBarProps {
+  menuItems: MenuItemList[];
+}

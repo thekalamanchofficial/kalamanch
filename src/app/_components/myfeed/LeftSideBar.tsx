@@ -1,4 +1,4 @@
-import { Box, Typography, Button, Grid2 as Grid } from "@mui/material";
+import { Box, Typography, Button, Grid2 as Grid, Divider } from "@mui/material";
 import React from "react";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import OwlSVG from "~/assets/svg/owl.svg";
@@ -12,13 +12,9 @@ import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlin
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import { type MenuItemList } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type LeftSideBarProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { usePathname, useRouter } from "next/navigation";
-import UserMenu from "./UserMenu";
-
-interface LeftSideBarProps {
-  menuItems: MenuItemList[];
-}
+import UserMenu from "../UserMenu";
 
 const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
   const router = useRouter();
@@ -47,7 +43,6 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
         backgroundColor: "white",
         position: "relative",
         py: 1,
-        px: "8px",
       }}
     >
       <Box
@@ -55,7 +50,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
           display: "flex",
           justifyContent: "start",
           alignItems: "center",
-          px: 2,
+          px: "12px",
         }}
       >
         <OwlSVG />
@@ -63,10 +58,16 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
           {STATIC_TEXTS.APP_TITLE}
         </Typography>
       </Box>
-      <Box sx={{ borderBottom: 1, borderColor: "grey.300" }}></Box>
+
+      <Divider
+        sx={{
+          width: "100%",
+        }}
+      ></Divider>
       <Box
         sx={{
           marginTop: 4,
+          px: "8px",
         }}
       >
         <Button
@@ -97,6 +98,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
       <Box
         sx={{
           marginTop: 2,
+          px: "8px",
         }}
       >
         {menuItems.map((item, index) => {
@@ -156,6 +158,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
           width: "100%",
           position: "absolute",
           bottom: "0",
+          px: "8px",
         }}
       >
         <UserMenu />

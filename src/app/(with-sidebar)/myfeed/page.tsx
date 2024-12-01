@@ -58,6 +58,7 @@ const MyFeed = () => {
           height: "100%",
           scrollbarWidth: "none",
           mt: 1,
+          pl: 1,
         }}
       >
         {tab === 0 ? (

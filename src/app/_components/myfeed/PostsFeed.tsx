@@ -4,9 +4,9 @@ import React from "react";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PostCardFooter from "./PostCardFooter";
 import PostCardContent from "./PostCardContent";
-import UserNameProfile from "./UserNameProfile";
+import UserNameProfile from "../UserNameProfile";
 import { type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import FollowButton from "./FollowButton";
+import FollowButton from "../FollowButton";
 
 const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
   return (
