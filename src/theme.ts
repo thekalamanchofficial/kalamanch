@@ -1,6 +1,12 @@
 "use client";
 import { createTheme } from "@mui/material/styles";
 
+declare module "@mui/material/styles" {
+  interface CommonColors {
+    lightGray?: string;
+  }
+}
+
 const theme = createTheme({
   palette: {
     mode: "light",
@@ -16,6 +22,7 @@ const theme = createTheme({
     common: {
       white: "#fff",
       black: "#101828",
+      lightGray: "#F2F3F5",
     },
     text: {
       primary: "#101828",
@@ -68,7 +75,7 @@ const theme = createTheme({
           boxShadow: "none",
           borderRadius: "4px",
           "&:hover": {
-            backgroundColor: "transparent",
+            // backgroundColor: "transparent",
             boxShadow: "none",
           },
           minHeight: "56px",

@@ -61,4 +61,14 @@ export const STATIC_TEXTS = {
       HAVE_ACCOUNT: "Already have an account?",
     },
   },
+  LOGOUT_MESSAGES: {
+    PENDING: "Logging out, please wait...",
+    SUCCESS: "Logout successful! Redirecting...",
+    ERROR: "Logout failed. Please try again.",
+  },
+  USER_FEED: {
+    BUTTONS: {
+      WRITE: "Write Something",
+    },
+  },
 };
