@@ -1,10 +1,10 @@
 "use client";
 import React, { type ReactNode } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
-import LeftSideBar from "~/app/_components/myfeed/LeftSideBar";
-import RightSideBar from "~/app/_components/myfeed/RightSideBar";
+import RightSideBar from "~/app/_components/sidebar/RightSideBar";
 import staticData from "~/app/(with-sidebar)/myfeed/myfeedMock/myfeedMock";
 import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
+import LeftSideBar from "../_components/sidebar/LeftSideBar";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
@@ -16,25 +16,24 @@ const Layout = ({ children }: { children: ReactNode }) => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        height: "100%",
       }}
     >
       <Grid
         container
         sx={{
-          height: "100vh",
+          height: "100%",
           width: "100%",
           maxWidth: "1572px",
           justifyContent: "center",
-          alignItems: "center",
           px: 1,
-          py: "4px",
+          py: "40px",
         }}
       >
         <Grid
           size={2}
           sx={{
-            height: "90vh",
-            borderRight: "1px solid #E0E0E0",
+            mr: 4,
           }}
         >
           <LeftSideBar menuItems={MENU_ITEMS} />
@@ -42,8 +41,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <Grid
           size={7}
           sx={{
-            height: "90vh",
-            overflow: "hidden",
             pb: "50px",
             backgroundColor: "white",
           }}
@@ -53,10 +50,9 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <Grid
           size={2}
           sx={{
-            height: "90vh",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between",
+            justifyContent: "start",
             alignItems: "center",
             ml: 4,
             gap: "12px",

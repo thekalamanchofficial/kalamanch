@@ -1,8 +1,8 @@
 "use client";
 import { Grid2 as Grid, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
-import PostsFeed from "~/app/_components/myfeed/PostsFeed";
 import mockData from "./myfeedMock/myfeedMock";
+import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
 const MyFeed = () => {
   const [tab, setTab] = useState(0);
 
@@ -19,7 +19,7 @@ const MyFeed = () => {
           justifyContent: "start",
           alignItems: "start",
           px: "4px",
-          pt: "4px",
+          pt: "8px",
           borderBottom: "1px solid #E0E0E0",
         }}
       >

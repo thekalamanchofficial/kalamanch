@@ -14,6 +14,7 @@ const SeeMoreButton = () => {
         ":hover": {
           backgroundColor: "transparent",
         },
+        fontWeight: "600",
       }}
       disableTouchRipple
     >

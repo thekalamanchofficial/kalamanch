@@ -1,21 +1,14 @@
 "use client";
-import {
-  Button,
-  Typography,
-  Grid2 as Grid,
-  Box,
-  IconButton,
-  Chip,
-} from "@mui/material";
+import { Typography, Grid2 as Grid, Box, Chip } from "@mui/material";
 import Image from "next/image";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Link from "next/link";
-import UserNameProfile from "../UserNameProfile";
+import UserNameProfile from "../userNameProfile/UserNameProfile";
 
 import { type RightSideBarProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import FollowButton from "~/app/_components/FollowButton";
-import SeeMoreButton from "./SeeMoreButton";
+import FollowButton from "~/app/_components/followButton/FollowButton";
+import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
 
 const RightSideBar: React.FC<RightSideBarProps> = ({
   featuredArticles,
@@ -28,7 +21,6 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
           backgroundColor: "white",
           borderRadius: "5px",
           width: "100%",
-          height: "50%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
@@ -118,15 +110,14 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
               </Grid>
             );
           })}
+          <SeeMoreButton />
         </Grid>
-        <SeeMoreButton />
       </Box>
       <Box
         sx={{
           backgroundColor: "white",
           borderRadius: "5px",
           width: "100%",
-          height: "48%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
@@ -140,7 +131,6 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
             color: "text.primary",
             fontSize: "18px",
             fontWeight: "550",
-            // py: "5px",
             mt: "2px",
             marginBottom: "10px",
           }}
@@ -208,20 +198,8 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
               </Grid>
             );
           })}
+          <SeeMoreButton />
         </Grid>
-        <Button
-          sx={{
-            minHeight: "auto",
-            height: "30px",
-            width: "auto",
-            color: "primary.main",
-            fontWeight: "bold",
-            fontSize: "15px",
-            mt: "10px",
-          }}
-        >
-          See more
-        </Button>
       </Box>
     </>
   );
