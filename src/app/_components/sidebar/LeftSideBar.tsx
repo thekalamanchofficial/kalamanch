@@ -14,7 +14,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { type LeftSideBarProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { usePathname, useRouter } from "next/navigation";
-import UserMenu from "../UserMenu";
+import UserMenu from "../userMenu/UserMenu";
 
 const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
   const router = useRouter();
@@ -37,7 +37,6 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
     <Grid
       columns={1}
       sx={{
-        height: "100%",
         width: "100%",
         spacing: 3,
         backgroundColor: "white",
@@ -63,7 +62,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
         sx={{
           width: "100%",
         }}
-      ></Divider>
+      />
       <Box
         sx={{
           marginTop: 4,
@@ -149,18 +148,6 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
             </Box>
           );
         })}
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          position: "absolute",
-          bottom: "0",
-          px: "8px",
-        }}
-      >
         <UserMenu />
       </Box>
     </Grid>

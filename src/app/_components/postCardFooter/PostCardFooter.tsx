@@ -7,7 +7,7 @@ import TollIcon from "@mui/icons-material/Toll";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import PostActionButton from "./PostActionButton";
+import PostActionButton from "../postActionButton/PostActionButton";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,

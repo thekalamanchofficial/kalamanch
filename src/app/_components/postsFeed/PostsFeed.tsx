@@ -2,11 +2,11 @@
 import { Button, Card, CardContent, Box } from "@mui/material";
 import React from "react";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
-import PostCardFooter from "./PostCardFooter";
-import PostCardContent from "./PostCardContent";
-import UserNameProfile from "../UserNameProfile";
 import { type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import FollowButton from "../FollowButton";
+import UserNameProfile from "../userNameProfile/UserNameProfile";
+import PostCardContent from "../postCardContent/PostCardContent";
+import PostCardFooter from "../postCardFooter/PostCardFooter";
+import FollowButton from "../followButton/FollowButton";
 
 const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
   return (
