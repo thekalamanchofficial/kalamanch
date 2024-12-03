@@ -24,16 +24,25 @@ const postSchema = yup.object({
   bids: yup.number().optional().default(0),
 });
 
-// Router definition
 export const postRouter = router({
-  getPosts: publicProcedure.query(async () => {
-    try {
-      return await prisma.post.findMany();
-    } catch (error) {
-      // handleError(error);
-      throw error;
-    }
-  }),
+  getPosts: publicProcedure
+    .input(
+      yup.object({
+        limit: yup.number().min(1).default(3),
+        skip: yup.number().min(0).default(0),
+      }),
+    )
+    .query(async ({ input }) => {
+      try {
+        const { limit, skip } = input;
+        return await prisma.post.findMany({
+          take: limit,
+          skip: skip,
+        });
+      } catch (error) {
+        throw error;
+      }
+    }),
   addPosts: publicProcedure.input(postSchema).mutation(async ({ input }) => {
     try {
       const posts = await prisma.post.create({
@@ -42,7 +51,7 @@ export const postRouter = router({
           authorId: input.authorId,
           authorName: input.authorName,
           title: input.title ?? "",
-          authorProfile: input.authorProfile ?? "", // Default empty string if no profile is provided
+          authorProfile: input.authorProfile ?? "",
           tags:
             input.tags?.filter((tag): tag is string => tag !== undefined) ?? [],
           media: {

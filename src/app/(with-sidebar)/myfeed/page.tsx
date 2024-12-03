@@ -1,18 +1,62 @@
 "use client";
 import { Box, CircularProgress, Grid2 as Grid, Tab, Tabs } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PostsFeed from "~/app/_components/myfeed/PostsFeed";
 import { trpc } from "~/server/client";
+import { type ArticlesList } from "./types/types";
 
 const MyFeed = () => {
   const [tab, setTab] = useState(0);
+  const [skip, setSkip] = useState(0);
+  const [posts, setPosts] = useState<ArticlesList[]>([]);
+  const [isLoadingInitial, setIsLoadingInitial] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
 
-  const { data: postData, isLoading, error } = trpc.post.getPosts.useQuery();
+  const {
+    data: postData,
+    isLoading: queryLoading,
+    error,
+  } = trpc.post.getPosts.useQuery(
+    { skip, limit: 3 },
+    {
+      enabled: skip >= 0 && hasMorePosts,
+    },
+  );
+
+  useEffect(() => {
+    if (postData) {
+      if (skip === 0) {
+        setIsLoadingInitial(false);
+        setPosts(postData);
+      } else {
+        if (postData.length === 0) {
+          setHasMorePosts(false);
+        } else {
+          setPosts((prevPosts) => [...prevPosts, ...postData]);
+        }
+      }
+      setIsLoadingMore(false);
+    }
+
+    if (error) {
+      setIsLoadingInitial(false);
+      setIsLoadingMore(false);
+    }
+  }, [postData, error, skip]);
 
   const handleChange = (event: React.SyntheticEvent) => {
-    console.log(postData);
-
     setTab(1 - tab);
+  };
+
+  const handleScroll = (e: React.UIEvent) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    const bottomReached = scrollHeight - scrollTop - clientHeight < 100;
+
+    if (bottomReached && hasMorePosts && !isLoadingMore) {
+      setSkip((prev) => prev + 3);
+      setIsLoadingMore(true);
+    }
   };
 
   return (
@@ -65,8 +109,9 @@ const MyFeed = () => {
           mt: 1,
           pl: 1,
         }}
+        onScroll={handleScroll}
       >
-        {isLoading ? (
+        {isLoadingInitial ? (
           <Box
             sx={{
               width: "100%",
@@ -75,22 +120,28 @@ const MyFeed = () => {
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              gap: "16px  ",
+              gap: "16px",
             }}
           >
             <CircularProgress />
             Loading Posts...
           </Box>
         ) : tab === 0 ? (
-          <PostsFeed articlesList={postData ?? []} />
+          <>
+            <PostsFeed articlesList={posts ?? []} />
+            {isLoadingMore && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                p={2}
+              >
+                <CircularProgress size={24} />
+              </Box>
+            )}
+          </>
         ) : (
-          <div
-            style={{
-              padding: "10px",
-            }}
-          >
-            Discover Tab
-          </div>
+          <div style={{ padding: "10px" }}>Discover Tab</div>
         )}
       </Grid>
     </>
