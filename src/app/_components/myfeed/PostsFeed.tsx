@@ -7,6 +7,7 @@ import PostCardContent from "./PostCardContent";
 import UserNameProfile from "../UserNameProfile";
 import { type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import FollowButton from "../FollowButton";
+import Link from "next/link";
 
 const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
   return (
@@ -27,10 +28,15 @@ const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
                   mb: "16px",
                 }}
               >
-                <UserNameProfile
-                  AuthorName={article.authorName}
-                  AuthorImage={article.authorImage}
-                />
+                <Link
+                  href={`${process.env.NEXT_PUBLIC_APP_URL}/user/${article.authorId}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <UserNameProfile
+                    AuthorName={article.authorName}
+                    AuthorImage={article.authorProfile}
+                  />
+                </Link>
                 <Box
                   sx={{
                     display: "flex",
@@ -39,7 +45,7 @@ const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
                   }}
                 >
                   <FollowButton
-                    authorProfileLink={article.authorProfileLink}
+                    authorProfileLink={`localhost:3000/author/${article.authorId}`}
                     yPadding="16px"
                     xPadding="20px"
                   />
@@ -52,18 +58,18 @@ const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
               </Box>
 
               <PostCardContent
-                articleContent={article.articleContent}
-                articleDescription={article.articleDecription}
-                articleImage={article.articleImage}
-                articleTags={article.articleTags}
-                articleTitle={article.articleTitle}
+                articleContent={article.content}
+                articleDescription={article.media.thumbnail_content}
+                articleImage={article.media.thumbnail_picture}
+                articleTags={article.tags}
+                articleId={article.id}
+                articleTitle={article.title}
               />
-
               <PostCardFooter
-                likes={article.articleLikes}
-                comments={article.articleComments}
-                shares={article.articleShares}
-                bids={article.articlesBids}
+                likes={article.likes}
+                comments={article.comments}
+                shares={article.shares}
+                bids={article.bids}
               />
             </CardContent>
           </Card>

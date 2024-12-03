@@ -27,20 +27,24 @@ export type MenuItemList = {
   icon: React.ReactNode;
 };
 
-type ArticlesList = {
+type ArticleMedia = {
+  thumbnail_picture: string[];
+  thumbnail_content: string;
+  thumbnail_title: string;
+};
+export type ArticlesList = {
+  id: string;
+  authorId: string;
   authorName: string;
-  authorImage: string;
-  authorProfileLink: string;
-  articleTitle: string;
-  articleContent: string;
-  articleTags: string[];
-  articleImage: string;
-  articleLink: string;
-  articleDecription: string;
-  articleLikes: number;
-  articleComments: number;
-  articleShares: number;
-  articlesBids: number;
+  authorProfile: string;
+  title: string;
+  content: string;
+  media: ArticleMedia;
+  tags: string[];
+  likes: number;
+  comments: number;
+  shares: number;
+  bids: number;
 };
 
 export type PostsFeedProps = {
@@ -66,7 +70,8 @@ export type PostCardContentProps = {
   articleTitle: string;
   articleContent: string;
   articleTags: string[];
-  articleImage?: string;
+  articleImage?: string[];
+  articleId: string;
   articleDescription: string;
 };
 

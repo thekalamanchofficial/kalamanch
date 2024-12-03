@@ -12,13 +12,43 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
-
-
 model User {
-  id            String   @id @default(cuid()) @map("_id") 
-  email         String   @unique
-  name          String
-  birthdate     DateTime
-  profile String?
-  interests     String[]
+  id          String   @id @default(cuid()) @map("_id") @db.ObjectId
+  email       String   @unique
+  name        String
+  birthdate   DateTime
+  profile     String?   
+  interests   String[]  
 }
+
+
+model Post {
+  id             String    @id @default(cuid()) @map("_id")
+  authorId       String @db.ObjectId
+  authorName     String 
+  authorProfile  String
+  content        String  
+  title          String  
+  media          Media     
+  tags           String[]  
+  likes          Int       
+  comments       Int       
+  shares         Int       
+  bids           Int
+  createdAt      DateTime  @default(now()) 
+  updatedAt      DateTime  @updatedAt      
+
+  @@index([tags]) 
+  @@index([createdAt]) 
+}
+
+type Media {
+  thumbnail_picture String[]  
+  thumbnail_content String  
+  thumbnail_title String  
+}
+
+
+
+
+

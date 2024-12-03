@@ -1,12 +1,17 @@
 "use client";
-import { Grid2 as Grid, Tab, Tabs } from "@mui/material";
+import { Box, CircularProgress, Grid2 as Grid, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
 import PostsFeed from "~/app/_components/myfeed/PostsFeed";
-import mockData from "./myfeedMock/myfeedMock";
+import { trpc } from "~/server/client";
+
 const MyFeed = () => {
   const [tab, setTab] = useState(0);
 
+  const { data: postData, isLoading, error } = trpc.post.getPosts.useQuery();
+
   const handleChange = (event: React.SyntheticEvent) => {
+    console.log(postData);
+
     setTab(1 - tab);
   };
 
@@ -61,8 +66,23 @@ const MyFeed = () => {
           pl: 1,
         }}
       >
-        {tab === 0 ? (
-          <PostsFeed articlesList={mockData.articlesList} />
+        {isLoading ? (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "16px  ",
+            }}
+          >
+            <CircularProgress />
+            Loading Posts...
+          </Box>
+        ) : tab === 0 ? (
+          <PostsFeed articlesList={postData ?? []} />
         ) : (
           <div
             style={{
