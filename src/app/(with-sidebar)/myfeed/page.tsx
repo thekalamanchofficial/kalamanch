@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import PostsFeed from "~/app/_components/myfeed/PostsFeed";
 import { trpc } from "~/server/client";
 import { type ArticlesList } from "./types/types";
+import { useClerk } from "@clerk/nextjs";
 
 const MyFeed = () => {
   const [tab, setTab] = useState(0);
@@ -23,6 +24,7 @@ const MyFeed = () => {
       enabled: skip >= 0 && hasMorePosts,
     },
   );
+  const { user } = useClerk();
 
   useEffect(() => {
     if (postData) {
@@ -46,6 +48,8 @@ const MyFeed = () => {
   }, [postData, error, skip]);
 
   const handleChange = (event: React.SyntheticEvent) => {
+    console.log(user);
+
     setTab(1 - tab);
   };
 
