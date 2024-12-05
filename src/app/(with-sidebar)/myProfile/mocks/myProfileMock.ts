@@ -1,88 +1,20 @@
-const FEATURED_ARTICLES = [
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    articleName: "सपनों के परिंदे",
-    articleLink: "/",
-    authorProfileLink: "/",
-    likes: 320,
-  },
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    articleName: "सपनों के परिंदे",
-    articleLink: "/",
-    authorProfileLink: "/",
-    likes: 320,
-  },
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    articleName: "सपनों के परिंदे",
-    articleLink: "/",
-    authorProfileLink: "/",
-    likes: 320,
-  },
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    articleName: "सपनों के परिंदे",
-    articleLink: "/",
-    authorProfileLink: "/",
-    likes: 320,
-  },
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    articleName: "सपनों के परिंदे",
-    articleLink: "/",
-    authorProfileLink: "/",
-    likes: 320,
-  },
-];
+const FEATURED_ARTICLES = Array.from({ length: 5 }, () => ({
+  profilePicture: "https://picsum.photos/200",
+  authorName: "Steve Jobs",
+  articleName: "सपनों के परिंदे",
+  articleLink: "/",
+  authorProfileLink: "/",
+  likes: 320,
+}));
 
-const AUTHOR_TO_FOLLOW_MOCK = [
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    authorProfileLink: "/",
-    onFollow: () => {
-      console.log(`followed writer `);
-    },
+const AUTHOR_TO_FOLLOW_MOCK = Array.from({ length: 5 }, () => ({
+  profilePicture: "https://picsum.photos/200",
+  authorName: "Steve Jobs",
+  authorProfileLink: "/",
+  onFollow: () => {
+    console.log(`followed writer`);
   },
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    authorProfileLink: "/",
-    onFollow: () => {
-      console.log(`followed writer `);
-    },
-  },
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    authorProfileLink: "/",
-    onFollow: () => {
-      console.log(`followed writer `);
-    },
-  },
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    authorProfileLink: "/",
-    onFollow: () => {
-      console.log(`followed writer `);
-    },
-  },
-  {
-    profilePicture: "https://picsum.photos/200",
-    authorName: "Steve Jobs",
-    authorProfileLink: "/",
-    onFollow: () => {
-      console.log(`followed writer `);
-    },
-  },
-];
+}));
 
 // create a dummy data
 const ARTICLES_LIST = [
