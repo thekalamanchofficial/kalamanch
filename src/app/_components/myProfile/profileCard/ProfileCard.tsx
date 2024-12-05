@@ -110,7 +110,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             gap={1}
           >
             <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="h6" align="center" fontWeight="bold">
+              <Typography variant="subtitle2" align="center" fontWeight="bold">
                 {followers}
               </Typography>
               <Typography variant="caption" color="text.secondary">
@@ -118,7 +118,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               </Typography>
             </Box>
             <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="h6" align="center" fontWeight="bold">
+              <Typography variant="subtitle2" align="center" fontWeight="bold">
                 {posts}
               </Typography>
               <Typography variant="caption" color="text.secondary">
