@@ -1,8 +1,19 @@
 "use client";
-import { Grid2 as Grid, Tab, Tabs } from "@mui/material";
-import React, { useState } from "react";
-import PostsFeed from "~/app/_components/myfeed/PostsFeed";
-import mockData from "./myfeedMock/myfeedMock";
+import { useClerk } from "@clerk/nextjs";
+import {
+  Box,
+  CircularProgress,
+  Grid2 as Grid,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
+import { type ArticlesList } from "./types/types";
+import { trpc } from "~/server/client";
+import { handleError } from "~/app/_utils/handleError";
+
 const MyFeed = () => {
   const { user } = useClerk();
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
@@ -112,8 +123,8 @@ const MyFeed = () => {
     setTab(1 - tab);
   };
 
-  const handleScroll = (e: React.UIEvent) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
     const bottomReached = scrollHeight - scrollTop - clientHeight < 100;
 
     if (bottomReached && hasMorePosts && !isLoadingMore) {
@@ -122,8 +133,20 @@ const MyFeed = () => {
     }
   };
 
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [hasMorePosts, isLoadingMore]);
+
   return (
-    <>
+    <Box
+      sx={{
+        height: "100%",
+        width: "100%",
+      }}
+    >
       <Grid
         size={12}
         sx={{
@@ -173,7 +196,6 @@ const MyFeed = () => {
             mt: 1,
             pl: 1,
           }}
-          onScroll={handleScroll}
         >
           {isLoadingInitial ? (
             <Box
@@ -224,7 +246,7 @@ const MyFeed = () => {
           <Typography> No Posts Found</Typography>
         </Box>
       )}
-    </>
+    </Box>
   );
 };
 
