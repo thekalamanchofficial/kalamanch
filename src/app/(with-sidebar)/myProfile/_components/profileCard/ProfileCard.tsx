@@ -20,6 +20,7 @@ interface ProfileCardProps {
   posts?: string;
   profileImage?: string;
   coverImage?: string;
+  handleEditProfileOpen: () => void;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -29,6 +30,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   posts,
   profileImage,
   coverImage,
+  handleEditProfileOpen,
 }) => {
   const router = useRouter();
   return (
@@ -83,6 +85,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               padding: "6px 16px",
               backgroundColor: (theme) => theme.palette.secondary.light,
             }}
+            onClick={handleEditProfileOpen}
           >
             Edit Profile
           </Button>
