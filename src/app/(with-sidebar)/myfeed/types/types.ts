@@ -32,6 +32,23 @@ type ArticleMedia = {
   thumbnail_content: string;
   thumbnail_title: string;
 };
+
+type Comment = {
+  id: string;
+  userId: string;
+  articleId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
+type Bid = {
+  id: string;
+  userId: string;
+  articleId: string;
+  amount: number;
+  createdAt: string;
+  updatedAt: string;
+};
 export type ArticlesList = {
   id: string;
   authorId: string;
@@ -41,21 +58,23 @@ export type ArticlesList = {
   content: string;
   media: ArticleMedia;
   tags: string[];
-  likes: number;
-  comments: number;
-  shares: number;
-  bids: number;
+  likeCount: number;
+  comments?: Comment[];
+  bids?: Bid[];
 };
 
 export type PostsFeedProps = {
   articlesList: ArticlesList[];
+  likedPosts: string[];
+  handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
 };
 
 export type PostCardFooterProps = {
   likes: number;
-  comments: number;
-  shares: number;
-  bids: number;
+  comments: Comment[];
+  bids: Bid[];
+  isLiked?: boolean;
+  handleLikeButton: () => void;
 };
 
 export type UserNameProfileProps = {

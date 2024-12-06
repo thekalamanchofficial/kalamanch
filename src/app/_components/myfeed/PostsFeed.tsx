@@ -9,7 +9,11 @@ import { type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import FollowButton from "../FollowButton";
 import Link from "next/link";
 
-const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
+const PostsFeed: React.FC<PostsFeedProps> = ({
+  articlesList,
+  likedPosts,
+  handleLikeButton,
+}) => {
   return (
     <>
       {articlesList.map((article, index) => {
@@ -66,10 +70,11 @@ const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
                 articleTitle={article.title}
               />
               <PostCardFooter
-                likes={article.likes}
-                comments={article.comments}
-                shares={article.shares}
-                bids={article.bids}
+                likes={article.likeCount ?? 0}
+                comments={article.comments ?? []}
+                bids={article.bids ?? []}
+                isLiked={likedPosts.includes(article.id)}
+                handleLikeButton={() => handleLikeButton(article.id)}
               />
             </CardContent>
           </Card>

@@ -18,10 +18,37 @@ const postSchema = yup.object({
     })
     .required(),
   tags: yup.array(yup.string()).optional(),
-  likes: yup.number().optional().default(0),
-  comments: yup.number().optional().default(0),
-  shares: yup.number().optional().default(0),
-  bids: yup.number().optional().default(0),
+  likesCount: yup.number().optional().default(0),
+  likes: yup
+    .array(
+      yup.object({
+        userId: yup.string().required("User ID is required for like"),
+        createdAt: yup.date().optional(),
+      }),
+    )
+    .optional(),
+  comments: yup
+    .array(
+      yup.object({
+        userId: yup.string().required("User ID is required for comment"),
+        name: yup.string().required("Name is required for comment"),
+        content: yup.string().required("Comment content is required"),
+        createdAt: yup.date().optional(),
+      }),
+    )
+    .optional(),
+  bids: yup
+    .array(
+      yup.object({
+        userId: yup.string().required("User ID is required for bid"),
+        amount: yup
+          .number()
+          .required("Bid amount is required")
+          .positive("Bid amount must be positive"),
+        createdAt: yup.date().optional(),
+      }),
+    )
+    .optional(),
 });
 
 export const postRouter = router({
@@ -67,7 +94,7 @@ export const postRouter = router({
       }
     }),
 
-  addPosts: publicProcedure.input(postSchema).mutation(async ({ input }) => {
+  addPost: publicProcedure.input(postSchema).mutation(async ({ input }) => {
     try {
       const posts = await prisma.post.create({
         data: {
@@ -85,10 +112,15 @@ export const postRouter = router({
             thumbnail_content: input.media?.thumbnail_content ?? "",
             thumbnail_title: input.media?.thumbnail_title ?? "",
           },
-          likes: input.likes ?? 0,
-          bids: input.bids ?? 0,
-          comments: input.comments ?? 0,
-          shares: input.shares ?? 0,
+          likes: {
+            create: [],
+          },
+          bids: {
+            create: [],
+          },
+          comments: {
+            create: [],
+          },
         },
       });
       return posts;

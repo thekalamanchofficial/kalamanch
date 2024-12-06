@@ -12,43 +12,88 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id          String   @id @default(cuid()) @map("_id") @db.ObjectId
-  email       String   @unique
-  name        String
-  birthdate   DateTime
-  profile     String?   
-  interests   String[]  
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  email     String    @unique
+  name      String
+  birthdate DateTime
+  profile   String?
+  interests String[]
+  likes     Like[]
+  comments  Comment[]
+  bids      Bid[]
+  posts     Post[]
 }
 
-
 model Post {
-  id             String    @id @default(cuid()) @map("_id")
-  authorId       String @db.ObjectId
-  authorName     String 
-  authorProfile  String
-  content        String  
-  title          String  
-  media          Media     
-  tags           String[]  
-  likes          Int       
-  comments       Int       
-  shares         Int       
-  bids           Int
-  createdAt      DateTime  @default(now()) 
-  updatedAt      DateTime  @updatedAt      
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  authorId      String   @db.ObjectId
+  authorName    String
+  authorProfile String
+  title         String
+  content       String
+  media         Media
+  tags          String[]
+  likeCount     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  @@index([tags]) 
-  @@index([createdAt]) 
+  author   User      @relation(fields: [authorId], references: [id])
+  likes    Like[]
+  comments Comment[]
+  bids     Bid[]
+
+  @@index([tags])
+  @@index([createdAt])
 }
 
 type Media {
-  thumbnail_picture String[]  
-  thumbnail_content String  
-  thumbnail_title String  
+  thumbnail_picture String[]
+  thumbnail_content String
+  thumbnail_title   String
 }
 
+model Like {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  postId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
+  @@index([postId])
+  @@index([userId])
+}
 
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  postId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  name      String
+  content   String
+  createdAt DateTime @default(now())
 
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([userId])
+}
+
+model Bid {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  postId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  amount    Int
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([userId])
+}

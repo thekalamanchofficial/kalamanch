@@ -1,12 +1,23 @@
 "use client";
-import { Box, CircularProgress, Grid2 as Grid, Tab, Tabs } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Grid2 as Grid,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import PostsFeed from "~/app/_components/myfeed/PostsFeed";
 import { trpc } from "~/server/client";
 import { type ArticlesList } from "./types/types";
 import { useClerk } from "@clerk/nextjs";
+import { handleError } from "~/app/_utils/handleError";
 
 const MyFeed = () => {
+  const { user } = useClerk();
+  const [likedPosts, setLikedPosts] = useState<string[]>([]);
+
   const [tab, setTab] = useState(0);
   const [skip, setSkip] = useState(0);
   const [posts, setPosts] = useState<ArticlesList[]>([]);
@@ -24,18 +35,73 @@ const MyFeed = () => {
       enabled: skip >= 0 && hasMorePosts,
     },
   );
-  const { user } = useClerk();
+
+  const { data: likedPostData } = trpc.likes.getUserLikes.useQuery(
+    { userEmail: user?.primaryEmailAddress?.emailAddress ?? "" },
+    {
+      enabled: !!user?.primaryEmailAddress,
+    },
+  );
+
+  const likePostMutation = trpc.likes.likePost.useMutation();
+
+  const handleLikeButton = async (
+    postId: string,
+  ): Promise<{ liked: boolean }> => {
+    if (user?.primaryEmailAddress?.emailAddress) {
+      try {
+        const response = await likePostMutation.mutateAsync({
+          postId,
+          userEmail: user?.primaryEmailAddress?.emailAddress,
+        });
+
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  likeCount: response.liked
+                    ? post.likeCount + 1
+                    : Math.max(0, post.likeCount - 1),
+                }
+              : post,
+          ),
+        );
+
+        if (response.liked) {
+          setLikedPosts((prevLikedPosts) => [...prevLikedPosts, postId]);
+        } else {
+          setLikedPosts((prevLikedPosts) =>
+            prevLikedPosts.filter((id) => id !== postId),
+          );
+        }
+
+        return { liked: response.liked };
+      } catch (error) {
+        handleError(error);
+        return { liked: false };
+      }
+    }
+
+    return { liked: false };
+  };
 
   useEffect(() => {
     if (postData) {
+      if (postData.length < 3) {
+        setHasMorePosts(false);
+      }
       if (skip === 0) {
         setIsLoadingInitial(false);
-        setPosts(postData);
+        setPosts(postData as ArticlesList[]);
       } else {
         if (postData.length === 0) {
           setHasMorePosts(false);
         } else {
-          setPosts((prevPosts) => [...prevPosts, ...postData]);
+          setPosts((prevPosts) => [
+            ...prevPosts,
+            ...(postData as ArticlesList[]),
+          ]);
         }
       }
       setIsLoadingMore(false);
@@ -47,9 +113,13 @@ const MyFeed = () => {
     }
   }, [postData, error, skip]);
 
-  const handleChange = (event: React.SyntheticEvent) => {
-    console.log(user);
+  useEffect(() => {
+    if (likedPostData) {
+      setLikedPosts(likedPostData);
+    }
+  }, [likedPostData]);
 
+  const handleChange = (event: React.SyntheticEvent) => {
     setTab(1 - tab);
   };
 
@@ -104,50 +174,67 @@ const MyFeed = () => {
           <Tab label="Discover" />
         </Tabs>
       </Grid>
-      <Grid
-        size={12}
-        sx={{
-          overflowY: "scroll",
-          height: "100%",
-          scrollbarWidth: "none",
-          mt: 1,
-          pl: 1,
-        }}
-        onScroll={handleScroll}
-      >
-        {isLoadingInitial ? (
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "16px",
-            }}
-          >
-            <CircularProgress />
-            Loading Posts...
-          </Box>
-        ) : tab === 0 ? (
-          <>
-            <PostsFeed articlesList={posts ?? []} />
-            {isLoadingMore && (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                p={2}
-              >
-                <CircularProgress size={24} />
-              </Box>
-            )}
-          </>
-        ) : (
-          <div style={{ padding: "10px" }}>Discover Tab</div>
-        )}
-      </Grid>
+      {postData?.length != 0 ? (
+        <Grid
+          size={12}
+          sx={{
+            overflowY: "scroll",
+            height: "100%",
+            scrollbarWidth: "none",
+            mt: 1,
+            pl: 1,
+          }}
+          onScroll={handleScroll}
+        >
+          {isLoadingInitial ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "16px",
+              }}
+            >
+              <CircularProgress />
+              Loading Posts...
+            </Box>
+          ) : tab === 0 ? (
+            <>
+              <PostsFeed
+                articlesList={posts ?? []}
+                likedPosts={likedPosts}
+                handleLikeButton={handleLikeButton}
+              />
+              {isLoadingMore && (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  p={2}
+                >
+                  <CircularProgress size={24} />
+                </Box>
+              )}
+            </>
+          ) : (
+            <div style={{ padding: "10px" }}>Discover Tab</div>
+          )}
+        </Grid>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <Typography> No Posts Found</Typography>
+        </Box>
+      )}
     </>
   );
 };
