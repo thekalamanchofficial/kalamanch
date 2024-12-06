@@ -8,7 +8,7 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import PostActionButton from "./PostActionButton";
+import PostActionButton from "../postActionButton/PostActionButton";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,

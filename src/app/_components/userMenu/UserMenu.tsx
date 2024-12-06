@@ -1,11 +1,10 @@
 import React from "react";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
-import UserNameProfile from "~/app/_components/UserNameProfile";
 import { useClerk } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { STATIC_TEXTS } from "./static/staticText";
+import { STATIC_TEXTS } from "../static/staticText";
 import { handleError } from "~/app/_utils/handleError";
-import { Button, Menu, MenuItem } from "@mui/material";
+import { Avatar, Box, Button, Menu, MenuItem, Typography } from "@mui/material";
 
 const UserMenu = () => {
   const { user, signOut } = useClerk();
@@ -41,18 +40,25 @@ const UserMenu = () => {
   };
 
   return (
-    <>
-      <UserNameProfile
-        ImageHeight={50}
-        ImageWidth={50}
-        AuthorImage={user?.imageUrl}
-        AuthorName={
-          user?.firstName === null
-            ? (user?.unsafeMetadata?.name as string)
-            : user?.firstName
-        }
-      />
-      <div style={{ paddingRight: "10px" }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <Box display="flex" alignItems="center">
+        <Avatar
+          alt="user profile picture"
+          src={user?.imageUrl}
+          sx={{ width: 38, height: 38, mr: 1 }}
+        />
+
+        <Typography color="text.secondary" variant="subtitle2">
+          {user?.firstName}
+        </Typography>
+      </Box>
+      <Box>
         <Button
           startIcon={<MoreHorizOutlinedIcon />}
           sx={{
@@ -77,8 +83,8 @@ const UserMenu = () => {
         >
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
-      </div>
-    </>
+      </Box>
+    </Box>
   );
 };
 

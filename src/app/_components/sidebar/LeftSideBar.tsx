@@ -2,7 +2,7 @@ import { Box, Typography, Button, Grid2 as Grid, Divider } from "@mui/material";
 import React from "react";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import OwlSVG from "~/assets/svg/owl.svg";
-import WriteLogo from "~/assets/svg/writeLogo.svg";
+import WriteLogo from "~/assets/svg/WriteLogo.svg";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
@@ -14,7 +14,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { type LeftSideBarProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { usePathname, useRouter } from "next/navigation";
-import UserMenu from "../UserMenu";
+import UserMenu from "../userMenu/UserMenu";
 
 const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
   const router = useRouter();
@@ -37,7 +37,6 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
     <Grid
       columns={1}
       sx={{
-        height: "100%",
         width: "100%",
         spacing: 3,
         backgroundColor: "white",
@@ -63,7 +62,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
         sx={{
           width: "100%",
         }}
-      ></Divider>
+      />
       <Box
         sx={{
           marginTop: 4,
@@ -149,18 +148,6 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
             </Box>
           );
         })}
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          position: "absolute",
-          bottom: "0",
-          px: "8px",
-        }}
-      >
         <UserMenu />
       </Box>
     </Grid>

@@ -1,19 +1,8 @@
 "use client";
-import {
-  Box,
-  CircularProgress,
-  Grid2 as Grid,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Grid2 as Grid, Tab, Tabs } from "@mui/material";
+import React, { useState } from "react";
 import PostsFeed from "~/app/_components/myfeed/PostsFeed";
-import { trpc } from "~/server/client";
-import { type ArticlesList } from "./types/types";
-import { useClerk } from "@clerk/nextjs";
-import { handleError } from "~/app/_utils/handleError";
-
+import mockData from "./myfeedMock/myfeedMock";
 const MyFeed = () => {
   const { user } = useClerk();
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
@@ -142,7 +131,7 @@ const MyFeed = () => {
           justifyContent: "start",
           alignItems: "start",
           px: "4px",
-          pt: "4px",
+          pt: "8px",
           borderBottom: "1px solid #E0E0E0",
         }}
       >
