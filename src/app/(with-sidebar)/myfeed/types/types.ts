@@ -33,12 +33,14 @@ type ArticleMedia = {
   thumbnail_title: string;
 };
 
-type Comment = {
+export type Comment = {
   id: string;
   userId: string;
   articleId: string;
+  name: string;
   content: string;
   createdAt: string;
+  profile: string;
   updatedAt: string;
 };
 type Bid = {
@@ -59,7 +61,7 @@ export type ArticlesList = {
   media: ArticleMedia;
   tags: string[];
   likeCount: number;
-  comments?: Comment[];
+  comments: Comment[];
   bids?: Bid[];
 };
 
@@ -67,6 +69,7 @@ export type PostsFeedProps = {
   articlesList: ArticlesList[];
   likedPosts: string[];
   handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
+  addCommment: (postId: string, content: string) => Promise<void>;
 };
 
 export type PostCardFooterProps = {
@@ -75,6 +78,7 @@ export type PostCardFooterProps = {
   bids: Bid[];
   isLiked?: boolean;
   handleLikeButton: () => void;
+  openCommentBox: () => void;
 };
 
 export type UserNameProfileProps = {
@@ -102,3 +106,11 @@ export type FollowButtonProps = {
 export interface LeftSideBarProps {
   menuItems: MenuItemList[];
 }
+
+export type CommentSectionProps = {
+  comments: Comment[];
+  addComment: (comment: string) => Promise<void>;
+};
+export type CommentCardProps = {
+  comment: Comment;
+};

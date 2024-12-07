@@ -86,6 +86,9 @@ export const postRouter = router({
           orderBy: {
             createdAt: "desc",
           },
+          include: {
+            comments: true,
+          },
         });
 
         return posts;

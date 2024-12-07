@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
-import { type ArticlesList } from "./types/types";
+import { type Comment, type ArticlesList } from "./types/types";
 import { trpc } from "~/server/client";
 import { handleError } from "~/app/_utils/handleError";
 
@@ -25,25 +25,29 @@ const MyFeed = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
 
+  const postMutation = trpc.post;
+  const likeMutation = trpc.likes;
+  const commentMutation = trpc.comments;
+
   const {
     data: postData,
     isLoading: queryLoading,
     error,
-  } = trpc.post.getPosts.useQuery(
+  } = postMutation.getPosts.useQuery(
     { skip, limit: 3 },
     {
       enabled: skip >= 0 && hasMorePosts,
     },
   );
 
-  const { data: likedPostData } = trpc.likes.getUserLikes.useQuery(
+  const { data: likedPostData } = likeMutation.getUserLikes.useQuery(
     { userEmail: user?.primaryEmailAddress?.emailAddress ?? "" },
     {
       enabled: !!user?.primaryEmailAddress,
     },
   );
 
-  const likePostMutation = trpc.likes.likePost.useMutation();
+  const likePostMutation = likeMutation.likePost.useMutation();
 
   const handleLikeButton = async (
     postId: string,
@@ -86,6 +90,41 @@ const MyFeed = () => {
     return { liked: false };
   };
 
+  const addCommentMutation = commentMutation.addComment.useMutation();
+
+  const addComment = async (postId: string, content: string): Promise<void> => {
+    if (!content.trim()) return;
+    if (user?.primaryEmailAddress?.emailAddress)
+      try {
+        const newComment = await addCommentMutation.mutateAsync({
+          postId,
+          userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+          name:
+            user?.firstName === null
+              ? (user?.unsafeMetadata?.name as string)
+              : user?.firstName,
+          content,
+          profile: user.imageUrl,
+        });
+
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  comments: [
+                    ...post.comments,
+                    { ...newComment, articleId: postId },
+                  ],
+                }
+              : post,
+          ),
+        );
+      } catch (error) {
+        handleError(error);
+      }
+  };
+
   useEffect(() => {
     if (postData) {
       if (postData.length < 3) {
@@ -93,14 +132,28 @@ const MyFeed = () => {
       }
       if (skip === 0) {
         setIsLoadingInitial(false);
-        setPosts(postData as ArticlesList[]);
+        setPosts(
+          postData.map((post) => ({
+            ...post,
+            comments: post.comments.map((comment) => ({
+              ...comment,
+              articleId: post.id,
+            })),
+          })) as ArticlesList[],
+        );
       } else {
         if (postData.length === 0) {
           setHasMorePosts(false);
         } else {
           setPosts((prevPosts) => [
             ...prevPosts,
-            ...(postData as ArticlesList[]),
+            ...postData.map((post) => ({
+              ...post,
+              comments: post.comments.map((comment) => ({
+                ...comment,
+                articleId: post.id,
+              })),
+            })),
           ]);
         }
       }
@@ -218,6 +271,7 @@ const MyFeed = () => {
                 articlesList={posts ?? []}
                 likedPosts={likedPosts}
                 handleLikeButton={handleLikeButton}
+                addCommment={addComment}
               />
               {isLoadingMore && (
                 <Box

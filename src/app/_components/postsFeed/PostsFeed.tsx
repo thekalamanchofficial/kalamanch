@@ -1,6 +1,6 @@
 "use client";
-import { Button, Card, CardContent, Box } from "@mui/material";
-import React from "react";
+import { Button, Card, CardContent, Box, Divider } from "@mui/material";
+import React, { useState } from "react";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import UserNameProfile from "../userNameProfile/UserNameProfile";
@@ -8,12 +8,29 @@ import PostCardContent from "../postCardContent/PostCardContent";
 import PostCardFooter from "../postCardFooter/PostCardFooter";
 import FollowButton from "../followButton/FollowButton";
 import Link from "next/link";
+import CommentSection from "../CommentSection/CommentSection";
 
 const PostsFeed: React.FC<PostsFeedProps> = ({
   articlesList,
   likedPosts,
   handleLikeButton,
+  addCommment,
 }) => {
+  const [toggleComment, setToggleComment] = useState<Record<string, boolean>>(
+    {},
+  );
+
+  const openCommentBox = (postId: string) => {
+    setToggleComment((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId],
+    }));
+  };
+
+  const handleAddComment = async (id: string, comment: string) => {
+    await addCommment(id, comment);
+  };
+
   return (
     <>
       {articlesList.map((article, index) => {
@@ -75,8 +92,18 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
                 bids={article.bids ?? []}
                 isLiked={likedPosts.includes(article.id)}
                 handleLikeButton={() => handleLikeButton(article.id)}
+                openCommentBox={() => openCommentBox(article.id)}
               />
+              {toggleComment[article.id] && (
+                <CommentSection
+                  comments={article.comments}
+                  addComment={(comment: string) =>
+                    handleAddComment(article.id, comment)
+                  }
+                />
+              )}
             </CardContent>
+            <Divider />
           </Card>
         );
       })}
