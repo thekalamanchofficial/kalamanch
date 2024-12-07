@@ -27,31 +27,58 @@ export type MenuItemList = {
   icon: React.ReactNode;
 };
 
-type ArticlesList = {
+type ArticleMedia = {
+  thumbnail_picture: string[];
+  thumbnail_content: string;
+  thumbnail_title: string;
+};
+
+export type Comment = {
+  id: string;
+  userId: string;
+  articleId: string;
+  name: string;
+  content: string;
+  createdAt: string;
+  profile: string;
+  updatedAt: string;
+};
+type Bid = {
+  id: string;
+  userId: string;
+  articleId: string;
+  amount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+export type ArticlesList = {
+  id: string;
+  authorId: string;
   authorName: string;
-  authorImage: string;
-  authorProfileLink: string;
-  articleTitle: string;
-  articleContent: string;
-  articleTags: string[];
-  articleImage: string;
-  articleLink: string;
-  articleDecription: string;
-  articleLikes: number;
-  articleComments: number;
-  articleShares: number;
-  articlesBids: number;
+  authorProfile: string;
+  title: string;
+  content: string;
+  media: ArticleMedia;
+  tags: string[];
+  likeCount: number;
+  comments: Comment[];
+  bids?: Bid[];
 };
 
 export type PostsFeedProps = {
   articlesList: ArticlesList[];
+  likedPosts: string[];
+  handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
+  addCommment: (postId: string, content: string) => Promise<void>;
 };
 
 export type PostCardFooterProps = {
   likes: number;
-  comments: number;
-  shares: number;
-  bids: number;
+  comments: Comment[];
+  bids: Bid[];
+  isLiked?: boolean;
+  handleLikeButton: () => void;
+  openCommentBox: () => void;
 };
 
 export type UserNameProfileProps = {
@@ -66,7 +93,8 @@ export type PostCardContentProps = {
   articleTitle: string;
   articleContent: string;
   articleTags: string[];
-  articleImage?: string;
+  articleImage?: string[];
+  articleId: string;
   articleDescription: string;
 };
 
@@ -78,3 +106,11 @@ export type FollowButtonProps = {
 export interface LeftSideBarProps {
   menuItems: MenuItemList[];
 }
+
+export type CommentSectionProps = {
+  comments: Comment[];
+  addComment: (comment: string) => Promise<void>;
+};
+export type CommentCardProps = {
+  comment: Comment;
+};
