@@ -12,13 +12,13 @@ const postSchema = yup.object({
   authorProfile: yup.string().optional(),
   media: yup
     .object({
-      thumbnail_picture: yup.array(yup.string()).optional(),
-      thumbnail_content: yup.string().optional(),
-      thumbnail_title: yup.string().optional(),
+      thumbnailPicture: yup.array(yup.string()).optional(),
+      thumbnailContent: yup.string().optional(),
+      thumbnailTitle: yup.string().optional(),
     })
     .required(),
   tags: yup.array(yup.string()).optional(),
-  likesCount: yup.number().optional().default(0),
+  likeCount: yup.number().optional().default(0),
   likes: yup
     .array(
       yup.object({
@@ -49,13 +49,58 @@ const postSchema = yup.object({
       }),
     )
     .optional(),
+  hasMorePosts: yup.boolean().optional(),
 });
 
 export const postRouter = router({
+  // getPosts: publicProcedure
+  //   .input(
+  //     yup.object({
+  //       limit: yup.number().min(1).default(3),
+  //       skip: yup.number().min(0).default(0),
+  //       interests: yup.array(yup.string()).optional(),
+  //       authorId: yup.string().optional(),
+  //     }),
+  //   )
+  //   .query(async ({ input }) => {
+  //     try {
+  //       const { limit, skip, interests, authorId } = input;
+
+  //       const query: { tags?: { hasSome: string[] }; authorId?: string } = {};
+
+  //       if (interests && interests.length > 0) {
+  //         query.tags = {
+  //           hasSome: interests.filter(
+  //             (interest): interest is string => interest !== undefined,
+  //           ),
+  //         };
+  //       }
+
+  //       if (authorId) {
+  //         query.authorId = authorId;
+  //       }
+
+  //       const posts = await prisma.post.findMany({
+  //         where: query,
+  //         take: limit,
+  //         skip: skip,
+  //         orderBy: {
+  //           createdAt: "desc",
+  //         },
+  //         include: {
+  //           comments: true,
+  //         },
+  //       });
+
+  //       return posts;
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   }),
   getPosts: publicProcedure
     .input(
       yup.object({
-        limit: yup.number().min(1).default(3),
+        limit: yup.number().min(1).default(5),
         skip: yup.number().min(0).default(0),
         interests: yup.array(yup.string()).optional(),
         authorId: yup.string().optional(),
@@ -87,11 +132,24 @@ export const postRouter = router({
             createdAt: "desc",
           },
           include: {
-            comments: true,
+            comments: {
+              include: {
+                replies: true,
+              },
+            },
           },
         });
+        const totalPosts = await prisma.post.count({});
 
-        return posts;
+        let hasMorePosts;
+
+        if (skip < totalPosts) {
+          hasMorePosts = true;
+        } else {
+          hasMorePosts = false;
+        }
+
+        return { posts, hasMorePosts };
       } catch (error) {
         throw error;
       }
@@ -109,11 +167,11 @@ export const postRouter = router({
           tags:
             input.tags?.filter((tag): tag is string => tag !== undefined) ?? [],
           media: {
-            thumbnail_picture: input.media?.thumbnail_picture?.filter(
+            thumbnailPicture: input.media?.thumbnailPicture?.filter(
               (pic): pic is string => pic !== undefined,
             ),
-            thumbnail_content: input.media?.thumbnail_content ?? "",
-            thumbnail_title: input.media?.thumbnail_title ?? "",
+            thumbnailContent: input.media?.thumbnailContent ?? "",
+            thumbnailTitle: input.media?.thumbnailTitle ?? "",
           },
           likes: {
             create: [],

@@ -14,7 +14,7 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
   articlesList,
   likedPosts,
   handleLikeButton,
-  addCommment,
+  addComment,
 }) => {
   const [toggleComment, setToggleComment] = useState<Record<string, boolean>>(
     {},
@@ -27,8 +27,12 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
     }));
   };
 
-  const handleAddComment = async (id: string, comment: string) => {
-    await addCommment(id, comment);
+  const handleAddComment = async (
+    id: string,
+    comment: string,
+    parent: string,
+  ) => {
+    await addComment(id, comment, parent);
   };
 
   return (
@@ -80,8 +84,8 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
 
               <PostCardContent
                 articleContent={article.content}
-                articleDescription={article.media.thumbnail_content}
-                articleImage={article.media.thumbnail_picture}
+                articleDescription={article.media.thumbnailContent}
+                articleImage={article.media.thumbnailPicture}
                 articleTags={article.tags}
                 articleId={article.id}
                 articleTitle={article.title}
@@ -97,10 +101,11 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
               {toggleComment[article.id] && (
                 <CommentSection
                   comments={article.comments}
-                  addComment={(comment: string) =>
-                    handleAddComment(article.id, comment)
+                  addComment={(comment: string, parent: string) =>
+                    handleAddComment(article.id, comment, parent)
                   }
                 />
+                // <CommentSection />
               )}
             </CardContent>
             <Divider />

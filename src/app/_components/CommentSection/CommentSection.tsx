@@ -1,32 +1,37 @@
-import {
-  Box,
-  Grid2 as Grid,
-  IconButton,
-  Input,
-  Typography,
-} from "@mui/material";
+import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
-import SendIcon from "@mui/icons-material/Send";
 import { type CommentSectionProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import CommentCard from "~/app/_components/commentCard/CommentCard";
-import { toast } from "react-toastify";
+import CommentCard from "~/app/_components/CommentSection/CommentCard";
+import Editor from "../commentCard/Editor";
 
 const CommentSection: React.FC<CommentSectionProps> = ({
   comments,
   addComment,
 }) => {
   const [newComment, setNewComment] = useState("");
+  const [replyingState, setReplyingState] = React.useState<
+    Record<string, boolean>
+  >({});
 
-  const commentButtonClick = async () => {
-    if (newComment?.trim().length > 1000) {
-      toast.error("Comment should not exceed 1000 characters");
-    } else if (newComment?.trim()) {
-      if (newComment.trim().length > 0) {
-        await addComment(newComment.trim());
-        setNewComment("");
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyingTo, setReplyingTo] = useState("");
+  const [parent, setParent] = useState<string>("");
+
+  const toggleReply = (commentId: string) => {
+    setReplyingState((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const commentButtonClick = async (comment: string, parent: string) => {
+    if (comment?.trim()) {
+      if (comment.trim().length > 0) {
+        await addComment(comment, parent);
       }
     }
   };
+
   return (
     <Grid
       size={12}
@@ -41,6 +46,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         marginTop: "16px",
         position: "relative",
         mb: "4px",
+        padding: "12px",
       }}
     >
       {comments && comments.length > 0 ? (
@@ -54,7 +60,33 @@ const CommentSection: React.FC<CommentSectionProps> = ({
           }}
         >
           {comments.map((item) => (
-            <CommentCard key={item.id} comment={item} />
+            <>
+              {item.parentId === null ? (
+                <CommentCard
+                  key={item.id}
+                  comment={item}
+                  isReplying={isReplying}
+                  setIsReplying={setIsReplying}
+                  setReplyingTo={setReplyingTo}
+                  setParentState={() => setParent(item.id)}
+                  setReplyingState={setReplyingState}
+                  replyingState={replyingState}
+                  handleReply={(newComment: string) =>
+                    commentButtonClick(newComment, item.id)
+                  }
+                  isChildren={false}
+                />
+              ) : null}
+              {item.replies && item.replies.length > 0
+                ? item.replies.map((reply) => (
+                    <CommentCard
+                      key={reply.id}
+                      comment={reply}
+                      isChildren={true}
+                    />
+                  ))
+                : null}
+            </>
           ))}
         </Box>
       ) : (
@@ -77,41 +109,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
           left: "0",
           position: "sticky",
           width: "100%",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-          height: "auto",
-          maxHeight: "200px",
           overflow: "hidden",
+          marginTop: "6px",
         }}
       >
-        <Input
-          aria-label="comment-input"
-          multiline
-          placeholder="Type your comment here..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          disableUnderline
-          sx={{
-            width: "100%",
-            border: "1px solid #e0e0e0",
-            overflowY: "scroll",
-            scrollbarWidth: "none",
-            maxHeight: "200px",
-            backgroundColor: "white",
-            pl: "4px",
-            py: "4px",
-            color: "text.secondary",
-          }}
+        <Editor
+          handleReply={(comment: string) => commentButtonClick(comment, "")}
         />
-        <IconButton
-          onClick={commentButtonClick}
-          sx={{
-            borderRadius: "0px",
-          }}
-        >
-          <SendIcon />
-        </IconButton>
       </Box>
     </Grid>
   );

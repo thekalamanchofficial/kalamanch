@@ -20,7 +20,7 @@ const CustomTabs = <T,>({
   const handleTabChange = (event: React.SyntheticEvent, newIndex: number) => {
     const selectedTab = tabs[newIndex];
     if (selectedTab) {
-      onTabChange(selectedTab.value); // Pass the selected value to the parent
+      onTabChange(selectedTab.value);
     }
   };
 

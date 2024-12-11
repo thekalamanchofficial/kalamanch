@@ -1,7 +1,7 @@
 import { Box, CardMedia, Chip, Typography } from "@mui/material";
 import React from "react";
 import { type PostCardContentProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import myfeedConfig from "~/app/(with-sidebar)/myfeed/_config/config";
+import { myfeedConfig } from "~/app/(with-sidebar)/myfeed/_config/config";
 import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
 import Link from "next/link";
 

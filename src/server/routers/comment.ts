@@ -23,6 +23,7 @@ const commentSchema = yup.object({
   content: yup.string().required().min(1),
   postId: yup.string().required(),
   profile: yup.string().required(),
+  parentId: yup.string().optional(),
 });
 
 export const commentRouter = router({
@@ -30,7 +31,7 @@ export const commentRouter = router({
     .input(commentSchema)
     .mutation(async ({ input }) => {
       try {
-        const { postId, userEmail, name, content, profile } = input;
+        const { postId, userEmail, name, content, profile, parentId } = input;
 
         const userDetails = await getUserDetails(userEmail);
         const { id: userId } = userDetails;
@@ -42,11 +43,12 @@ export const commentRouter = router({
             name,
             profile,
             content,
+            parentId: parentId === "" ? null : parentId,
           },
         });
         return comment;
       } catch (error) {
-        handleError(error);
+        // handleError(error);
         throw error;
       }
     }),
@@ -61,13 +63,50 @@ export const commentRouter = router({
       try {
         const { postId } = input;
 
+        // Fetch comments with their replies
         const comments = await prisma.comment.findMany({
           where: {
             postId,
+            parentId: null, // Fetch only top-level comments
+          },
+          include: {
+            replies: {
+              include: {
+                user: true, // Optionally include user details for replies
+                replies: true, // Optionally include replies for replies
+              },
+            },
           },
         });
 
         return comments;
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    }),
+
+  getPostReplies: publicProcedure
+    .input(
+      yup.object({
+        postId: yup.string().required(),
+      }),
+    )
+    .query(async ({ input }) => {
+      try {
+        const { postId } = input;
+
+        // Fetch only replies
+        const replies = await prisma.comment.findMany({
+          where: {
+            parentId: postId,
+          },
+          include: {
+            user: true,
+          },
+        });
+
+        return replies;
       } catch (error) {
         handleError(error);
         throw error;

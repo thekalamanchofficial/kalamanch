@@ -28,21 +28,24 @@ export type MenuItemList = {
 };
 
 type ArticleMedia = {
-  thumbnail_picture: string[];
-  thumbnail_content: string;
-  thumbnail_title: string;
+  thumbnailPicture: string[];
+  thumbnailContent: string;
+  thumbnailTitle: string;
 };
 
 export type Comment = {
   id: string;
   userId: string;
-  articleId: string;
+  postId: string;
   name: string;
   content: string;
   createdAt: string;
   profile: string;
   updatedAt: string;
+  parentId: string | null;
+  replies?: Comment[];
 };
+
 type Bid = {
   id: string;
   userId: string;
@@ -69,7 +72,11 @@ export type PostsFeedProps = {
   articlesList: ArticlesList[];
   likedPosts: string[];
   handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
-  addCommment: (postId: string, content: string) => Promise<void>;
+  addComment: (
+    postId: string,
+    content: string,
+    parent: string,
+  ) => Promise<void>;
 };
 
 export type PostCardFooterProps = {
@@ -109,8 +116,13 @@ export interface LeftSideBarProps {
 
 export type CommentSectionProps = {
   comments: Comment[];
-  addComment: (comment: string) => Promise<void>;
+  addComment: (comment: string, parent: string) => Promise<void>;
 };
 export type CommentCardProps = {
   comment: Comment;
 };
+
+export enum MyFeedTabsEnum {
+  MY_FEED = "My Feed",
+  DISCOVERY = "Discover",
+}
