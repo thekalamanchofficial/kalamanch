@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Grid2 as Grid } from "@mui/material";
+import { Box, Grid2 as Grid } from "@mui/material";
 import { useMemo } from "react";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
 import CustomTabs from "~/app/_components/CustomTabs/CustomTabs";

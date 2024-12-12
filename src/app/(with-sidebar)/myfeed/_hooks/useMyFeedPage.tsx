@@ -48,7 +48,11 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     isLoading: queryLoading,
     error,
   } = postMutation.getPosts.useQuery(
-    { skip, limit: config.lazyLoading.limit },
+    {
+      skip,
+      limit:
+        skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
+    },
     {
       enabled: skip >= 0 && hasMorePosts === true,
     },
@@ -144,12 +148,12 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
         if (comment.id === parentId) {
           return {
             ...comment,
-            replies: [...(comment.replies || []), newReply],
+            replies: [...(comment.replies ?? []), newReply],
           };
         }
         return {
           ...comment,
-          replies: addReplyToParent(comment.replies || [], parentId, newReply),
+          replies: addReplyToParent(comment.replies ?? [], parentId, newReply),
         };
       });
     };
@@ -213,7 +217,11 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
 
     if (bottomReached && !queryLoading && !error) {
       setHasMorePosts(postData?.hasMorePosts);
-      setSkip((prev) => prev + 2);
+      setSkip((prev) =>
+        prev == 0
+          ? config.lazyLoading.initialLimit + prev
+          : prev + config.lazyLoading.limit,
+      );
     }
   }, [error, postData?.hasMorePosts, queryLoading]);
 
