@@ -1,17 +1,13 @@
 import { useClerk } from "@clerk/nextjs";
 import { Avatar, Button, Grid2 as Grid, Paper, TextField } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 
 export interface EditorProps {
   handleReply?: (reply: string) => void;
-  replyingTo?: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onSubmit?: () => void;
 }
 
-export default function Editor({ handleReply, replyingTo }: EditorProps) {
+export default function Editor({ handleReply }: EditorProps) {
   const { user } = useClerk();
   const theme = useTheme();
   const [comment, setComment] = useState("");

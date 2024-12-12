@@ -53,50 +53,6 @@ const postSchema = yup.object({
 });
 
 export const postRouter = router({
-  // getPosts: publicProcedure
-  //   .input(
-  //     yup.object({
-  //       limit: yup.number().min(1).default(3),
-  //       skip: yup.number().min(0).default(0),
-  //       interests: yup.array(yup.string()).optional(),
-  //       authorId: yup.string().optional(),
-  //     }),
-  //   )
-  //   .query(async ({ input }) => {
-  //     try {
-  //       const { limit, skip, interests, authorId } = input;
-
-  //       const query: { tags?: { hasSome: string[] }; authorId?: string } = {};
-
-  //       if (interests && interests.length > 0) {
-  //         query.tags = {
-  //           hasSome: interests.filter(
-  //             (interest): interest is string => interest !== undefined,
-  //           ),
-  //         };
-  //       }
-
-  //       if (authorId) {
-  //         query.authorId = authorId;
-  //       }
-
-  //       const posts = await prisma.post.findMany({
-  //         where: query,
-  //         take: limit,
-  //         skip: skip,
-  //         orderBy: {
-  //           createdAt: "desc",
-  //         },
-  //         include: {
-  //           comments: true,
-  //         },
-  //       });
-
-  //       return posts;
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   }),
   getPosts: publicProcedure
     .input(
       yup.object({

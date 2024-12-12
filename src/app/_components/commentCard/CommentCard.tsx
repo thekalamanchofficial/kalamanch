@@ -1,9 +1,15 @@
 import React from "react";
 import { Grid2 as Grid, Box, Typography, Avatar } from "@mui/material";
 import { type Comment } from "~/app/(with-sidebar)/myfeed/types/types";
-import { formatDistanceToNow, isToday } from "date-fns";
 import ReplyButton from "../commentCard/ReplyButton";
 import Editor from "../commentCard/Editor";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import isToday from "dayjs/plugin/isToday";
+
+dayjs().format();
+dayjs.extend(relativeTime);
+dayjs.extend(isToday);
 
 type commentCardProps = {
   comment: Comment;
@@ -27,9 +33,9 @@ const CommentCard: React.FC<commentCardProps> = ({
   replyingState = {},
   handleReply,
 }) => {
-  const timeAgo = isToday(new Date(comment.createdAt))
+  const timeAgo = dayjs(comment.createdAt).isToday()
     ? "Today"
-    : formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true });
+    : dayjs(comment.createdAt).fromNow();
 
   return (
     <Grid
@@ -84,12 +90,11 @@ const CommentCard: React.FC<commentCardProps> = ({
                 }}
                 props={{
                   onClick: () => {
-                    setIsReplying ? setIsReplying(!isReplying) : null;
-                    setReplyingTo ? setReplyingTo(comment.name) : null;
-                    setParentState ? setParentState() : null;
-                    setReplyingState
-                      ? setReplyingState({ [comment.id]: true })
-                      : null;
+                    if (setIsReplying) setIsReplying(!isReplying);
+                    if (setReplyingTo) setReplyingTo(comment.name);
+                    if (setParentState) setParentState();
+                    if (setReplyingState)
+                      setReplyingState({ [comment.id]: true });
                   },
                 }}
               />

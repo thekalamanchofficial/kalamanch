@@ -1,34 +1,21 @@
 import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { type CommentSectionProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import CommentCard from "~/app/_components/CommentSection/CommentCard";
+import CommentCard from "~/app/_components/commentCard/CommentCard";
 import Editor from "../commentCard/Editor";
 
 const CommentSection: React.FC<CommentSectionProps> = ({
   comments,
   addComment,
 }) => {
-  const [newComment, setNewComment] = useState("");
-  const [replyingState, setReplyingState] = React.useState<
-    Record<string, boolean>
-  >({});
-
-  const [isReplying, setIsReplying] = useState(false);
-  const [replyingTo, setReplyingTo] = useState("");
-  const [parent, setParent] = useState<string>("");
-
-  const toggleReply = (commentId: string) => {
-    setReplyingState((prev) => ({
-      ...prev,
-      [commentId]: !prev[commentId],
-    }));
-  };
+  const [replyingState, setReplyingState] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const commentButtonClick = async (comment: string, parent: string) => {
-    if (comment?.trim()) {
-      if (comment.trim().length > 0) {
-        await addComment(comment, parent);
-      }
+    if (comment.trim()) {
+      await addComment(comment, parent);
+      setReplyingState({}); // Reset reply state to close dialog
     }
   };
 
@@ -38,15 +25,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       sx={{
         backgroundColor: "secondary.main",
         minHeight: "120px",
-        height: "auto",
         maxHeight: "600px",
         width: "100%",
         overflowY: "scroll",
-        scrollbarWidth: "none",
         marginTop: "16px",
-        position: "relative",
         mb: "4px",
-        padding: "12px",
+        overflow: "hidden",
       }}
     >
       {comments && comments.length > 0 ? (
@@ -54,21 +38,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({
           sx={{
             width: "100%",
             maxHeight: "450px",
+            padding: "10px",
             minHeight: "100px",
             overflowY: "scroll",
-            scrollbarWidth: "none",
           }}
         >
           {comments.map((item) => (
-            <>
-              {item.parentId === null ? (
+            <React.Fragment key={item.id}>
+              {item.parentId === null && (
                 <CommentCard
-                  key={item.id}
                   comment={item}
-                  isReplying={isReplying}
-                  setIsReplying={setIsReplying}
-                  setReplyingTo={setReplyingTo}
-                  setParentState={() => setParent(item.id)}
                   setReplyingState={setReplyingState}
                   replyingState={replyingState}
                   handleReply={(newComment: string) =>
@@ -76,17 +55,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                   }
                   isChildren={false}
                 />
-              ) : null}
-              {item.replies && item.replies.length > 0
-                ? item.replies.map((reply) => (
-                    <CommentCard
-                      key={reply.id}
-                      comment={reply}
-                      isChildren={true}
-                    />
-                  ))
-                : null}
-            </>
+              )}
+              {item.replies?.map((reply) => (
+                <CommentCard key={reply.id} comment={reply} isChildren={true} />
+              ))}
+            </React.Fragment>
           ))}
         </Box>
       ) : (
@@ -104,14 +77,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         </Box>
       )}
       <Box
-        sx={{
-          bottom: "0",
-          left: "0",
-          position: "sticky",
-          width: "100%",
-          overflow: "hidden",
-          marginTop: "6px",
-        }}
+        sx={{ bottom: "0", left: "0", position: "sticky", marginTop: "6px" }}
       >
         <Editor
           handleReply={(comment: string) => commentButtonClick(comment, "")}
