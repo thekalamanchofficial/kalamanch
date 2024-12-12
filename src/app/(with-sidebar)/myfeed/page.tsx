@@ -9,7 +9,6 @@ import Loader from "~/app/_components/loader/Loader";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
 import useMyFeedPage from "./_hooks/useMyFeedPage";
-import { trpc } from "~/server/client";
 const MyFeed = () => {
   const {
     tab,
@@ -23,7 +22,6 @@ const MyFeed = () => {
     addComment,
     errorMessage,
   } = useMyFeedPage();
-  const mutation = trpc.post.addPost.useMutation();
 
   const renderUI = useMemo(() => {
     if (errorMessage) {
