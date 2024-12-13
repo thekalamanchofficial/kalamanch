@@ -42,6 +42,7 @@
     "react-toastify": "^10.0.5",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
+    "svix": "^1.44.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
