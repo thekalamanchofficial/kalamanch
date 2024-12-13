@@ -77,4 +77,10 @@ export const STATIC_TEXTS = {
       { label: "Discover", value: "Discover" },
     ],
   },
+  MY_PROFILE_PAGE: {
+    TABS: [
+      { label: "My Posts", value: "My Posts" },
+      { label: "Liked Posts", value: "Liked Posts" },
+    ],
+  },
 };

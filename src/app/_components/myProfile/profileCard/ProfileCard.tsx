@@ -17,7 +17,7 @@ interface ProfileCardProps {
   name: string;
   bio: string;
   followers?: string;
-  posts?: string;
+  posts?: number;
   profileImage?: string;
   coverImage?: string;
 }

@@ -1,152 +1,119 @@
 "use client";
 import { Grid2 as Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import CustomTabs from "~/app/_components/CustomTabs/CustomTabs";
 import ProfileCard from "~/app/_components/myProfile/profileCard/ProfileCard";
-import { MyProfileTabsEnum } from "./types/types";
-import { tabs } from "./_config/config";
+import { tabs } from "~/app/(with-sidebar)/myProfile/_config/config";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
-import mockData from "./mocks/myProfileMock";
-import { type ArticlesList } from "~/app/(with-sidebar)/myfeed/types/types";
-import { useClerk } from "@clerk/nextjs";
-import { trpc } from "~/server/client";
-import { handleError } from "~/app/_utils/handleError";
+import useMyProfilePage from "~/app/(with-sidebar)/myProfile/_hook/useMyProfile";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import Loader from "~/app/_components/loader/Loader";
+import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
+import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 
 const MyProfile = () => {
-  const [activeTab, setActiveTab] = React.useState(MyProfileTabsEnum.MY_POSTS);
-  const [posts, setPosts] = useState<ArticlesList[]>([]);
-  const [likedPosts, setLikedPosts] = useState<string[]>([]);
-  const handleTabChange = (newTab: MyProfileTabsEnum) => {
-    setActiveTab(newTab);
-  };
+  const {
+    userProfile,
+    tab,
+    skip,
+    likedPosts,
+    queryLoading,
+    hasMorePosts,
+    postDataWithComments,
+    handleLikeButton,
+    handleChange,
+    addComment,
+    errorMessage,
+  } = useMyProfilePage();
 
-  const { user } = useClerk();
-
-  const postMutation = trpc.post;
-  const likeMutation = trpc.likes;
-  const commentMutation = trpc.comments;
-
-  const likePostMutation = likeMutation.likePost.useMutation();
-
-  const handleLikeButton = async (
-    postId: string,
-  ): Promise<{ liked: boolean }> => {
-    if (user?.primaryEmailAddress?.emailAddress) {
-      try {
-        const response = await likePostMutation.mutateAsync({
-          postId,
-          userEmail: user?.primaryEmailAddress?.emailAddress,
-        });
-
-        const updatePostLikeCount = (
-          post: ArticlesList,
-          postId: string,
-          liked: boolean,
-        ) => {
-          if (post.id !== postId) return post;
-
-          return {
-            ...post,
-            likeCount: liked
-              ? post.likeCount + 1
-              : Math.max(0, post.likeCount - 1),
-          };
-        };
-
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            updatePostLikeCount(post, postId, response.liked),
-          ),
-        );
-
-        if (response.liked) {
-          setLikedPosts((prevLikedPosts) => [...prevLikedPosts, postId]);
-        } else {
-          setLikedPosts((prevLikedPosts) =>
-            prevLikedPosts.filter((id) => id !== postId),
-          );
-        }
-
-        return { liked: response.liked };
-      } catch (error) {
-        handleError(error);
-        return { liked: false };
-      }
+  const renderUI = useMemo(() => {
+    if (errorMessage) {
+      return <ErrorMessage message={errorMessage} />;
+    }
+    if (queryLoading && skip === 0) {
+      return <Loader title="Loading Posts..." height="100%" width="100%" />;
     }
 
-    return { liked: false };
-  };
-
-  const addCommentMutation = commentMutation.addComment.useMutation();
-
-  const updatePostComments = (
-    post: ArticlesList,
-    postId: string,
-    newComment: Comment,
-  ) => {
-    if (post.id !== postId) return post;
-
-    return {
-      ...post,
-      comments: [...post.comments, newComment],
-    };
-  };
-
-  const addComment = async (postId: string, content: string): Promise<void> => {
-    if (!content.trim()) return;
-
-    if (user?.primaryEmailAddress?.emailAddress) {
-      try {
-        const newComment = await addCommentMutation.mutateAsync({
-          postId,
-          userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-          name:
-            user?.firstName === null
-              ? (user?.unsafeMetadata?.name as string)
-              : user?.firstName,
-          content,
-          profile: user.imageUrl,
-        });
-
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            updatePostComments(post, postId, {
-              ...newComment,
-              articleId: postId,
-            }),
-          ),
-        );
-      } catch (error) {
-        handleError(error);
-      }
+    if (tab === STATIC_TEXTS.MY_PROFILE_PAGE.TABS[0]?.value) {
+      return (
+        <>
+          <PostsFeed
+            articlesList={postDataWithComments ?? []}
+            likedPosts={likedPosts}
+            handleLikeButton={handleLikeButton}
+            addComment={addComment}
+          />
+          {queryLoading && skip > 0 ? (
+            <Loader height="auto" width="auto" title="" />
+          ) : null}
+          {!queryLoading && !hasMorePosts ? (
+            <ShowMessage
+              title="No More Posts Found."
+              style={{
+                height: "auto",
+                width: "100%",
+                marginTop: "20px",
+                padding: "8px",
+                backgroundColor: "secondary.main",
+              }}
+            />
+          ) : null}
+        </>
+      );
     }
-  };
 
+    if (tab === STATIC_TEXTS.MY_PROFILE_PAGE.TABS[1]?.value) {
+      return (
+        <>
+          <PostsFeed
+            articlesList={postDataWithComments ?? []}
+            likedPosts={likedPosts}
+            handleLikeButton={handleLikeButton}
+            addComment={addComment}
+          />
+          {queryLoading && skip > 0 ? (
+            <Loader height="auto" width="auto" title="" />
+          ) : null}
+          {!queryLoading && !hasMorePosts ? (
+            <ShowMessage
+              title="No More Posts Found."
+              style={{
+                height: "auto",
+                width: "100%",
+                marginTop: "20px",
+                padding: "8px",
+                backgroundColor: "secondary.main",
+              }}
+            />
+          ) : null}
+        </>
+      );
+    }
+
+    return <ShowMessage title="No Posts Found." />;
+  }, [
+    errorMessage,
+    queryLoading,
+    skip,
+    tab,
+    postDataWithComments,
+    likedPosts,
+    handleLikeButton,
+    addComment,
+    hasMorePosts,
+  ]);
   return (
     <Grid columns={1}>
       <ProfileCard
         coverImage="https://picsum.photos/200"
         bio="bio"
         followers="1M"
-        posts="4000"
-        profileImage="https://picsum.photos/200"
+        posts={postDataWithComments.length}
+        profileImage={userProfile}
         name="kalamanch"
       />
-      <CustomTabs
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
-      {activeTab === MyProfileTabsEnum.MY_POSTS ? (
-        <PostsFeed
-          articlesList={mockData.articlesList}
-          likedPosts={[]}
-          handleLikeButton={handleLikeButton}
-          addCommment={addComment}
-        />
-      ) : (
-        <div>Liked Posts</div>
-      )}
+      <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
+      {renderUI}
     </Grid>
   );
 };

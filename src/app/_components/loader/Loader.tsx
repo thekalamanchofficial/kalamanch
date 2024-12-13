@@ -17,6 +17,7 @@ const Loader: React.FC<LoaderProps> = ({ height, width, title }) => {
         justifyContent: "center",
         alignItems: "center",
         gap: "16px",
+        margin: "10px",
       }}
     >
       <CircularProgress />
