@@ -2,9 +2,10 @@ import { Box, IconButton } from "@mui/material";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
-import SendIcon from "@mui/icons-material/Send";
 import TollIcon from "@mui/icons-material/Toll";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ShareIcon from "@mui/icons-material/Share";
 
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import PostActionButton from "../postActionButton/PostActionButton";
@@ -12,8 +13,10 @@ import PostActionButton from "../postActionButton/PostActionButton";
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,
   comments,
-  shares,
   bids,
+  isLiked,
+  handleLikeButton,
+  openCommentBox,
 }) => {
   const handleAction = (actionType: string) => {
     switch (actionType) {
@@ -55,24 +58,24 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         }}
       >
         <PostActionButton
-          icon={<FavoriteBorderIcon />}
-          label={likes}
-          onClick={() => handleAction("like")}
+          icon={isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          label={likes && likes > 0 ? likes : "0"}
+          onClick={handleLikeButton}
         />
 
         <PostActionButton
           icon={<MessageIcon />}
-          label={comments}
-          onClick={() => handleAction("comment")}
+          label={comments && comments.length > 0 ? comments.length : "0"}
+          onClick={() => openCommentBox()}
         />
         <PostActionButton
           icon={<TollIcon />}
-          label={bids}
+          label={bids && bids.length > 0 ? bids.length : "0"}
           onClick={() => handleAction("share")}
         />
         <PostActionButton
-          icon={<SendIcon />}
-          label={shares}
+          icon={<ShareIcon />}
+          label=""
           onClick={() => handleAction("bid")}
         />
       </Box>

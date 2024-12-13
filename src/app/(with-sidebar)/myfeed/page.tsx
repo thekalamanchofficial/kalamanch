@@ -1,17 +1,88 @@
 "use client";
-import { Grid2 as Grid, Tab, Tabs } from "@mui/material";
-import React, { useState } from "react";
-import mockData from "./myfeedMock/myfeedMock";
+import { Box, Grid2 as Grid } from "@mui/material";
+import { useMemo } from "react";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
+import CustomTabs from "~/app/_components/CustomTabs/CustomTabs";
+import { tabs } from "./_config/config";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import Loader from "~/app/_components/loader/Loader";
+import ShowMessage from "~/app/_components/showMessage/ShowMessage";
+import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
+import useMyFeedPage from "./_hooks/useMyFeedPage";
 const MyFeed = () => {
-  const [tab, setTab] = useState(0);
+  const {
+    tab,
+    skip,
+    likedPosts,
+    queryLoading,
+    hasMorePosts,
+    postDataWithComments,
+    handleLikeButton,
+    handleChange,
+    addComment,
+    errorMessage,
+  } = useMyFeedPage();
 
-  const handleChange = (event: React.SyntheticEvent) => {
-    setTab(1 - tab);
-  };
+  const renderUI = useMemo(() => {
+    if (errorMessage) {
+      return <ErrorMessage message={errorMessage} />;
+    }
+    if (queryLoading && skip === 0) {
+      return <Loader title="Loading Posts..." height="100%" width="100%" />;
+    }
+
+    if (tab === STATIC_TEXTS.MY_FEED_PAGE.TABS[0]?.value) {
+      return (
+        <>
+          <PostsFeed
+            articlesList={postDataWithComments ?? []}
+            likedPosts={likedPosts}
+            handleLikeButton={handleLikeButton}
+            addComment={addComment}
+          />
+          {queryLoading && skip > 0 ? (
+            <Loader height="auto" width="auto" title="" />
+          ) : null}
+          {!queryLoading && !hasMorePosts ? (
+            <ShowMessage
+              title="No More Posts Found."
+              style={{
+                height: "auto",
+                width: "100%",
+                marginTop: "20px",
+                padding: "8px",
+                backgroundColor: "secondary.main",
+              }}
+            />
+          ) : null}
+        </>
+      );
+    }
+
+    if (tab === STATIC_TEXTS.MY_FEED_PAGE.TABS[1]?.value) {
+      return <div style={{ padding: "10px" }}>Discover Tab</div>;
+    }
+
+    return <ShowMessage title="No Posts Found." />;
+  }, [
+    errorMessage,
+    queryLoading,
+    skip,
+    tab,
+    postDataWithComments,
+    likedPosts,
+    handleLikeButton,
+    addComment,
+    hasMorePosts,
+  ]);
 
   return (
-    <>
+    <Box
+      sx={{
+        height: "100%",
+        width: "100%",
+      }}
+    >
       <Grid
         size={12}
         sx={{
@@ -23,33 +94,7 @@ const MyFeed = () => {
           borderBottom: "1px solid #E0E0E0",
         }}
       >
-        <Tabs
-          value={tab}
-          onChange={handleChange}
-          sx={{
-            borderColor: "divider",
-            "& .MuiTab-root": {
-              fontSize: "16px",
-              minHeight: "auto",
-              height: "50px",
-              marginRight: "10px",
-              paddingBottom: "2px",
-              textTransform: "none",
-            },
-            "& .MuiTab-textColorPrimary.Mui-selected": {
-              color: "primary.main",
-            },
-            "& .MuiTabs-indicator": {
-              backgroundColor: "primary.main",
-              height: "2px",
-            },
-          }}
-          indicatorColor="primary"
-          textColor="primary"
-        >
-          <Tab label="My Feed" />
-          <Tab label="Discover" />
-        </Tabs>
+        <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
       </Grid>
       <Grid
         size={12}
@@ -61,19 +106,9 @@ const MyFeed = () => {
           pl: 1,
         }}
       >
-        {tab === 0 ? (
-          <PostsFeed articlesList={mockData.articlesList} />
-        ) : (
-          <div
-            style={{
-              padding: "10px",
-            }}
-          >
-            Discover Tab
-          </div>
-        )}
+        {renderUI}
       </Grid>
-    </>
+    </Box>
   );
 };
 

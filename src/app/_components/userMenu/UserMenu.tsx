@@ -55,7 +55,9 @@ const UserMenu = () => {
         />
 
         <Typography color="text.secondary" variant="subtitle2">
-          {user?.firstName}
+          {user?.firstName === null
+            ? (user?.unsafeMetadata?.name as string)
+            : user?.firstName}
         </Typography>
       </Box>
       <Box>

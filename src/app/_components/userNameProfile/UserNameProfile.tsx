@@ -23,7 +23,6 @@ const UserNameProfile: React.FC<UserNameProfileProps> = ({
         src={AuthorImage}
         sx={{ width: ImageWidth, height: ImageHeight }}
       />
-
       <Typography
         sx={{
           fontSize: NameFontSize,

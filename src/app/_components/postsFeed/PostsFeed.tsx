@@ -1,14 +1,40 @@
 "use client";
-import { Button, Card, CardContent, Box } from "@mui/material";
-import React from "react";
+import { Button, Card, CardContent, Box, Divider } from "@mui/material";
+import React, { useState } from "react";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import UserNameProfile from "../userNameProfile/UserNameProfile";
 import PostCardContent from "../postCardContent/PostCardContent";
 import PostCardFooter from "../postCardFooter/PostCardFooter";
 import FollowButton from "../followButton/FollowButton";
+import Link from "next/link";
+import CommentSection from "../CommentSection/CommentSection";
 
-const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
+const PostsFeed: React.FC<PostsFeedProps> = ({
+  articlesList,
+  likedPosts,
+  handleLikeButton,
+  addComment,
+}) => {
+  const [toggleComment, setToggleComment] = useState<Record<string, boolean>>(
+    {},
+  );
+
+  const openCommentBox = (postId: string) => {
+    setToggleComment((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId],
+    }));
+  };
+
+  const handleAddComment = async (
+    id: string,
+    comment: string,
+    parent: string,
+  ) => {
+    await addComment(id, comment, parent);
+  };
+
   return (
     <>
       {articlesList.map((article, index) => {
@@ -27,10 +53,15 @@ const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
                   mb: "16px",
                 }}
               >
-                <UserNameProfile
-                  AuthorName={article.authorName}
-                  AuthorImage={article.authorImage}
-                />
+                <Link
+                  href={`${process.env.NEXT_PUBLIC_APP_URL}/user/${article.authorId}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <UserNameProfile
+                    AuthorName={article.authorName}
+                    AuthorImage={article.authorProfile}
+                  />
+                </Link>
                 <Box
                   sx={{
                     display: "flex",
@@ -39,7 +70,7 @@ const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
                   }}
                 >
                   <FollowButton
-                    authorProfileLink={article.authorProfileLink}
+                    authorProfileLink={`localhost:3000/author/${article.authorId}`}
                     yPadding="16px"
                     xPadding="20px"
                   />
@@ -52,20 +83,32 @@ const PostsFeed: React.FC<PostsFeedProps> = ({ articlesList }) => {
               </Box>
 
               <PostCardContent
-                articleContent={article.articleContent}
-                articleDescription={article.articleDecription}
-                articleImage={article.articleImage}
-                articleTags={article.articleTags}
-                articleTitle={article.articleTitle}
+                articleContent={article.content}
+                articleDescription={article.media.thumbnailContent}
+                articleImage={article.media.thumbnailPicture}
+                articleTags={article.tags}
+                articleId={article.id}
+                articleTitle={article.title}
               />
-
               <PostCardFooter
-                likes={article.articleLikes}
-                comments={article.articleComments}
-                shares={article.articleShares}
-                bids={article.articlesBids}
+                likes={article.likeCount ?? 0}
+                comments={article.comments ?? []}
+                bids={article.bids ?? []}
+                isLiked={likedPosts.includes(article.id)}
+                handleLikeButton={() => handleLikeButton(article.id)}
+                openCommentBox={() => openCommentBox(article.id)}
               />
+              {toggleComment[article.id] && (
+                <CommentSection
+                  comments={article.comments}
+                  addComment={(comment: string, parent: string) =>
+                    handleAddComment(article.id, comment, parent)
+                  }
+                />
+                // <CommentSection />
+              )}
             </CardContent>
+            <Divider />
           </Card>
         );
       })}

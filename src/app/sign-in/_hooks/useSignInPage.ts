@@ -38,7 +38,6 @@ export const useSignInPage: UseSignInPage = () => {
   const handleSSOLogin = async (strategy: OAuthStrategy) => {
     if (!signIn || !signUp) return null;
     try {
-      // Clear any previous errors
       setSSOLoginErrors(undefined);
 
       const userExistsButNeedsToSignIn =

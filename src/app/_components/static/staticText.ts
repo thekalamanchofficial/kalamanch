@@ -71,4 +71,16 @@ export const STATIC_TEXTS = {
       WRITE: "Write Something",
     },
   },
+  MY_FEED_PAGE: {
+    TABS: [
+      { label: "My Feed", value: "My Feed" },
+      { label: "Discover", value: "Discover" },
+    ],
+  },
+  MY_PROFILE_PAGE: {
+    TABS: [
+      { label: "My Posts", value: "My Posts" },
+      { label: "Liked Posts", value: "Liked Posts" },
+    ],
+  },
 };
