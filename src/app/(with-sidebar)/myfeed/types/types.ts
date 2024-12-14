@@ -2,25 +2,6 @@ export const followWriter = (writerName: string, writerProfileLink: string) => {
   console.log(`followed writer ${writerName} ${writerProfileLink} `);
 };
 
-type FeaturedArticle = {
-  profilePicture: string;
-  authorName: string;
-  articleName: string;
-  articleLink: string;
-  authorProfileLink: string;
-  likes: number;
-};
-
-type AuthorToFollow = {
-  profilePicture: string;
-  authorName: string;
-  authorProfileLink: string;
-};
-export type RightSideBarProps = {
-  featuredArticles: FeaturedArticle[];
-  authorToFollow: AuthorToFollow[];
-};
-
 export type MenuItemList = {
   label: string;
   route: string;
@@ -126,3 +107,22 @@ export enum MyFeedTabsEnum {
   MY_FEED = "My Feed",
   DISCOVERY = "Discover",
 }
+export type RightSideBarProps = {
+  featuredPost: FeaturedPost[];
+  featuredAuthor: FeaturedAuthor[];
+};
+
+export type FeaturedAuthor = {
+  userId: string;
+  name: string;
+  profile: string;
+};
+
+export type FeaturedPost = {
+  postId: string;
+  title: string;
+  authorName: string;
+  authorProfile: string;
+  authorId: string;
+  likeCount: number;
+};

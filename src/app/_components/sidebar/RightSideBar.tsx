@@ -11,8 +11,8 @@ import FollowButton from "~/app/_components/followButton/FollowButton";
 import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
 
 const RightSideBar: React.FC<RightSideBarProps> = ({
-  featuredArticles,
-  authorToFollow,
+  featuredAuthor,
+  featuredPost,
 }) => {
   return (
     <>
@@ -40,7 +40,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
           Featured Writings
         </Typography>
         <Grid container spacing={1}>
-          {featuredArticles.map((item, index) => {
+          {featuredPost.map((item, index) => {
             return (
               <Grid size={12} key={index}>
                 <Box
@@ -54,7 +54,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                   }}
                 >
                   <Link
-                    href={item.articleLink}
+                    href={`/article/${item.postId}`}
                     style={{ textDecoration: "none", color: "text.primary" }}
                   >
                     <Typography
@@ -66,7 +66,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                         },
                       }}
                     >
-                      {item.articleName}
+                      {item.title}
                     </Typography>
                   </Link>
                   <Box
@@ -79,7 +79,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                     }}
                   >
                     <Link
-                      href={item.authorProfileLink}
+                      href={`/profile/${item.authorId}`}
                       style={{ textDecoration: "none" }}
                     >
                       <UserNameProfile
@@ -88,7 +88,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                         NameFontSize={15}
                         NameFontWeight="400"
                         AuthorName={item.authorName}
-                        AuthorImage={item.profilePicture}
+                        AuthorImage={item.authorProfile}
                       />
                     </Link>
                     <Box
@@ -98,7 +98,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                       }}
                     >
                       <Chip
-                        label={item.likes}
+                        label={item.likeCount}
                         icon={<FavoriteBorderIcon />}
                         sx={{
                           backgroundColor: "white",
@@ -138,7 +138,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
           Top writers to follow
         </Typography>
         <Grid container spacing={2}>
-          {authorToFollow.map((item, index) => {
+          {featuredAuthor.map((item, index) => {
             return (
               <Grid size={12} key={index}>
                 <Box
@@ -155,11 +155,11 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                     style={{
                       textDecoration: "none",
                     }}
-                    href={item.authorProfileLink}
+                    href={`/profile/${item.userId}`}
                   >
                     <Image
                       alt="profile picture "
-                      src={item.profilePicture}
+                      src={item.profile}
                       width={40}
                       height={40}
                       style={{
@@ -180,7 +180,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                       style={{
                         textDecoration: "none",
                       }}
-                      href={item.authorProfileLink}
+                      href={`/profile/${item.userId}`}
                     >
                       <Typography
                         sx={{
@@ -189,10 +189,12 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                           marginLeft: "8px",
                         }}
                       >
-                        {item.authorName}
+                        {item.name}
                       </Typography>
                     </Link>
-                    <FollowButton authorProfileLink={item.authorProfileLink} />
+                    <FollowButton
+                      authorProfileLink={`/profile/${item.userId}`}
+                    />
                   </Box>
                 </Box>
               </Grid>
