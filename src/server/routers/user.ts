@@ -10,6 +10,8 @@ const userSchema = yup.object({
   birthdate: yup.date().required(),
   profile: yup.string().optional(),
   interests: yup.array(yup.string()),
+  followers: yup.array(yup.string()).default([]),
+  following: yup.array(yup.string()).default([]),
 });
 
 export const userRouter = router({

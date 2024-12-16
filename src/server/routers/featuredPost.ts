@@ -43,6 +43,14 @@ export const featuredPostRouter = router({
     .query(async ({ input }) => {
       const { limit, skip } = input;
       try {
+        let hasMore = false;
+
+        const count = await prisma.featuredPost.count();
+
+        if (count > limit + skip) {
+          hasMore = true;
+        }
+
         const featuredPosts = await prisma.featuredPost.findMany({
           include: {
             post: {
@@ -55,7 +63,7 @@ export const featuredPostRouter = router({
           skip: skip,
         });
 
-        return featuredPosts.map(
+        const featuredPostWithLikeCount = featuredPosts.map(
           (featuredPost: {
             id: string;
             postId: string;
@@ -71,11 +79,15 @@ export const featuredPostRouter = router({
             authorName: featuredPost.authorName,
             authorId: featuredPost.authorId,
             authorProfile: featuredPost.authorProfile,
-            likeCount: featuredPost.post.likeCount,
+            likeCount: 0,
           }),
         );
+        return {
+          featuredPosts: featuredPostWithLikeCount,
+          hasMorePost: hasMore,
+        };
       } catch (error) {
-        handleError(error);
+        // handleError(error);
         throw error;
       }
     }),

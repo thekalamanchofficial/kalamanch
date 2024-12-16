@@ -107,10 +107,6 @@ export enum MyFeedTabsEnum {
   MY_FEED = "My Feed",
   DISCOVERY = "Discover",
 }
-export type RightSideBarProps = {
-  featuredPost: FeaturedPost[];
-  featuredAuthor: FeaturedAuthor[];
-};
 
 export type FeaturedAuthor = {
   userId: string;

@@ -19,6 +19,7 @@ model User {
   bids           Bid[]
   posts          Post[]
   following      String[]         @db.ObjectId
+  followers      String[]         @db.ObjectId
   bookmarks      String[]         @db.ObjectId
   FeaturedAuthor FeaturedAuthor[]
 }

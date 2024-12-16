@@ -3,7 +3,6 @@ import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 
-// Validation schema for featured author
 const featuredAuthorSchema = yup.object({
   userId: yup.string().required(),
   name: yup.string().required(),
@@ -44,11 +43,20 @@ export const featuredAuthorRouter = router({
     .query(async ({ input }) => {
       try {
         const { limit, skip } = input;
+
+        let hasMore = false;
+
+        const count = await prisma.featuredAuthor.count();
+
+        if (count > limit + skip) {
+          hasMore = true;
+        }
+
         const featuredAuthor = await prisma.featuredAuthor.findMany({
           take: limit,
           skip: skip,
         });
-        return featuredAuthor;
+        return { featuredAuthor: featuredAuthor, hasMoreAuthor: hasMore };
       } catch (error) {
         handleError(error);
         throw error;

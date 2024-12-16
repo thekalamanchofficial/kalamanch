@@ -4,24 +4,8 @@ import { Grid2 as Grid, Box } from "@mui/material";
 import RightSideBar from "~/app/_components/sidebar/RightSideBar";
 import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
 import LeftSideBar from "../_components/sidebar/LeftSideBar";
-import { trpc } from "~/server/client";
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const featuredAuthorMutation = trpc.featuredAuthor;
-  const featuredPostMutation = trpc.featuredPost;
-
-  const { data: featuredAuthorData, isLoading: featuredAuthorLoading } =
-    featuredAuthorMutation.getFeaturedAuthors.useQuery({
-      limit: 5,
-      skip: 0,
-    });
-
-  const { data: featuredPostData, isLoading: featuredPostLoading } =
-    featuredPostMutation.getFeaturedPosts.useQuery({
-      limit: 5,
-      skip: 0,
-    });
-
   return (
     <Box
       sx={{
@@ -73,10 +57,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             gap: "12px",
           }}
         >
-          <RightSideBar
-            featuredPost={featuredPostData ?? []}
-            featuredAuthor={featuredAuthorData ?? []}
-          />
+          <RightSideBar />
         </Grid>
       </Grid>
     </Box>

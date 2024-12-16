@@ -1,10 +1,14 @@
 import { Button } from "@mui/material";
 import React from "react";
 
-const SeeMoreButton = () => {
+type SeeMoreButtonProps = {
+  onClick?: () => void;
+};
+const SeeMoreButton: React.FC<SeeMoreButtonProps> = ({ onClick }) => {
   return (
     <Button
       variant="text"
+      onClick={onClick}
       sx={{
         minHeight: "auto",
         width: "auto",
