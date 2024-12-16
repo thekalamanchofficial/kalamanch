@@ -71,8 +71,9 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
                 >
                   <FollowButton
                     authorProfileLink={`localhost:3000/author/${article.authorId}`}
-                    yPadding="16px"
-                    xPadding="20px"
+                    style={{
+                      padding: "16px 20px",
+                    }}
                   />
                   <Button
                     startIcon={<MoreHorizOutlinedIcon />}
