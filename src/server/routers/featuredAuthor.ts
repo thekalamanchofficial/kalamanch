@@ -33,6 +33,7 @@ export const featuredAuthorRouter = router({
         throw error;
       }
     }),
+
   getFeaturedAuthors: publicProcedure
     .input(
       yup.object({
@@ -52,11 +53,31 @@ export const featuredAuthorRouter = router({
           hasMore = true;
         }
 
-        const featuredAuthor = await prisma.featuredAuthor.findMany({
+        const featuredAuthors = await prisma.featuredAuthor.findMany({
           take: limit,
           skip: skip,
+          include: {
+            user: {
+              select: {
+                followers: true,
+                posts: true,
+              },
+            },
+          },
         });
-        return { featuredAuthor: featuredAuthor, hasMoreAuthor: hasMore };
+
+        const authorsWithCounts = featuredAuthors.map((author) => {
+          return {
+            ...author,
+            followersCount: author.user.followers.length,
+            articlesCount: author.user.posts.length,
+          };
+        });
+
+        return {
+          featuredAuthor: authorsWithCounts,
+          hasMoreAuthor: hasMore,
+        };
       } catch (error) {
         handleError(error);
         throw error;

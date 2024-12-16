@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
+import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { trpc } from "~/server/client";
 import { type FeaturedAuthor } from "../../myfeed/types/types";
@@ -7,13 +7,21 @@ import config from "~/app/_config/config";
 import Loader from "~/app/_components/loader/Loader";
 import UserNameProfile from "~/app/_components/userNameProfile/UserNameProfile";
 import Link from "next/link";
+import FollowButton from "~/app/_components/followButton/FollowButton";
+import { useClerk } from "@clerk/nextjs";
 
 const Page = () => {
+  const { user } = useClerk();
   const [author, setAuthor] = useState<FeaturedAuthor[]>([]);
   const [skip, setSkip] = useState(0);
   const [hasMoreAuthor, setHasMoreAuthor] = useState<boolean | undefined>(true);
 
   const featuredAuthorMutation = trpc.featuredAuthor;
+  const userMutation = trpc.user;
+
+  const { data: userFollowing } = userMutation.getUserFollowings.useQuery({
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
 
   const { data, isLoading, error } =
     featuredAuthorMutation.getFeaturedAuthors.useQuery(
@@ -81,7 +89,6 @@ const Page = () => {
           <Typography
             variant="body1"
             sx={{
-              // color: "font.primary",
               padding: "4px",
               fontWeight: "550",
               fontSize: "24px",
@@ -102,6 +109,8 @@ const Page = () => {
         }}
       >
         {author.map((item, index) => {
+          const isFollowing = userFollowing?.includes(item.userId);
+
           return (
             <Grid
               size={12}
@@ -132,26 +141,34 @@ const Page = () => {
                     }}
                     gap={10}
                   >
-                    <Link href={`/author/${item.userId}`}>
+                    <Link
+                      href={`/author/${item.userId}`}
+                      style={{
+                        textDecoration: "none",
+                      }}
+                    >
                       <UserNameProfile
                         AuthorImage={item.profile}
                         AuthorName={item.name}
                       />
                     </Link>
-                    <Typography variant="caption">Followers: 1000</Typography>
-                    <Typography variant="caption">Articles: 112</Typography>
+                    <Typography variant="caption">
+                      Followers: {item.followersCount}
+                    </Typography>
+                    <Typography variant="caption">
+                      Articles: {item.articlesCount}
+                    </Typography>
                   </Box>
                 </Box>
                 <Box>
-                  <Button
-                    sx={{
-                      padding: "8px 16px",
-                      minHeight: "auto",
-                      backgroundColor: "secondary.main",
+                  <FollowButton
+                    authorProfileLink={item.userId}
+                    style={{
+                      height: "40px",
+                      width: "100px",
                     }}
-                  >
-                    Follow
-                  </Button>
+                    followState={isFollowing ? "Following" : "Follow"}
+                  />
                 </Box>
               </Box>
             </Grid>

@@ -1,6 +1,4 @@
-export const followWriter = (writerName: string, writerProfileLink: string) => {
-  console.log(`followed writer ${writerName} ${writerProfileLink} `);
-};
+import { type SxProps } from "@mui/material";
 
 export type MenuItemList = {
   label: string;
@@ -88,8 +86,8 @@ export type PostCardContentProps = {
 
 export type FollowButtonProps = {
   authorProfileLink: string;
-  yPadding?: string;
-  xPadding?: string;
+  style?: SxProps;
+  followState?: string;
 };
 export interface LeftSideBarProps {
   menuItems: MenuItemList[];
@@ -112,6 +110,8 @@ export type FeaturedAuthor = {
   userId: string;
   name: string;
   profile: string;
+  followersCount: number;
+  articlesCount: number;
 };
 
 export type FeaturedPost = {

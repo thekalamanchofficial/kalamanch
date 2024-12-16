@@ -87,7 +87,7 @@ export const featuredPostRouter = router({
           hasMorePost: hasMore,
         };
       } catch (error) {
-        // handleError(error);
+        handleError(error);
         throw error;
       }
     }),
