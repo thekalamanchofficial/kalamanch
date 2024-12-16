@@ -63,7 +63,12 @@ export const userRouter = router({
 
       const currentUserId = currentUserDetails?.id;
       const { followerId } = input;
-      console.log(currentUserId, followerId);
+
+      if (currentUserId === followerId) {
+        return {
+          message: "Invalid Operation. You cannot follow yourself",
+        };
+      }
 
       try {
         const currentUser = await prisma.user.findUnique({

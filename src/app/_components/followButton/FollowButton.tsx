@@ -2,6 +2,7 @@ import { useClerk } from "@clerk/nextjs";
 import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { type FollowButtonProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import { handleError } from "~/app/_utils/handleError";
 import { trpc } from "~/server/client";
 
 const FollowButton: React.FC<FollowButtonProps> = ({
@@ -19,15 +20,20 @@ const FollowButton: React.FC<FollowButtonProps> = ({
     const userEmail = user?.primaryEmailAddress?.emailAddress;
 
     if (userEmail) {
-      const res = await followUser.mutateAsync({
-        currentUserEmail: userEmail,
-        followerId: authorProfileLink,
-      });
+      try {
+        const res = await followUser.mutateAsync({
+          currentUserEmail: userEmail,
+          followerId: authorProfileLink,
+        });
 
-      if (res?.message === "Unfollowed") {
-        setTitle("Follow");
-      } else {
-        setTitle("Following");
+        if (res?.message === "Unfollowed") {
+          setTitle("Follow");
+        } else {
+          setTitle("Following");
+        }
+      } catch (error) {
+        handleError(error);
+        throw error;
       }
     }
   };

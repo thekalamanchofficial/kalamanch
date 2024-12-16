@@ -6,70 +6,12 @@ import {
   Grid2 as Grid,
   Typography,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
 import SeeMoreButton from "~/app/_components/seeMoreButton/SeeMoreButton";
-import { trpc } from "~/server/client";
-import { type FeaturedPost } from "../../myfeed/types/types";
-import config from "~/app/_config/config";
 import Loader from "~/app/_components/loader/Loader";
+import useFeaturedPostPage from "./_hooks/useFeaturedPostPage";
 
 const Page = () => {
-  const router = useRouter();
-
-  const [post, setPosts] = useState<FeaturedPost[]>([]);
-  const [skip, setSkip] = useState(0);
-  const [hasMorePosts, setHasMorePosts] = useState<boolean | undefined>(true);
-
-  const featuredPostMutation = trpc.featuredPost;
-
-  const {
-    data: featuredPostData,
-    isLoading: featuredPostLoading,
-    error,
-  } = featuredPostMutation.getFeaturedPosts.useQuery(
-    {
-      skip,
-      limit:
-        skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
-    },
-    {
-      enabled: skip >= 0 && hasMorePosts === true,
-    },
-  );
-
-  const handleClick = (postId: string) => {
-    router.push(`/article/${postId}`);
-  };
-
-  const handleScroll = useCallback(() => {
-    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    const bottomReached = scrollHeight - scrollTop - clientHeight < 10;
-
-    if (bottomReached && !featuredPostLoading && !error) {
-      setHasMorePosts(featuredPostData?.hasMorePost);
-      setSkip((prev) =>
-        prev == 0
-          ? config.lazyLoading.initialLimit + prev
-          : prev + config.lazyLoading.limit,
-      );
-    }
-  }, [error, featuredPostData?.hasMorePost, featuredPostLoading]);
-
-  useEffect(() => {
-    setPosts((prevPosts) => [
-      ...prevPosts,
-      ...(featuredPostData?.featuredPosts ?? []),
-    ]);
-  }, [featuredPostData]);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [handleScroll, hasMorePosts, featuredPostLoading]);
-
+  const { post, featuredPostLoading, handleClick } = useFeaturedPostPage();
   return (
     <Box
       sx={{
