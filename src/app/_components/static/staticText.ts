@@ -83,4 +83,10 @@ export const STATIC_TEXTS = {
       { label: "Liked Posts", value: "Liked Posts" },
     ],
   },
+  FEATURED_PAGE: {
+    MESSAGES: {
+      NO_AUTHOR: "No featured authors available right now. Check back later.",
+      NO_POST: "No featured posts available right now. Check back later.",
+    },
+  },
 };

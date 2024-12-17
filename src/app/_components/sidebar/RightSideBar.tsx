@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 import RightSideBarSkeletonAuthor from "./RightSideBarSkeletonAuthor";
 import RightSideBarSkeletonPost from "./RightSideBarSkeletonPost";
+import { STATIC_TEXTS } from "../static/staticText";
 
 const RightSideBar = () => {
   const { user } = useClerk();
@@ -25,7 +26,6 @@ const RightSideBar = () => {
   const { data: userFollowing } = userMutation.getUserFollowings.useQuery({
     userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
   });
-
   const { data: featuredAuthorData, isLoading: featuredAuthorLoading } =
     featuredAuthorMutation.getFeaturedAuthors.useQuery({
       limit: 5,
@@ -70,7 +70,7 @@ const RightSideBar = () => {
         <Grid container spacing={1}>
           {featuredPostLoading ? (
             <RightSideBarSkeletonPost />
-          ) : (
+          ) : (featuredPostData?.featuredPosts?.length ?? 0) > 0 ? (
             featuredPostData?.featuredPosts.map((item, index) => {
               return (
                 <Grid size={12} key={index}>
@@ -141,6 +141,17 @@ const RightSideBar = () => {
                 </Grid>
               );
             })
+          ) : (
+            <Typography
+              variant="caption"
+              sx={{
+                textAlign: "center",
+                padding: "10px",
+                margin: "10px",
+              }}
+            >
+              {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_POST}
+            </Typography>
           )}
           {featuredPostData?.hasMore ? (
             <SeeMoreButton onClick={() => handleSeeMore("/featured/post")} />
@@ -175,9 +186,10 @@ const RightSideBar = () => {
         <Grid container spacing={2}>
           {featuredAuthorLoading ? (
             <RightSideBarSkeletonAuthor />
-          ) : (
+          ) : (featuredAuthorData?.featuredAuthor?.length ?? 0 > 0) ? (
             featuredAuthorData?.featuredAuthor.map((item, index) => {
               const isFollowing = userFollowing?.includes(item.userId);
+
               return (
                 <Grid size={12} key={index}>
                   <Box
@@ -238,13 +250,24 @@ const RightSideBar = () => {
                           width: "80px",
                           padding: "12px",
                         }}
-                        followState={isFollowing ? "Following" : "Follow"}
+                        isFollowing={isFollowing}
                       />
                     </Box>
                   </Box>
                 </Grid>
               );
             })
+          ) : (
+            <Typography
+              variant="caption"
+              sx={{
+                textAlign: "center",
+                padding: "10px",
+                margin: "10px",
+              }}
+            >
+              {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_AUTHOR}
+            </Typography>
           )}
           {featuredAuthorData?.hasMoreAuthor ? (
             <SeeMoreButton onClick={() => handleSeeMore("/featured/author")} />
