@@ -142,7 +142,7 @@ const RightSideBar = () => {
               );
             })
           )}
-          {featuredPostData?.hasMorePost ? (
+          {featuredPostData?.hasMore ? (
             <SeeMoreButton onClick={() => handleSeeMore("/featured/post")} />
           ) : null}
         </Grid>
