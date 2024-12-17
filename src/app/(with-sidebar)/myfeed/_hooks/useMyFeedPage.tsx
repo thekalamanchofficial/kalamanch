@@ -8,6 +8,7 @@ import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
+import useLazyLoading from "~/app/_hooks/useLazyLoading";
 
 type useMyFeedPageReturn = {
   posts: ArticlesList[];
@@ -31,13 +32,13 @@ type useMyFeedPageReturn = {
 };
 
 const useMyFeedPage = (): useMyFeedPageReturn => {
-  const { user } = useClerk();
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
-
   const [tab, setTab] = useState(MyFeedTabsEnum.MY_FEED);
   const [skip, setSkip] = useState(0);
-  const [hasMorePosts, setHasMorePosts] = useState<boolean | undefined>(true);
+  const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
   const [post, setPosts] = useState<ArticlesList[]>([]);
+
+  const { user } = useClerk();
 
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
@@ -57,6 +58,17 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
       enabled: skip >= 0 && hasMorePosts === true,
     },
   );
+
+  const { handleScroll } = useLazyLoading({
+    queryLoading,
+    error: error?.message ?? "",
+    initialLimit: config.lazyLoading.initialLimit,
+    limit: config.lazyLoading.limit,
+    skip,
+    setSkip,
+    hasMoreData: postData?.hasMorePosts ?? false,
+    setHasMoreData: setHasMorePosts,
+  });
 
   const postDataWithComments: ArticlesList[] = useMemo(() => {
     return (
@@ -211,30 +223,9 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     setTab(newTab);
   };
 
-  const handleScroll = useCallback(() => {
-    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    const bottomReached = scrollHeight - scrollTop - clientHeight < 10;
-
-    if (bottomReached && !queryLoading && !error) {
-      setHasMorePosts(postData?.hasMorePosts);
-      setSkip((prev) =>
-        prev == 0
-          ? config.lazyLoading.initialLimit + prev
-          : prev + config.lazyLoading.limit,
-      );
-    }
-  }, [error, postData?.hasMorePosts, queryLoading]);
-
   useEffect(() => {
     setPosts((prevPosts) => [...(prevPosts ?? []), ...(postData?.posts ?? [])]);
   }, [postData]);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [handleScroll, hasMorePosts, queryLoading]);
 
   useEffect(() => {
     if (likedPostData) {

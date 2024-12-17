@@ -80,11 +80,11 @@ export const userRouter = router({
         });
 
         if (!currentUser) {
-          throw new Error("Current user not found");
+          throw new Error("User not found");
         }
 
         if (!followerUser) {
-          throw new Error("Follower user not found");
+          throw new Error("User not found");
         }
 
         const isFollowing = currentUser.following.includes(followerId);
@@ -133,7 +133,7 @@ export const userRouter = router({
           return { message: "Followed" };
         }
       } catch (error) {
-        // handleError(error);
+        handleError(error);
         console.log(error);
       }
     }),

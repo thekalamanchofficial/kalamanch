@@ -84,7 +84,7 @@ export const featuredPostRouter = router({
         );
         return {
           featuredPosts: featuredPostWithLikeCount,
-          hasMorePost: hasMore,
+          hasMore,
         };
       } catch (error) {
         handleError(error);

@@ -11,7 +11,7 @@ import Loader from "~/app/_components/loader/Loader";
 import useFeaturedPostPage from "./_hooks/useFeaturedPostPage";
 
 const Page = () => {
-  const { post, featuredPostLoading, handleClick } = useFeaturedPostPage();
+  const { post, isLoading, handleClick } = useFeaturedPostPage();
   return (
     <Box
       sx={{
@@ -134,7 +134,7 @@ const Page = () => {
             </Grid>
           );
         })}
-        {featuredPostLoading ? (
+        {isLoading ? (
           <Loader title="Loading Posts..." height="auto" width="100%" />
         ) : null}
       </Grid>

@@ -70,7 +70,7 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
                   }}
                 >
                   <FollowButton
-                    authorProfileLink={`localhost:3000/author/${article.authorId}`}
+                    authorProfileLink={article.authorId}
                     style={{
                       padding: "16px 20px",
                     }}

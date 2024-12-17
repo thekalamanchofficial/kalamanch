@@ -79,7 +79,7 @@ export const featuredAuthorRouter = router({
           hasMoreAuthor: hasMore,
         };
       } catch (error) {
-        // handleError(error);
+        handleError(error);
         throw error;
       }
     }),

@@ -1,6 +1,6 @@
 import { useClerk } from "@clerk/nextjs";
 import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { type FollowButtonProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { handleError } from "~/app/_utils/handleError";
 import { trpc } from "~/server/client";
@@ -26,25 +26,13 @@ const FollowButton: React.FC<FollowButtonProps> = ({
           followerId: authorProfileLink,
         });
 
-        if (res?.message === "Unfollowed") {
-          setTitle("Follow");
-        } else {
-          setTitle("Following");
-        }
+        setTitle(res?.message === "Unfollowed" ? "Follow" : "Following");
       } catch (error) {
         handleError(error);
         throw error;
       }
     }
   };
-
-  useEffect(() => {
-    if (followState === "Following") {
-      setTitle("Following");
-    } else {
-      setTitle("Follow");
-    }
-  }, [followState]);
 
   return (
     <Button

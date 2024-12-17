@@ -9,14 +9,22 @@ import UserNameProfile from "../userNameProfile/UserNameProfile";
 import FollowButton from "~/app/_components/followButton/FollowButton";
 import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
 import { trpc } from "~/server/client";
-import Loader from "../loader/Loader";
 import { useRouter } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
+import RightSideBarSkeletonAuthor from "./RightSideBarSkeletonAuthor";
+import RightSideBarSkeletonPost from "./RightSideBarSkeletonPost";
 
 const RightSideBar = () => {
+  const { user } = useClerk();
   const router = useRouter();
 
   const featuredAuthorMutation = trpc.featuredAuthor;
   const featuredPostMutation = trpc.featuredPost;
+  const userMutation = trpc.user;
+
+  const { data: userFollowing } = userMutation.getUserFollowings.useQuery({
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
 
   const { data: featuredAuthorData, isLoading: featuredAuthorLoading } =
     featuredAuthorMutation.getFeaturedAuthors.useQuery({
@@ -61,11 +69,7 @@ const RightSideBar = () => {
         </Typography>
         <Grid container spacing={1}>
           {featuredPostLoading ? (
-            <Loader
-              height="100%"
-              width="100%"
-              title="Please wait, loading..."
-            />
+            <RightSideBarSkeletonPost />
           ) : (
             featuredPostData?.featuredPosts.map((item, index) => {
               return (
@@ -143,6 +147,7 @@ const RightSideBar = () => {
           ) : null}
         </Grid>
       </Box>
+
       <Box
         sx={{
           backgroundColor: "white",
@@ -169,13 +174,10 @@ const RightSideBar = () => {
         </Typography>
         <Grid container spacing={2}>
           {featuredAuthorLoading ? (
-            <Loader
-              height="100%"
-              width="100%"
-              title="Please wait, loading..."
-            />
+            <RightSideBarSkeletonAuthor />
           ) : (
             featuredAuthorData?.featuredAuthor.map((item, index) => {
+              const isFollowing = userFollowing?.includes(item.userId);
               return (
                 <Grid size={12} key={index}>
                   <Box
@@ -230,7 +232,13 @@ const RightSideBar = () => {
                         </Typography>
                       </Link>
                       <FollowButton
-                        authorProfileLink={`/profile/${item.userId}`}
+                        authorProfileLink={item.userId}
+                        style={{
+                          height: "20px",
+                          width: "80px",
+                          padding: "12px",
+                        }}
+                        followState={isFollowing ? "Following" : "Follow"}
                       />
                     </Box>
                   </Box>
