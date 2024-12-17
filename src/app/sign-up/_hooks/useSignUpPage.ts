@@ -73,6 +73,9 @@ export const useSignUpPage: UseSignUpPage = () => {
       birthdate: formData.birthdate,
       profile: formData.profile,
       interests: formData.interests,
+      followers: [],
+      following: [],
+      bookmarks: [],
     };
 
     try {

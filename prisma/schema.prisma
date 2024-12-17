@@ -8,17 +8,20 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  email     String    @unique
-  name      String
-  birthdate DateTime
-  profile   String?
-  interests String[]
-  likes     Like[]
-  comments  Comment[]
-  bids      Bid[]
-  posts     Post[]
-  bookmarks String[]  @db.ObjectId // Array of post IDs bookmarked by the user
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  email          String           @unique
+  name           String
+  birthdate      DateTime
+  profile        String?
+  interests      String[]
+  likes          Like[]
+  comments       Comment[]
+  bids           Bid[]
+  posts          Post[]
+  following      String[]         @db.ObjectId
+  followers      String[]         @db.ObjectId
+  bookmarks      String[]         @db.ObjectId
+  FeaturedAuthor FeaturedAuthor[]
 }
 
 model Post {
@@ -34,10 +37,11 @@ model Post {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  author   User      @relation(fields: [authorId], references: [id])
-  likes    Like[]
-  comments Comment[]
-  bids     Bid[]
+  author       User           @relation(fields: [authorId], references: [id])
+  likes        Like[]
+  comments     Comment[]
+  bids         Bid[]
+  FeaturedPost FeaturedPost[]
 
   @@index([tags])
   @@index([createdAt])
@@ -80,7 +84,7 @@ model Comment {
 
   @@index([postId])
   @@index([userId])
-  @@index([parentId]) // To optimize fetching replies
+  @@index([parentId])
 }
 
 model Bid {
@@ -95,4 +99,24 @@ model Bid {
 
   @@index([postId])
   @@index([userId])
+}
+
+model FeaturedPost {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  postId        String @unique @db.ObjectId
+  title         String
+  authorName    String
+  authorProfile String
+  authorId      String @db.ObjectId
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model FeaturedAuthor {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @db.ObjectId
+  name    String
+  profile String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

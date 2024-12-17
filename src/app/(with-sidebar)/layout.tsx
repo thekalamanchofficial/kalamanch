@@ -2,7 +2,6 @@
 import React, { type ReactNode } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
 import RightSideBar from "~/app/_components/sidebar/RightSideBar";
-import staticData from "~/app/(with-sidebar)/myfeed/myfeedMock/myfeedMock";
 import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
 import LeftSideBar from "../_components/sidebar/LeftSideBar";
 
@@ -58,10 +57,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             gap: "12px",
           }}
         >
-          <RightSideBar
-            authorToFollow={staticData.authorToFollow}
-            featuredArticles={staticData.featuredArticles}
-          />
+          <RightSideBar />
         </Grid>
       </Grid>
     </Box>
