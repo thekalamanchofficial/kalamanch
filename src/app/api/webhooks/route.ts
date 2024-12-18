@@ -1,7 +1,7 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { type WebhookEvent } from "@clerk/nextjs/server";
-import { trpc } from "~/server/client";
+import prisma from "~/server/db";
 
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -62,18 +62,19 @@ export async function POST(req: Request) {
   console.log("Webhook payload:", body);
 
   if (evt.type === "user.created") {
-    const mutation = trpc.user.addUser.useMutation();
     const email = evt.data.email_addresses[0]?.email_address;
     const name = evt.data.first_name;
     if (email && name) {
-      await mutation.mutateAsync({
-        email,
-        name,
-        birthdate: null,
-        interests: [],
-        following: [],
-        followers: [],
-        bookmarks: [],
+      await prisma.user.create({
+        data: {
+          email,
+          name,
+          birthdate: null,
+          interests: [],
+          following: [],
+          followers: [],
+          bookmarks: [],
+        },
       });
     }
   }
