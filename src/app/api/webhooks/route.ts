@@ -33,10 +33,12 @@ export async function POST(req: Request) {
   const payload = await req.json();
   const body = JSON.stringify(payload);
 
-  console.log("SIGNING_SECRET", SIGNING_SECRET);
-  console.log("headerPayload", headerPayload);
-
   let evt: WebhookEvent;
+
+  console.log("SIGNING_SECRET", SIGNING_SECRET);
+  console.log("body", body);
+  console.log("payload", payload);
+  console.log("headerPayload", headerPayload);
 
   // Verify payload with headers
   try {
@@ -53,15 +55,10 @@ export async function POST(req: Request) {
   }
 
   // Do something with payload
-  // For this guide, log payload to console
   const { id } = evt.data;
   const eventType = evt.type;
   console.log(`Received webhook with ID ${id} and event type of ${eventType}`);
   console.log("Webhook payload:", body);
-
-  if (evt.type === "user.created") {
-    console.log("userId:", evt.data.id);
-  }
 
   return new Response("Webhook received", { status: 200 });
 }
