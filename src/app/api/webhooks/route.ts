@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   console.log("SIGNING_SECRET", SIGNING_SECRET);
   console.log("body", body);
   console.log("payload", payload);
-  console.log("headerPayload", headerPayload);
+  console.log("svix_id", svix_id);
 
   // Verify payload with headers
   try {
