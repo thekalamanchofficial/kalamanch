@@ -36,11 +36,6 @@ export async function POST(req: Request) {
 
   let evt: WebhookEvent;
 
-  console.log("SIGNING_SECRET", SIGNING_SECRET);
-  console.log("body", body);
-  console.log("payload", payload);
-  console.log("svix_id", svix_id);
-
   // Verify payload with headers
   try {
     evt = wh.verify(body, {
