@@ -87,7 +87,7 @@ export type PostCardContentProps = {
 export type FollowButtonProps = {
   authorProfileLink: string;
   style?: SxProps;
-  followState?: string;
+  isFollowing?: boolean;
 };
 export interface LeftSideBarProps {
   menuItems: MenuItemList[];

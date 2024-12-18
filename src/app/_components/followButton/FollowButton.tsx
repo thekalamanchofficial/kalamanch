@@ -8,11 +8,12 @@ import { trpc } from "~/server/client";
 const FollowButton: React.FC<FollowButtonProps> = ({
   authorProfileLink,
   style,
-  followState = "Follow",
+  isFollowing = false,
 }) => {
   const { user } = useClerk();
 
-  const [title, setTitle] = useState(followState);
+  const [isFollowingState, setIsFollowingState] = useState(isFollowing);
+
   const userMutation = trpc.user;
   const followUser = userMutation.followUser.useMutation();
 
@@ -26,7 +27,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({
           followerId: authorProfileLink,
         });
 
-        setTitle(res?.message === "Unfollowed" ? "Follow" : "Following");
+        setIsFollowingState(res?.message !== "Unfollowed");
       } catch (error) {
         handleError(error);
         throw error;
@@ -37,9 +38,8 @@ const FollowButton: React.FC<FollowButtonProps> = ({
   return (
     <Button
       sx={{
-        backgroundColor:
-          title === "Following" ? "primary.main" : "secondary.main",
-        color: title === "Following" ? "white" : "font.primary",
+        backgroundColor: isFollowingState ? "primary.main" : "secondary.main",
+        color: isFollowingState ? "white" : "font.primary",
         minHeight: "auto",
         height: "25px",
         margin: "3px 5px ",
@@ -50,7 +50,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({
         await followWriter();
       }}
     >
-      {title}
+      {isFollowingState ? "Following" : "Follow"}
     </Button>
   );
 };

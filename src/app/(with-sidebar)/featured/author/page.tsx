@@ -5,6 +5,7 @@ import UserNameProfile from "~/app/_components/userNameProfile/UserNameProfile";
 import Link from "next/link";
 import FollowButton from "~/app/_components/followButton/FollowButton";
 import useFeaturedAuthorPage from "./_hooks/useFeaturedAuthorPage";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 const Page = () => {
   const { author, isLoading, userFollowing } = useFeaturedAuthorPage();
@@ -56,72 +57,85 @@ const Page = () => {
           height: "100%",
         }}
       >
-        {author.map((item, index) => {
-          const isFollowing = userFollowing?.includes(item.userId);
+        {author.length > 0 ? (
+          author.map((item, index) => {
+            const isFollowing = userFollowing?.includes(item.userId);
 
-          return (
-            <Grid
-              size={12}
-              sx={{
-                width: "100%",
-              }}
-              key={index}
-            >
-              <Box
+            return (
+              <Grid
+                size={12}
                 sx={{
-                  display: "flex",
                   width: "100%",
-                  alignItems: "center",
-                  justifyContent: "space-between",
                 }}
+                key={index}
               >
                 <Box
                   sx={{
                     display: "flex",
+                    width: "100%",
                     alignItems: "center",
-                    gap: "8px",
+                    justifyContent: "space-between",
                   }}
                 >
                   <Box
                     sx={{
                       display: "flex",
                       alignItems: "center",
+                      gap: "8px",
                     }}
-                    gap={10}
                   >
-                    <Link
-                      href={`/author/${item.userId}`}
-                      style={{
-                        textDecoration: "none",
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
                       }}
+                      gap={10}
                     >
-                      <UserNameProfile
-                        AuthorImage={item.profile}
-                        AuthorName={item.name}
-                      />
-                    </Link>
-                    <Typography variant="caption">
-                      Followers: {item.followersCount}
-                    </Typography>
-                    <Typography variant="caption">
-                      Articles: {item.articlesCount}
-                    </Typography>
+                      <Link
+                        href={`/author/${item.userId}`}
+                        style={{
+                          textDecoration: "none",
+                        }}
+                      >
+                        <UserNameProfile
+                          AuthorImage={item.profile}
+                          AuthorName={item.name}
+                        />
+                      </Link>
+                      <Typography variant="caption">
+                        Followers: {item.followersCount}
+                      </Typography>
+                      <Typography variant="caption">
+                        Articles: {item.articlesCount}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box>
+                    <FollowButton
+                      authorProfileLink={item.userId}
+                      style={{
+                        height: "40px",
+                        width: "100px",
+                      }}
+                      isFollowing={isFollowing}
+                    />
                   </Box>
                 </Box>
-                <Box>
-                  <FollowButton
-                    authorProfileLink={item.userId}
-                    style={{
-                      height: "40px",
-                      width: "100px",
-                    }}
-                    followState={isFollowing ? "Following" : "Follow"}
-                  />
-                </Box>
-              </Box>
-            </Grid>
-          );
-        })}
+              </Grid>
+            );
+          })
+        ) : (
+          <Typography
+            variant="caption"
+            sx={{
+              textAlign: "center",
+              padding: "10px",
+              margin: "10px",
+            }}
+          >
+            {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_AUTHOR}
+          </Typography>
+        )}
         {isLoading ? (
           <Loader title="Loading authors..." height="auto" width="100%" />
         ) : null}

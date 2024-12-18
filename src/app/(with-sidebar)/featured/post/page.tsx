@@ -9,6 +9,7 @@ import {
 import SeeMoreButton from "~/app/_components/seeMoreButton/SeeMoreButton";
 import Loader from "~/app/_components/loader/Loader";
 import useFeaturedPostPage from "./_hooks/useFeaturedPostPage";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 const Page = () => {
   const { post, isLoading, handleClick } = useFeaturedPostPage();
@@ -59,81 +60,94 @@ const Page = () => {
           height: "100%",
         }}
       >
-        {post.map((item, index) => {
-          return (
-            <Grid
-              size={{
-                md: 6,
-                sm: 12,
-              }}
-              key={index}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  width: "100%",
-                  padding: "4px",
-                  height: "auto",
+        {post.length > 0 ? (
+          post.map((item, index) => {
+            return (
+              <Grid
+                size={{
+                  md: 6,
+                  sm: 12,
                 }}
+                key={index}
               >
-                <CardMedia
-                  component="img"
-                  height="80"
-                  image={"https://picsum.photos/200"}
-                  alt="green iguana"
-                  sx={{
-                    width: "400px",
-                    height: "250px",
-                  }}
-                />
                 <Box
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "space-between",
+                    justifyContent: "start",
                     alignItems: "start",
                     width: "100%",
-                    gap: "10px",
-                    ":hover": {
-                      cursor: "pointer",
-                    },
+                    padding: "4px",
+                    height: "auto",
                   }}
-                  onClick={() => handleClick(item.postId)}
                 >
-                  <Typography
+                  <CardMedia
+                    component="img"
+                    height="80"
+                    image={"https://picsum.photos/200"}
+                    alt="green iguana"
                     sx={{
-                      fontSize: "24px",
-                      color: "primary.main",
+                      width: "400px",
+                      height: "250px",
                     }}
-                  >
-                    {item.title}
-                  </Typography>
+                  />
                   <Box
                     sx={{
                       display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      alignItems: "start",
+                      width: "100%",
                       gap: "10px",
-                      alignItems: "center",
-                      ml: "4px",
+                      ":hover": {
+                        cursor: "pointer",
+                      },
                     }}
+                    onClick={() => handleClick(item.postId)}
                   >
                     <Typography
                       sx={{
-                        fontSize: "16px",
+                        fontSize: "24px",
+                        color: "primary.main",
                       }}
                     >
-                      December 12, 2024
+                      {item.title}
                     </Typography>
-                    <Divider orientation="vertical" flexItem />
-                    <SeeMoreButton />
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: "10px",
+                        alignItems: "center",
+                        ml: "4px",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: "16px",
+                        }}
+                      >
+                        December 12, 2024
+                      </Typography>
+                      <Divider orientation="vertical" flexItem />
+                      <SeeMoreButton />
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            </Grid>
-          );
-        })}
+              </Grid>
+            );
+          })
+        ) : (
+          <Typography
+            variant="caption"
+            sx={{
+              textAlign: "center",
+              padding: "10px",
+              margin: "10px",
+            }}
+          >
+            {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_POST}
+          </Typography>
+        )}
         {isLoading ? (
           <Loader title="Loading Posts..." height="auto" width="100%" />
         ) : null}
