@@ -1,25 +1,4 @@
-export const followWriter = (writerName: string, writerProfileLink: string) => {
-  console.log(`followed writer ${writerName} ${writerProfileLink} `);
-};
-
-type FeaturedArticle = {
-  profilePicture: string;
-  authorName: string;
-  articleName: string;
-  articleLink: string;
-  authorProfileLink: string;
-  likes: number;
-};
-
-type AuthorToFollow = {
-  profilePicture: string;
-  authorName: string;
-  authorProfileLink: string;
-};
-export type RightSideBarProps = {
-  featuredArticles: FeaturedArticle[];
-  authorToFollow: AuthorToFollow[];
-};
+import { type SxProps } from "@mui/material";
 
 export type MenuItemList = {
   label: string;
@@ -107,8 +86,8 @@ export type PostCardContentProps = {
 
 export type FollowButtonProps = {
   authorProfileLink: string;
-  yPadding?: string;
-  xPadding?: string;
+  style?: SxProps;
+  isFollowing?: boolean;
 };
 export interface LeftSideBarProps {
   menuItems: MenuItemList[];
@@ -126,3 +105,20 @@ export enum MyFeedTabsEnum {
   MY_FEED = "My Feed",
   DISCOVERY = "Discover",
 }
+
+export type FeaturedAuthor = {
+  userId: string;
+  name: string;
+  profile: string;
+  followersCount: number;
+  articlesCount: number;
+};
+
+export type FeaturedPost = {
+  postId: string;
+  title: string;
+  authorName: string;
+  authorProfile: string;
+  authorId: string;
+  likeCount: number;
+};

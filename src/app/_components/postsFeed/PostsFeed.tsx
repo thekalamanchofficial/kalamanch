@@ -9,6 +9,8 @@ import PostCardFooter from "../postCardFooter/PostCardFooter";
 import FollowButton from "../followButton/FollowButton";
 import Link from "next/link";
 import CommentSection from "../CommentSection/CommentSection";
+import { trpc } from "~/server/client";
+import { useClerk } from "@clerk/nextjs";
 
 const PostsFeed: React.FC<PostsFeedProps> = ({
   articlesList,
@@ -19,6 +21,8 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
   const [toggleComment, setToggleComment] = useState<Record<string, boolean>>(
     {},
   );
+
+  const { user } = useClerk();
 
   const openCommentBox = (postId: string) => {
     setToggleComment((prevState) => ({
@@ -35,9 +39,16 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
     await addComment(id, comment, parent);
   };
 
+  const userMutation = trpc.user;
+
+  const { data: userFollowing } = userMutation.getUserFollowings.useQuery({
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
+
   return (
     <>
       {articlesList.map((article, index) => {
+        const isFollowing = userFollowing?.includes(article.authorId);
         return (
           <Card
             sx={{ width: "100%", boxShadow: "none", px: "0px" }}
@@ -70,9 +81,11 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
                   }}
                 >
                   <FollowButton
-                    authorProfileLink={`localhost:3000/author/${article.authorId}`}
-                    yPadding="16px"
-                    xPadding="20px"
+                    authorProfileLink={article.authorId}
+                    style={{
+                      padding: "16px 20px",
+                    }}
+                    isFollowing={isFollowing}
                   />
                   <Button
                     startIcon={<MoreHorizOutlinedIcon />}
