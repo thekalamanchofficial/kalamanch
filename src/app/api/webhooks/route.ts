@@ -31,6 +31,9 @@ export async function POST(req: Request) {
   const payload = req.json();
   const body = JSON.stringify(payload);
 
+  console.log("SIGNING_SECRET", SIGNING_SECRET);
+  console.log("headerPayload", headerPayload);
+
   let evt: WebhookEvent;
 
   // Verify payload with headers
