@@ -7,11 +7,12 @@ import { handleError } from "~/app/_utils/handleError";
 const userSchema = yup.object({
   email: yup.string().email().required(),
   name: yup.string().required(),
-  birthdate: yup.date().required(),
+  birthdate: yup.date().nullable().default(null),
   profile: yup.string().optional(),
-  interests: yup.array(yup.string()),
+  interests: yup.array(yup.string()).default([]),
   followers: yup.array(yup.string()).default([]),
   following: yup.array(yup.string()).default([]),
+  bookmarks: yup.array(yup.string()).default([]),
 });
 
 export const userRouter = router({
