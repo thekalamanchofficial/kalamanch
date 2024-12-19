@@ -1,43 +1,64 @@
-import React from "react";
-import { useSignUpInterestForm } from "~/app/sign-up/_hooks/useSignUpForm";
-import { Controller } from "react-hook-form";
-import {
-  type FormDataPartial,
-  type FormDataInterest,
-} from "~/app/sign-up/_types/types";
+import { Grid2 as Grid, Typography, Chip, Button } from "@mui/material";
+import { Controller, useForm, type UseFormReturn } from "react-hook-form";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
-import { STATIC_TEXTS } from "../static/staticText";
-import { Button, Chip, Grid2 as Grid, Typography } from "@mui/material";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import CloseIcon from "@mui/icons-material/Close";
 
-type InterestsFormProps = {
-  onNext: (data: FormDataInterest) => Promise<void>;
-  onPrev: () => void;
-  data: FormDataPartial;
+export type OnboardingDataType = {
+  interests: string[];
 };
+export const onboardingSchema = yup.object().shape({
+  interests: yup
+    .array()
+    .min(1, "Please select at least one interest")
+    .required("Interests are required"),
+});
 
-const Interests: React.FC<InterestsFormProps> = ({
-  onNext,
-  onPrev,
-  data: interestData,
-}) => {
+export const useOnboardingForm = (): UseFormReturn<OnboardingDataType> =>
+  useForm({
+    mode: "onChange",
+    resolver: yupResolver(onboardingSchema),
+  });
+
+export const Onboarding: React.FC<{
+  onSubmit: (data: OnboardingDataType) => void;
+}> = ({ onSubmit }) => {
   const {
     handleSubmit,
-    trigger,
     control,
     formState: { errors },
-  } = useSignUpInterestForm();
-
-  const handleNext = async (data: FormDataInterest) => {
-    const isValid = await trigger();
-    if (isValid) {
-      await onNext(data);
-    }
-  };
+  } = useOnboardingForm();
 
   return (
-    <Grid container width="100%">
-      <Grid display="flex" width="100%" flexDirection="column" mb={3}>
+    <Grid
+      container
+      sx={{
+        width: "100%",
+        backgroundColor: "secondary.main",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Grid
+        display="flex"
+        width="100%"
+        flexDirection="column"
+        mb={3}
+        sx={{
+          backgroundColor: "#fff",
+          maxWidth: "824px",
+          px: 6,
+          py: 4,
+          width: "100%",
+          height: "max-content",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <Typography
           variant="h1"
           fontSize="28px"
@@ -60,11 +81,7 @@ const Interests: React.FC<InterestsFormProps> = ({
           <Controller
             name="interests"
             control={control}
-            defaultValue={
-              interestData && "interests" in interestData
-                ? interestData.interests
-                : []
-            }
+            defaultValue={[]}
             render={({ field: { onChange, value } }) => (
               <Grid gap={2} display="flex" width="100%" flexWrap="wrap">
                 {INTEREST_ARRAY.map((interest) => (
@@ -108,29 +125,18 @@ const Interests: React.FC<InterestsFormProps> = ({
             {errors?.interests?.message}
           </Typography>
         </Grid>
-        <Grid justifyContent="space-between" display="flex" width="100%" mt={2}>
-          <Button
-            type="button"
-            onClick={onPrev}
-            variant="contained"
-            size="large"
-            sx={{ width: "150px" }}
-          >
-            <Typography variant="h6">{STATIC_TEXTS.NAVIGATION.BACK}</Typography>
-          </Button>
+        <Grid justifyContent="center" display="flex" width="100%" mt={2}>
           <Button
             type="button"
             variant="contained"
             size="large"
             sx={{ width: "150px" }}
-            onClick={handleSubmit(handleNext)}
+            onClick={handleSubmit(onSubmit)}
           >
-            <Typography variant="h6">{STATIC_TEXTS.NAVIGATION.NEXT}</Typography>
+            <Typography variant="h6">{`Let's go`}</Typography>
           </Button>
         </Grid>
       </Grid>
     </Grid>
   );
 };
-
-export default Interests;
