@@ -65,7 +65,7 @@ export async function POST(req: Request) {
           email,
           name,
           birthdate: null,
-          interests: [],
+          interests: (evt.data.public_metadata.interests as string[]) ?? [],
           following: [],
           followers: [],
           bookmarks: [],
