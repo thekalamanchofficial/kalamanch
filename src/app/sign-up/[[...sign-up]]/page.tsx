@@ -2,7 +2,6 @@
 import React from "react";
 
 import Details from "~/app/_components/signUp/Details";
-import Interests from "~/app/_components/signUp/Interests";
 
 import { SignUpFormStages, STEPS } from "~/app/sign-up/_config/config";
 import OTPVerification from "~/app/_components/signUp/OtpForm";
@@ -101,10 +100,6 @@ export default function Page() {
             imagePreview={imagePreview}
             setImagePreview={setImagePreview}
           />
-        ) : null}
-
-        {formStep === SignUpFormStages.INTEREST ? (
-          <Interests onNext={handleNext} onPrev={handlePrev} data={formData} />
         ) : null}
         {formStep === SignUpFormStages.OTP_VERIFICATION ? (
           <OTPVerification

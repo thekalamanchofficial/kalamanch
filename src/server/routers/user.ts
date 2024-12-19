@@ -51,6 +51,23 @@ export const userRouter = router({
     });
     return user;
   }),
+  updateUser: publicProcedure.input(userSchema).mutation(async ({ input }) => {
+    const user = await prisma.user.update({
+      where: { email: input.email },
+      data: {
+        name: input.name,
+        birthdate: input.birthdate,
+        profile: input.profile,
+        interests: input.interests?.filter(
+          (interest): interest is string => interest !== undefined,
+        ),
+        following: input.following?.filter((f): f is string => f !== undefined),
+        followers: input.followers?.filter((f): f is string => f !== undefined),
+        bookmarks: input.bookmarks?.filter((b): b is string => b !== undefined),
+      },
+    });
+    return user;
+  }),
   getUserFollowings: publicProcedure
     .input(
       yup.object({
