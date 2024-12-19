@@ -1,8 +1,9 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { type OnboardingDataType } from "./_components/Onboarding";
 
-export const completeOnboarding = async (formData: FormData) => {
+export const completeOnboarding = async (formData: OnboardingDataType) => {
   const { userId } = auth();
 
   if (!userId) {
@@ -15,17 +16,12 @@ export const completeOnboarding = async (formData: FormData) => {
     const res = await client.users.updateUser(userId, {
       publicMetadata: {
         onboardingComplete: true,
-        applicationName: formData.get("applicationName"),
-        applicationType: formData.get("applicationType"),
+        interests: formData.interests,
       },
     });
 
     return {
       message: res.publicMetadata,
-      user: {
-        email: res.emailAddresses?.[0]?.emailAddress,
-        name: res.firstName,
-      },
     };
   } catch (err) {
     return { error: "There was an error updating the user metadata." };
