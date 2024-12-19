@@ -1,10 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useSignUpDetailsForm } from "~/app/sign-up/_hooks/useSignUpForm";
 import { Controller } from "react-hook-form";
-import {
-  type FormDataPartial,
-  type FormDataDetails,
-} from "~/app/sign-up/_types/types";
+import { type FormDataDetails } from "~/app/sign-up/_types/types";
 
 import UploadIcon from "~/assets/svg/UploadIcon.svg";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -22,12 +19,11 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
   onPrev: () => void;
-  data?: FormDataPartial;
+  data?: FormDataDetails;
   profileFile?: File;
   setProfileFile: (file?: File) => void;
   imagePreview: string | null;
@@ -171,7 +167,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         <Controller
           control={control}
           name="birthdate"
-          defaultValue={(data as FormDataDetails)?.birthdate ?? dayjs()}
+          defaultValue={data?.birthdate}
           render={({ field: { onChange, value } }) => {
             return (
               <LocalizationProvider dateAdapter={AdapterDayjs}>

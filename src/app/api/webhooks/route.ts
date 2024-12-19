@@ -64,7 +64,7 @@ export async function POST(req: Request) {
         data: {
           email,
           name,
-          birthdate: null,
+          birthdate: (evt.data.unsafe_metadata.birthdate as Date) ?? null,
           interests: [],
           following: [],
           followers: [],

@@ -1,6 +1,5 @@
 export const enum SignUpFormStages {
   DETAILS = "DETAILS",
-  INTEREST = "INTEREST",
   OTP_VERIFICATION = "OTP_VERIFICATION",
 }
 
@@ -35,11 +34,7 @@ export const STEPS = [
     stepNumber: 0,
   },
   {
-    label: "Add Interests",
-    stepNumber: 1,
-  },
-  {
     label: "Verification",
-    stepNumber: 2,
+    stepNumber: 1,
   },
 ];
