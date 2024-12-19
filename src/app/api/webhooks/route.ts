@@ -65,10 +65,22 @@ export async function POST(req: Request) {
           email,
           name,
           birthdate: null,
-          interests: (evt.data.public_metadata.interests as string[]) ?? [],
+          interests: [],
           following: [],
           followers: [],
           bookmarks: [],
+        },
+      });
+    }
+  }
+
+  if (evt.type === "user.updated") {
+    const email = evt.data.email_addresses[0]?.email_address;
+    if (email) {
+      await prisma.user.update({
+        where: { email: email },
+        data: {
+          interests: (evt.data.public_metadata.interests as string[]) ?? [],
         },
       });
     }
