@@ -5,12 +5,15 @@ import { httpBatchLink } from "@trpc/react-query";
 import { trpc } from "../../server/client";
 
 export default function Provider({ children }: { children: React.ReactNode }) {
+  const isDev = process.env.NODE_ENV === "development";
   const [queryClient] = useState(() => new QueryClient({}));
   const [trpcClient] = useState(
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: "http://localhost:3000/api/trpc",
+          url: isDev
+            ? "http://localhost:3000/api/trpc"
+            : "https://kalamanch.vercel.app/api/trpc",
         }),
       ],
     }),
