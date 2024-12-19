@@ -65,7 +65,7 @@ const Interests: React.FC<InterestsFormProps> = ({
                 ? interestData.interests
                 : []
             }
-            render={({ field: { onChange, value }, fieldState }) => (
+            render={({ field: { onChange, value } }) => (
               <Grid gap={2} display="flex" width="100%" flexWrap="wrap">
                 {INTEREST_ARRAY.map((interest) => (
                   <Chip
