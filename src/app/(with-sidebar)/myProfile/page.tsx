@@ -2,14 +2,16 @@
 import { Grid2 as Grid } from "@mui/material";
 import React, { useMemo } from "react";
 import CustomTabs from "~/app/_components/CustomTabs/CustomTabs";
-import ProfileCard from "~/app/_components/myProfile/profileCard/ProfileCard";
-import { tabs } from "~/app/(with-sidebar)/myProfile/_config/config";
+import ProfileCard from "~/app/(with-sidebar)/myprofile/_components/profileCard/ProfileCard";
+import { tabs } from "~/app/(with-sidebar)/myprofile/_config/config";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
-import useMyProfilePage from "~/app/(with-sidebar)/myProfile/_hook/useMyProfile";
+import useMyProfilePage from "~/app/(with-sidebar)/myprofile/_hook/useMyProfile";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import Loader from "~/app/_components/loader/Loader";
 import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
+import { EditProfile } from "./_components/editProfile/EditProfile";
+import dayjs from "dayjs";
 
 const MyProfile = () => {
   const {
@@ -24,6 +26,15 @@ const MyProfile = () => {
     handleChange,
     addComment,
     errorMessage,
+    postCount,
+    followerCount,
+    userName,
+    isEditProfileOpen,
+    handleEditProfileClose,
+    handleEditProfileOpen,
+    interests,
+    bio: userBio,
+    birthdate,
   } = useMyProfilePage();
 
   const renderUI = useMemo(() => {
@@ -106,14 +117,35 @@ const MyProfile = () => {
     <Grid columns={1}>
       <ProfileCard
         coverImage="https://picsum.photos/200"
-        bio="bio"
-        followers="1M"
-        posts={postDataWithComments.length}
+        bio=""
+        followers={followerCount}
+        posts={postCount}
         profileImage={userProfile}
-        name="kalamanch"
+        name={userName}
+        handleEditProfileOpen={handleEditProfileOpen}
       />
       <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
       {renderUI}
+      <EditProfile
+        open={isEditProfileOpen}
+        handleClose={handleEditProfileClose}
+        profileData={{
+          name: userName,
+          bio: userBio ? userBio : "",
+          birthdate: dayjs("2024-12-02T08:34:51.000+00:").toDate(),
+          interests: interests,
+        }}
+        handleProfileSave={async ({ name, bio, birthdate, interests }) => {
+          console.log({
+            name,
+            bio,
+            birthdate,
+            interests,
+          });
+          // await Promise.resolve();
+          handleEditProfileClose();
+        }}
+      />
     </Grid>
   );
 };

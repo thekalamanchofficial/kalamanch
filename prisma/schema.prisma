@@ -8,20 +8,25 @@ datasource db {
 }
 
 model User {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
-  email          String           @unique
-  name           String
-  birthdate      DateTime?
-  profile        String?
-  interests      String[]
-  likes          Like[]
-  comments       Comment[]
-  bids           Bid[]
-  posts          Post[]
-  following      String[]         @db.ObjectId
-  followers      String[]         @db.ObjectId
-  bookmarks      String[]         @db.ObjectId
-  FeaturedAuthor FeaturedAuthor[]
+  id                      String           @id @default(auto()) @map("_id") @db.ObjectId
+  email                   String           @unique
+  name                    String
+  firstName               String?
+  lastName                String?
+  profile                 String?
+  birthdate               DateTime?
+  interests               String[]
+  bio                     String?
+  education               String[]         @default([])
+  professionalCredentials String[]         @default([])
+  following               String[]         @db.ObjectId
+  followers               String[]         @db.ObjectId
+  bookmarks               String[]         @db.ObjectId
+  featuredAuthor          FeaturedAuthor[]
+  likes                   Like[]
+  comments                Comment[]
+  bids                    Bid[]
+  posts                   Post[]
 }
 
 model Post {

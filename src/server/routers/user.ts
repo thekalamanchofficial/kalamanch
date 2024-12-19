@@ -24,6 +24,19 @@ export const userRouter = router({
       handleError(error);
     }
   }),
+  getUserDetails: publicProcedure
+    .input(yup.string().email())
+    .query(async ({ input }) => {
+      const userDetails = await prisma.user.findUnique({
+        where: { email: input },
+        include: {
+          posts: true,
+        },
+      });
+
+      return userDetails;
+    }),
+
   addUser: publicProcedure.input(userSchema).mutation(async ({ input }) => {
     const user = await prisma.user.create({
       data: {

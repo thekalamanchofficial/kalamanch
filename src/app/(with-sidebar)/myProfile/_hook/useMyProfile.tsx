@@ -1,4 +1,4 @@
-import { MyProfileTabsEnum } from "../types/types";
+import { MyProfileTabsEnum } from "~/app/(with-sidebar)/myprofile/types/types";
 import {
   type ArticlesList,
   type Comment,
@@ -30,6 +30,15 @@ type useMyProfilePage = {
   handleScroll: () => void;
   errorMessage: string;
   userProfile: string;
+  postCount: number;
+  userName: string;
+  followerCount: number;
+  isEditProfileOpen: boolean;
+  handleEditProfileClose: () => void;
+  handleEditProfileOpen: () => void;
+  interests: string[];
+  bio: string;
+  birthdate: Date;
 };
 
 const useMyProfilePage = (): useMyProfilePage => {
@@ -40,10 +49,18 @@ const useMyProfilePage = (): useMyProfilePage => {
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean | undefined>(true);
   const [post, setPosts] = useState<ArticlesList[]>([]);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+
+  // const [];
 
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
   const commentMutation = trpc.comments;
+  const userMutation = trpc.user;
+
+  const { data: userDetails } = userMutation.getUserDetails.useQuery(
+    user?.primaryEmailAddress?.emailAddress,
+  );
 
   const {
     data: postData,
@@ -51,12 +68,13 @@ const useMyProfilePage = (): useMyProfilePage => {
     error,
   } = postMutation.getPosts.useQuery(
     {
+      authorId: userDetails?.id,
       skip,
       limit:
         skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
     },
     {
-      enabled: skip >= 0 && hasMorePosts === true,
+      enabled: Boolean(userDetails?.id) && skip >= 0 && hasMorePosts === true,
     },
   );
 
@@ -80,6 +98,14 @@ const useMyProfilePage = (): useMyProfilePage => {
   );
 
   const likePostMutation = likeMutation.likePost.useMutation();
+
+  const handleEditProfileOpen = () => {
+    setIsEditProfileOpen(true);
+  };
+
+  const handleEditProfileClose = () => {
+    setIsEditProfileOpen(false);
+  };
 
   const handleLikeButton = useCallback(
     async (postId: string): Promise<{ liked: boolean }> => {
@@ -260,6 +286,17 @@ const useMyProfilePage = (): useMyProfilePage => {
     addComment,
     handleScroll,
     userProfile: user?.imageUrl ?? "",
+    postCount: userDetails?.posts.length ?? 0,
+    followerCount: userDetails?.followers.length ?? 0,
+    userName: user?.fullName ?? "",
+    isEditProfileOpen,
+    handleEditProfileClose,
+    handleEditProfileOpen,
+    interests: userDetails?.interests ?? [],
+    bio: userDetails?.bio ?? "",
+    birthdate: userDetails?.birthdate
+      ? new Date(userDetails.birthdate)
+      : new Date(),
   };
 };
 
