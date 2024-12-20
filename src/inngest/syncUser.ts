@@ -8,7 +8,7 @@ export const syncUser = inngest.createFunction(
   { event: "clerk/user.created" }, // ← This is the function's triggering event
   async ({ event }) => {
     const email = event.data.email_addresses[0]?.email_address;
-    const name = event.data.first_name;
+    const name = event.data.first_name ?? event.data.unsafe_metadata.name;
     await prisma.user.create({
       data: {
         email,
