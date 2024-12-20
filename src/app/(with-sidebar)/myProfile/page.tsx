@@ -123,6 +123,7 @@ const MyProfile = () => {
     handleLikeButton,
     addComment,
     hasMorePosts,
+    userLikedPosts,
   ]);
   return (
     <Grid columns={1}>
