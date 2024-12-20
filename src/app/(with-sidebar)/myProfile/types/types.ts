@@ -11,3 +11,12 @@ export type EditProfileDetails = {
   education?: string[];
   professionalAchievements?: string;
 };
+
+export type userSchema = {
+  name: string;
+  birthdate: Date;
+  interests: string[];
+  bio?: string;
+  education?: string[];
+  professionalAchievements?: string;
+};

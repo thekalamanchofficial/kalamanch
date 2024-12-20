@@ -10,6 +10,8 @@ import {
   TextField,
   Typography,
   Box,
+  Paper,
+  IconButton,
 } from "@mui/material";
 import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hook/useEditProfileForm";
 import { type EditProfileDetails } from "../../types/types";
@@ -21,10 +23,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-// import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-// import dayjs from "dayjs";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export type EditProfileProps = {
   open: boolean;
@@ -51,8 +50,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     e.preventDefault();
     setOpenDatePicker((open) => !open);
   };
-
-  console.log(profileData);
 
   return (
     <Dialog
@@ -90,6 +87,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             </FormControl>
           )}
         />
+
         <Controller
           control={control}
           name="bio"
@@ -116,6 +114,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             </FormControl>
           )}
         />
+
         <Controller
           control={control}
           name="birthdate"
@@ -193,23 +192,24 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             </FormControl>
           )}
         />
+
         <Controller
           control={control}
           name="education"
           defaultValue={profileData.education ?? []}
-          render={({ field: { value, onChange } }) => {
+          render={({ field: { value = [], onChange } }) => {
             const handleAddEducation = (
               e: React.KeyboardEvent<HTMLInputElement>,
             ) => {
               if (e.key === "Enter" && education.trim()) {
-                const updatedEducation = [...(value ?? []), education.trim()];
+                const updatedEducation = [...value, education.trim()];
                 onChange(updatedEducation);
                 setEducation("");
               }
             };
 
             const handleRemoveEducation = (index: number) => {
-              const updatedEducation = value?.filter((_, i) => i !== index);
+              const updatedEducation = value.filter((_, i) => i !== index);
               onChange(updatedEducation);
             };
 
@@ -232,20 +232,30 @@ export const EditProfile: React.FC<EditProfileProps> = ({
                   fullWidth
                   sx={{
                     mb: 2,
-
                     "& .MuiInputBase-inputMultiline": { minHeight: 64 },
                   }}
                 />
-                {/* Render entered education entries as chips */}
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                  {value?.map((edu, index) => (
-                    <Chip
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                  {value.map((edu, index) => (
+                    <Paper
                       key={index}
-                      label={edu}
-                      onDelete={() => handleRemoveEducation(index)}
-                      variant="outlined"
-                      color="primary"
-                    />
+                      elevation={3}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: 2,
+                        borderRadius: 2,
+                        width: "100%",
+                        maxWidth: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      <Typography variant="body1">{edu}</Typography>
+                      <IconButton onClick={() => handleRemoveEducation(index)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Paper>
                   ))}
                 </Box>
               </FormControl>

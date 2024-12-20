@@ -9,6 +9,7 @@ import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
+import { toast } from "react-toastify";
 
 type useMyProfilePage = {
   posts: ArticlesList[];
@@ -39,6 +40,16 @@ type useMyProfilePage = {
   interests: string[];
   bio: string;
   birthdate: Date;
+  education: string[];
+  achievements: string;
+  handleSave: (details: {
+    name: string;
+    bio: string;
+    interests: string[];
+    birthdate: Date;
+    education: string[];
+    achievements: string;
+  }) => Promise<void>;
 };
 
 const useMyProfilePage = (): useMyProfilePage => {
@@ -50,8 +61,6 @@ const useMyProfilePage = (): useMyProfilePage => {
   const [hasMorePosts, setHasMorePosts] = useState<boolean | undefined>(true);
   const [post, setPosts] = useState<ArticlesList[]>([]);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-
-  // const [];
 
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
@@ -239,6 +248,52 @@ const useMyProfilePage = (): useMyProfilePage => {
     setTab(newTab);
   };
 
+  const updateUser = userMutation.updateUser.useMutation();
+
+  const handleSave = async ({
+    name,
+    bio,
+    interests,
+    birthdate,
+    education,
+    achievements,
+  }: {
+    name: string;
+    bio: string;
+    birthdate: Date;
+    interests: string[];
+    education: string[];
+    achievements: string;
+  }) => {
+    const toastId = toast.loading("Updating profile...");
+
+    try {
+      await updateUser.mutateAsync({
+        name,
+        bio,
+        email: user?.primaryEmailAddress?.emailAddress ?? "",
+        birthdate,
+        education,
+        achievements,
+        interests,
+      });
+      toast.update(toastId, {
+        render: "Profile updated successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    } catch (error) {
+      handleError(error);
+      toast.update(toastId, {
+        render: "Failed to update profile. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+
   const handleScroll = useCallback(() => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
     const bottomReached = scrollHeight - scrollTop - clientHeight < 10;
@@ -297,6 +352,10 @@ const useMyProfilePage = (): useMyProfilePage => {
     birthdate: userDetails?.birthdate
       ? new Date(userDetails.birthdate)
       : new Date(),
+
+    education: userDetails?.education ?? [],
+    achievements: userDetails?.professionalCredentials ?? "",
+    handleSave,
   };
 };
 

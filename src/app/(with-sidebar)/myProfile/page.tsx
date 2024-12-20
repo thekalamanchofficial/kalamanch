@@ -11,7 +11,6 @@ import Loader from "~/app/_components/loader/Loader";
 import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import { EditProfile } from "./_components/editProfile/EditProfile";
-import dayjs from "dayjs";
 
 const MyProfile = () => {
   const {
@@ -35,6 +34,9 @@ const MyProfile = () => {
     interests,
     bio: userBio,
     birthdate,
+    education,
+    achievements,
+    handleSave,
   } = useMyProfilePage();
 
   const renderUI = useMemo(() => {
@@ -48,12 +50,25 @@ const MyProfile = () => {
     if (tab === STATIC_TEXTS.MY_PROFILE_PAGE.TABS[0]?.value) {
       return (
         <>
-          <PostsFeed
-            articlesList={postDataWithComments ?? []}
-            likedPosts={likedPosts}
-            handleLikeButton={handleLikeButton}
-            addComment={addComment}
-          />
+          {postDataWithComments.length > 0 ? (
+            <PostsFeed
+              articlesList={postDataWithComments ?? []}
+              likedPosts={likedPosts}
+              handleLikeButton={handleLikeButton}
+              addComment={addComment}
+            />
+          ) : (
+            <ShowMessage
+              title="No Posts Found."
+              style={{
+                height: "200px",
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            />
+          )}
           {queryLoading && skip > 0 ? (
             <Loader height="auto" width="auto" title="" />
           ) : null}
@@ -117,7 +132,7 @@ const MyProfile = () => {
     <Grid columns={1}>
       <ProfileCard
         coverImage="https://picsum.photos/200"
-        bio=""
+        bio={userBio ? userBio : ""}
         followers={followerCount}
         posts={postCount}
         profileImage={userProfile}
@@ -126,26 +141,42 @@ const MyProfile = () => {
       />
       <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
       {renderUI}
-      <EditProfile
-        open={isEditProfileOpen}
-        handleClose={handleEditProfileClose}
-        profileData={{
-          name: userName,
-          bio: userBio ? userBio : "",
-          birthdate: dayjs("2024-12-02T08:34:51.000+00:").toDate(),
-          interests: interests,
-        }}
-        handleProfileSave={async ({ name, bio, birthdate, interests }) => {
-          console.log({
+      {isEditProfileOpen && (
+        <EditProfile
+          open={isEditProfileOpen}
+          handleClose={handleEditProfileClose}
+          profileData={{
+            name: userName,
+            bio: userBio ? userBio : "",
+            birthdate: birthdate,
+            interests: interests,
+            education: education,
+            professionalAchievements: achievements,
+          }}
+          handleProfileSave={async ({
             name,
             bio,
             birthdate,
             interests,
-          });
-          // await Promise.resolve();
-          handleEditProfileClose();
-        }}
-      />
+            education,
+            professionalAchievements,
+          }) => {
+            try {
+              await handleSave({
+                name,
+                birthdate,
+                bio: bio ?? "",
+                interests: interests ?? [],
+                education: education ?? [],
+                achievements: professionalAchievements ?? "",
+              });
+              handleEditProfileClose();
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+        />
+      )}
     </Grid>
   );
 };

@@ -11,14 +11,12 @@ model User {
   id                      String           @id @default(auto()) @map("_id") @db.ObjectId
   email                   String           @unique
   name                    String
-  firstName               String?
-  lastName                String?
   profile                 String?
   birthdate               DateTime?
   interests               String[]
   bio                     String?
   education               String[]         @default([])
-  professionalCredentials String[]         @default([])
+  professionalCredentials String           @default("")
   following               String[]         @db.ObjectId
   followers               String[]         @db.ObjectId
   bookmarks               String[]         @db.ObjectId
