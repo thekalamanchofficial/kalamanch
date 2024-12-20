@@ -27,16 +27,11 @@ const MyProfile = () => {
     errorMessage,
     postCount,
     followerCount,
-    userName,
     isEditProfileOpen,
     handleEditProfileClose,
     handleEditProfileOpen,
-    interests,
-    bio: userBio,
-    birthdate,
-    education,
-    achievements,
     handleSave,
+    userInfo,
   } = useMyProfilePage();
 
   const renderUI = useMemo(() => {
@@ -132,11 +127,11 @@ const MyProfile = () => {
     <Grid columns={1}>
       <ProfileCard
         coverImage="https://picsum.photos/200"
-        bio={userBio ? userBio : ""}
+        bio={userInfo.bio ? userInfo.bio : ""}
         followers={followerCount}
         posts={postCount}
         profileImage={userProfile}
-        name={userName}
+        name={userInfo.name}
         handleEditProfileOpen={handleEditProfileOpen}
       />
       <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
@@ -145,14 +140,7 @@ const MyProfile = () => {
         <EditProfile
           open={isEditProfileOpen}
           handleClose={handleEditProfileClose}
-          profileData={{
-            name: userName,
-            bio: userBio ? userBio : "",
-            birthdate: birthdate,
-            interests: interests,
-            education: education,
-            professionalAchievements: achievements,
-          }}
+          profileData={userInfo}
           handleProfileSave={async ({
             name,
             bio,

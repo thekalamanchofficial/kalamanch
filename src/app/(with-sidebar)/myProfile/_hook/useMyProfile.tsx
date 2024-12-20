@@ -32,21 +32,23 @@ type useMyProfilePage = {
   errorMessage: string;
   userProfile: string;
   postCount: number;
-  userName: string;
   followerCount: number;
   isEditProfileOpen: boolean;
   handleEditProfileClose: () => void;
   handleEditProfileOpen: () => void;
-  interests: string[];
-  bio: string;
-  birthdate: Date;
-  education: string[];
-  achievements: string;
-  handleSave: (details: {
+  userInfo: {
     name: string;
     bio: string;
     interests: string[];
     birthdate: Date;
+    education: string[];
+    achievements: string;
+  };
+  handleSave: (details: {
+    name: string;
+    bio: string;
+    birthdate: Date;
+    interests: string[];
     education: string[];
     achievements: string;
   }) => Promise<void>;
@@ -62,6 +64,22 @@ const useMyProfilePage = (): useMyProfilePage => {
   const [post, setPosts] = useState<ArticlesList[]>([]);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
+  const [userInfo, setUserInfo] = useState<{
+    name: string;
+    bio: string;
+    interests: string[];
+    birthdate: Date;
+    education: string[];
+    achievements: string;
+  }>({
+    name: "",
+    bio: "",
+    interests: [],
+    birthdate: new Date(),
+    education: [],
+    achievements: "",
+  });
+
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
   const commentMutation = trpc.comments;
@@ -70,6 +88,19 @@ const useMyProfilePage = (): useMyProfilePage => {
   const { data: userDetails } = userMutation.getUserDetails.useQuery(
     user?.primaryEmailAddress?.emailAddress,
   );
+
+  useEffect(() => {
+    setUserInfo({
+      name: userDetails?.name ?? "",
+      bio: userDetails?.bio ?? "",
+      interests: userDetails?.interests ?? [],
+      birthdate: userDetails?.birthdate
+        ? new Date(userDetails.birthdate)
+        : new Date(),
+      education: userDetails?.education ?? [],
+      achievements: userDetails?.professionalCredentials ?? "",
+    });
+  }, [userDetails]);
 
   const {
     data: postData,
@@ -283,6 +314,15 @@ const useMyProfilePage = (): useMyProfilePage => {
         isLoading: false,
         autoClose: 3000,
       });
+
+      setUserInfo({
+        name,
+        bio,
+        interests,
+        birthdate,
+        education,
+        achievements,
+      });
     } catch (error) {
       handleError(error);
       toast.update(toastId, {
@@ -343,19 +383,11 @@ const useMyProfilePage = (): useMyProfilePage => {
     userProfile: user?.imageUrl ?? "",
     postCount: userDetails?.posts.length ?? 0,
     followerCount: userDetails?.followers.length ?? 0,
-    userName: user?.fullName ?? "",
     isEditProfileOpen,
     handleEditProfileClose,
     handleEditProfileOpen,
-    interests: userDetails?.interests ?? [],
-    bio: userDetails?.bio ?? "",
-    birthdate: userDetails?.birthdate
-      ? new Date(userDetails.birthdate)
-      : new Date(),
-
-    education: userDetails?.education ?? [],
-    achievements: userDetails?.professionalCredentials ?? "",
     handleSave,
+    userInfo,
   };
 };
 
