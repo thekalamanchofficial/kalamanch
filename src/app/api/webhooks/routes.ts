@@ -56,35 +56,5 @@ export async function POST(req: Request) {
   console.log(`Received webhook with ID ${id} and event type of ${eventType}`);
   console.log("Webhook payload:", body);
 
-  //   if (evt.type === "user.created") {
-  //     const email = evt.data.email_addresses[0]?.email_address;
-  //     const name = evt.data.first_name;
-  //     if (email && name) {
-  //       await prisma.user.create({
-  //         data: {
-  //           email,
-  //           name,
-  //           birthdate: (evt.data.unsafe_metadata.birthdate as Date) ?? null,
-  //           interests: [],
-  //           following: [],
-  //           followers: [],
-  //           bookmarks: [],
-  //         },
-  //       });
-  //     }
-  //   }
-
-  //   if (evt.type === "user.updated") {
-  //     const email = evt.data.email_addresses[0]?.email_address;
-  //     if (email) {
-  //       await prisma.user.update({
-  //         where: { email: email },
-  //         data: {
-  //           interests: (evt.data.public_metadata.interests as string[]) ?? [],
-  //         },
-  //       });
-  //     }
-  //   }
-
   return new Response("Webhook received", { status: 200 });
 }
