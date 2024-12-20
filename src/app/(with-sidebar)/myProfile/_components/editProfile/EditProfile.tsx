@@ -9,6 +9,7 @@ import {
   FormControl,
   TextField,
   Typography,
+  Box,
 } from "@mui/material";
 import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hook/useEditProfileForm";
 import { type EditProfileDetails } from "../../types/types";
@@ -38,6 +39,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   handleProfileSave,
 }) => {
   const [openDatePicker, setOpenDatePicker] = useState(false);
+  const [education, setEducation] = useState("");
 
   const {
     handleSubmit,
@@ -114,20 +116,19 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             </FormControl>
           )}
         />
-        {/* <Controller
+        <Controller
           control={control}
           name="birthdate"
-          // defaultValue={profileData.birthdate} // Convert to Day.js
+          defaultValue={profileData.birthdate}
           render={({ field: { onChange, value } }) => {
             return (
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   onChange={(newValue) => {
                     console.log(newValue);
-
-                    onChange(newValue); // Pass the Day.js object to react-hook-form
+                    onChange(newValue);
                   }}
-                  value={value} // Ensure value is a Day.js object or null
+                  value={dayjs(value)}
                   open={openDatePicker}
                   onOpen={() => setOpenDatePicker(true)}
                   onClose={() => setOpenDatePicker(false)}
@@ -151,8 +152,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
               </LocalizationProvider>
             );
           }}
-        /> */}
-
+        />
         <Controller
           control={control}
           name="interests"
@@ -164,16 +164,18 @@ export const EditProfile: React.FC<EditProfileProps> = ({
               </Typography>
               <Grid container spacing={1}>
                 {INTEREST_ARRAY.map((interest) => {
-                  const isSelected = value.includes(interest);
+                  const isSelected = value?.includes(interest);
                   return (
                     <Grid key={interest}>
                       <Chip
                         label={interest}
                         onClick={() => {
                           if (isSelected) {
-                            onChange(value.filter((item) => item !== interest));
+                            onChange(
+                              value?.filter((item) => item !== interest),
+                            );
                           } else {
-                            onChange([...value, interest]);
+                            onChange([...(value ?? []), interest]);
                           }
                         }}
                         color={isSelected ? "primary" : "default"}
@@ -188,6 +190,94 @@ export const EditProfile: React.FC<EditProfileProps> = ({
                   {errors.interests.message}
                 </Typography>
               )}
+            </FormControl>
+          )}
+        />
+        <Controller
+          control={control}
+          name="education"
+          defaultValue={profileData.education ?? []}
+          render={({ field: { value, onChange } }) => {
+            const handleAddEducation = (
+              e: React.KeyboardEvent<HTMLInputElement>,
+            ) => {
+              if (e.key === "Enter" && education.trim()) {
+                const updatedEducation = [...(value ?? []), education.trim()];
+                onChange(updatedEducation);
+                setEducation("");
+              }
+            };
+
+            const handleRemoveEducation = (index: number) => {
+              const updatedEducation = value?.filter((_, i) => i !== index);
+              onChange(updatedEducation);
+            };
+
+            return (
+              <FormControl fullWidth>
+                <Typography variant="h6" sx={{ mb: 1, mt: 2 }}>
+                  Education
+                </Typography>
+                <TextField
+                  type="text"
+                  value={education}
+                  onChange={(e) => setEducation(e.target.value)}
+                  onKeyDown={handleAddEducation}
+                  id="education"
+                  label="Add Education"
+                  placeholder="Enter your education and press Enter"
+                  helperText={errors?.education?.message}
+                  error={!!errors?.education?.message}
+                  variant="outlined"
+                  fullWidth
+                  sx={{
+                    mb: 2,
+
+                    "& .MuiInputBase-inputMultiline": { minHeight: 64 },
+                  }}
+                />
+                {/* Render entered education entries as chips */}
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {value?.map((edu, index) => (
+                    <Chip
+                      key={index}
+                      label={edu}
+                      onDelete={() => handleRemoveEducation(index)}
+                      variant="outlined"
+                      color="primary"
+                    />
+                  ))}
+                </Box>
+              </FormControl>
+            );
+          }}
+        />
+        <Controller
+          control={control}
+          name="professionalAchievements"
+          defaultValue={profileData.professionalAchievements}
+          render={({ field: { value, onChange } }) => (
+            <FormControl fullWidth>
+              <Typography variant="h6" gutterBottom sx={{ mt: 2, mb: 1 }}>
+                Professional Achievements
+              </Typography>
+              <TextField
+                type="text"
+                value={value}
+                onChange={onChange}
+                id="achievements"
+                label="Add achievements"
+                placeholder="Share your Professional achievements"
+                helperText={errors?.bio?.message}
+                error={!!errors?.bio?.message}
+                variant="outlined"
+                fullWidth
+                sx={{
+                  mb: 2,
+                  "& .MuiInputBase-inputMultiline": { minHeight: 64 },
+                }}
+                multiline
+              />
             </FormControl>
           )}
         />

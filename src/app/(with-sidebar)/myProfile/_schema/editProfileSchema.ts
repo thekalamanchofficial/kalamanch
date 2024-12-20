@@ -8,7 +8,7 @@ export const editProfileSchema = Yup.object().shape({
     .max(new Date(), "Date of birth can't be in the future")
     .required("Birthdate is required"),
   bio: Yup.string().optional(),
-  interests: Yup.array().min(2, "At least two interests are required"),
+  interests: Yup.array().min(1, "At least one interests are required"),
   education: Yup.array().optional(),
-  professionalCredentials: Yup.array().optional(),
+  professionalAchievements: Yup.string().optional(),
 });

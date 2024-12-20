@@ -9,5 +9,5 @@ export type EditProfileDetails = {
   bio?: string;
   birthdate: Date;
   education?: string[];
-  professionalCredentials?: string[];
+  professionalAchievements?: string;
 };
