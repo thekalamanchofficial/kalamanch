@@ -32,6 +32,7 @@ const MyProfile = () => {
     handleEditProfileOpen,
     handleSave,
     userInfo,
+    userLikedPosts,
   } = useMyProfilePage();
 
   const renderUI = useMemo(() => {
@@ -87,7 +88,7 @@ const MyProfile = () => {
       return (
         <>
           <PostsFeed
-            articlesList={postDataWithComments ?? []}
+            articlesList={userLikedPosts ?? []}
             likedPosts={likedPosts}
             handleLikeButton={handleLikeButton}
             addComment={addComment}

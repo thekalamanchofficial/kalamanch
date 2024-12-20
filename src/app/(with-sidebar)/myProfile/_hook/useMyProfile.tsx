@@ -44,6 +44,7 @@ type useMyProfilePage = {
     education: string[];
     achievements: string;
   };
+  userLikedPosts: ArticlesList[];
   handleSave: (details: {
     name: string;
     bio: string;
@@ -87,6 +88,15 @@ const useMyProfilePage = (): useMyProfilePage => {
 
   const { data: userDetails } = userMutation.getUserDetails.useQuery(
     user?.primaryEmailAddress?.emailAddress,
+  );
+
+  const { data: userLikedPosts } = likeMutation.getUserLikedPost.useQuery(
+    {
+      userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+    },
+    {
+      enabled: !!user?.primaryEmailAddress?.emailAddress,
+    },
   );
 
   useEffect(() => {
@@ -387,6 +397,7 @@ const useMyProfilePage = (): useMyProfilePage => {
     handleEditProfileClose,
     handleEditProfileOpen,
     handleSave,
+    userLikedPosts: userLikedPosts ?? [],
     userInfo,
   };
 };
