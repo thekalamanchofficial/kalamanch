@@ -110,4 +110,41 @@ export const likeRouter = router({
         throw error;
       }
     }),
+  getUserLikedPost: publicProcedure
+    .input(
+      yup.object({
+        userEmail: yup.string().email().required(),
+      }),
+    )
+    .query(async ({ input }) => {
+      try {
+        const { userEmail } = input;
+
+        const userDetails = await getUserDetails(userEmail);
+
+        const likedPost = await prisma.like.findMany({
+          where: {
+            userId: userDetails.id,
+          },
+          select: {
+            post: {
+              include: {
+                comments: {
+                  include: {
+                    replies: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const formattedLikedPost = likedPost.map((like) => like.post);
+
+        return formattedLikedPost;
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    }),
 });

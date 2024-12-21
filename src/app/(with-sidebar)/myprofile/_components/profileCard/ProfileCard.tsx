@@ -14,12 +14,13 @@ import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutl
 import { useRouter } from "next/navigation";
 
 interface ProfileCardProps {
-  name: string | null | undefined;
+  name: string;
   bio: string;
   followers?: number;
   posts?: number;
   profileImage?: string;
   coverImage?: string;
+  handleEditProfileOpen: () => void;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -29,9 +30,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   posts,
   profileImage,
   coverImage,
+  handleEditProfileOpen,
 }) => {
   const router = useRouter();
-
   return (
     <Card sx={{ boxShadow: "none" }}>
       <Box sx={{ padding: "8px 20px", display: "flex" }}>
@@ -58,7 +59,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <Box>
           <Avatar
             src={profileImage}
-            alt={`${name}`}
+            alt={name}
             sx={{
               width: 118,
               height: 118,
@@ -84,6 +85,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               padding: "6px 16px",
               backgroundColor: (theme) => theme.palette.secondary.light,
             }}
+            onClick={handleEditProfileOpen}
           >
             Edit Profile
           </Button>
