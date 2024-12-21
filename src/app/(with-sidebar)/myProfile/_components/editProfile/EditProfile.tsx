@@ -13,7 +13,7 @@ import {
   Paper,
   IconButton,
 } from "@mui/material";
-import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hook/useEditProfileForm";
+import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hooks/useEditProfileForm";
 import { type EditProfileDetails } from "../../types/types";
 import { Controller } from "react-hook-form";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";

@@ -5,7 +5,7 @@ import CustomTabs from "~/app/_components/CustomTabs/CustomTabs";
 import ProfileCard from "~/app/(with-sidebar)/myprofile/_components/profileCard/ProfileCard";
 import { tabs } from "~/app/(with-sidebar)/myprofile/_config/config";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
-import useMyProfilePage from "~/app/(with-sidebar)/myprofile/_hook/useMyProfile";
+import useMyProfilePage from "~/app/(with-sidebar)/myprofile/_hooks/useMyProfile";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import Loader from "~/app/_components/loader/Loader";
 import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
@@ -30,7 +30,7 @@ const MyProfile = () => {
     isEditProfileOpen,
     handleEditProfileClose,
     handleEditProfileOpen,
-    handleSave,
+    callSave,
     userInfo,
     userLikedPosts,
   } = useMyProfilePage();
@@ -143,28 +143,7 @@ const MyProfile = () => {
           open={isEditProfileOpen}
           handleClose={handleEditProfileClose}
           profileData={userInfo}
-          handleProfileSave={async ({
-            name,
-            bio,
-            birthdate,
-            interests,
-            education,
-            professionalAchievements,
-          }) => {
-            try {
-              await handleSave({
-                name,
-                birthdate,
-                bio: bio ?? "",
-                interests: interests ?? [],
-                education: education ?? [],
-                achievements: professionalAchievements ?? "",
-              });
-              handleEditProfileClose();
-            } catch (error) {
-              console.error(error);
-            }
-          }}
+          handleProfileSave={callSave}
         />
       )}
     </Grid>

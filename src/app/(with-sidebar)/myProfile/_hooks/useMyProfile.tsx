@@ -1,4 +1,7 @@
-import { MyProfileTabsEnum } from "~/app/(with-sidebar)/myprofile/types/types";
+import {
+  MyProfileTabsEnum,
+  type saveUserInfo,
+} from "~/app/(with-sidebar)/myprofile/types/types";
 import {
   type ArticlesList,
   type Comment,
@@ -10,50 +13,10 @@ import { useClerk } from "@clerk/nextjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
 import { toast } from "react-toastify";
-
-type useMyProfilePage = {
-  posts: ArticlesList[];
-  setPosts: React.Dispatch<React.SetStateAction<ArticlesList[]>>;
-  likedPosts: string[];
-  queryLoading: boolean;
-  hasMorePosts: boolean;
-  tab: MyProfileTabsEnum;
-  skip: number;
-  postDataWithComments: ArticlesList[];
-  setSkip: React.Dispatch<React.SetStateAction<number>>;
-  handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
-  handleChange: (newTab: MyProfileTabsEnum) => void;
-  addComment: (
-    postId: string,
-    content: string,
-    parent: string,
-  ) => Promise<void>;
-  handleScroll: () => void;
-  errorMessage: string;
-  userProfile: string;
-  postCount: number;
-  followerCount: number;
-  isEditProfileOpen: boolean;
-  handleEditProfileClose: () => void;
-  handleEditProfileOpen: () => void;
-  userInfo: {
-    name: string;
-    bio: string;
-    interests: string[];
-    birthdate: Date;
-    education: string[];
-    achievements: string;
-  };
-  userLikedPosts: ArticlesList[];
-  handleSave: (details: {
-    name: string;
-    bio: string;
-    birthdate: Date;
-    interests: string[];
-    education: string[];
-    achievements: string;
-  }) => Promise<void>;
-};
+import {
+  type userInfo,
+  type useMyProfilePage,
+} from "~/app/(with-sidebar)/myprofile/types/types";
 
 const useMyProfilePage = (): useMyProfilePage => {
   const { user } = useClerk();
@@ -65,20 +28,13 @@ const useMyProfilePage = (): useMyProfilePage => {
   const [post, setPosts] = useState<ArticlesList[]>([]);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
-  const [userInfo, setUserInfo] = useState<{
-    name: string;
-    bio: string;
-    interests: string[];
-    birthdate: Date;
-    education: string[];
-    achievements: string;
-  }>({
+  const [userInfo, setUserInfo] = useState<userInfo>({
     name: "",
     bio: "",
     interests: [],
     birthdate: new Date(),
     education: [],
-    achievements: "",
+    professionalAchievements: "",
   });
 
   const postMutation = trpc.post;
@@ -99,7 +55,7 @@ const useMyProfilePage = (): useMyProfilePage => {
     },
   );
 
-  useEffect(() => {
+  useMemo(() => {
     setUserInfo({
       name: userDetails?.name ?? "",
       bio: userDetails?.bio ?? "",
@@ -108,7 +64,7 @@ const useMyProfilePage = (): useMyProfilePage => {
         ? new Date(userDetails.birthdate)
         : new Date(),
       education: userDetails?.education ?? [],
-      achievements: userDetails?.professionalCredentials ?? "",
+      professionalAchievements: userDetails?.professionalCredentials ?? "",
     });
   }, [userDetails]);
 
@@ -297,14 +253,14 @@ const useMyProfilePage = (): useMyProfilePage => {
     interests,
     birthdate,
     education,
-    achievements,
+    professionalAchievements,
   }: {
     name: string;
     bio: string;
     birthdate: Date;
     interests: string[];
     education: string[];
-    achievements: string;
+    professionalAchievements: string;
   }) => {
     const toastId = toast.loading("Updating profile...");
 
@@ -315,7 +271,7 @@ const useMyProfilePage = (): useMyProfilePage => {
         email: user?.primaryEmailAddress?.emailAddress ?? "",
         birthdate,
         education,
-        achievements,
+        achievements: professionalAchievements,
         interests,
       });
       toast.update(toastId, {
@@ -331,7 +287,7 @@ const useMyProfilePage = (): useMyProfilePage => {
         interests,
         birthdate,
         education,
-        achievements,
+        professionalAchievements,
       });
     } catch (error) {
       handleError(error);
@@ -343,6 +299,54 @@ const useMyProfilePage = (): useMyProfilePage => {
       });
     }
   };
+
+  const callSave = async ({
+    name,
+    bio,
+    birthdate,
+    interests,
+    education,
+    professionalAchievements,
+  }: saveUserInfo) => {
+    try {
+      await handleSave({
+        name,
+        birthdate,
+        bio: bio ?? "",
+        interests: interests ?? [],
+        education: education ?? [],
+        professionalAchievements: professionalAchievements ?? "",
+      });
+      handleEditProfileClose();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // const handleSaveHook = async (profileData: EditProfileDetails) => {
+  //   try {
+  //     const {
+  //       name,
+  //       bio ,
+  //       birthdate,
+  //       interests,
+  //       education,
+  //       professionalAchievements,
+  //     } = profileData;
+
+  //     await handleSave({
+  //       name,
+  //       birthdate,
+  //       bio: bio ?? "",
+  //       interests: interests ?? [],
+  //       education: education ?? [],
+  //       professionalAchievements: professionalAchievements ?? "",
+  //     });
+  //     handleEditProfileClose();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const handleScroll = useCallback(() => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
@@ -399,6 +403,8 @@ const useMyProfilePage = (): useMyProfilePage => {
     handleSave,
     userLikedPosts: userLikedPosts ?? [],
     userInfo,
+    callSave,
+    // handleSaveHook,
   };
 };
 
