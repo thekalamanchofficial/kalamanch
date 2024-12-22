@@ -1,6 +1,6 @@
 import {
   MyProfileTabsEnum,
-  type saveUserInfo,
+  type SaveUserInfo,
 } from "~/app/(with-sidebar)/myprofile/types/types";
 import {
   type ArticlesList,
@@ -14,11 +14,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
 import { toast } from "react-toastify";
 import {
-  type userInfo,
-  type useMyProfilePage,
+  type UserInfo,
+  type UseMyProfilePage,
 } from "~/app/(with-sidebar)/myprofile/types/types";
 
-const useMyProfilePage = (): useMyProfilePage => {
+const useMyProfilePage = (): UseMyProfilePage => {
   const { user } = useClerk();
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
 
@@ -28,7 +28,7 @@ const useMyProfilePage = (): useMyProfilePage => {
   const [post, setPosts] = useState<ArticlesList[]>([]);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
-  const [userInfo, setUserInfo] = useState<userInfo>({
+  const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
     bio: "",
     interests: [],
@@ -55,7 +55,7 @@ const useMyProfilePage = (): useMyProfilePage => {
     },
   );
 
-  useMemo(() => {
+  useEffect(() => {
     setUserInfo({
       name: userDetails?.name ?? "",
       bio: userDetails?.bio ?? "",
@@ -307,7 +307,7 @@ const useMyProfilePage = (): useMyProfilePage => {
     interests,
     education,
     professionalAchievements,
-  }: saveUserInfo) => {
+  }: SaveUserInfo) => {
     try {
       await handleSave({
         name,
@@ -322,31 +322,6 @@ const useMyProfilePage = (): useMyProfilePage => {
       console.error(error);
     }
   };
-
-  // const handleSaveHook = async (profileData: EditProfileDetails) => {
-  //   try {
-  //     const {
-  //       name,
-  //       bio ,
-  //       birthdate,
-  //       interests,
-  //       education,
-  //       professionalAchievements,
-  //     } = profileData;
-
-  //     await handleSave({
-  //       name,
-  //       birthdate,
-  //       bio: bio ?? "",
-  //       interests: interests ?? [],
-  //       education: education ?? [],
-  //       professionalAchievements: professionalAchievements ?? "",
-  //     });
-  //     handleEditProfileClose();
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   const handleScroll = useCallback(() => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
@@ -404,7 +379,6 @@ const useMyProfilePage = (): useMyProfilePage => {
     userLikedPosts: userLikedPosts ?? [],
     userInfo,
     callSave,
-    // handleSaveHook,
   };
 };
 

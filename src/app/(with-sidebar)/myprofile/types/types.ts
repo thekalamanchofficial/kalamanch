@@ -14,7 +14,7 @@ export type EditProfileDetails = {
   professionalAchievements?: string;
 };
 
-export type userSchema = {
+export type UserSchema = {
   name: string;
   birthdate: Date;
   interests: string[];
@@ -23,7 +23,7 @@ export type userSchema = {
   professionalAchievements?: string;
 };
 
-export type userInfo = {
+export type UserInfo = {
   name: string;
   bio: string;
   interests: string[];
@@ -32,9 +32,8 @@ export type userInfo = {
   professionalAchievements: string;
 };
 
-export type useMyProfilePage = {
-  // handleSaveHook: (details: userInfo) => Promise<void>;
-  callSave: (details: saveUserInfo) => Promise<void>;
+export type UseMyProfilePage = {
+  callSave: (details: SaveUserInfo) => Promise<void>;
   posts: ArticlesList[];
   setPosts: React.Dispatch<React.SetStateAction<ArticlesList[]>>;
   likedPosts: string[];
@@ -59,12 +58,12 @@ export type useMyProfilePage = {
   isEditProfileOpen: boolean;
   handleEditProfileClose: () => void;
   handleEditProfileOpen: () => void;
-  userInfo: userInfo;
+  userInfo: UserInfo;
   userLikedPosts: ArticlesList[];
-  handleSave: (details: userInfo) => Promise<void>;
+  handleSave: (details: UserInfo) => Promise<void>;
 };
 
-export type saveUserInfo = {
+export type SaveUserInfo = {
   name: string;
   bio?: string;
   birthdate: Date;

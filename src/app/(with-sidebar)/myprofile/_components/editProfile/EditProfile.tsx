@@ -31,6 +31,7 @@ export type EditProfileProps = {
   profileData: EditProfileDetails;
   handleProfileSave: (data: EditProfileDetails) => Promise<void>;
 };
+
 export const EditProfile: React.FC<EditProfileProps> = ({
   open,
   handleClose,

@@ -5,7 +5,7 @@ import CustomTabs from "~/app/_components/CustomTabs/CustomTabs";
 import ProfileCard from "~/app/(with-sidebar)/myprofile/_components/profileCard/ProfileCard";
 import { tabs } from "~/app/(with-sidebar)/myprofile/_config/config";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
-import useMyProfilePage from "~/app/(with-sidebar)/myprofile/_hooks/useMyProfile";
+import UseMyProfilePage from "~/app/(with-sidebar)/myprofile/_hooks/useMyProfile";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import Loader from "~/app/_components/loader/Loader";
 import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
@@ -33,7 +33,7 @@ const MyProfile = () => {
     callSave,
     userInfo,
     userLikedPosts,
-  } = useMyProfilePage();
+  } = UseMyProfilePage();
 
   const renderUI = useMemo(() => {
     if (errorMessage) {
@@ -129,7 +129,7 @@ const MyProfile = () => {
     <Grid columns={1}>
       <ProfileCard
         coverImage="https://picsum.photos/200"
-        bio={userInfo.bio ? userInfo.bio : ""}
+        bio={userInfo.bio ?? ""}
         followers={followerCount}
         posts={postCount}
         profileImage={userProfile}
