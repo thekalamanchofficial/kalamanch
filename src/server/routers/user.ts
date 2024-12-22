@@ -9,6 +9,9 @@ const userSchema = yup.object({
   name: yup.string().required(),
   birthdate: yup.date().nullable().default(null),
   profile: yup.string().optional(),
+  education: yup.array(yup.string()).optional().default([]),
+  professionalAchievements: yup.string().optional().default(""),
+  bio: yup.string().optional().default(""),
   interests: yup.array(yup.string()).default([]),
   followers: yup.array(yup.string()).default([]),
   following: yup.array(yup.string()).default([]),
@@ -24,6 +27,19 @@ export const userRouter = router({
       handleError(error);
     }
   }),
+  getUserDetails: publicProcedure
+    .input(yup.string().email())
+    .query(async ({ input }) => {
+      const userDetails = await prisma.user.findUnique({
+        where: { email: input },
+        include: {
+          posts: true,
+        },
+      });
+
+      return userDetails;
+    }),
+
   addUser: publicProcedure.input(userSchema).mutation(async ({ input }) => {
     const user = await prisma.user.create({
       data: {
@@ -38,23 +54,36 @@ export const userRouter = router({
     });
     return user;
   }),
-  updateUser: publicProcedure.input(userSchema).mutation(async ({ input }) => {
-    const user = await prisma.user.update({
-      where: { email: input.email },
-      data: {
-        name: input.name,
-        birthdate: input.birthdate,
-        profile: input.profile,
-        interests: input.interests?.filter(
-          (interest): interest is string => interest !== undefined,
-        ),
-        following: input.following?.filter((f): f is string => f !== undefined),
-        followers: input.followers?.filter((f): f is string => f !== undefined),
-        bookmarks: input.bookmarks?.filter((b): b is string => b !== undefined),
-      },
-    });
-    return user;
-  }),
+  updateUser: publicProcedure
+    .input(
+      yup.object({
+        name: yup.string(),
+        email: yup.string().email().required(),
+        bio: yup.string().optional(),
+        interests: yup.array(yup.string()).required().min(1),
+        birthdate: yup.date(),
+        education: yup.array(yup.string()).optional(),
+        achievements: yup.string().optional(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.update({
+        where: { email: input.email },
+        data: {
+          name: input.name,
+          bio: input.bio,
+          birthdate: input.birthdate,
+          education: input.education?.filter(
+            (edu): edu is string => edu !== undefined,
+          ),
+          interests: input.interests?.filter(
+            (interest): interest is string => interest !== undefined,
+          ),
+          professionalCredentials: input.achievements,
+        },
+      });
+      return user;
+    }),
   getUserFollowings: publicProcedure
     .input(
       yup.object({

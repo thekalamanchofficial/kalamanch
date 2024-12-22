@@ -2,14 +2,15 @@
 import { Grid2 as Grid } from "@mui/material";
 import React, { useMemo } from "react";
 import CustomTabs from "~/app/_components/CustomTabs/CustomTabs";
-import ProfileCard from "~/app/_components/myProfile/profileCard/ProfileCard";
-import { tabs } from "~/app/(with-sidebar)/myProfile/_config/config";
+import ProfileCard from "~/app/(with-sidebar)/myprofile/_components/profileCard/ProfileCard";
+import { tabs } from "~/app/(with-sidebar)/myprofile/_config/config";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
-import useMyProfilePage from "~/app/(with-sidebar)/myProfile/_hook/useMyProfile";
+import UseMyProfilePage from "~/app/(with-sidebar)/myprofile/_hooks/useMyProfile";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import Loader from "~/app/_components/loader/Loader";
 import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
+import { EditProfile } from "./_components/editProfile/EditProfile";
 
 const MyProfile = () => {
   const {
@@ -24,7 +25,15 @@ const MyProfile = () => {
     handleChange,
     addComment,
     errorMessage,
-  } = useMyProfilePage();
+    postCount,
+    followerCount,
+    isEditProfileOpen,
+    handleEditProfileClose,
+    handleEditProfileOpen,
+    callSave,
+    userInfo,
+    userLikedPosts,
+  } = UseMyProfilePage();
 
   const renderUI = useMemo(() => {
     if (errorMessage) {
@@ -37,12 +46,25 @@ const MyProfile = () => {
     if (tab === STATIC_TEXTS.MY_PROFILE_PAGE.TABS[0]?.value) {
       return (
         <>
-          <PostsFeed
-            articlesList={postDataWithComments ?? []}
-            likedPosts={likedPosts}
-            handleLikeButton={handleLikeButton}
-            addComment={addComment}
-          />
+          {postDataWithComments.length > 0 ? (
+            <PostsFeed
+              articlesList={postDataWithComments ?? []}
+              likedPosts={likedPosts}
+              handleLikeButton={handleLikeButton}
+              addComment={addComment}
+            />
+          ) : (
+            <ShowMessage
+              title="No Posts Found."
+              style={{
+                height: "200px",
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            />
+          )}
           {queryLoading && skip > 0 ? (
             <Loader height="auto" width="auto" title="" />
           ) : null}
@@ -66,7 +88,7 @@ const MyProfile = () => {
       return (
         <>
           <PostsFeed
-            articlesList={postDataWithComments ?? []}
+            articlesList={userLikedPosts ?? []}
             likedPosts={likedPosts}
             handleLikeButton={handleLikeButton}
             addComment={addComment}
@@ -101,19 +123,29 @@ const MyProfile = () => {
     handleLikeButton,
     addComment,
     hasMorePosts,
+    userLikedPosts,
   ]);
   return (
     <Grid columns={1}>
       <ProfileCard
         coverImage="https://picsum.photos/200"
-        bio="bio"
-        followers="1M"
-        posts={postDataWithComments.length}
+        bio={userInfo.bio ?? ""}
+        followers={followerCount}
+        posts={postCount}
         profileImage={userProfile}
-        name="kalamanch"
+        name={userInfo.name}
+        handleEditProfileOpen={handleEditProfileOpen}
       />
       <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
       {renderUI}
+      {isEditProfileOpen && (
+        <EditProfile
+          open={isEditProfileOpen}
+          handleClose={handleEditProfileClose}
+          profileData={userInfo}
+          handleProfileSave={callSave}
+        />
+      )}
     </Grid>
   );
 };

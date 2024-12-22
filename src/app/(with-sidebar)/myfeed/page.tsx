@@ -24,6 +24,18 @@ const MyFeed = () => {
   } = useMyFeedPage();
 
   const renderUI = useMemo(() => {
+    if (postDataWithComments.length === 0 && !queryLoading) {
+      return (
+        <ShowMessage
+          title="No Posts Found."
+          style={{
+            height: "100%",
+            width: "100%",
+          }}
+        />
+      );
+    }
+
     if (errorMessage) {
       return <ErrorMessage message={errorMessage} />;
     }

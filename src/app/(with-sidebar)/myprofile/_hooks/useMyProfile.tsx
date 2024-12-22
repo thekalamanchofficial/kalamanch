@@ -1,4 +1,7 @@
-import { MyProfileTabsEnum } from "../types/types";
+import {
+  MyProfileTabsEnum,
+  type SaveUserInfo,
+} from "~/app/(with-sidebar)/myprofile/types/types";
 import {
   type ArticlesList,
   type Comment,
@@ -9,30 +12,13 @@ import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
+import { toast } from "react-toastify";
+import {
+  type UserInfo,
+  type UseMyProfilePage,
+} from "~/app/(with-sidebar)/myprofile/types/types";
 
-type useMyProfilePage = {
-  posts: ArticlesList[];
-  setPosts: React.Dispatch<React.SetStateAction<ArticlesList[]>>;
-  likedPosts: string[];
-  queryLoading: boolean;
-  hasMorePosts: boolean;
-  tab: MyProfileTabsEnum;
-  skip: number;
-  postDataWithComments: ArticlesList[];
-  setSkip: React.Dispatch<React.SetStateAction<number>>;
-  handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
-  handleChange: (newTab: MyProfileTabsEnum) => void;
-  addComment: (
-    postId: string,
-    content: string,
-    parent: string,
-  ) => Promise<void>;
-  handleScroll: () => void;
-  errorMessage: string;
-  userProfile: string;
-};
-
-const useMyProfilePage = (): useMyProfilePage => {
+const useMyProfilePage = (): UseMyProfilePage => {
   const { user } = useClerk();
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
 
@@ -40,10 +26,47 @@ const useMyProfilePage = (): useMyProfilePage => {
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean | undefined>(true);
   const [post, setPosts] = useState<ArticlesList[]>([]);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    name: "",
+    bio: "",
+    interests: [],
+    birthdate: new Date(),
+    education: [],
+    professionalAchievements: "",
+  });
 
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
   const commentMutation = trpc.comments;
+  const userMutation = trpc.user;
+
+  const { data: userDetails } = userMutation.getUserDetails.useQuery(
+    user?.primaryEmailAddress?.emailAddress,
+  );
+
+  const { data: userLikedPosts } = likeMutation.getUserLikedPost.useQuery(
+    {
+      userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+    },
+    {
+      enabled: !!user?.primaryEmailAddress?.emailAddress,
+    },
+  );
+
+  useEffect(() => {
+    setUserInfo({
+      name: userDetails?.name ?? "",
+      bio: userDetails?.bio ?? "",
+      interests: userDetails?.interests ?? [],
+      birthdate: userDetails?.birthdate
+        ? new Date(userDetails.birthdate)
+        : new Date(),
+      education: userDetails?.education ?? [],
+      professionalAchievements: userDetails?.professionalCredentials ?? "",
+    });
+  }, [userDetails]);
 
   const {
     data: postData,
@@ -51,12 +74,13 @@ const useMyProfilePage = (): useMyProfilePage => {
     error,
   } = postMutation.getPosts.useQuery(
     {
+      authorId: userDetails?.id,
       skip,
       limit:
         skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
     },
     {
-      enabled: skip >= 0 && hasMorePosts === true,
+      enabled: Boolean(userDetails?.id) && skip >= 0 && hasMorePosts === true,
     },
   );
 
@@ -80,6 +104,14 @@ const useMyProfilePage = (): useMyProfilePage => {
   );
 
   const likePostMutation = likeMutation.likePost.useMutation();
+
+  const handleEditProfileOpen = () => {
+    setIsEditProfileOpen(true);
+  };
+
+  const handleEditProfileClose = () => {
+    setIsEditProfileOpen(false);
+  };
 
   const handleLikeButton = useCallback(
     async (postId: string): Promise<{ liked: boolean }> => {
@@ -213,6 +245,84 @@ const useMyProfilePage = (): useMyProfilePage => {
     setTab(newTab);
   };
 
+  const updateUser = userMutation.updateUser.useMutation();
+
+  const handleSave = async ({
+    name,
+    bio,
+    interests,
+    birthdate,
+    education,
+    professionalAchievements,
+  }: {
+    name: string;
+    bio: string;
+    birthdate: Date;
+    interests: string[];
+    education: string[];
+    professionalAchievements: string;
+  }) => {
+    const toastId = toast.loading("Updating profile...");
+
+    try {
+      await updateUser.mutateAsync({
+        name,
+        bio,
+        email: user?.primaryEmailAddress?.emailAddress ?? "",
+        birthdate,
+        education,
+        achievements: professionalAchievements,
+        interests,
+      });
+      toast.update(toastId, {
+        render: "Profile updated successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      setUserInfo({
+        name,
+        bio,
+        interests,
+        birthdate,
+        education,
+        professionalAchievements,
+      });
+    } catch (error) {
+      handleError(error);
+      toast.update(toastId, {
+        render: "Failed to update profile. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const callSave = async ({
+    name,
+    bio,
+    birthdate,
+    interests,
+    education,
+    professionalAchievements,
+  }: SaveUserInfo) => {
+    try {
+      await handleSave({
+        name,
+        birthdate,
+        bio: bio ?? "",
+        interests: interests ?? [],
+        education: education ?? [],
+        professionalAchievements: professionalAchievements ?? "",
+      });
+      handleEditProfileClose();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleScroll = useCallback(() => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
     const bottomReached = scrollHeight - scrollTop - clientHeight < 10;
@@ -260,6 +370,15 @@ const useMyProfilePage = (): useMyProfilePage => {
     addComment,
     handleScroll,
     userProfile: user?.imageUrl ?? "",
+    postCount: userDetails?.posts.length ?? 0,
+    followerCount: userDetails?.followers.length ?? 0,
+    isEditProfileOpen,
+    handleEditProfileClose,
+    handleEditProfileOpen,
+    handleSave,
+    userLikedPosts: userLikedPosts ?? [],
+    userInfo,
+    callSave,
   };
 };
 
