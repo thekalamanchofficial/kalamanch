@@ -4,6 +4,8 @@ import { createTheme } from "@mui/material/styles";
 declare module "@mui/material/styles" {
   interface CommonColors {
     lightGray?: string;
+    gray?: string;
+    strokePrimary?: string;
   }
 }
 
@@ -23,6 +25,8 @@ const theme = createTheme({
       white: "#fff",
       black: "#101828",
       lightGray: "#F2F3F5",
+      gray: "#535353",
+      strokePrimary: "#E4E4E4",
     },
     text: {
       primary: "#101828",
