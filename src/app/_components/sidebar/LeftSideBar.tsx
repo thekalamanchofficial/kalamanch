@@ -16,7 +16,10 @@ import { type LeftSideBarProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { usePathname, useRouter } from "next/navigation";
 import UserMenu from "../userMenu/UserMenu";
 
-const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
+const LeftSideBar: React.FC<LeftSideBarProps> = ({
+  menuItems,
+  createPostFormOpen,
+}) => {
   const router = useRouter();
 
   const pathname = usePathname();
@@ -82,6 +85,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ menuItems }) => {
             alignItems: "center",
             px: "12px",
           }}
+          onClick={createPostFormOpen}
         >
           <Typography
             variant="h6"
