@@ -1,3 +1,4 @@
+"use client";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddIcon from "@mui/icons-material/Add";
 import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhoto";

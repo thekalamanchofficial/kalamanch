@@ -1,3 +1,4 @@
+"use client";
 import {
   Button,
   Chip,
@@ -128,30 +129,6 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           )}
         />
 
-        {/* <Controller
-          control={control}
-          name="thumbnailUrl"
-          defaultValue={createPostFormData.thumbnailUrl}
-          render={({ field: { onChange } }) => (
-            <FormControl fullWidth>
-              <Typography variant="h6" gutterBottom>
-                Upload Thumbnail
-              </Typography>
-              <TextField
-                type="file"
-                onChange={(e) =>
-                  onChange((e.target as HTMLInputElement).files?.[0] ?? null)
-                }
-                id="thumbnail"
-                helperText={errors?.thumbnailUrl?.message}
-                error={!!errors?.thumbnailUrl?.message}
-                variant="outlined"
-                fullWidth
-                sx={{ mb: 4, mt: 1 }}
-              />
-            </FormControl>
-          )}
-        /> */}
         <Controller
           control={control}
           name="thumbnailUrl"
@@ -180,7 +157,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         <Controller
           control={control}
           name="postType"
-          defaultValue={createPostFormData.postType ?? ""} // Ensure it matches the Select value
+          defaultValue={createPostFormData.postType ?? ""}
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth error={!!errors?.postType?.message}>
               <InputLabel id="postType-label">Post Type</InputLabel>

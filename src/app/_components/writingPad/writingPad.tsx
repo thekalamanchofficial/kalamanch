@@ -1,7 +1,5 @@
 "use client";
-
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toolbarConfig } from "./config/configs";
 import { useContentForm } from "./hooks/useContentForm";
@@ -11,6 +9,8 @@ import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FolderIcon from "@mui/icons-material/Folder";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { type EditorPost } from "~/app/editor/types/types";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 type WritingPadProps = {
   handleOpen: () => void;
