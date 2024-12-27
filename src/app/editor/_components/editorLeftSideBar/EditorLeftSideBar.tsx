@@ -5,12 +5,10 @@ import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutl
 import { Box, Button, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import React from "react";
+import { type Iteration } from "../../types/types";
 
 type editorLeftSideBarProps = {
-  iterations: Array<{
-    iterationName: string;
-    iterationContent: string;
-  }>;
+  iterations: Iteration[];
 };
 
 const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
@@ -126,6 +124,31 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
             width: "100%",
           }}
         >
+          <Box
+            sx={{
+              borderRadius: "4px",
+              border: "1px solid ",
+              borderColor: "common.strokePrimary",
+              padding: "10px",
+              marginTop: "8px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "16px",
+                color: "font.secondary",
+              }}
+            >{`Iteration 0`}</Typography>
+            <ArrowForwardIosOutlinedIcon
+              sx={{
+                color: "common.gray",
+                fontSize: "12px",
+              }}
+            />
+          </Box>
           {iterations?.map((item, index) => {
             return (
               <Box
@@ -139,14 +162,14 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
                   justifyContent: "space-between",
                   alignItems: "center",
                 }}
-                key={index}
+                key={index + 1}
               >
                 <Typography
                   sx={{
                     fontSize: "16px",
                     color: "font.secondary",
                   }}
-                >{`Iteration ${index}`}</Typography>
+                >{`Iteration ${index + 1}`}</Typography>
                 <ArrowForwardIosOutlinedIcon
                   sx={{
                     color: "common.gray",

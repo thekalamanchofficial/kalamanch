@@ -14,6 +14,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const handleCreatePostFormOpen = () => {
     setCreatePostFormOpen(true);
   };
+
   return (
     <Box
       sx={{
@@ -75,6 +76,14 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <CreatePostForm
           open={createPostFormOpen}
           handleClose={handleCreatePostFormClose}
+          createPostFormData={{
+            title: "",
+            targetAudience: [],
+            thumbnailUrl: "",
+            postType: "",
+            tags: [],
+            actors: [],
+          }}
         />
       )}
     </Box>

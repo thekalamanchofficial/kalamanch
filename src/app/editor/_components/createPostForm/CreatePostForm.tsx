@@ -24,22 +24,33 @@ import { useState } from "react";
 export type CreatePostFormProps = {
   open: boolean;
   handleClose: () => void;
+  createPostFormData: CreatePostFormType;
 };
 
 export const CreatePostForm: React.FC<CreatePostFormProps> = ({
   open,
   handleClose,
+  createPostFormData,
 }) => {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useCreatePostForm();
+  } = useCreatePostForm({
+    defaultValues: createPostFormData,
+  });
 
   const postType = useWatch({ control, name: "postType" });
   const [actors, setActors] = useState("");
 
-  const TARGET_AUDIENCE_OPTIONS = ["Kids", "Teens", "Adults", "Elderly"];
+  const TARGET_AUDIENCE_OPTIONS = [
+    "Kids",
+    "Teens",
+    "Adults",
+    "Elderly",
+    "Educators",
+    "Researchers",
+  ];
 
   return (
     <Dialog
@@ -58,6 +69,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         <Controller
           control={control}
           name="title"
+          defaultValue={createPostFormData.title}
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth>
               <TextField
@@ -80,27 +92,32 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         <Controller
           control={control}
           name="targetAudience"
+          defaultValue={createPostFormData.targetAudience}
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth>
               <Typography variant="h6" gutterBottom>
                 Select Target Audience
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-                {TARGET_AUDIENCE_OPTIONS.map((option) => (
-                  <Chip
-                    key={option}
-                    label={option}
-                    onClick={() => {
-                      if (value?.includes(option)) {
-                        onChange(value.filter((item) => item !== option));
-                      } else {
-                        onChange([...(value ?? []), option]);
-                      }
-                    }}
-                    color={value?.includes(option) ? "primary" : "default"}
-                    variant={value?.includes(option) ? "filled" : "outlined"}
-                  />
-                ))}
+                {TARGET_AUDIENCE_OPTIONS.map((option) => {
+                  const isSelected = value?.includes(option);
+
+                  return (
+                    <Chip
+                      key={option}
+                      label={option}
+                      onClick={() => {
+                        if (isSelected) {
+                          onChange(value.filter((item) => item !== option));
+                        } else {
+                          onChange([...(value ?? []), option]);
+                        }
+                      }}
+                      color={isSelected ? "primary" : "default"}
+                      variant={isSelected ? "filled" : "outlined"}
+                    />
+                  );
+                })}
               </Box>
               {errors?.targetAudience?.message && (
                 <Typography color="error" variant="body2">
@@ -111,9 +128,10 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           )}
         />
 
-        <Controller
+        {/* <Controller
           control={control}
-          name="thumbnail"
+          name="thumbnailUrl"
+          defaultValue={createPostFormData.thumbnailUrl}
           render={({ field: { onChange } }) => (
             <FormControl fullWidth>
               <Typography variant="h6" gutterBottom>
@@ -125,8 +143,32 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                   onChange((e.target as HTMLInputElement).files?.[0] ?? null)
                 }
                 id="thumbnail"
-                helperText={errors?.thumbnail?.message}
-                error={!!errors?.thumbnail?.message}
+                helperText={errors?.thumbnailUrl?.message}
+                error={!!errors?.thumbnailUrl?.message}
+                variant="outlined"
+                fullWidth
+                sx={{ mb: 4, mt: 1 }}
+              />
+            </FormControl>
+          )}
+        /> */}
+        <Controller
+          control={control}
+          name="thumbnailUrl"
+          defaultValue={createPostFormData.thumbnailUrl ?? null}
+          render={({ field: { onChange } }) => (
+            <FormControl fullWidth>
+              <Typography variant="h6" gutterBottom>
+                Upload Thumbnail
+              </Typography>
+              <TextField
+                type="file"
+                onChange={(e) =>
+                  onChange((e.target as HTMLInputElement).files?.[0] ?? null)
+                }
+                id="thumbnail"
+                helperText={errors?.thumbnailUrl?.message}
+                error={!!errors?.thumbnailUrl?.message}
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 4, mt: 1 }}
@@ -138,7 +180,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         <Controller
           control={control}
           name="postType"
-          defaultValue=""
+          defaultValue={createPostFormData.postType ?? ""} // Ensure it matches the Select value
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth error={!!errors?.postType?.message}>
               <InputLabel id="postType-label">Post Type</InputLabel>
@@ -166,6 +208,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           <Controller
             control={control}
             name="actors"
+            defaultValue={createPostFormData.actors}
             render={({ field: { value = [], onChange } }) => {
               const handleAddActors = (
                 e: React.KeyboardEvent<HTMLInputElement>,
@@ -185,7 +228,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
               return (
                 <FormControl fullWidth>
                   <Typography variant="h6" sx={{ mb: 1, mt: 2 }}>
-                    Education
+                    Actors
                   </Typography>
                   <TextField
                     type="text"
@@ -232,6 +275,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         <Controller
           control={control}
           name="tags"
+          defaultValue={createPostFormData.tags}
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth>
               <Typography variant="h6" gutterBottom>

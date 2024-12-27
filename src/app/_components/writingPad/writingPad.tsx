@@ -1,5 +1,6 @@
 "use client";
 
+import EditNoteIcon from "@mui/icons-material/EditNote";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toolbarConfig } from "./config/configs";
@@ -9,7 +10,16 @@ import { Box, Button, Typography } from "@mui/material";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FolderIcon from "@mui/icons-material/Folder";
 import ChecklistIcon from "@mui/icons-material/Checklist";
-export function WritingPad() {
+import { type EditorPost } from "~/app/editor/types/types";
+
+type WritingPadProps = {
+  handleOpen: () => void;
+  editorPostData: EditorPost;
+};
+const WritingPad: React.FC<WritingPadProps> = ({
+  handleOpen,
+  editorPostData,
+}) => {
   const { handleSubmit, reset, control } = useContentForm();
 
   const onSubmit = (data: { content: string }) => {
@@ -39,13 +49,13 @@ export function WritingPad() {
             flex: 1,
             height: "calc(100vh - 300px)",
             maxHeight: "calc(100vh - 200px)",
-            // height: "auto",
             padding: "10px",
           }}
         >
           <Controller
             control={control}
             name="content"
+            defaultValue={editorPostData.content}
             render={({ field }) => (
               <ReactQuill
                 {...field}
@@ -75,6 +85,28 @@ export function WritingPad() {
             padding: "10px",
           }}
         >
+          <Button
+            sx={{
+              backgroundColor: "secondary.main",
+              minHeight: "auto",
+              color: "primary.main",
+              py: "8px",
+              px: "16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+            onClick={handleOpen}
+          >
+            <EditNoteIcon />
+            <Typography
+              sx={{
+                fontSize: "14px",
+              }}
+            >
+              Edit details
+            </Typography>
+          </Button>
           <Button
             sx={{
               backgroundColor: "secondary.main",
@@ -143,4 +175,6 @@ export function WritingPad() {
       </form>
     </Box>
   );
-}
+};
+
+export default WritingPad;

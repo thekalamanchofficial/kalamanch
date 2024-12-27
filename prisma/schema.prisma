@@ -133,7 +133,7 @@ enum PostType {
 model Metadata {
   id             String       @id @default(auto()) @map("_id") @db.ObjectId
   title          String
-  targetAudience String
+  targetAudience String[]
   thumbnailUrl   String
   postType       PostType
   actors         String[]     @default([])

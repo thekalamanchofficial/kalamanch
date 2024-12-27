@@ -5,7 +5,7 @@ export const createPostFormSchema = Yup.object().shape({
   targetAudience: Yup.array()
     .min(1, "Select at least one target audience")
     .required(),
-  thumbnail: Yup.string().required("Thumbnail is required"),
+  thumbnailUrl: Yup.string().required("Thumbnail is required"),
   postType: Yup.string().required("Post Type is required"),
   tags: Yup.array().min(1, "At least one interests are required").required(),
   actors: Yup.array().default([]),

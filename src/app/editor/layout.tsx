@@ -1,9 +1,9 @@
 "use client";
 import React, { type ReactNode } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
-import editorMockData from "./mockDataEditor/mockdata";
 import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
 import EditorLeftSideBar from "./_components/editorLeftSideBar/EditorLeftSideBar";
+import editorMockData from "./mockDataEditor/mockdata";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
@@ -35,7 +35,9 @@ const Layout = ({ children }: { children: ReactNode }) => {
             mr: 4,
           }}
         >
-          <EditorLeftSideBar iterations={editorMockData.iterations} />
+          <EditorLeftSideBar
+            iterations={editorMockData.editorPost.iterations}
+          />
         </Grid>
         <Grid
           size={7}
