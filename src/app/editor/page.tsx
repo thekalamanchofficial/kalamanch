@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import WritingPad from "../_components/writingPad/writingPad";
+import WritingPad from "../_components/writingPad/WritingPad";
 import { Box, Grid2 as Grid } from "@mui/material";
 import CustomTabs from "../_components/CustomTabs/CustomTabs";
 import { tabs } from "./_config/config";
@@ -38,7 +38,6 @@ const Page = () => {
           alignItems: "start",
           px: "4px",
           pt: "8px",
-          borderBottom: "1px solid #E0E0E0",
         }}
       >
         <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />

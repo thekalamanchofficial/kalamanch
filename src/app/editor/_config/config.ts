@@ -11,3 +11,12 @@ export const tabs: { label: string; value: EditorTabsEnum }[] = [
     value: EditorTabsEnum.PUBLISHED,
   },
 ];
+
+export const TARGET_AUDIENCE_OPTIONS = [
+  "Kids",
+  "Teens",
+  "Adults",
+  "Elderly",
+  "Educators",
+  "Researchers",
+];

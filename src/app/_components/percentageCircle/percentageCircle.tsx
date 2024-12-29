@@ -1,70 +1,40 @@
-import React from "react";
+import * as React from "react";
+import CircularProgress, {
+  type CircularProgressProps,
+} from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
-const PercentageCircle = ({
-  circleSize = 168,
-  percent = 0,
-  fontColor = "rgba(0,0,0,.5)",
-  circleColor = "#30b37e",
-  circleInnerColor = "#d9f5ea",
-}) => {
-  const validPercent = Math.floor(Math.max(Math.min(percent, 100), 0));
-
-  const strokeWidth = circleSize / 14;
-  const diameter = circleSize - strokeWidth;
-  const radius = diameter / 2;
-  const circumference = 2 * Math.PI * radius;
-  const pCircumference = (circumference * validPercent) / 100;
-  const x = circleSize / 2;
-  const y = (circleSize - diameter) / 2;
-  const fontSize = circleSize / 3.73;
-  const textX = circleSize / 2 - fontSize / 1.8;
-  const d = `
-    M ${x} ${y}
-    a ${radius} ${radius} 0 0 1 0 ${diameter}
-    a ${radius} ${radius} 0 0 1 0 ${diameter * -1}
-  `;
-
+function percentageCircle(props: CircularProgressProps & { value: number }) {
   return (
-    <div
-      style={{
-        position: "relative",
-        width: circleSize,
-        height: circleSize,
-      }}
-    >
-      <svg viewBox={`0 0 ${circleSize} ${circleSize}`} stroke={circleColor}>
-        <path
-          style={{
-            fill: "none",
-            stroke: circleInnerColor,
-            strokeWidth,
-          }}
-          d={d}
-        />
-        <path
-          style={{
-            fill: "none",
-            strokeWidth,
-          }}
-          d={d}
-          strokeDasharray={`${pCircumference} ${circumference}`}
-        />
-      </svg>
-      <div
-        style={{
+    <Box sx={{ position: "relative", display: "inline-flex" }}>
+      <CircularProgress
+        variant="determinate"
+        {...props}
+        size="4rem"
+        thickness={5}
+        color="primary"
+      />
+      <Box
+        sx={{
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
           position: "absolute",
-          width: "100%",
-          textAlign: "center",
-          color: fontColor,
-          top: textX,
-          fontSize,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        {validPercent}
-        <span style={{ fontSize: fontSize / 2 }}>%</span>
-      </div>
-    </div>
+        <Typography
+          variant="caption"
+          component="div"
+          sx={{ color: "text.secondary", fontSize: "14px" }}
+        >{`${Math.round(props.value)}%`}</Typography>
+      </Box>
+    </Box>
   );
-};
+}
 
-export default PercentageCircle;
+export default percentageCircle;

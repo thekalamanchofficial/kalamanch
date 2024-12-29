@@ -7,7 +7,6 @@ import { SignUpFormStages, STEPS } from "~/app/sign-up/_config/config";
 import OTPVerification from "~/app/_components/signUp/OtpForm";
 
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-
 import CheckPending from "~/assets/svg/CheckPending.svg";
 import CheckComplete from "~/assets/svg/CheckComplete.svg";
 import { useSignUpPage } from "../_hooks/useSignUpPage";

@@ -142,12 +142,13 @@ model Metadata {
 }
 
 model Iterations {
-  id           String     @id @default(auto()) @map("_id") @db.ObjectId
-  content      String
-  EditorPost   EditorPost @relation(fields: [editorPostId], references: [id])
-  editorPostId String     @db.ObjectId
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  iterationName String
+  content       String
+  EditorPost    EditorPost @relation(fields: [editorPostId], references: [id])
+  editorPostId  String     @db.ObjectId
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 
 model EditorPost {

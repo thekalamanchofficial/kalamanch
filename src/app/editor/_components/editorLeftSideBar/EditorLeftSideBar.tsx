@@ -62,8 +62,8 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
         container
         sx={{
           marginTop: 2,
-          px: 2,
-          gap: "14px",
+          px: 3,
+          gap: "20px",
         }}
       >
         <Typography
@@ -80,7 +80,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
             display: "flex",
             justifyContent: "start",
             alignItems: "center",
-            gap: "4px",
+            gap: "8px",
             width: "100%",
             backgroundColor: "primary.main",
             minHeight: "auto",
@@ -102,7 +102,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
             display: "flex",
             justifyContent: "start",
             alignItems: "center",
-            gap: "4px",
+            gap: "8px",
             width: "100%",
             backgroundColor: "secondary.main",
             minHeight: "auto",
@@ -130,7 +130,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
               borderRadius: "4px",
               border: "1px solid ",
               borderColor: "common.strokePrimary",
-              padding: "10px",
+              padding: "8px 10px",
               marginTop: "8px",
               display: "flex",
               justifyContent: "space-between",
@@ -139,10 +139,15 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
           >
             <Typography
               sx={{
-                fontSize: "16px",
+                fontSize: "14px",
                 color: "font.secondary",
               }}
-            >{`Iteration 0`}</Typography>
+            >
+              {" "}
+              {iterations[0]?.iterationName !== ""
+                ? iterations[0]?.iterationName
+                : `Iteration 0`}
+            </Typography>
             <ArrowForwardIosOutlinedIcon
               sx={{
                 color: "common.gray",
@@ -157,8 +162,8 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
                   borderRadius: "4px",
                   border: "1px solid ",
                   borderColor: "common.strokePrimary",
-                  padding: "10px",
-                  marginTop: "8px",
+                  padding: "8px 10px",
+                  marginTop: "10px",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -167,10 +172,14 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
               >
                 <Typography
                   sx={{
-                    fontSize: "16px",
+                    fontSize: "14px",
                     color: "font.secondary",
                   }}
-                >{`Iteration ${index + 1}`}</Typography>
+                >
+                  {iterations[index]?.iterationName != ""
+                    ? iterations[index]?.iterationName
+                    : `Iteration ${index + 1}`}
+                </Typography>
                 <ArrowForwardIosOutlinedIcon
                   sx={{
                     color: "common.gray",

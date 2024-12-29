@@ -14,6 +14,7 @@ export type CreatePostFormType = {
 
 export type Iteration = {
   id: string;
+  iterationName: string;
   content: string;
   editorPostId: string;
   createdAt: string;

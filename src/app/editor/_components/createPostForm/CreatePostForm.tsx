@@ -17,10 +17,11 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { type CreatePostFormType } from "../../types/types";
-import { Controller, useWatch } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
 import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
 import { useState } from "react";
+import { TARGET_AUDIENCE_OPTIONS } from "~/app/editor/_config/config";
 
 export type CreatePostFormProps = {
   open: boolean;
@@ -37,21 +38,13 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
     handleSubmit,
     control,
     formState: { errors },
+    watch,
   } = useCreatePostForm({
     defaultValues: createPostFormData,
   });
 
-  const postType = useWatch({ control, name: "postType" });
+  const postType = watch("postType");
   const [actors, setActors] = useState("");
-
-  const TARGET_AUDIENCE_OPTIONS = [
-    "Kids",
-    "Teens",
-    "Adults",
-    "Elderly",
-    "Educators",
-    "Researchers",
-  ];
 
   return (
     <Dialog
@@ -303,7 +296,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           onClick={handleSubmit((data) => console.log(data))}
           sx={{ width: "100px" }}
         >
-          Save
+          Create
         </Button>
       </DialogActions>
     </Dialog>
