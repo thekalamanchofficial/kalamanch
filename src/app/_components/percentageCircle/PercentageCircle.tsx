@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 const PercentageCircle = (
-  props: CircularProgressProps & { value: number; color: string },
+  props: CircularProgressProps & { value: number; fillColor: string },
 ) => {
   return (
     <Box sx={{ position: "relative", display: "inline-flex" }}>
@@ -16,7 +16,7 @@ const PercentageCircle = (
         size="4rem"
         thickness={5}
         sx={{
-          color: `${props.color} !important`,
+          color: `${props.fillColor} !important`,
         }}
       />
       <Box

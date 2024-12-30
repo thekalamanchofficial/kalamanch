@@ -88,7 +88,7 @@ const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({
                 <PercentageCircle
                   variant="determinate"
                   value={item.value}
-                  color={color}
+                  fillColor={color}
                 />
               </Box>
             );
