@@ -7,6 +7,7 @@ import { Box, Button, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import React from "react";
 import { type Iteration } from "../../types/types";
+import { useRouter } from "next/navigation";
 
 type editorLeftSideBarProps = {
   iterations: Iteration[];
@@ -15,6 +16,7 @@ type editorLeftSideBarProps = {
 const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
   iterations,
 }) => {
+  const router = useRouter();
   return (
     <Grid
       columns={1}
@@ -34,6 +36,10 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
           alignItems: "center",
           py: "4px",
           px: 2,
+          cursor: "pointer",
+        }}
+        onClick={() => {
+          router.back();
         }}
       >
         <ArrowBackIosIcon

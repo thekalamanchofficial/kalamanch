@@ -26,7 +26,6 @@ const useLazyLoading: UseLazyLoading = ({
   hasMoreData,
   setHasMoreData,
 }) => {
-  console.log(hasMoreData);
   const handleScroll = useCallback(() => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
     const bottomReached = scrollHeight - scrollTop - clientHeight < 10;
