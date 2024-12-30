@@ -1,6 +1,6 @@
 import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import React from "react";
-import PercentageCircle from "~/app/_components/percentageCircle/percentageCircle";
+import PercentageCircle from "~/app/_components/percentageCircle/PercentageCircle";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 type editorRightSideBarProps = {

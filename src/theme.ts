@@ -34,6 +34,7 @@ const theme = createTheme({
       percentageYellow: "#E2AC22",
       percentageRed: "#B71717",
     },
+
     text: {
       primary: "#101828",
       secondary: "#4D5565",
