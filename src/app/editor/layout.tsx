@@ -1,11 +1,11 @@
 "use client";
-import React, { type ReactNode } from "react";
+import React, { type ReactElement } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
 import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
 import EditorLeftSideBar from "./_components/editorLeftSideBar/EditorLeftSideBar";
 import editorMockData from "./mockDataEditor/mockdata";
 
-const Layout = ({ children }: { children: ReactNode }) => {
+const Layout = ({ children }: { children: ReactElement }) => {
   return (
     <Box
       sx={{

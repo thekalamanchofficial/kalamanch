@@ -12,6 +12,15 @@ type editorRightSideBarProps = {
 const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({
   accuracy,
 }) => {
+  const getColor = (value: number) => {
+    if (value < 40) {
+      return "#B71717";
+    } else if (value < 70) {
+      return "#E2AC22";
+    } else {
+      return "#17B752";
+    }
+  };
   return (
     <Grid
       columns={1}
@@ -56,6 +65,7 @@ const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({
       >
         {accuracy?.map(
           (item: { parameterName: string; value: number }, index: number) => {
+            const color = getColor(item.value);
             return (
               <Box
                 key={index}
@@ -75,7 +85,11 @@ const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({
                   {`${item.parameterName} `}
                 </Typography>
 
-                <PercentageCircle variant="determinate" value={item.value} />
+                <PercentageCircle
+                  variant="determinate"
+                  value={item.value}
+                  color={color}
+                />
               </Box>
             );
           },

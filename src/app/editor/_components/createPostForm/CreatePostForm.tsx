@@ -22,6 +22,7 @@ import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
 import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
 import { useState } from "react";
 import { TARGET_AUDIENCE_OPTIONS } from "~/app/editor/_config/config";
+import { useRouter } from "next/navigation";
 
 export type CreatePostFormProps = {
   open: boolean;
@@ -43,8 +44,21 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
     defaultValues: createPostFormData,
   });
 
+  const router = useRouter();
+
   const postType = watch("postType");
   const [actors, setActors] = useState("");
+
+  const handleFormSubmit = (data: CreatePostFormType) => {
+    const queryData = {
+      ...data,
+      targetAudience: data.targetAudience.join(","),
+      tags: data.tags.join(","),
+      actors: data.actors.join(","),
+    };
+    const query = new URLSearchParams(queryData).toString();
+    router.push(`/editor?${query}`);
+  };
 
   return (
     <Dialog
@@ -293,7 +307,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         </Button>
         <Button
           variant="contained"
-          onClick={handleSubmit((data) => console.log(data))}
+          onClick={handleSubmit(handleFormSubmit)}
           sx={{ width: "100px" }}
         >
           Create
