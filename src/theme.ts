@@ -4,6 +4,11 @@ import { createTheme } from "@mui/material/styles";
 declare module "@mui/material/styles" {
   interface CommonColors {
     lightGray?: string;
+    gray?: string;
+    strokePrimary?: string;
+    percentageGreen?: string;
+    percentageYellow?: string;
+    percentageRed?: string;
   }
 }
 
@@ -23,7 +28,13 @@ const theme = createTheme({
       white: "#fff",
       black: "#101828",
       lightGray: "#F2F3F5",
+      gray: "#535353",
+      strokePrimary: "#E4E4E4",
+      percentageGreen: "#17B752",
+      percentageYellow: "#E2AC22",
+      percentageRed: "#B71717",
     },
+
     text: {
       primary: "#101828",
       secondary: "#4D5565",

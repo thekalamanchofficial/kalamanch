@@ -123,3 +123,44 @@ model FeaturedAuthor {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+enum PostType {
+  ARTICLE
+  VIDEO
+  PODCAST
+}
+
+model Metadata {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  targetAudience String[]
+  thumbnailUrl   String
+  postType       PostType
+  actors         String[]     @default([])
+  tags           String[]
+  editorPosts    EditorPost[]
+}
+
+model Iterations {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  iterationName String
+  content       String
+  EditorPost    EditorPost @relation(fields: [editorPostId], references: [id])
+  editorPostId  String     @db.ObjectId
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model EditorPost {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  authorName    String
+  authorProfile String
+  authorId      String       @db.ObjectId
+  content       String
+  metadataId    String       @db.ObjectId
+  metadata      Metadata     @relation(fields: [metadataId], references: [id], onDelete: Cascade)
+  Iterations    Iterations[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}

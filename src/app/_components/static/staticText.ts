@@ -89,4 +89,10 @@ export const STATIC_TEXTS = {
       NO_POST: "No featured posts available right now. Check back later.",
     },
   },
+  EDITOR_PAGE: {
+    HEADING: "Editor",
+    ADD_ITERATION: "Add Iteration",
+    IMPORT_TEXT: "Import text from image",
+    RIGHTSIDEBAR_HEADING: "Technical Accuracy",
+  },
 };

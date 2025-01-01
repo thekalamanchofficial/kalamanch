@@ -1,11 +1,20 @@
 "use client";
-import React, { type ReactNode } from "react";
+import React, { useState, type ReactNode } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
 import RightSideBar from "~/app/_components/sidebar/RightSideBar";
 import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
 import LeftSideBar from "../_components/sidebar/LeftSideBar";
+import CreatePostForm from "../editor/_components/createPostForm/CreatePostForm";
 
 const Layout = ({ children }: { children: ReactNode }) => {
+  const [createPostFormOpen, setCreatePostFormOpen] = useState(false);
+  const handleCreatePostFormClose = () => {
+    setCreatePostFormOpen(false);
+  };
+  const handleCreatePostFormOpen = () => {
+    setCreatePostFormOpen(true);
+  };
+
   return (
     <Box
       sx={{
@@ -35,7 +44,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
             mr: 4,
           }}
         >
-          <LeftSideBar menuItems={MENU_ITEMS} />
+          <LeftSideBar
+            menuItems={MENU_ITEMS}
+            createPostFormOpen={handleCreatePostFormOpen}
+          />
         </Grid>
         <Grid
           size={7}
@@ -60,6 +72,20 @@ const Layout = ({ children }: { children: ReactNode }) => {
           <RightSideBar />
         </Grid>
       </Grid>
+      {createPostFormOpen && (
+        <CreatePostForm
+          open={createPostFormOpen}
+          handleClose={handleCreatePostFormClose}
+          createPostFormData={{
+            title: "",
+            targetAudience: [],
+            thumbnailUrl: "",
+            postType: "",
+            tags: [],
+            actors: [],
+          }}
+        />
+      )}
     </Box>
   );
 };

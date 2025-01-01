@@ -91,6 +91,7 @@ export type FollowButtonProps = {
 };
 export interface LeftSideBarProps {
   menuItems: MenuItemList[];
+  createPostFormOpen: () => void;
 }
 
 export type CommentSectionProps = {

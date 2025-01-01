@@ -92,7 +92,6 @@ export const useSignUpPage: UseSignUpPage = () => {
   const handleNext = async (data?: FormDataDetails): Promise<void> => {
     setFormStepNumber((prev) => prev + 1);
     setFormData((prev) => ({ ...prev, ...data }));
-    console.log("gbfnjbdjkdb", data);
 
     if (formStep === SignUpFormStages.DETAILS) {
       await finalSubmit(data);
