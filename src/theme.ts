@@ -65,6 +65,11 @@ const theme = createTheme({
       lineHeight: "21px",
       fontWeight: "bold",
     },
+    h4: {
+      fontSize: "15px",
+      lineHeight: "21px",
+      fontWeight: "550",
+    },
     subtitle1: {
       fontSize: "20px",
       lineHeight: "22px",
@@ -86,7 +91,6 @@ const theme = createTheme({
           boxShadow: "none",
           borderRadius: "4px",
           "&:hover": {
-            // backgroundColor: "transparent",
             boxShadow: "none",
           },
           minHeight: "56px",
@@ -106,6 +110,17 @@ const theme = createTheme({
         disableElevation: true,
       },
     },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+          "& .MuiTextField-root": {
+            "margin-bottom": "16px",
+            "margin-top": "8px",
+          },
+        },
+      },
+    },
     MuiTextField: {
       styleOverrides: {
         root: {
@@ -113,6 +128,16 @@ const theme = createTheme({
             "-webkit-text-fill-color": "black",
             "-webkit-box-shadow": "0 0 0px 1000px white inset",
           },
+          marginBottom: "8px",
+          marginTop: "8px",
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          height: "38px",
+          padding: 0,
         },
       },
     },
@@ -122,6 +147,20 @@ const theme = createTheme({
           "& .MuiInputBase-input:-webkit-autofill": {
             "-webkit-text-fill-color": "black",
             "-webkit-box-shadow": "0 0 0px 1000px white inset",
+          },
+          padding: "6px 9px",
+        },
+      },
+    },
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          minHeight: "48px",
+          "&.MuiButton-root": {
+            "min-height": "48px",
+          },
+          "&.MuiChip-root": {
+            "min-height": "32px",
           },
         },
       },

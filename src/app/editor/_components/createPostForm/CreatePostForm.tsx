@@ -23,6 +23,8 @@ import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
 import { useState } from "react";
 import { TARGET_AUDIENCE_OPTIONS } from "~/app/editor/_config/config";
 import { useRouter } from "next/navigation";
+import CloseIcon from "@mui/icons-material/Close";
+import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUploader";
 
 export type CreatePostFormProps = {
   open: boolean;
@@ -80,6 +82,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           defaultValue={createPostFormData.title}
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth>
+              <Typography variant="h4">Title</Typography>
               <TextField
                 type="text"
                 value={value}
@@ -103,7 +106,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           defaultValue={createPostFormData.targetAudience}
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h4" gutterBottom>
                 Select Target Audience
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
@@ -114,6 +117,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                     <Chip
                       key={option}
                       label={option}
+                      clickable
                       onClick={() => {
                         if (isSelected) {
                           onChange(value.filter((item) => item !== option));
@@ -121,8 +125,22 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                           onChange([...(value ?? []), option]);
                         }
                       }}
-                      color={isSelected ? "primary" : "default"}
-                      variant={isSelected ? "filled" : "outlined"}
+                      {...(isSelected && {
+                        onDelete: () => {
+                          onChange(value.filter((item) => item !== option));
+                        },
+                        deleteIcon: <CloseIcon />,
+                      })}
+                      sx={{
+                        backgroundColor: isSelected
+                          ? "secondary.main"
+                          : "grey.300",
+                        color: isSelected ? "text.primary" : "primary.main",
+                        border: isSelected ? "1px solid" : "none",
+                        borderColor: isSelected
+                          ? "primary.main"
+                          : "solid grey.300",
+                      }}
                     />
                   );
                 })}
@@ -142,21 +160,8 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           defaultValue={createPostFormData.thumbnailUrl ?? null}
           render={({ field: { onChange } }) => (
             <FormControl fullWidth>
-              <Typography variant="h6" gutterBottom>
-                Upload Thumbnail
-              </Typography>
-              <TextField
-                type="file"
-                onChange={(e) =>
-                  onChange((e.target as HTMLInputElement).files?.[0] ?? null)
-                }
-                id="thumbnail"
-                helperText={errors?.thumbnailUrl?.message}
-                error={!!errors?.thumbnailUrl?.message}
-                variant="outlined"
-                fullWidth
-                sx={{ mb: 4, mt: 1 }}
-              />
+              <Typography variant="h4">Upload Thumbnail</Typography>
+              <ThumbnailUploader onImageUpload={onChange} />
             </FormControl>
           )}
         />
@@ -167,15 +172,14 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           defaultValue={createPostFormData.postType ?? ""}
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth error={!!errors?.postType?.message}>
-              <InputLabel id="postType-label">Post Type</InputLabel>
+              <Typography variant="h4">Post type</Typography>
               <Select
-                labelId="postType-label"
                 value={value}
                 onChange={onChange}
                 id="postType"
-                label="Post Type"
                 variant="outlined"
-                sx={{ mb: 2 }}
+                sx={{ mb: 2, mt: 1, height: "50px" }}
+                placeholder="Select post type"
               >
                 <MenuItem value="blog">Blog</MenuItem>
                 <MenuItem value="article">Article</MenuItem>
@@ -211,9 +215,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
 
               return (
                 <FormControl fullWidth>
-                  <Typography variant="h6" sx={{ mb: 1, mt: 2 }}>
-                    Actors
-                  </Typography>
+                  <Typography variant="h4">Actors</Typography>
                   <TextField
                     type="text"
                     value={actors}
@@ -262,7 +264,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           defaultValue={createPostFormData.tags}
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h4" gutterBottom>
                 Select relevant tags
               </Typography>
               <Grid container spacing={1}>
@@ -281,8 +283,29 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                             onChange([...(value ?? []), interest]);
                           }
                         }}
-                        color={isSelected ? "primary" : "default"}
-                        variant={isSelected ? "filled" : "outlined"}
+                        {...(value.includes(interest) && {
+                          onDelete: () => {
+                            const newValue = value.filter(
+                              (item) => item !== interest,
+                            );
+                            onChange(newValue);
+                          },
+                          deleteIcon: <CloseIcon />,
+                        })}
+                        sx={{
+                          backgroundColor: value.includes(interest)
+                            ? "secondary.main"
+                            : "grey.300",
+                          color: value.includes(interest)
+                            ? "text.primary"
+                            : "primary.main",
+                          border: value.includes(interest)
+                            ? "1px solid"
+                            : "none",
+                          borderColor: value.includes(interest)
+                            ? "primary.main"
+                            : "solid grey.300",
+                        }}
                       />
                     </Grid>
                   );
