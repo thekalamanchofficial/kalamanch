@@ -54,9 +54,9 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
   const handleFormSubmit = (data: CreatePostFormType) => {
     const queryData = {
       ...data,
-      targetAudience: data.targetAudience.join(","),
-      tags: data.tags.join(","),
-      actors: data.actors.join(","),
+      targetAudience: data?.targetAudience?.join(",") ?? "",
+      tags: data?.tags?.join(",") ?? "",
+      actors: data?.actors?.join(",") ?? "",
     };
     const query = new URLSearchParams(queryData).toString();
     router.push(`/editor?${query}`);
@@ -120,14 +120,14 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                       clickable
                       onClick={() => {
                         if (isSelected) {
-                          onChange(value.filter((item) => item !== option));
+                          onChange(value?.filter((item) => item !== option));
                         } else {
                           onChange([...(value ?? []), option]);
                         }
                       }}
                       {...(isSelected && {
                         onDelete: () => {
-                          onChange(value.filter((item) => item !== option));
+                          onChange(value?.filter((item) => item !== option));
                         },
                         deleteIcon: <CloseIcon />,
                       })}
@@ -157,7 +157,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         <Controller
           control={control}
           name="thumbnailUrl"
-          defaultValue={createPostFormData.thumbnailUrl ?? null}
+          defaultValue={createPostFormData?.thumbnailUrl}
           render={({ field: { onChange } }) => (
             <FormControl fullWidth>
               <Typography variant="h4">Upload Thumbnail</Typography>
@@ -283,7 +283,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                             onChange([...(value ?? []), interest]);
                           }
                         }}
-                        {...(value.includes(interest) && {
+                        {...(value?.includes(interest) && {
                           onDelete: () => {
                             const newValue = value.filter(
                               (item) => item !== interest,
@@ -293,16 +293,16 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                           deleteIcon: <CloseIcon />,
                         })}
                         sx={{
-                          backgroundColor: value.includes(interest)
+                          backgroundColor: value?.includes(interest)
                             ? "secondary.main"
                             : "grey.300",
-                          color: value.includes(interest)
+                          color: value?.includes(interest)
                             ? "text.primary"
                             : "primary.main",
-                          border: value.includes(interest)
+                          border: value?.includes(interest)
                             ? "1px solid"
                             : "none",
-                          borderColor: value.includes(interest)
+                          borderColor: value?.includes(interest)
                             ? "primary.main"
                             : "solid grey.300",
                         }}

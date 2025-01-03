@@ -5,11 +5,11 @@ export enum EditorTabsEnum {
 }
 export type CreatePostFormType = {
   title: string;
-  targetAudience: string[];
-  thumbnailUrl: string;
-  postType: string;
-  tags: string[];
-  actors: string[];
+  targetAudience?: string[];
+  thumbnailUrl?: string;
+  postType?: string;
+  tags?: string[];
+  actors?: string[];
 };
 
 export type Iteration = {
