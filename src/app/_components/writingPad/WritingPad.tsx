@@ -10,6 +10,9 @@ import FolderIcon from "@mui/icons-material/Folder";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { type EditorPost } from "~/app/editor/types/types";
 import dynamic from "next/dynamic";
+import { trpc } from "~/server/client";
+// import { ObjectId } from "mongodb";
+
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 type WritingPadProps = {
@@ -21,9 +24,24 @@ const WritingPad: React.FC<WritingPadProps> = ({
   editorPostData,
 }) => {
   const { handleSubmit, reset, control } = useContentForm();
+  const editorMutation = trpc.editorPost.createPost.useMutation();
 
-  const onSubmit = (data: { content: string }) => {
-    console.log(data);
+  const onSubmit = async (data: { content: string }) => {
+    await editorMutation.mutateAsync({
+      title: "test",
+      authorName: "Kalamanch",
+      authorProfile: "https://avatars.githubusercontent.com/u/101991854?v=4",
+      authorId: "675fe69487db071e7a9dacc0",
+      metadataId: "32",
+      posts: [
+        {
+          iterationName: "test",
+          content: data.content,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+    });
   };
 
   return (

@@ -157,10 +157,7 @@ model EditorPost {
   authorName    String
   authorProfile String
   authorId      String       @db.ObjectId
-  content       String
+  posts         Iterations[]
   metadataId    String       @db.ObjectId
   metadata      Metadata     @relation(fields: [metadataId], references: [id], onDelete: Cascade)
-  Iterations    Iterations[]
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
 }
