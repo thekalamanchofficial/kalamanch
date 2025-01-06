@@ -1,7 +1,7 @@
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import OwlSVG from "~/assets/svg/owl.svg";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import CreatePostFormButton from "./CreatePostForm";
+import CreatePostFormButton from "./CreatePostFormButton";
 import UserMenu from "../userMenu/UserMenu";
 import { type LeftSideBarProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import LeftSideBarNavLinks from "./LeftSideBarNavLinks";
