@@ -90,9 +90,6 @@ export type FollowButtonProps = {
   style?: SxProps;
   isFollowing?: boolean;
 };
-export interface LeftSideBarProps {
-  menuItems: MenuItemList[];
-}
 
 export type CommentSectionProps = {
   comments: Comment[];
@@ -124,10 +121,3 @@ export type FeaturedPost = {
   likeCount: number;
 };
 
-export type LeftSideBarNavLinksProps = {
-  menuItems: {
-    label: string;
-    route: string;
-    icon: ReactNode;
-  }[];
-}
