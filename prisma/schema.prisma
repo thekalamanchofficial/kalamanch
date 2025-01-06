@@ -11,7 +11,7 @@ model User {
   id                      String           @id @default(auto()) @map("_id") @db.ObjectId
   email                   String           @unique
   name                    String
-  profile                 String?
+  profile                  String?
   birthdate               DateTime?
   interests               String[]
   bio                     String?
@@ -20,7 +20,7 @@ model User {
   following               String[]         @db.ObjectId
   followers               String[]         @db.ObjectId
   bookmarks               String[]         @db.ObjectId
-  featuredAuthor          FeaturedAuthor[]
+  featuredAuthors         AuthorInfo[]
   likes                   Like[]
   comments                Comment[]
   bids                    Bid[]
@@ -31,7 +31,7 @@ model Post {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   authorId      String   @db.ObjectId
   authorName    String
-  authorProfile String
+  authorProfile  String?
   title         String
   content       String
   media         Media
@@ -44,10 +44,12 @@ model Post {
   likes        Like[]
   comments     Comment[]
   bids         Bid[]
-  FeaturedPost FeaturedPost[]
+  isFeatured   Boolean    @default(false)
 
   @@index([tags])
   @@index([createdAt])
+  @@index([isFeatured])
+
 }
 
 type Media {
@@ -74,8 +76,8 @@ model Comment {
   postId    String   @db.ObjectId
   userId    String   @db.ObjectId
   parentId  String?  @db.ObjectId
-  name      String
-  profile   String
+  userName  String
+  userProfile  String?
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -104,26 +106,6 @@ model Bid {
   @@index([userId])
 }
 
-model FeaturedPost {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  postId        String @unique @db.ObjectId
-  title         String
-  authorName    String
-  authorProfile String
-  authorId      String @db.ObjectId
-
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-}
-
-model FeaturedAuthor {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  userId  String @db.ObjectId
-  name    String
-  profile String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 enum PostType {
   ARTICLE
   VIDEO
@@ -138,25 +120,23 @@ model Metadata {
   postType       PostType
   actors         String[]     @default([])
   tags           String[]
-  editorPosts    EditorPost[]
+  draftPosts    DraftPost[]
 }
 
 model Iterations {
   id            String     @id @default(auto()) @map("_id") @db.ObjectId
   iterationName String
   content       String
-  EditorPost    EditorPost @relation(fields: [editorPostId], references: [id])
-  editorPostId  String     @db.ObjectId
+  DraftPost     DraftPost @relation(fields: [draftPostId], references: [id])
+  draftPostId   String     @db.ObjectId
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }
 
-model EditorPost {
+model DraftPost {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
   title         String
-  authorName    String
-  authorProfile String
-  authorId      String       @db.ObjectId
+  author        AuthorInfo
   content       String
   metadataId    String       @db.ObjectId
   metadata      Metadata     @relation(fields: [metadataId], references: [id], onDelete: Cascade)
@@ -164,3 +144,10 @@ model EditorPost {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
+
+type AuthorInfo {
+  id            String   @db.ObjectId
+  name          String
+  profile        String?
+}
+
