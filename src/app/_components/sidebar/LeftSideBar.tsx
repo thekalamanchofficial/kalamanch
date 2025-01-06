@@ -29,12 +29,10 @@ const LeftSideBarServer: React.FC<LeftSideBarProps> = ({ menuItems }) => {
       </Stack>
 
       <Divider sx={{ width: "100%" }} />
-      
-      {/* Create Post Form Button */}
+
       <CreatePostFormButton />
 
       <Box sx={{ marginTop: 2, px: "8px" }}>
-        {/* Pass menuItems to the client-side NavLink component */}
         <LeftSideBarNavLinks menuItems={menuItems} />
         <UserMenu />
       </Box>
