@@ -1,4 +1,5 @@
 import { type SxProps } from "@mui/material";
+import { type ReactNode } from "react";
 
 export type MenuItemList = {
   label: string;
@@ -91,7 +92,6 @@ export type FollowButtonProps = {
 };
 export interface LeftSideBarProps {
   menuItems: MenuItemList[];
-  createPostFormOpen: () => void;
 }
 
 export type CommentSectionProps = {
@@ -123,3 +123,11 @@ export type FeaturedPost = {
   authorId: string;
   likeCount: number;
 };
+
+export type LeftSideBarNavLinksProps = {
+  menuItems: {
+    label: string;
+    route: string;
+    icon: ReactNode;
+  }[];
+}
