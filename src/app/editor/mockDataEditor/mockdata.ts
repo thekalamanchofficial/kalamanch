@@ -33,7 +33,6 @@ const editorMockData = {
   ],
 
   editorPost: {
-    id: "64dfde16f24b1c0090a7e9d2",
     title: "The Impact of AI on Modern Learning",
     authorName: "Alice Johnson",
     authorProfile: "https://example.com/profiles/alice.jpg",
@@ -51,11 +50,8 @@ const editorMockData = {
     },
     iterations: [
       {
-        id: "64dfde16f24b1c0090a7e9d4",
         content: "Initial draft content about AI in education...",
         editorPostId: "64dfde16f24b1c0090a7e9d2",
-        createdAt: "2024-12-27T10:30:00.000Z",
-        updatedAt: "2024-12-27T11:00:00.000Z",
         iterationName: "",
       },
       {

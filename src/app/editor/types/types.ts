@@ -3,6 +3,7 @@ export enum EditorTabsEnum {
   DRAFTS = "Drafts",
   PUBLISHED = "Published",
 }
+
 export type CreatePostFormType = {
   title: string;
   targetAudience?: string[];
@@ -17,12 +18,10 @@ export type Iteration = {
   iterationName: string;
   content: string;
   editorPostId: string;
-  createdAt: string;
-  updatedAt: string;
+  editorPost: EditorPost;
 };
 
 type Metadata = {
-  id: string;
   title: string;
   targetAudience: string[];
   thumbnailUrl: string;
@@ -32,7 +31,6 @@ type Metadata = {
 };
 
 export type EditorPost = {
-  id: string;
   title: string;
   authorName: string;
   authorProfile: string;
@@ -40,6 +38,42 @@ export type EditorPost = {
   content: string;
   metadata: Metadata;
   iterations: Iteration[];
-  createdAt: string;
-  updatedAt: string;
 };
+
+export type Like = {
+  userId: string;
+  createdAt: string;
+};
+
+export type Comment = {
+  userId: string;
+  name: string;
+  content: string;
+  createdAt: string;
+};
+
+export type Bid = {
+  userId: string;
+  amount: number;
+  createdAt: string;
+};
+
+export type Post = {
+  authorId: string;
+  authorName: string;
+  authorProfile?: string; // Optional as per schema
+  title: string;
+  content: string;
+  media: {
+    thumbnailPicture?: string[]; // Optional as per schema
+    thumbnailContent?: string;  // Optional as per schema
+    thumbnailTitle?: string;    // Optional as per schema
+  };
+  tags?: string[];  // Optional as per schema
+  likeCount?: number; // Optional, with default value 0 in schema
+  comments?: Comment[]; // Optional as per schema
+  bids?: Bid[];  // Optional as per schema
+  likes?: Like[];  // Optional as per schema
+  hasMorePosts?: boolean; // Optional as per schema
+};
+

@@ -8,24 +8,37 @@ import { Box, Button, Typography } from "@mui/material";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FolderIcon from "@mui/icons-material/Folder";
 import ChecklistIcon from "@mui/icons-material/Checklist";
-import { type EditorPost } from "~/app/editor/types/types";
+import { Post, type EditorPost } from "~/app/editor/types/types";
 import dynamic from "next/dynamic";
+import { trpc } from "~/server/client";
+import { PostType } from "@prisma/client";
+import { useClerk } from "@clerk/nextjs";
+
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 type WritingPadProps = {
   handleOpen: () => void;
   editorPostData: EditorPost;
+  postData: Post;
 };
+
 const WritingPad: React.FC<WritingPadProps> = ({
   handleOpen,
   editorPostData,
+  postData
 }) => {
   const { handleSubmit, reset, control } = useContentForm();
+  const editPostMutation = trpc.editorPost.createPost.useMutation();
+  const postMutation = trpc.post.addPost.useMutation();
 
-  const onSubmit = (data: { content: string }) => {
-    console.log(data);
+
+  const onSubmit = async (data: { content: string }) => {
+    editorPostData.content = data.content;
+    postData.content = data.content;
+    await editPostMutation.mutateAsync(editorPostData)
+    await postMutation.mutateAsync(postData);
   };
-
+      
   return (
     <Box
       sx={{

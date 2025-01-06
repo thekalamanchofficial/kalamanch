@@ -125,9 +125,13 @@ model FeaturedAuthor {
 }
 
 enum PostType {
-  ARTICLE
+  ARTICLE 
   VIDEO
   PODCAST
+  BLOG
+  SCRIPT
+  NEWS
+  ANNOUNCEMENT
 }
 
 model Metadata {
