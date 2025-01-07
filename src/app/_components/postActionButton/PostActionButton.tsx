@@ -1,16 +1,18 @@
 import React from "react";
-import { Button, Box } from "@mui/material";
+import { Button, Box, type SxProps } from "@mui/material";
 
 type PostActionButtonProps = {
   icon: React.ReactNode;
   label: number | string;
   onClick?: () => void;
+  sx?: SxProps;
 };
 
 const PostActionButton: React.FC<PostActionButtonProps> = ({
   icon,
   label,
   onClick,
+  sx,
 }) => {
   return (
     <Button
@@ -18,21 +20,24 @@ const PostActionButton: React.FC<PostActionButtonProps> = ({
       sx={{
         display: "flex",
         alignItems: "center",
-        minHeight: "auto",
+        minHeight: "26px",
+        minWidth: "88px",
         gap: "8px",
-        borderRadius: "16px",
+        borderRadius: "40px",
         padding: "6px 8px",
         backgroundColor: "common.lightGray",
         fontSize: "14px",
         color: "text.secondary",
         textTransform: "none",
         "&:hover": {
-          backgroundColor: "common.gray",
+          backgroundColor: "secondary.main",
+          color: "primary.main",
         },
+        ...sx,
       }}
     >
       {icon}
-      <Box component="span">{label}</Box>
+      {label && <Box component="span">{label}</Box>}
     </Button>
   );
 };

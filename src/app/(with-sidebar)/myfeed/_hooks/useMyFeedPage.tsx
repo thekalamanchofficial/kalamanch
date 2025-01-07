@@ -1,7 +1,6 @@
 import {
   MyFeedTabsEnum,
   type ArticlesList,
-  type Comment,
 } from "../types/types";
 import { handleError } from "~/app/_utils/handleError";
 import config from "~/app/_config/config";
@@ -11,34 +10,33 @@ import { trpc } from "~/server/client";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 
 type useMyFeedPageReturn = {
-  posts: ArticlesList[];
-  setPosts: React.Dispatch<React.SetStateAction<ArticlesList[]>>;
+  postDataWithComments: ArticlesList[];
   likedPosts: string[];
   queryLoading: boolean;
   hasMorePosts: boolean;
   tab: MyFeedTabsEnum;
   skip: number;
-  postDataWithComments: ArticlesList[];
   setSkip: React.Dispatch<React.SetStateAction<number>>;
   handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
-  handleChange: (newTab: MyFeedTabsEnum) => void;
+  handleChangeTab: (newTab: MyFeedTabsEnum) => void;
   addComment: (
     postId: string,
     content: string,
-    parent: string,
+    parentId?: string,
   ) => Promise<void>;
   handleScroll: () => void;
   errorMessage: string;
 };
 
 const useMyFeedPage = (): useMyFeedPageReturn => {
+  const [posts, setPosts] = useState<ArticlesList[]>([]);
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
-  const [tab, setTab] = useState(MyFeedTabsEnum.MY_FEED);
+  const [tab, setTab] = useState<MyFeedTabsEnum>(MyFeedTabsEnum.MY_FEED);
   const [skip, setSkip] = useState(0);
-  const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
-  const [post, setPosts] = useState<ArticlesList[]>([]);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
 
   const { user } = useClerk();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
 
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
@@ -55,7 +53,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
         skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
     },
     {
-      enabled: skip >= 0 && hasMorePosts === true,
+      enabled: hasMorePosts,
     },
   );
 
@@ -70,184 +68,140 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     setHasMoreData: setHasMorePosts,
   });
 
-  const postDataWithComments: ArticlesList[] = useMemo(() => {
-    return (
-      post?.map((postItem) => ({
-        ...postItem,
-        comments: postItem.comments.map((comment) => ({
+  const postDataWithComments = useMemo(
+    () =>
+      posts.map((post) => ({
+        ...post,
+        comments: post.comments.map((comment) => ({
           ...comment,
-          postId: postItem.id,
+          postId: post.id,
         })),
-      })) ?? []
-    );
-  }, [post]);
+      })),
+    [posts],
+  );
 
   const { data: likedPostData } = likeMutation.getUserLikes.useQuery(
-    { userEmail: user?.primaryEmailAddress?.emailAddress ?? "" },
-    {
-      enabled: !!user?.primaryEmailAddress?.emailAddress,
-    },
+    { userEmail: userEmail ?? "" },
+    { enabled: !!userEmail },
   );
 
   const likePostMutation = likeMutation.likePost.useMutation();
 
   const handleLikeButton = useCallback(
     async (postId: string): Promise<{ liked: boolean }> => {
-      if (user?.primaryEmailAddress?.emailAddress) {
-        try {
-          const response = await likePostMutation.mutateAsync({
-            postId,
-            userEmail: user?.primaryEmailAddress?.emailAddress,
-          });
+      if (!userEmail) return { liked: false };
 
-          const updatePostLikeCount = (
-            post: ArticlesList,
-            postId: string,
-            liked: boolean,
-          ) => {
-            if (post.id !== postId) return post;
+      try {
+        const response = await likePostMutation.mutateAsync({
+          postId,
+          userEmail,
+        });
 
-            return {
-              ...post,
-              likeCount: liked
-                ? post.likeCount + 1
-                : Math.max(0, post.likeCount - 1),
-            };
-          };
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  likeCount: response.liked
+                    ? post.likeCount + 1
+                    : Math.max(0, post.likeCount - 1),
+                }
+              : post,
+          ),
+        );
 
-          setPosts((prevPosts) =>
-            prevPosts.map((post) =>
-              updatePostLikeCount(post, postId, response.liked),
-            ),
-          );
+        setLikedPosts((prev) =>
+          response.liked
+            ? [...prev, postId]
+            : prev.filter((id) => id !== postId),
+        );
 
-          if (response.liked) {
-            setLikedPosts((prevLikedPosts) => [...prevLikedPosts, postId]);
-          } else {
-            setLikedPosts((prevLikedPosts) =>
-              prevLikedPosts.filter((id) => id !== postId),
-            );
-          }
-
-          return { liked: response.liked };
+        return { liked: response.liked };
         } catch (error) {
           handleError(error);
-          return { liked: false };
-        }
+        return { liked: false };
       }
-
-      return { liked: false };
     },
-    [likePostMutation, user?.primaryEmailAddress?.emailAddress],
+    [likePostMutation, userEmail],
   );
 
   const addCommentMutation = commentMutation.addComment.useMutation();
 
-  const updatePostComments = (
-    post: ArticlesList,
-    postId: string,
-    newComment: Comment,
-    parentId?: string,
-  ): ArticlesList => {
-    if (post.id !== postId) return post;
-
-    const addReplyToParent = (
-      comments: Comment[],
-      parentId: string,
-      newReply: Comment,
-    ): Comment[] => {
-      return comments.map((comment) => {
-        if (comment.id === parentId) {
-          return {
-            ...comment,
-            replies: [...(comment.replies ?? []), newReply],
-          };
-        }
-        return {
-          ...comment,
-          replies: addReplyToParent(comment.replies ?? [], parentId, newReply),
-        };
-      });
-    };
-
-    return {
-      ...post,
-      comments: parentId
-        ? addReplyToParent(post.comments, parentId, { ...newComment, postId })
-        : [...post.comments, { ...newComment, postId }],
-    };
-  };
-
   const addComment = useCallback(
-    async (
-      postId: string,
-      content: string,
-      parentId?: string,
-    ): Promise<void> => {
-      if (!content.trim()) return;
+    async (postId: string, content: string, parentId?: string) => {
+      if (!content.trim() || !userEmail) return;
 
-      if (user?.primaryEmailAddress?.emailAddress) {
-        try {
-          const newComment = await addCommentMutation.mutateAsync({
-            postId,
-            userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-            name:
-              user?.firstName === null
-                ? (user?.unsafeMetadata?.name as string)
-                : user?.firstName,
-            content,
-            profile: user.imageUrl,
-            parentId,
-          });
+      try {
+        const newComment = await addCommentMutation.mutateAsync({
+          postId,
+          userEmail,
+          name:
+            user?.firstName ??
+            ((user?.unsafeMetadata?.name as string) || "Anonymous"),
+          content,
+          profile: user.imageUrl,
+          parentId,
+        });
 
-          setPosts((prevPosts) =>
-            prevPosts.map((post) =>
-              updatePostComments(post, postId, newComment, parentId),
-            ),
-          );
-        } catch (error) {
-          handleError(error);
-        }
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  comments: parentId
+                    ? post.comments.map((comment) =>
+                        comment.id === parentId
+                          ? {
+                              ...comment,
+                              replies: [...(comment.replies ?? []), newComment],
+                            }
+                          : comment,
+                      )
+                    : [...post.comments, newComment],
+                }
+              : post,
+          ),
+        );
+      } catch (error) {
+        handleError(error);
       }
     },
     [
       addCommentMutation,
+      userEmail,
       user?.firstName,
-      user?.imageUrl,
-      user?.primaryEmailAddress?.emailAddress,
       user?.unsafeMetadata?.name,
+      user?.imageUrl,
     ],
   );
 
-  const handleChange = (newTab: MyFeedTabsEnum) => {
+  const handleChangeTab = (newTab: MyFeedTabsEnum) => {
     setTab(newTab);
   };
 
   useEffect(() => {
-    setPosts((prevPosts) => [...(prevPosts ?? []), ...(postData?.posts ?? [])]);
+    if (postData?.posts) {
+      setPosts((prev) => [...prev, ...postData.posts]);
+    }
   }, [postData]);
 
   useEffect(() => {
-    if (likedPostData) {
-      setLikedPosts(likedPostData);
-    }
+    if (likedPostData) setLikedPosts(likedPostData);
   }, [likedPostData]);
 
   return {
-    posts: postDataWithComments,
-    setPosts,
+    postDataWithComments,
     likedPosts,
     queryLoading,
-    hasMorePosts: !!hasMorePosts,
-    postDataWithComments,
+    hasMorePosts,
     tab,
     skip,
     setSkip,
     handleLikeButton,
-    handleChange,
-    errorMessage: error?.message ?? "",
+    handleChangeTab,
     addComment,
     handleScroll,
+    errorMessage: error?.message ?? "",
   };
 };
 

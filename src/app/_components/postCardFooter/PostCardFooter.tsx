@@ -1,4 +1,4 @@
-import { Box, IconButton } from "@mui/material";
+import { Box } from "@mui/material";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
@@ -80,15 +80,15 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         />
       </Box>
       <Box>
-        <IconButton
-          sx={{
-            backgroundColor: "common.lightGray",
-          }}
-          size="small"
+        <PostActionButton
+          icon={<BookmarkBorderIcon />}
+          label=""
           onClick={() => handleAction("bookmark")}
-        >
-          <BookmarkBorderIcon />
-        </IconButton>
+          sx={{
+            minWidth: "65px",
+            minHeight: "24px",
+          }}
+        />
       </Box>
     </Box>
   );

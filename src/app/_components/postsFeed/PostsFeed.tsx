@@ -88,10 +88,11 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
                     isFollowing={isFollowing}
                   />
                   <Button
-                    startIcon={<MoreHorizOutlinedIcon />}
                     sx={{ color: "text.secondary", minHeight: "auto" }}
                     size="small"
-                  ></Button>
+                  >
+                    <MoreHorizOutlinedIcon />
+                  </Button>
                 </Box>
               </Box>
 
