@@ -32,10 +32,8 @@ model Post {
   authorId      String   @db.ObjectId
   authorName    String
   authorProfile  String?
-  title         String
   content       String
-  media         Media
-  tags          String[]
+  metadata      Metadata
   likeCount     Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -46,16 +44,17 @@ model Post {
   bids         Bid[]
   isFeatured   Boolean    @default(false)
 
+  @@index([authorId])
   @@index([tags])
   @@index([createdAt])
   @@index([isFeatured])
 
 }
 
-type Media {
-  thumbnailPicture String[]
-  thumbnailContent String
-  thumbnailTitle   String
+type ThumbnailDetails {
+  url String[]
+  content String
+  title   String
 }
 
 model Like {
@@ -112,38 +111,38 @@ enum PostType {
   PODCAST
 }
 
-model Metadata {
-  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+type Metadata {
   title          String
   targetAudience String[]
-  thumbnailUrl   String
   postType       PostType
   actors         String[]     @default([])
   tags           String[]
-  draftPosts    DraftPost[]
+  thumbnailDetails  ThumbnailDetails
 }
 
 model Iterations {
   id            String     @id @default(auto()) @map("_id") @db.ObjectId
   iterationName String
   content       String
-  DraftPost     DraftPost @relation(fields: [draftPostId], references: [id])
   draftPostId   String     @db.ObjectId
+  DraftPost     DraftPost  @relation(fields: [draftPostId], references: [id], onDelete: Cascade)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }
 
 model DraftPost {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  title         String
-  author        AuthorInfo
-  content       String
-  metadataId    String       @db.ObjectId
-  metadata      Metadata     @relation(fields: [metadataId], references: [id], onDelete: Cascade)
-  Iterations    Iterations[]
+  authorId      String       @db.ObjectId
+  authorName    String
+  authorProfile  String?
+  metadata      Metadata
+  iterations    Iterations[] 
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+
+  @@index([authorId])
 }
+
 
 type AuthorInfo {
   id            String   @db.ObjectId
