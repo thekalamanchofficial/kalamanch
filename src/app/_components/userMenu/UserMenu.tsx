@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { useClerk } from "@clerk/nextjs";
