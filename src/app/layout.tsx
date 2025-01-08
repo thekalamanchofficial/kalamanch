@@ -1,5 +1,5 @@
 import "~/styles/globals.css";
-import Provider from "./_components/Provider";
+import { TRPCProvider } from "./_trpc/client";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -34,7 +34,7 @@ export default function RootLayout({
                 pauseOnHover
                 theme="light"
               />
-              <Provider>{children}</Provider>
+              <TRPCProvider>{children}</TRPCProvider>
             </ThemeProvider>
           </AppRouterCacheProvider>
         </body>
