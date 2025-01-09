@@ -18,7 +18,7 @@ const MyFeed = () => {
     hasMorePosts,
     postDataWithComments,
     handleLikeButton,
-    handleChangeTab,
+    handleTabChange,
     addComment,
     errorMessage,
   } = useMyFeedPage();
@@ -106,7 +106,7 @@ const MyFeed = () => {
           borderBottom: "1px solid #E0E0E0",
         }}
       >
-        <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChangeTab} />
+        <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleTabChange} />
       </Grid>
       <Grid
         size={12}

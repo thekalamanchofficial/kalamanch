@@ -18,7 +18,7 @@ type useMyFeedPageReturn = {
   skip: number;
   setSkip: React.Dispatch<React.SetStateAction<number>>;
   handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
-  handleChangeTab: (newTab: MyFeedTabsEnum) => void;
+  handleTabChange: (newTab: MyFeedTabsEnum) => void;
   addComment: (
     postId: string,
     content: string,
@@ -175,7 +175,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     ],
   );
 
-  const handleChangeTab = (newTab: MyFeedTabsEnum) => {
+  const handleTabChange = (newTab: MyFeedTabsEnum) => {
     setTab(newTab);
   };
 
@@ -198,7 +198,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     skip,
     setSkip,
     handleLikeButton,
-    handleChangeTab,
+    handleTabChange,
     addComment,
     handleScroll,
     errorMessage: error?.message ?? "",

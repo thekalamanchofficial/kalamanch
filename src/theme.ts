@@ -164,6 +164,9 @@ const theme = createTheme({
           },
         },
       },
+      defaultProps: {
+        disableRipple: true,
+      },
     },
     MuiStepConnector: {
       styleOverrides: {

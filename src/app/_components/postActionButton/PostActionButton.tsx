@@ -20,11 +20,10 @@ const PostActionButton: React.FC<PostActionButtonProps> = ({
       sx={{
         display: "flex",
         alignItems: "center",
-        minHeight: "26px",
-        minWidth: "88px",
         gap: "8px",
         borderRadius: "40px",
-        padding: "6px 8px",
+        lineHeight: "17.64px",
+        padding: "4px 20px",
         backgroundColor: "common.lightGray",
         fontSize: "14px",
         color: "text.secondary",
@@ -33,6 +32,9 @@ const PostActionButton: React.FC<PostActionButtonProps> = ({
           backgroundColor: "secondary.main",
           color: "primary.main",
         },
+        "&.MuiButton-root": {
+            "minHeight": "26px",
+          },
         ...sx,
       }}
     >
