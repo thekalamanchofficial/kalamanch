@@ -155,14 +155,13 @@ const theme = createTheme({
     MuiButtonBase: {
       styleOverrides: {
         root: {
-          minHeight: "48px",
-          "&.MuiButton-root": {
-            "minHeight": "48px",
-          },
           "&.MuiChip-root": {
             "minHeight": "32px",
           },
         },
+      },
+      defaultProps: {
+        disableRipple: true,
       },
     },
     MuiStepConnector: {

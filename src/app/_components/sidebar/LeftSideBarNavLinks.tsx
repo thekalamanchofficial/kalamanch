@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Typography, Box } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -45,45 +45,35 @@ const LeftSideBarNavLinks: React.FC<LeftSideBarNavLinksProps> = ({ menuItems }) 
             href={item.route}
             style={{ textDecoration: "none" }}
           >
-            <Box
+            <Button
+              startIcon={<IconComponent />}
+              variant="text"
+              size="small"
+              fullWidth
               sx={{
                 display: "flex",
+                minHeight: "48px",
                 justifyContent: "start",
                 alignItems: "center",
-                px: "2px",
-                py: "4px",
+                padding: "6px 12px",
+                color: isActive ? "primary.main" : "text.secondary",
+                ":hover": {
+                  backgroundColor: isActive ? "" : "transparent",
+                },
                 backgroundColor: isActive ? "secondary.main" : "white",
               }}
             >
-              <Button
-                startIcon={<IconComponent />}
-                variant="text"
-                size="small"
-                fullWidth
+              <Typography
+                variant="h6"
                 sx={{
-                  display: "flex",
-                  height: "40px",
-                  justifyContent: "start",
-                  alignItems: "center",
+                  fontSize: "18px",
+                  fontWeight: "500",
                   color: isActive ? "primary.main" : "text.secondary",
-                  marginLeft: "4px",
-                  ":hover": {
-                    backgroundColor: "transparent",
-                  },
                 }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontSize: "18px",
-                    fontWeight: "500",
-                    color: isActive ? "primary.main" : "text.secondary",
-                  }}
-                >
-                  {item.label}
-                </Typography>
-              </Button>
-            </Box>
+                {item.label}
+              </Typography>
+            </Button>
           </Link>
         );
       })}

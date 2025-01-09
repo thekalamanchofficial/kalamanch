@@ -12,35 +12,49 @@ type LeftSideBarProps = {
 
 const LeftSideBarServer: React.FC<LeftSideBarProps> = ({ menuItems }) => {
   return (
-    <Box
+    <Stack
       sx={{
-        width: "100%",
-        py: 1,
+        minWidth: "264px",
+        minHeight: "1124px",
         backgroundColor: "white",
         position: "relative",
+        paddingBlockEnd: "24px",
       }}
+      direction="column"
+      justifyContent="space-between"
     >
-      <Stack
-        direction="row"
-        justifyContent="start"
-        alignItems="center"
-        sx={{ px: "12px" }}
-      >
-        <OwlSVG />
-        <Typography variant="h5" fontWeight="bold" color="primary">
-          {STATIC_TEXTS.APP_TITLE}
-        </Typography>
-      </Stack>
+      <Box>
+        <Stack
+          direction="row"
+          justifyContent="start"
+          alignItems="center"
+          sx={{ px: "12px" }}
+        >
+          <OwlSVG />
+          <Typography variant="h5" fontWeight="bold" color="primary">
+            {STATIC_TEXTS.APP_TITLE}
+          </Typography>
+        </Stack>
 
-      <Divider sx={{ width: "100%" }} />
+        <Divider sx={{ width: "100%" }} />
 
-      <CreatePostFormButton />
-
-      <Box sx={{ marginTop: 2, px: "8px" }}>
-        <LeftSideBarNavLinks menuItems={menuItems} />
+        <Box sx={{ marginTop: 2, px: "8px", width: "240px" }}>
+          <Stack
+            direction="column"
+            justifyContent="center"
+            alignItems="stretch"
+            gap="20px"
+          >
+            <CreatePostFormButton />
+            <LeftSideBarNavLinks menuItems={menuItems} />
+          </Stack>
+        </Box>
+      </Box>
+      <Box sx={{ width: "100%",
+        height: "48px", }}>
         <UserMenu />
       </Box>
-    </Box>
+    </Stack>
   );
 };
 

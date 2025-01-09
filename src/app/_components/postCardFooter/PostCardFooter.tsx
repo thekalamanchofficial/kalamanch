@@ -40,6 +40,8 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
     }
   };
 
+  const iconSx = { height: "16px", width: "16px" };
+
   return (
     <Box
       sx={{
@@ -58,30 +60,30 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         }}
       >
         <PostActionButton
-          icon={isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          icon={isLiked ? <FavoriteIcon sx={iconSx} /> : <FavoriteBorderIcon sx={iconSx} />}
           label={likes && likes > 0 ? likes : "0"}
           onClick={handleLikeButton}
         />
 
         <PostActionButton
-          icon={<MessageIcon />}
+          icon={<MessageIcon sx={iconSx} />}
           label={comments && comments.length > 0 ? comments.length : "0"}
           onClick={() => openCommentBox()}
         />
         <PostActionButton
-          icon={<TollIcon />}
+          icon={<TollIcon sx={iconSx} />}
           label={bids && bids.length > 0 ? bids.length : "0"}
           onClick={() => handleAction("share")}
         />
         <PostActionButton
-          icon={<ShareIcon />}
+          icon={<ShareIcon sx={iconSx} />}
           label=""
           onClick={() => handleAction("bid")}
         />
       </Box>
       <Box>
         <PostActionButton
-          icon={<BookmarkBorderIcon />}
+          icon={<BookmarkBorderIcon sx={iconSx} />}
           label=""
           onClick={() => handleAction("bookmark")}
           sx={{

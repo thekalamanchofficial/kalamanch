@@ -6,7 +6,7 @@ import { useClerk } from "@clerk/nextjs";
 import { toast } from "react-toastify";
 import { STATIC_TEXTS } from "../static/staticText";
 import { handleError } from "~/app/_utils/handleError";
-import { Avatar, Box, Button, Menu, MenuItem, Typography } from "@mui/material";
+import { Avatar, Box, Button, Menu, MenuItem, Stack, Typography } from "@mui/material";
 
 const UserMenu = () => {
   const { user, signOut } = useClerk();
@@ -47,13 +47,15 @@ const UserMenu = () => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        padding: "6px 12px",
+        borderRadius: "4px"
       }}
     >
-      <Box display="flex" alignItems="center">
+      <Stack direction="row" alignItems="center" gap="12px">
         <Avatar
           alt="user profile picture"
           src={user?.imageUrl}
-          sx={{ width: 38, height: 38, mr: 1 }}
+          sx={{ width: 38, height: 38 }}
         />
 
         <Typography color="text.secondary" variant="subtitle2">
@@ -61,21 +63,24 @@ const UserMenu = () => {
             ? (user?.unsafeMetadata?.name as string)
             : user?.firstName}
         </Typography>
-      </Box>
+      </Stack>
       <Box>
         <Button
-          startIcon={<MoreHorizOutlinedIcon />}
           sx={{
             color: "text.secondary",
-            height: "auto",
-            width: "20px",
+            minHeight: "24px",
+            minWidth: "24px",
+            padding: "0px",
           }}
+          size="small"
           id="basic-button"
           aria-controls={open ? "basic-menu" : undefined}
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
           onClick={handleClick}
-        />
+        >
+          <MoreHorizOutlinedIcon sx={{ height: "24px", width: "24px" }} />
+        </Button>
         <Menu
           id="basic-menu"
           anchorEl={anchorEl}

@@ -17,7 +17,6 @@ const CreatePostFormButton = () => {
     <Box
       sx={{
         marginTop: 4,
-        px: "8px",
       }}
     >
       <Button
