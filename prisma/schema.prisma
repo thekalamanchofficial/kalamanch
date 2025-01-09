@@ -20,7 +20,7 @@ model User {
   following               String[]         @db.ObjectId
   followers               String[]         @db.ObjectId
   bookmarks               String[]         @db.ObjectId
-  featuredAuthors         AuthorInfo[]
+  usersToFollow           AuthorInfo[]
   likes                   Like[]
   comments                Comment[]
   bids                    Bid[]
@@ -31,9 +31,9 @@ model Post {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   authorId      String   @db.ObjectId
   authorName    String
-  authorProfile  String?
+  authorProfileImageUrl  String?
   content       String
-  metadata      Metadata
+  postDetails   PostDetails
   likeCount     Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -52,9 +52,9 @@ model Post {
 }
 
 type ThumbnailDetails {
-  url String[]
-  content String
-  title   String
+  url     String
+  content String?
+  title   String?
 }
 
 model Like {
@@ -76,7 +76,7 @@ model Comment {
   userId    String   @db.ObjectId
   parentId  String?  @db.ObjectId
   userName  String
-  userProfile  String?
+  userProfileImageUrl  String?
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -111,7 +111,7 @@ enum PostType {
   PODCAST
 }
 
-type Metadata {
+type PostDetails {
   title          String
   targetAudience String[]
   postType       PostType
@@ -134,8 +134,8 @@ model DraftPost {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
   authorId      String       @db.ObjectId
   authorName    String
-  authorProfile  String?
-  metadata      Metadata
+  authorProfileImageUrl  String?
+  postDetails   PostDetails
   iterations    Iterations[] 
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
@@ -147,6 +147,6 @@ model DraftPost {
 type AuthorInfo {
   id            String   @db.ObjectId
   name          String
-  profile        String?
+  profileImageUrl  String?
 }
 
