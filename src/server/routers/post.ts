@@ -87,9 +87,6 @@ export const postRouter = router({
     }),
 
   addPost: publicProcedure.input(postSchema).mutation(async ({ input }) => {
-    addPost: publicProcedure
-    .input(postSchema)
-    .mutation(async ({ input }) => {
       try {
         // Utility function to clean arrays by removing undefined values
         const cleanArray = (array?: (string | undefined)[]): string[] => 
