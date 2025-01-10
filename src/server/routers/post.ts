@@ -67,6 +67,7 @@ export const postRouter = router({
                 replies: true,
               },
             },
+            likes: true,
           },
         });
         const totalPosts = await prisma.post.count({});
