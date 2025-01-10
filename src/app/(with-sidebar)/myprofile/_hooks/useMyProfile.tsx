@@ -213,12 +213,12 @@ const useMyProfilePage = (): UseMyProfilePage => {
           const newComment = await addCommentMutation.mutateAsync({
             postId,
             userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-            name:
+            userName:
               user?.firstName === null
                 ? (user?.unsafeMetadata?.name as string)
                 : user?.firstName,
             content,
-            profile: user.imageUrl,
+            userProfileImageUrl: user.imageUrl ?? "",
             parentId,
           });
 

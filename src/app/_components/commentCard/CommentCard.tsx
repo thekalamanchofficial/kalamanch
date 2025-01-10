@@ -75,9 +75,9 @@ const CommentCard: React.FC<commentCardProps> = ({
                 alignItems: "center",
               }}
             >
-              <Avatar sx={{ width: 30, height: 30 }} src={comment.profile} />
+              <Avatar sx={{ width: 30, height: 30 }} src={comment.userProfileImageUrl} />
               <Typography variant="subtitle2" fontWeight="700">
-                {comment.name}
+                {comment.userName}
               </Typography>
               <Typography variant="subtitle2" color="text.secondary">
                 {timeAgo}
@@ -91,7 +91,7 @@ const CommentCard: React.FC<commentCardProps> = ({
                 props={{
                   onClick: () => {
                     if (setIsReplying) setIsReplying(!isReplying);
-                    if (setReplyingTo) setReplyingTo(comment.name);
+                    if (setReplyingTo) setReplyingTo(comment.userName);
                     if (setParentState) setParentState();
                     if (setReplyingState)
                       setReplyingState({ [comment.id]: true });

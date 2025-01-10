@@ -8,7 +8,7 @@ import useFeaturedAuthorPage from "./_hooks/useFeaturedAuthorPage";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 const Page = () => {
-  const { author, isLoading, userFollowing } = useFeaturedAuthorPage();
+  const { usersToFollow: author, isLoading, userFollowing } = useFeaturedAuthorPage();
 
   return (
     <Box
@@ -59,7 +59,7 @@ const Page = () => {
       >
         {author.length > 0 ? (
           author.map((item, index) => {
-            const isFollowing = userFollowing?.includes(item.userId);
+            const isFollowing = userFollowing?.includes(item.id);
 
             return (
               <Grid
@@ -92,27 +92,29 @@ const Page = () => {
                       gap={10}
                     >
                       <Link
-                        href={`/author/${item.userId}`}
+                        href={`/author/${item.id}`}
                         style={{
                           textDecoration: "none",
                         }}
                       >
                         <UserNameProfile
-                          AuthorImage={item.profile}
+                          AuthorImage={item.profileImageUrl}
                           AuthorName={item.name}
                         />
                       </Link>
                       <Typography variant="caption">
-                        Followers: {item.followersCount}
+                        Followers: 0   
+                        {/* TODO - Needs to be dynamic */}
                       </Typography>
                       <Typography variant="caption">
-                        Articles: {item.articlesCount}
+                        Articles: 0
+                         {/* TODO - Needs to be dynamic */}
                       </Typography>
                     </Box>
                   </Box>
                   <Box>
                     <FollowButton
-                      authorProfileLink={item.userId}
+                      authorProfileLink={item.profileImageUrl}
                       style={{
                         height: "40px",
                         width: "100px",

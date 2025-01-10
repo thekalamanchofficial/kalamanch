@@ -23,7 +23,6 @@ export type Like = {
   userId: string;
   postId: string;
   createdAt: string;
-  updatedAt: string;
 }
 
 type Bid = {
