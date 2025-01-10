@@ -59,7 +59,7 @@ const Page = () => {
       >
         {author.length > 0 ? (
           author.map((item, index) => {
-            const isFollowing = userFollowing?.includes(item.id);
+            const isFollowing = userFollowing?.includes(item.userId);
 
             return (
               <Grid
@@ -92,7 +92,7 @@ const Page = () => {
                       gap={10}
                     >
                       <Link
-                        href={`/author/${item.id}`}
+                        href={`/author/${item.userId}`}
                         style={{
                           textDecoration: "none",
                         }}
@@ -103,12 +103,10 @@ const Page = () => {
                         />
                       </Link>
                       <Typography variant="caption">
-                        Followers: 0   
-                        {/* TODO - Needs to be dynamic */}
+                        Followers: {item.followersCount}
                       </Typography>
                       <Typography variant="caption">
-                        Articles: 0
-                         {/* TODO - Needs to be dynamic */}
+                        Articles: {item.postCount}
                       </Typography>
                     </Box>
                   </Box>

@@ -20,7 +20,7 @@ model User {
   following               String[]         @db.ObjectId
   followers               String[]         @db.ObjectId
   bookmarks               String[]         @db.ObjectId
-  usersToFollow           AuthorInfo[]
+  usersToFollow           UserToFollow[]
   likes                   Like[]
   comments                Comment[]
   bids                    Bid[]
@@ -104,6 +104,14 @@ model Bid {
   @@index([userId])
 }
 
+model UserToFollow {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @db.ObjectId
+  name    String
+  profileImageUrl String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 enum PostType {
   ARTICLE
   VIDEO
@@ -140,12 +148,5 @@ model DraftPost {
   updatedAt     DateTime     @updatedAt
 
   @@index([authorId])
-}
-
-
-type AuthorInfo {
-  id            String   @db.ObjectId
-  name          String
-  profileImageUrl  String
 }
 

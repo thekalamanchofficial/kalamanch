@@ -14,7 +14,7 @@ import { useClerk } from "@clerk/nextjs";
 import RightSideBarSkeletonAuthor from "./RightSideBarSkeletonAuthor";
 import RightSideBarSkeletonPost from "./RightSideBarSkeletonPost";
 import { STATIC_TEXTS } from "../static/staticText";
-import type { FeaturedPost, UserMinimalInfo } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { FeaturedPost, UserToFollow } from "~/app/(with-sidebar)/myfeed/types/types";
 
 const RightSideBar = () => {
   const USERS_TO_FOLLOW_LIMIT = 5;
@@ -23,12 +23,18 @@ const RightSideBar = () => {
   const router = useRouter();
   const featuredPostMutation = trpc.featuredPost;
   const userMutation = trpc.user;
-  const { data: userDetails, isLoading: userDetailsLoading } = userMutation.getUserDetails.useQuery(
-    user?.primaryEmailAddress?.emailAddress
-  );
-  const usersToFollow = userDetails?.usersToFollow ?? [];
-  const userAlreadyFollowing = userDetails?.following ?? [];
-  const hasMoreUsersToFollow = usersToFollow.length > USERS_TO_FOLLOW_LIMIT;
+  const featuredAuthorMutation = trpc.usersToFollow;
+
+
+  const { data: usersAlreadyFollowing } = userMutation.getUserFollowings.useQuery({
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
+  const { data: usersToFollowData, isLoading: usersToFollowLoading } =
+    featuredAuthorMutation.getUsersToFollow.useQuery({
+      limit: 5,
+      skip: 0,
+    });
+
 
   const { data: featuredPostData, isLoading: featuredPostLoading } =
     featuredPostMutation.getFeaturedPosts.useQuery({
@@ -182,11 +188,11 @@ const RightSideBar = () => {
           Top writers to follow
         </Typography>
         <Grid container spacing={2}>
-          {userDetailsLoading ? (
+          {usersToFollowLoading ? (
             <RightSideBarSkeletonAuthor />
-          ) : (usersToFollow?.length ?? 0 > 0) ? (
-            usersToFollow.map((item: UserMinimalInfo, index: number) => {
-              const isFollowing = userAlreadyFollowing?.includes(item.id);
+          ) : (usersToFollowData?.featuredAuthor?.length ?? 0 > 0) ? (
+            usersToFollowData?.featuredAuthor.map((item, index) => {
+              const isFollowing = usersAlreadyFollowing?.includes(item.userId);
 
               return (
                 <Grid size={12} key={index}>
@@ -204,7 +210,7 @@ const RightSideBar = () => {
                       style={{
                         textDecoration: "none",
                       }}
-                      href={`/profile/${item.id}`}
+                      href={`/profile/${item.userId}`}
                     >
                       <Image
                         alt="profile picture "
@@ -229,7 +235,7 @@ const RightSideBar = () => {
                         style={{
                           textDecoration: "none",
                         }}
-                        href={`/profile/${item.id}`}
+                        href={`/profile/${item.userId}`}
                       >
                         <Typography
                           sx={{
@@ -242,7 +248,7 @@ const RightSideBar = () => {
                         </Typography>
                       </Link>
                       <FollowButton
-                        authorProfileLink={item.profileImageUrl}
+                        authorProfileLink={item.userId}
                         style={{
                           height: "20px",
                           width: "80px",
@@ -267,7 +273,7 @@ const RightSideBar = () => {
               {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_AUTHOR}
             </Typography>
           )}
-          {hasMoreUsersToFollow  ? (
+          {usersToFollowData?.hasMoreAuthor  ? (
             <SeeMoreButton onClick={() => handleSeeMore("/featured/author")} />
           ) : null}
         </Grid>

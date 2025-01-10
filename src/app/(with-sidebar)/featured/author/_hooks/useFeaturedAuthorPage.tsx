@@ -2,52 +2,64 @@ import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { trpc } from "~/server/client";
-import type { UserMinimalInfo,  FeaturedAuthor } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { UserToFollow } from "~/app/(with-sidebar)/myfeed/types/types";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 
 type useFeaturedAuthorPageProps = {
-  usersToFollow: UserMinimalInfo[];
+  usersToFollow: UserToFollow[];
   isLoading: boolean;
   userFollowing: string[] | undefined;
 };
 
 const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
 
-  const USERS_TO_FOLLOW_LIMIT = 5;
-  const [author, setAuthor] = useState<UserMinimalInfo[]>([]);
+  const [author, setAuthor] = useState<UserToFollow[]>([]);
   const [skip, setSkip] = useState(0);
   const [hasMoreAuthor, setHasMoreAuthor] = useState<boolean>(true);
 
+  
   const userMutation = trpc.user;
+  const featuredAuthorMutation = trpc.usersToFollow;
 
   const { user } = useClerk();
 
-  const { data: userDetails, isLoading: userDetailsLoading , error } = userMutation.getUserDetails.useQuery(
-    user?.primaryEmailAddress?.emailAddress
-  );
-  const usersToFollow = userDetails?.usersToFollow ?? [];
-  const userAlreadyFollowing = userDetails?.following ?? [];
-  const hasMoreUsersToFollow = usersToFollow.length > USERS_TO_FOLLOW_LIMIT;
+  const { data: userAlreadyFollowing } = userMutation.getUserFollowings.useQuery({
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
+
+  const { data: usersToFollowData, isLoading, error } =
+    featuredAuthorMutation.getUsersToFollow.useQuery(
+      {
+        skip,
+        limit:
+          skip === 0
+            ? config.lazyLoading.initialLimit
+            : config.lazyLoading.limit,
+      },
+      {
+        enabled: skip >= 0 && hasMoreAuthor === true,
+      },
+    );
 
 
   const { handleScroll } = useLazyLoading({
-    queryLoading: userDetailsLoading,
+    queryLoading: isLoading,
     error: error?.message ?? "",
     initialLimit: config.lazyLoading.initialLimit,
     limit: config.lazyLoading.limit,
     skip,
     setSkip,
-    hasMoreData: hasMoreUsersToFollow ?? false,
+    hasMoreData: usersToFollowData?.hasMoreAuthor ?? false,
     setHasMoreData: setHasMoreAuthor,
   });
 
   useEffect(() => {
-    setAuthor((prevAuthor) => [...prevAuthor, ...(usersToFollow ?? [])]);
-  }, [userDetails]);
+    setAuthor((prevAuthor) => [...prevAuthor, ...(usersToFollowData?.featuredAuthor ?? [])]);
+  }, [usersToFollowData]);
 
   return {
     usersToFollow: author,
-    isLoading: userDetailsLoading,
+    isLoading,
     userFollowing: userAlreadyFollowing,
   };
 };

@@ -118,13 +118,6 @@ export enum MyFeedTabsEnum {
   DISCOVERY = "Discover",
 }
 
-export type FeaturedAuthor = {
-  userId: string;
-  name: string;
-  profile: string;
-  followersCount: number;
-  articlesCount: number;
-};
 
 export type FeaturedPost = {
   id: string;
@@ -135,8 +128,11 @@ export type FeaturedPost = {
   likeCount: number;
 };
 
-export type UserMinimalInfo = {
+export type UserToFollow = {
   id: string;
+  userId: string;
   name: string;
   profileImageUrl: string;
+  followersCount: number;
+  postCount: number;
 };
