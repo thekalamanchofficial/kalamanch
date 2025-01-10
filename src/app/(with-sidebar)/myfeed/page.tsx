@@ -18,13 +18,13 @@ const MyFeed = () => {
     hasMorePosts,
     postDataWithComments,
     handleLikeButton,
-    handleChange,
+    handleTabChange,
     addComment,
     errorMessage,
   } = useMyFeedPage();
 
   const renderUI = useMemo(() => {
-    if (postDataWithComments.length === 0 && !queryLoading) {
+    if (postDataWithComments?.length === 0 && !queryLoading) {
       return (
         <ShowMessage
           title="No Posts Found."
@@ -106,7 +106,7 @@ const MyFeed = () => {
           borderBottom: "1px solid #E0E0E0",
         }}
       >
-        <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
+        <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleTabChange} />
       </Grid>
       <Grid
         size={12}

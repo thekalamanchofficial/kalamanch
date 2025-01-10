@@ -1,4 +1,4 @@
-import { Box, IconButton } from "@mui/material";
+import { Box } from "@mui/material";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
@@ -40,6 +40,8 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
     }
   };
 
+  const iconSx = { height: "16px", width: "16px" };
+
   return (
     <Box
       sx={{
@@ -58,37 +60,37 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         }}
       >
         <PostActionButton
-          icon={isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          icon={isLiked ? <FavoriteIcon sx={iconSx} /> : <FavoriteBorderIcon sx={iconSx} />}
           label={likes && likes > 0 ? likes : "0"}
           onClick={handleLikeButton}
         />
 
         <PostActionButton
-          icon={<MessageIcon />}
+          icon={<MessageIcon sx={iconSx} />}
           label={comments && comments.length > 0 ? comments.length : "0"}
           onClick={() => openCommentBox()}
         />
         <PostActionButton
-          icon={<TollIcon />}
+          icon={<TollIcon sx={iconSx} />}
           label={bids && bids.length > 0 ? bids.length : "0"}
           onClick={() => handleAction("share")}
         />
         <PostActionButton
-          icon={<ShareIcon />}
+          icon={<ShareIcon sx={iconSx} />}
           label=""
           onClick={() => handleAction("bid")}
         />
       </Box>
       <Box>
-        <IconButton
-          sx={{
-            backgroundColor: "common.lightGray",
-          }}
-          size="small"
+        <PostActionButton
+          icon={<BookmarkBorderIcon sx={iconSx} />}
+          label=""
           onClick={() => handleAction("bookmark")}
-        >
-          <BookmarkBorderIcon />
-        </IconButton>
+          sx={{
+            minWidth: "65px",
+            minHeight: "24px",
+          }}
+        />
       </Box>
     </Box>
   );
