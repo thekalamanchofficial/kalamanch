@@ -72,8 +72,8 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
             component="img"
             height="140"
             image={
-              articleImage[0] !== ""
-                ? articleImage[0]
+              articleImage !== ""
+                ? articleImage
                 : "https://picsum.photos/200"
             }
             alt="green iguana"

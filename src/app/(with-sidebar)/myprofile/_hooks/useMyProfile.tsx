@@ -3,7 +3,7 @@ import {
   type SaveUserInfo,
 } from "~/app/(with-sidebar)/myprofile/types/types";
 import {
-  type ArticlesList,
+  type Post,
   type Comment,
 } from "~/app/(with-sidebar)/myfeed/types/types";
 
@@ -25,7 +25,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const [tab, setTab] = useState(MyProfileTabsEnum.MY_POSTS);
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean | undefined>(true);
-  const [post, setPosts] = useState<ArticlesList[]>([]);
+  const [post, setPosts] = useState<Post[]>([]);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
@@ -84,7 +84,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
     },
   );
 
-  const postDataWithComments: ArticlesList[] = useMemo(() => {
+  const postDataWithComments: Post[] = useMemo(() => {
     return (
       post?.map((postItem) => ({
         ...postItem,
@@ -123,7 +123,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
           });
 
           const updatePostLikeCount = (
-            post: ArticlesList,
+            post: Post,
             postId: string,
             liked: boolean,
           ) => {
@@ -166,11 +166,11 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const addCommentMutation = commentMutation.addComment.useMutation();
 
   const updatePostComments = (
-    post: ArticlesList,
+    post: Post,
     postId: string,
     newComment: Comment,
     parentId?: string,
-  ): ArticlesList => {
+  ): Post => {
     if (post.id !== postId) return post;
 
     const addReplyToParent = (

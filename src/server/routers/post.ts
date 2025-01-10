@@ -3,54 +3,28 @@ import prisma from "~/server/db";
 
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import type { PostType } from "@prisma/client";
 
 const postSchema = yup.object({
-  content: yup.string().required(),
-  title: yup.string().required(),
-  authorId: yup.string().required(),
-  authorName: yup.string().required(),
-  authorProfile: yup.string().optional(),
-  media: yup
-    .object({
-      thumbnailPicture: yup.array(yup.string()).optional(),
-      thumbnailContent: yup.string().optional(),
-      thumbnailTitle: yup.string().optional(),
-    })
-    .required(),
-  tags: yup.array(yup.string()).optional(),
-  likeCount: yup.number().optional().default(0),
-  likes: yup
-    .array(
-      yup.object({
-        userId: yup.string().required("User ID is required for like"),
-        createdAt: yup.date().optional(),
-      }),
-    )
-    .optional(),
-  comments: yup
-    .array(
-      yup.object({
-        userId: yup.string().required("User ID is required for comment"),
-        name: yup.string().required("Name is required for comment"),
-        content: yup.string().required("Comment content is required"),
-        createdAt: yup.date().optional(),
-      }),
-    )
-    .optional(),
-  bids: yup
-    .array(
-      yup.object({
-        userId: yup.string().required("User ID is required for bid"),
-        amount: yup
-          .number()
-          .required("Bid amount is required")
-          .positive("Bid amount must be positive"),
-        createdAt: yup.date().optional(),
-      }),
-    )
-    .optional(),
-  hasMorePosts: yup.boolean().optional(),
+  content: yup.string().required("Content is required."),
+  postDetails: yup.object({
+    title: yup.string().required("Title is required."),
+    targetAudience: yup.array(yup.string()).required("Target audience is required."),
+    postType: yup.string().required("Post type is required."),
+    actors: yup.array(yup.string()).optional(),
+    tags: yup.array(yup.string()).optional(),
+    thumbnailDetails: yup.object({
+      url: yup.string().required("Thumbnail URL is required."),
+      content: yup.string().optional(),
+      title: yup.string().optional(),
+    }).required(),
+  }).required("Post details are required."),
+  authorId: yup.string().required("Author ID is required."),
+  authorName: yup.string().required("Author name is required."),
+  authorProfileImageUrl: yup.string().optional(),
+ 
 });
+
 
 export const postRouter = router({
   getPosts: publicProcedure
@@ -112,38 +86,52 @@ export const postRouter = router({
     }),
 
   addPost: publicProcedure.input(postSchema).mutation(async ({ input }) => {
-    try {
-      const posts = await prisma.post.create({
-        data: {
-          content: input.content,
-          authorId: input.authorId,
-          authorName: input.authorName,
-          title: input.title ?? "",
-          authorProfile: input.authorProfile ?? "",
-          tags:
-            input.tags?.filter((tag): tag is string => tag !== undefined) ?? [],
-          media: {
-            thumbnailPicture: input.media?.thumbnailPicture?.filter(
-              (pic): pic is string => pic !== undefined,
-            ),
-            thumbnailContent: input.media?.thumbnailContent ?? "",
-            thumbnailTitle: input.media?.thumbnailTitle ?? "",
+    addPost: publicProcedure
+    .input(postSchema)
+    .mutation(async ({ input }) => {
+      try {
+        // Utility function to clean arrays by removing undefined values
+        const cleanArray = (array?: (string | undefined)[]): string[] => 
+          array?.filter((item): item is string => item !== undefined) ?? [];
+        const sanitizedInput = {
+          ...input,
+          postDetails: {
+            ...input.postDetails,
+            targetAudience: cleanArray(input.postDetails.targetAudience),
+            actors: cleanArray(input.postDetails.actors),
+            tags: cleanArray(input.postDetails.tags),
           },
-          likes: {
-            create: [],
+        };
+
+        const post = await prisma.post.create({
+          data: {
+            content: sanitizedInput.content,
+            authorId: sanitizedInput.authorId,
+            authorName: sanitizedInput.authorName,
+            authorProfileImageUrl: sanitizedInput.authorProfileImageUrl ?? "",
+            postDetails: {
+              title: sanitizedInput.postDetails.title,
+              targetAudience: sanitizedInput.postDetails.targetAudience,
+              postType: sanitizedInput.postDetails.postType as PostType,
+              actors: sanitizedInput.postDetails.actors,
+              tags: sanitizedInput.postDetails.tags,
+              thumbnailDetails: {
+                url: sanitizedInput.postDetails.thumbnailDetails.url,
+                content: sanitizedInput.postDetails.thumbnailDetails.content ?? null,
+                title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
+              },
+            },
+            likes: { create: [] },
+            bids: { create: [] },
+            comments: { create: [] },
           },
-          bids: {
-            create: [],
-          },
-          comments: {
-            create: [],
-          },
-        },
-      });
-      return posts;
-    } catch (error) {
-      handleError(error);
-      throw error;
-    }
-  }),
+        });
+        
+        return post;
+      } catch (error) {
+        handleError(error);
+        throw new Error("Failed to create the post.");
+      }
+    }),
+  
 });

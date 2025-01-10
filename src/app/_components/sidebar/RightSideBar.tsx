@@ -14,23 +14,21 @@ import { useClerk } from "@clerk/nextjs";
 import RightSideBarSkeletonAuthor from "./RightSideBarSkeletonAuthor";
 import RightSideBarSkeletonPost from "./RightSideBarSkeletonPost";
 import { STATIC_TEXTS } from "../static/staticText";
+import type { FeaturedPost, UserMinimalInfo } from "~/app/(with-sidebar)/myfeed/types/types";
 
 const RightSideBar = () => {
+  const USERS_TO_FOLLOW_LIMIT = 5;
+
   const { user } = useClerk();
   const router = useRouter();
-
-  const featuredAuthorMutation = trpc.featuredAuthor;
   const featuredPostMutation = trpc.featuredPost;
   const userMutation = trpc.user;
-
-  const { data: userFollowing } = userMutation.getUserFollowings.useQuery({
-    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-  });
-  const { data: featuredAuthorData, isLoading: featuredAuthorLoading } =
-    featuredAuthorMutation.getFeaturedAuthors.useQuery({
-      limit: 5,
-      skip: 0,
-    });
+  const { data: userDetails, isLoading: userDetailsLoading } = userMutation.getUserDetails.useQuery(
+    user?.primaryEmailAddress?.emailAddress
+  );
+  const usersToFollow = userDetails?.usersToFollow ?? [];
+  const userAlreadyFollowing = userDetails?.following ?? [];
+  const hasMoreUsersToFollow = usersToFollow.length > USERS_TO_FOLLOW_LIMIT;
 
   const { data: featuredPostData, isLoading: featuredPostLoading } =
     featuredPostMutation.getFeaturedPosts.useQuery({
@@ -85,7 +83,7 @@ const RightSideBar = () => {
                     }}
                   >
                     <Link
-                      href={`/article/${item.postId}`}
+                      href={`/article/${item.id}`}
                       style={{ textDecoration: "none", color: "text.primary" }}
                     >
                       <Typography
@@ -119,7 +117,7 @@ const RightSideBar = () => {
                           NameFontSize={15}
                           NameFontWeight="400"
                           AuthorName={item.authorName}
-                          AuthorImage={item.authorProfile}
+                          AuthorImage={item.authorProfileImageUrl}
                         />
                       </Link>
                       <Box
@@ -184,11 +182,11 @@ const RightSideBar = () => {
           Top writers to follow
         </Typography>
         <Grid container spacing={2}>
-          {featuredAuthorLoading ? (
+          {userDetailsLoading ? (
             <RightSideBarSkeletonAuthor />
-          ) : (featuredAuthorData?.featuredAuthor?.length ?? 0 > 0) ? (
-            featuredAuthorData?.featuredAuthor.map((item, index) => {
-              const isFollowing = userFollowing?.includes(item.userId);
+          ) : (usersToFollow?.length ?? 0 > 0) ? (
+            usersToFollow.map((item: UserMinimalInfo, index: number) => {
+              const isFollowing = userAlreadyFollowing?.includes(item.id);
 
               return (
                 <Grid size={12} key={index}>
@@ -206,11 +204,11 @@ const RightSideBar = () => {
                       style={{
                         textDecoration: "none",
                       }}
-                      href={`/profile/${item.userId}`}
+                      href={`/profile/${item.id}`}
                     >
                       <Image
                         alt="profile picture "
-                        src={item.profile}
+                        src={item.profileImageUrl}
                         width={40}
                         height={40}
                         style={{
@@ -231,7 +229,7 @@ const RightSideBar = () => {
                         style={{
                           textDecoration: "none",
                         }}
-                        href={`/profile/${item.userId}`}
+                        href={`/profile/${item.id}`}
                       >
                         <Typography
                           sx={{
@@ -244,7 +242,7 @@ const RightSideBar = () => {
                         </Typography>
                       </Link>
                       <FollowButton
-                        authorProfileLink={item.userId}
+                        authorProfileLink={item.profileImageUrl}
                         style={{
                           height: "20px",
                           width: "80px",
@@ -269,7 +267,7 @@ const RightSideBar = () => {
               {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_AUTHOR}
             </Typography>
           )}
-          {featuredAuthorData?.hasMoreAuthor ? (
+          {hasMoreUsersToFollow  ? (
             <SeeMoreButton onClick={() => handleSeeMore("/featured/author")} />
           ) : null}
         </Grid>

@@ -11,7 +11,7 @@ model User {
   id                      String           @id @default(auto()) @map("_id") @db.ObjectId
   email                   String           @unique
   name                    String
-  profile                  String?
+  profileImageUrl          String
   birthdate               DateTime?
   interests               String[]
   bio                     String?
@@ -31,7 +31,7 @@ model Post {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   authorId      String   @db.ObjectId
   authorName    String
-  authorProfileImageUrl  String?
+  authorProfileImageUrl  String
   content       String
   postDetails   PostDetails
   likeCount     Int      @default(0)
@@ -45,7 +45,6 @@ model Post {
   isFeatured   Boolean    @default(false)
 
   @@index([authorId])
-  @@index([tags])
   @@index([createdAt])
   @@index([isFeatured])
 
@@ -76,7 +75,7 @@ model Comment {
   userId    String   @db.ObjectId
   parentId  String?  @db.ObjectId
   userName  String
-  userProfileImageUrl  String?
+  userProfileImageUrl  String
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -134,7 +133,7 @@ model DraftPost {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
   authorId      String       @db.ObjectId
   authorName    String
-  authorProfileImageUrl  String?
+  authorProfileImageUrl  String
   postDetails   PostDetails
   iterations    Iterations[] 
   createdAt     DateTime     @default(now())
@@ -147,6 +146,6 @@ model DraftPost {
 type AuthorInfo {
   id            String   @db.ObjectId
   name          String
-  profileImageUrl  String?
+  profileImageUrl  String
 }
 

@@ -1,6 +1,6 @@
 import {
   MyFeedTabsEnum,
-  type ArticlesList,
+  type Post,
   type Comment,
 } from "../types/types";
 import { handleError } from "~/app/_utils/handleError";
@@ -11,14 +11,14 @@ import { trpc } from "~/server/client";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 
 type useMyFeedPageReturn = {
-  posts: ArticlesList[];
-  setPosts: React.Dispatch<React.SetStateAction<ArticlesList[]>>;
+  posts: Post[];
+  setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
   likedPosts: string[];
   queryLoading: boolean;
   hasMorePosts: boolean;
   tab: MyFeedTabsEnum;
   skip: number;
-  postDataWithComments: ArticlesList[];
+  postDataWithComments: Post[];
   setSkip: React.Dispatch<React.SetStateAction<number>>;
   handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
   handleChange: (newTab: MyFeedTabsEnum) => void;
@@ -36,7 +36,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
   const [tab, setTab] = useState(MyFeedTabsEnum.MY_FEED);
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
-  const [post, setPosts] = useState<ArticlesList[]>([]);
+  const [post, setPosts] = useState<Post[]>([]);
 
   const { user } = useClerk();
 
@@ -70,7 +70,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     setHasMoreData: setHasMorePosts,
   });
 
-  const postDataWithComments: ArticlesList[] = useMemo(() => {
+  const postDataWithComments: Post[] = useMemo(() => {
     return (
       post?.map((postItem) => ({
         ...postItem,
@@ -101,7 +101,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
           });
 
           const updatePostLikeCount = (
-            post: ArticlesList,
+            post: Post,
             postId: string,
             liked: boolean,
           ) => {
@@ -144,11 +144,11 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
   const addCommentMutation = commentMutation.addComment.useMutation();
 
   const updatePostComments = (
-    post: ArticlesList,
+    post: Post,
     postId: string,
     newComment: Comment,
     parentId?: string,
-  ): ArticlesList => {
+  ): Post => {
     if (post.id !== postId) return post;
 
     const addReplyToParent = (
@@ -191,15 +191,14 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
           const newComment = await addCommentMutation.mutateAsync({
             postId,
             userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-            name:
+            userName:
               user?.firstName === null
                 ? (user?.unsafeMetadata?.name as string)
                 : user?.firstName,
             content,
-            profile: user.imageUrl,
+            userProfileImageUrl: user.imageUrl ?? "",
             parentId,
           });
-
           setPosts((prevPosts) =>
             prevPosts.map((post) =>
               updatePostComments(post, postId, newComment, parentId),

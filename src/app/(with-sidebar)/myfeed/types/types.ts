@@ -1,55 +1,70 @@
 import { type SxProps } from "@mui/material";
-import { type ReactNode } from "react";
 
 export type MenuItemList = {
   label: string;
   route: string;
   icon: React.ReactNode;
 };
-
-type ArticleMedia = {
-  thumbnailPicture: string[];
-  thumbnailContent: string;
-  thumbnailTitle: string;
-};
-
 export type Comment = {
   id: string;
-  userId: string;
   postId: string;
-  name: string;
+  userId: string;
+  userName: string;
+  userProfileImageUrl: string;
   content: string;
   createdAt: string;
-  profile: string;
   updatedAt: string;
   parentId: string | null;
   replies?: Comment[];
 };
 
+export type Like = {
+  id: string;
+  userId: string;
+  postId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 type Bid = {
   id: string;
   userId: string;
-  articleId: string;
+  postId: string;
   amount: number;
   createdAt: string;
   updatedAt: string;
 };
-export type ArticlesList = {
+export type Post = {
   id: string;
   authorId: string;
   authorName: string;
-  authorProfile: string;
-  title: string;
+  authorProfileImageUrl: string;
   content: string;
-  media: ArticleMedia;
-  tags: string[];
+  postDetails:  PostDetails;
   likeCount: number;
+  likes: Like[];
   comments: Comment[];
   bids?: Bid[];
+  createdAt: string;
+  updatedAt: string;
 };
 
+export type PostDetails = {
+  title: string;
+  targetAudience: string[];
+  postType: string;
+  actors: string[];
+  tags: string[];
+  thumbnailDetails: ThumbnailDetails;
+}
+
+export type ThumbnailDetails = {
+  url: string;
+  content: string | null;
+  title: string | null;
+}
 export type PostsFeedProps = {
-  articlesList: ArticlesList[];
+  articlesList: Post[];
   likedPosts: string[];
   handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
   addComment: (
@@ -80,7 +95,7 @@ export type PostCardContentProps = {
   articleTitle: string;
   articleContent: string;
   articleTags: string[];
-  articleImage?: string[];
+  articleImage?: string;
   articleId: string;
   articleDescription: string;
 };
@@ -113,11 +128,16 @@ export type FeaturedAuthor = {
 };
 
 export type FeaturedPost = {
-  postId: string;
+  id: string;
   title: string;
   authorName: string;
-  authorProfile: string;
+  authorProfileImageUrl: string;
   authorId: string;
   likeCount: number;
 };
 
+export type UserMinimalInfo = {
+  id: string;
+  name: string;
+  profileImageUrl: string;
+};

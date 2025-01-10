@@ -10,33 +10,10 @@ const featuredAuthorSchema = yup.object({
 });
 
 export const featuredAuthorRouter = router({
-  addFeaturedAuthor: publicProcedure
-    .input(yup.array(featuredAuthorSchema))
-    .mutation(async ({ input }) => {
-      try {
-        if (!input) {
-          throw new Error("Input is undefined");
-        }
-        for (const author of input) {
-          const { userId, name, profile } = author;
-          await prisma.featuredAuthor.create({
-            data: {
-              userId,
-              name,
-              profile,
-            },
-          });
-        }
-        return true;
-      } catch (error) {
-        handleError(error);
-        throw error;
-      }
-    }),
-
   getFeaturedAuthors: publicProcedure
     .input(
       yup.object({
+        userId: yup.string().required(),
         limit: yup.number().min(1).default(5),
         skip: yup.number().min(0).default(0),
       }),
@@ -47,13 +24,19 @@ export const featuredAuthorRouter = router({
 
         let hasMore = false;
 
-        const count = await prisma.featuredAuthor.count();
+        const count = await prisma.user.count({
+          where: {
+            id: input.userId,
+          }
+        }
+          
+        );
 
         if (count > limit + skip) {
           hasMore = true;
         }
 
-        const featuredAuthors = await prisma.featuredAuthor.findMany({
+        const featuredAuthors = await prisma.user.findMany({
           take: limit,
           skip: skip,
           include: {
