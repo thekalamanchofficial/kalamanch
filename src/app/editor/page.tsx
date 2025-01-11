@@ -8,6 +8,9 @@ import { type CreatePostFormType, EditorTabsEnum } from "./types/types";
 import CreatePostForm from "./_components/createPostForm/CreatePostForm";
 import editorMockData from "./mockDataEditor/mockdata";
 import { useSearchParams } from "next/navigation";
+import { useUser } from "~/context/userContext";
+import { trpc } from "~/server/client";
+import { handleError } from "../_utils/handleError";
 
 const Page = () => {
   const [tab, setTab] = useState(EditorTabsEnum.EDITOR);
@@ -15,9 +18,41 @@ const Page = () => {
 
   const searchParams = useSearchParams();
   const queryParams = Object.fromEntries(searchParams.entries());
+  const postMutation = trpc.post.addPost.useMutation();
+  const postId = queryParams.postId ?? "";
+  const draftPostId = queryParams.draftPostId ?? "";
+  const {user} = useUser();
+  const defaultContent = "";
+
+
+  console.log(user);
 
   const handleChange = (newTab: EditorTabsEnum) => {
     setTab(newTab);
+  };
+
+  const handlePublishPost = (content: string) => {
+
+    void postMutation.mutateAsync({
+      content: content,
+      authorId: user?.id ?? "",
+      authorName: user?.name ?? "",
+      authorProfileImageUrl: user?.profileImageUrl ?? "",
+      postDetails: {
+        title: queryParams.title ?? "",
+        targetAudience: queryParams.targetAudience?.split(",") ?? [],
+        postType: queryParams.postType ?? "",
+        actors: queryParams.actors ? queryParams.actors.split(",") : [],
+        tags: queryParams.tags?.split(",") ?? [],
+        thumbnailDetails: {
+          url: queryParams.thumbnailUrl ?? "",
+        },
+      },
+    }).catch((error) => {
+      handleError(error);
+    });
+
+    setIsCreatePostFormOpen(false);
   };
 
   const handleClose = () => {
@@ -66,7 +101,8 @@ const Page = () => {
       >
         <WritingPad
           handleOpen={handleOpen}
-          editorPostData={editorMockData.editorPost}
+          handlePublish={handlePublishPost}
+          defaultContentToDisplay={defaultContent}
         />
       </Grid>
       {isCreatePostFormOpen ? (

@@ -14,7 +14,7 @@ const postSchema = yup.object({
     actors: yup.array(yup.string()).optional(),
     tags: yup.array(yup.string()).optional(),
     thumbnailDetails: yup.object({
-      url: yup.string().required("Thumbnail URL is required."),
+      url: yup.string().optional(),
       content: yup.string().optional(),
       title: yup.string().optional(),
     }).required(),
@@ -110,11 +110,11 @@ export const postRouter = router({
             postDetails: {
               title: sanitizedInput.postDetails.title,
               targetAudience: sanitizedInput.postDetails.targetAudience,
-              postType: sanitizedInput.postDetails.postType as PostType,
+              postType: sanitizedInput.postDetails.postType.toUpperCase() as PostType,
               actors: sanitizedInput.postDetails.actors,
               tags: sanitizedInput.postDetails.tags,
               thumbnailDetails: {
-                url: sanitizedInput.postDetails.thumbnailDetails.url,
+                url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
                 content: sanitizedInput.postDetails.thumbnailDetails.content ?? null,
                 title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
               },

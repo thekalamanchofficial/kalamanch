@@ -115,7 +115,7 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
               />
               {toggleComment[article.id] && (
                 <CommentSection
-                  comments={article.comments}
+                  comments={article.comments ?? []}
                   addComment={(comment: string, parent: string) =>
                     handleAddComment(article.id, comment, parent)
                   }

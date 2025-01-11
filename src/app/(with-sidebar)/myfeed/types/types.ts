@@ -41,8 +41,8 @@ export type Post = {
   content: string;
   postDetails:  PostDetails;
   likeCount: number;
-  likes: Like[];
-  comments: Comment[];
+  likes?: Like[];
+  comments?: Comment[];
   bids?: Bid[];
   createdAt: string;
   updatedAt: string;

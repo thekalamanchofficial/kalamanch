@@ -16,38 +16,21 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 type WritingPadProps = {
   handleOpen: () => void;
-  editorPostData: PostDetails;
+  handlePublish: (data: string) => void;
+  defaultContentToDisplay: string;
+
 };
+
 const WritingPad: React.FC<WritingPadProps> = ({
   handleOpen,
-  editorPostData,
+  handlePublish,
+  defaultContentToDisplay,
 }) => {
   const { handleSubmit, reset, control } = useContentForm();
 
   const onSubmit = (data: { content: string }) => {
-
-    const { mutate: createPost } = trpc.post.addPost.useMutation();
-    const onSubmit = (data: { content: string }) => {
-      createPost({ 
-        content: data.content, 
-        postDetails: {
-          title: editorPostData.title,
-          targetAudience: editorPostData.targetAudience,
-          postType: editorPostData.postType,
-          actors: editorPostData.actors,
-          tags: editorPostData.tags,
-          thumbnailDetails: {
-            url: editorPostData.thumbnailDetails.url,
-            content: editorPostData.thumbnailDetails.content ?? "",
-            title: editorPostData.thumbnailDetails.title ?? "",
-          }
-        },
-      });
-      
-      reset();
-    }
-    
-  };
+    handlePublish(data.content);
+  }
 
   return (
     <Box
@@ -69,7 +52,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
         <Controller
           control={control}
           name="content"
-          defaultValue={editorPostData.content}
+          defaultValue={defaultContentToDisplay}
           render={({ field }) => (
             <ReactQuill
               {...field}
