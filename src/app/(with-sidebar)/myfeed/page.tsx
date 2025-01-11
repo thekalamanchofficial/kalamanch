@@ -17,9 +17,7 @@ const MyFeed = () => {
     queryLoading,
     hasMorePosts,
     postDataWithComments,
-    handleLikeButton,
     handleTabChange,
-    addComment,
     errorMessage,
   } = useMyFeedPage();
 
@@ -49,8 +47,6 @@ const MyFeed = () => {
           <PostsFeed
             articlesList={postDataWithComments ?? []}
             likedPosts={likedPosts}
-            handleLikeButton={handleLikeButton}
-            addComment={addComment}
           />
           {queryLoading && skip > 0 ? (
             <Loader height="auto" width="auto" title="" />
@@ -76,17 +72,7 @@ const MyFeed = () => {
     }
 
     return <ShowMessage title="No Posts Found." />;
-  }, [
-    errorMessage,
-    queryLoading,
-    skip,
-    tab,
-    postDataWithComments,
-    likedPosts,
-    handleLikeButton,
-    addComment,
-    hasMorePosts,
-  ]);
+  }, [errorMessage, queryLoading, skip, tab, postDataWithComments, hasMorePosts, likedPosts]);
 
   return (
     <Box

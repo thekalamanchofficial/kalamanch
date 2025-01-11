@@ -65,12 +65,6 @@ export type ThumbnailDetails = {
 export type PostsFeedProps = {
   articlesList: Post[];
   likedPosts: string[];
-  handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
-  addComment: (
-    postId: string,
-    content: string,
-    parent: string,
-  ) => Promise<void>;
 };
 
 export type PostCardFooterProps = {
