@@ -8,13 +8,15 @@ import { Box, Button, Typography } from "@mui/material";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FolderIcon from "@mui/icons-material/Folder";
 import ChecklistIcon from "@mui/icons-material/Checklist";
-import { type EditorPost } from "~/app/editor/types/types";
+import { type DraftPost } from "~/app/editor/types/types";
 import dynamic from "next/dynamic";
+import { trpc } from "~/server/client";
+import { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 type WritingPadProps = {
   handleOpen: () => void;
-  editorPostData: EditorPost;
+  editorPostData: PostDetails;
 };
 const WritingPad: React.FC<WritingPadProps> = ({
   handleOpen,
@@ -23,7 +25,28 @@ const WritingPad: React.FC<WritingPadProps> = ({
   const { handleSubmit, reset, control } = useContentForm();
 
   const onSubmit = (data: { content: string }) => {
-    console.log(data);
+
+    const { mutate: createPost } = trpc.post.addPost.useMutation();
+    const onSubmit = (data: { content: string }) => {
+      createPost({ 
+        content: data.content, 
+        postDetails: {
+          title: editorPostData.title,
+          targetAudience: editorPostData.targetAudience,
+          postType: editorPostData.postType,
+          actors: editorPostData.actors,
+          tags: editorPostData.tags,
+          thumbnailDetails: {
+            url: editorPostData.thumbnailDetails.url,
+            content: editorPostData.thumbnailDetails.content ?? "",
+            title: editorPostData.thumbnailDetails.title ?? "",
+          }
+        },
+      });
+      
+      reset();
+    }
+    
   };
 
   return (

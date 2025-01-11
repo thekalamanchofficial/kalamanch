@@ -1,3 +1,5 @@
+import { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+
 export enum EditorTabsEnum {
   EDITOR = "Editor",
   DRAFTS = "Drafts",
@@ -21,24 +23,14 @@ export type Iteration = {
   updatedAt: string;
 };
 
-type Metadata = {
-  id: string;
-  title: string;
-  targetAudience: string[];
-  thumbnailUrl: string;
-  postType: string;
-  actors: string[];
-  tags: string[];
-};
 
-export type EditorPost = {
+export type DraftPost = {
   id: string;
-  title: string;
   authorName: string;
   authorProfile: string;
   authorId: string;
   content: string;
-  metadata: Metadata;
+  postDetails: PostDetails;
   iterations: Iteration[];
   createdAt: string;
   updatedAt: string;
