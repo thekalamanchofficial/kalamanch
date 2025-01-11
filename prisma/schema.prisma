@@ -11,7 +11,7 @@ model User {
   id                      String           @id @default(auto()) @map("_id") @db.ObjectId
   email                   String           @unique
   name                    String
-  profile                 String?
+  profileImageUrl          String
   birthdate               DateTime?
   interests               String[]
   bio                     String?
@@ -20,7 +20,7 @@ model User {
   following               String[]         @db.ObjectId
   followers               String[]         @db.ObjectId
   bookmarks               String[]         @db.ObjectId
-  featuredAuthor          FeaturedAuthor[]
+  usersToFollow           UserToFollow[]
   likes                   Like[]
   comments                Comment[]
   bids                    Bid[]
@@ -31,11 +31,9 @@ model Post {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   authorId      String   @db.ObjectId
   authorName    String
-  authorProfile String
-  title         String
+  authorProfileImageUrl  String
   content       String
-  media         Media
-  tags          String[]
+  postDetails   PostDetails
   likeCount     Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -44,16 +42,18 @@ model Post {
   likes        Like[]
   comments     Comment[]
   bids         Bid[]
-  FeaturedPost FeaturedPost[]
+  isFeatured   Boolean    @default(false)
 
-  @@index([tags])
+  @@index([authorId])
   @@index([createdAt])
+  @@index([isFeatured])
+
 }
 
-type Media {
-  thumbnailPicture String[]
-  thumbnailContent String
-  thumbnailTitle   String
+type ThumbnailDetails {
+  url     String
+  content String?
+  title   String?
 }
 
 model Like {
@@ -74,8 +74,8 @@ model Comment {
   postId    String   @db.ObjectId
   userId    String   @db.ObjectId
   parentId  String?  @db.ObjectId
-  name      String
-  profile   String
+  userName  String
+  userProfileImageUrl  String
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -104,23 +104,11 @@ model Bid {
   @@index([userId])
 }
 
-model FeaturedPost {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  postId        String @unique @db.ObjectId
-  title         String
-  authorName    String
-  authorProfile String
-  authorId      String @db.ObjectId
-
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-}
-
-model FeaturedAuthor {
+model UserToFollow {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   userId  String @db.ObjectId
   name    String
-  profile String
-
+  profileImageUrl String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -130,37 +118,35 @@ enum PostType {
   PODCAST
 }
 
-model Metadata {
-  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+type PostDetails {
   title          String
   targetAudience String[]
-  thumbnailUrl   String
   postType       PostType
   actors         String[]     @default([])
   tags           String[]
-  editorPosts    EditorPost[]
+  thumbnailDetails  ThumbnailDetails
 }
 
 model Iterations {
   id            String     @id @default(auto()) @map("_id") @db.ObjectId
   iterationName String
   content       String
-  EditorPost    EditorPost @relation(fields: [editorPostId], references: [id])
-  editorPostId  String     @db.ObjectId
+  draftPostId   String     @db.ObjectId
+  DraftPost     DraftPost  @relation(fields: [draftPostId], references: [id], onDelete: Cascade)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }
 
-model EditorPost {
+model DraftPost {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  title         String
-  authorName    String
-  authorProfile String
   authorId      String       @db.ObjectId
-  content       String
-  metadataId    String       @db.ObjectId
-  metadata      Metadata     @relation(fields: [metadataId], references: [id], onDelete: Cascade)
-  Iterations    Iterations[]
+  authorName    String
+  authorProfileImageUrl  String
+  postDetails   PostDetails
+  iterations    Iterations[] 
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+
+  @@index([authorId])
 }
+

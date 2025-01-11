@@ -134,6 +134,7 @@ export const likeRouter = router({
                     replies: true,
                   },
                 },
+                likes: true,
               },
             },
           },

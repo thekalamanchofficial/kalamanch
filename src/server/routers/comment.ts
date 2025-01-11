@@ -19,10 +19,10 @@ const getUserDetails = async (userEmail: string) => {
 
 const commentSchema = yup.object({
   userEmail: yup.string().email().required(),
-  name: yup.string().required(),
+  userName: yup.string().required(),
   content: yup.string().required().min(1),
   postId: yup.string().required(),
-  profile: yup.string().required(),
+  userProfileImageUrl: yup.string().required(),
   parentId: yup.string().optional(),
 });
 
@@ -31,7 +31,7 @@ export const commentRouter = router({
     .input(commentSchema)
     .mutation(async ({ input }) => {
       try {
-        const { postId, userEmail, name, content, profile, parentId } = input;
+        const { postId, userEmail, userName, content, userProfileImageUrl, parentId } = input;
 
         const userDetails = await getUserDetails(userEmail);
         const { id: userId } = userDetails;
@@ -40,8 +40,8 @@ export const commentRouter = router({
           data: {
             userId,
             postId,
-            name,
-            profile,
+            userName,
+            userProfileImageUrl,
             content,
             parentId: parentId === "" ? null : parentId,
           },

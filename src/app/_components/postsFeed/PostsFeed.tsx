@@ -44,6 +44,7 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
   const { data: userFollowing } = userMutation.getUserFollowings.useQuery({
     userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
   });
+  
 
   return (
     <>
@@ -70,7 +71,7 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
                 >
                   <UserNameProfile
                     AuthorName={article.authorName}
-                    AuthorImage={article.authorProfile}
+                    AuthorImage={article.authorProfileImageUrl}
                   />
                 </Link>
                 <Box
@@ -98,11 +99,11 @@ const PostsFeed: React.FC<PostsFeedProps> = ({
 
               <PostCardContent
                 articleContent={article.content}
-                articleDescription={article.media.thumbnailContent}
-                articleImage={article.media.thumbnailPicture}
-                articleTags={article.tags}
+                articleDescription={article.postDetails.thumbnailDetails.content ?? ""}
+                articleImage={article.postDetails.thumbnailDetails.url}
+                articleTags={article.postDetails.tags}
                 articleId={article.id}
-                articleTitle={article.title}
+                articleTitle={article.postDetails.title}
               />
               <PostCardFooter
                 likes={article.likeCount ?? 0}

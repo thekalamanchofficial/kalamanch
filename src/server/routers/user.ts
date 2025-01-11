@@ -46,7 +46,7 @@ export const userRouter = router({
         email: input.email,
         name: input.name,
         birthdate: input.birthdate,
-        profile: input.profile,
+        profileImageUrl: input.profile ?? "",
         interests: input.interests?.filter(
           (interest): interest is string => interest !== undefined,
         ),

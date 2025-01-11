@@ -1,6 +1,7 @@
 import {
   MyFeedTabsEnum,
-  type ArticlesList,
+  type Post,
+  type Comment,
 } from "../types/types";
 import { handleError } from "~/app/_utils/handleError";
 import config from "~/app/_config/config";
@@ -10,7 +11,7 @@ import { trpc } from "~/server/client";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 
 type useMyFeedPageReturn = {
-  postDataWithComments: ArticlesList[];
+  postDataWithComments: Post[];
   likedPosts: string[];
   queryLoading: boolean;
   hasMorePosts: boolean;
@@ -29,7 +30,7 @@ type useMyFeedPageReturn = {
 };
 
 const useMyFeedPage = (): useMyFeedPageReturn => {
-  const [posts, setPosts] = useState<ArticlesList[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
   const [tab, setTab] = useState<MyFeedTabsEnum>(MyFeedTabsEnum.MY_FEED);
   const [skip, setSkip] = useState(0);
@@ -135,11 +136,11 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
         const newComment = await addCommentMutation.mutateAsync({
           postId,
           userEmail,
-          name:
+          userName:
             user?.firstName ??
             ((user?.unsafeMetadata?.name as string) || "Anonymous"),
           content,
-          profile: user.imageUrl,
+          userProfileImageUrl: user.imageUrl,
           parentId,
         });
 
