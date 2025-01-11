@@ -25,9 +25,13 @@ export function useComments({
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [pendingUpdates, setPendingUpdates] = useState<OptimisticUpdate[]>([]);
 
+  // Keep comments in sync with initialComments prop
   useEffect(() => {
-    setComments(initialComments);
-  }, [initialComments]);
+    // Only update if there are no pending optimistic updates
+    if (pendingUpdates.length === 0) {
+      setComments(initialComments);
+    }
+  }, [initialComments, pendingUpdates.length]);
 
   const commentMutation = trpc.comments.addComment.useMutation();
 
@@ -35,7 +39,7 @@ export function useComments({
     content: string, 
     parentId: string | undefined
   ): Comment => ({
-    id: `temp-${new Date().getTime()}-${Math.random().toString(36).slice(2)}`,
+    id: `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     postId,
     userId: userEmail!,
     userName: userName ?? userEmail!,
@@ -48,18 +52,18 @@ export function useComments({
   }), [userEmail, userName, userProfileImageUrl, postId]);
 
   const updateCommentsTree = useCallback((
-    comments: Comment[], 
+    currentComments: Comment[], 
     parentId: string | null, 
     newComment: Comment, 
     isRollback = false
   ): Comment[] => {
     if (!parentId) {
       return isRollback 
-        ? comments.filter(comment => comment.id !== newComment.id)
-        : [...comments, newComment];
+        ? currentComments.filter(comment => comment.id !== newComment.id)
+        : [...currentComments, newComment];
     }
 
-    return comments.map(comment => {
+    return currentComments.map(comment => {
       if (comment.id === parentId) {
         const updatedReplies = isRollback
           ? (comment.replies ?? []).filter(reply => reply.id !== newComment.id)
@@ -70,29 +74,41 @@ export function useComments({
           replies: updatedReplies
         };
       }
+      if (comment.replies?.length) {
+        return {
+          ...comment,
+          replies: updateCommentsTree(comment.replies, parentId, newComment, isRollback)
+        };
+      }
       return comment;
     });
   }, []);
 
   const replaceTemporaryComment = useCallback((
-    comments: Comment[],
+    currentComments: Comment[],
     tempId: string,
     parentId: string | null,
     serverComment: Comment
   ): Comment[] => {
     if (!parentId) {
-      return comments.map(comment => 
-        comment.id === tempId ? { ...comment, ...serverComment } : comment
+      return currentComments.map(comment => 
+        comment.id === tempId ? serverComment : comment
       );
     }
 
-    return comments.map(comment => {
+    return currentComments.map(comment => {
       if (comment.id === parentId) {
         return {
           ...comment,
           replies: comment.replies?.map(reply =>
-            reply.id === tempId ? { ...reply, ...serverComment } : reply
+            reply.id === tempId ? serverComment : reply
           ) ?? []
+        };
+      }
+      if (comment.replies?.length) {
+        return {
+          ...comment,
+          replies: replaceTemporaryComment(comment.replies, tempId, parentId, serverComment)
         };
       }
       return comment;
@@ -110,8 +126,10 @@ export function useComments({
       parentId: parentId ?? null
     };
 
-    // Optimistically update state
-    setComments(prev => updateCommentsTree(prev, parentId ?? null, tempComment));
+    // Optimistically update state immediately
+    setComments(currentComments => 
+      updateCommentsTree(currentComments, parentId ?? null, tempComment)
+    );
     setPendingUpdates(prev => [...prev, optimisticUpdate]);
 
     try {
@@ -125,30 +143,34 @@ export function useComments({
       });
 
       // Update with server response
-      setComments(prev => replaceTemporaryComment(
-        prev,
-        tempComment.id,
-        parentId ?? null,
-        response
-      ));
+      setComments(currentComments => 
+        replaceTemporaryComment(
+          currentComments,
+          tempComment.id,
+          parentId ?? null,
+          response
+        )
+      );
       setPendingUpdates(prev => 
         prev.filter(update => update.tempId !== tempComment.id)
       );
 
     } catch (error) {
       // Rollback on error
-      setComments(prev => updateCommentsTree(
-        prev,
-        parentId ?? null,
-        tempComment,
-        true
-      ));
+      setComments(currentComments => 
+        updateCommentsTree(
+          currentComments,
+          parentId ?? null,
+          tempComment,
+          true
+        )
+      );
       setPendingUpdates(prev => 
         prev.filter(update => update.tempId !== tempComment.id)
       );
 
       console.error("Error adding comment:", error);
-      throw error; // Re-throw to allow parent components to handle the error
+      throw error;
     }
   }, [
     postId,
