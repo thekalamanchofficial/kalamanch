@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { trpc } from '~/server/client';
 import { type Comment } from '~/app/(with-sidebar)/myfeed/types/types';
+import { handleError } from '~/app/_utils/handleError';
 
 interface UseCommentsProps {
   initialComments: Comment[];
@@ -25,14 +26,6 @@ export function useComments({
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [pendingUpdates, setPendingUpdates] = useState<OptimisticUpdate[]>([]);
 
-  // Keep comments in sync with initialComments prop
-  useEffect(() => {
-    // Only update if there are no pending optimistic updates
-    if (pendingUpdates.length === 0) {
-      setComments(initialComments);
-    }
-  }, [initialComments, pendingUpdates.length]);
-
   const commentMutation = trpc.comments.addComment.useMutation();
 
   const createTempComment = useCallback((
@@ -43,11 +36,11 @@ export function useComments({
     postId,
     userId: userEmail!,
     userName: userName ?? userEmail!,
+    parentId: parentId ? parentId : null,
     userProfileImageUrl: userProfileImageUrl ?? "",
     content,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    parentId: parentId ?? null,
     replies: [],
   }), [userEmail, userName, userProfileImageUrl, postId]);
 
@@ -74,12 +67,6 @@ export function useComments({
           replies: updatedReplies
         };
       }
-      if (comment.replies?.length) {
-        return {
-          ...comment,
-          replies: updateCommentsTree(comment.replies, parentId, newComment, isRollback)
-        };
-      }
       return comment;
     });
   }, []);
@@ -103,12 +90,6 @@ export function useComments({
           replies: comment.replies?.map(reply =>
             reply.id === tempId ? serverComment : reply
           ) ?? []
-        };
-      }
-      if (comment.replies?.length) {
-        return {
-          ...comment,
-          replies: replaceTemporaryComment(comment.replies, tempId, parentId, serverComment)
         };
       }
       return comment;
@@ -170,7 +151,7 @@ export function useComments({
       );
 
       console.error("Error adding comment:", error);
-      throw error;
+      handleError(error);
     }
   }, [
     postId,

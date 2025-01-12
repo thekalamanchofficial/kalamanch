@@ -1,4 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useFeedContext } from '~/app/(with-sidebar)/myfeed/context/FeedContext';
+import { handleError } from '~/app/_utils/handleError';
 import { trpc } from '~/server/client';
 
 interface UseLikeProps {
@@ -11,6 +13,7 @@ interface UseLikeProps {
 export function useLike({ initialLikeCount, initialIsLiked, postId, userEmail }: UseLikeProps) {
   const [hasLiked, setHasLiked] = useState(initialIsLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const { addLikeToBatch } = useFeedContext();
   const isLikeInProgress = useRef(false);
 
   const likeMutation = trpc.likes.likePost.useMutation();
@@ -29,6 +32,11 @@ export function useLike({ initialLikeCount, initialIsLiked, postId, userEmail }:
     // Optimistically update the state
     setHasLiked(newLikedState);
     setLikeCount(prev => newLikedState ? prev + 1 : prev - 1);
+    addLikeToBatch({
+      [postId]: {
+        liked: newLikedState,
+        userId: userEmail,},
+    });
 
     try {
       const response = await likeMutation.mutateAsync({
@@ -46,10 +54,11 @@ export function useLike({ initialLikeCount, initialIsLiked, postId, userEmail }:
       setHasLiked(!newLikedState);
       setLikeCount(prev => newLikedState ? prev - 1 : prev + 1);
       console.error("Error liking post:", error);
+      handleError(error);
     } finally {
       isLikeInProgress.current = false;
     }
-  }, [hasLiked, postId, userEmail, likeMutation]);
+  }, [hasLiked, postId, userEmail, likeMutation, addLikeToBatch]);
 
   return {
     hasLiked,

@@ -115,8 +115,8 @@ const theme = createTheme({
         root: {
           padding: 0,
           "& .MuiTextField-root": {
-            "margin-bottom": "16px",
-            "margin-top": "8px",
+            marginBottom: "16px",
+            marginTop: "8px",
           },
         },
       },
@@ -125,8 +125,8 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiTextField-input:-webkit-autofill": {
-            "-webkit-text-fill-color": "black",
-            "-webkit-box-shadow": "0 0 0px 1000px white inset",
+            "WebkitTextFillColor": "black",
+            "WebkitBoxShadow": "0 0 0px 1000px white inset",
           },
           marginBottom: "8px",
           marginTop: "8px",
@@ -145,8 +145,8 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiInputBase-input:-webkit-autofill": {
-            "-webkit-text-fill-color": "black",
-            "-webkit-box-shadow": "0 0 0px 1000px white inset",
+            "WebkitTextFillColor": "black",
+            "WebkitBoxShadow": "0 0 0px 1000px white inset",
           },
           padding: "6px 9px",
         },
@@ -157,10 +157,10 @@ const theme = createTheme({
         root: {
           minHeight: "48px",
           "&.MuiButton-root": {
-            "minHeight": "48px",
+            minHeight: "48px",
           },
           "&.MuiChip-root": {
-            "minHeight": "32px",
+            minHeight: "32px",
           },
         },
       },

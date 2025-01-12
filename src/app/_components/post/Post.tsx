@@ -1,5 +1,5 @@
 "use client";
-import { Card, CardContent, Box, Divider } from "@mui/material";
+import { Card, CardContent, Box } from "@mui/material";
 import { memo, useState, useCallback } from "react";
 import { type Post as PostType } from "~/app/(with-sidebar)/myfeed/types/types";
 import UserNameProfile from "../userNameProfile/UserNameProfile";
@@ -42,7 +42,7 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
   }, []);
 
   return (
-    <Card sx={{ mb: 2 }}>
+    <Card sx={{ mb: 2, boxShadow: "none" }}>
       <CardContent>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <UserNameProfile
@@ -64,7 +64,6 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
           articleId={post.id}
           articleDescription={post.postDetails.thumbnailDetails.content ?? ""}
         />
-        <Divider sx={{ my: 1 }} />
         <PostCardFooter
           likes={likeCount}
           comments={comments}

@@ -4,6 +4,15 @@ import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 
+const bulkLikeSchema = yup.array().of(
+  yup.object({
+    postId: yup.string().required('Post ID is required'),
+    userId: yup.string().required('User ID is required'),
+    liked: yup.boolean().required('Liked field is required'),
+  })
+);
+
+
 const getUserDetails = async (userEmail: string) => {
   const userDetails = await prisma.user.findFirst({
     where: {
