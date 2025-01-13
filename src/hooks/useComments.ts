@@ -107,7 +107,6 @@ export function useComments({
       parentId: parentId ?? null
     };
 
-    // Optimistically update state immediately
     setComments(currentComments => 
       updateCommentsTree(currentComments, parentId ?? null, tempComment)
     );
@@ -123,7 +122,6 @@ export function useComments({
         userProfileImageUrl: userProfileImageUrl ?? "",
       });
 
-      // Update with server response
       setComments(currentComments => 
         replaceTemporaryComment(
           currentComments,
@@ -137,7 +135,6 @@ export function useComments({
       );
 
     } catch (error) {
-      // Rollback on error
       setComments(currentComments => 
         updateCommentsTree(
           currentComments,

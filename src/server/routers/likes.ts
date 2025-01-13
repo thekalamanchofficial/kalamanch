@@ -99,7 +99,6 @@ export const likeRouter = router({
 
       const { id: userId } = await getUserDetails(input.userEmail);
 
-      // Separate likes to be created and deleted
       const likesToCreate: { postId: string; userId: string }[] = [];
       const likesToDelete: { postId: string; userId: string }[] = [];
       const likeCountChanges: Record<string, number> = {};
@@ -107,21 +106,19 @@ export const likeRouter = router({
       for (const { postId, liked } of input.likes) {
         if (liked) {
           likesToCreate.push({ postId, userId });
-          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) + 1; // Increment like count
+          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) + 1;
         } else {
           likesToDelete.push({ postId, userId });
-          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) - 1; // Decrement like count
+          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) - 1;
         }
       }
 
-      // Perform bulk create if there are likes to be created
       if (likesToCreate.length > 0) {
         await prisma.like.createMany({
           data: likesToCreate,
         });
       }
 
-      // Perform bulk delete if there are likes to be deleted
       if (likesToDelete.length > 0) {
         await prisma.like.deleteMany({
           where: {
@@ -130,7 +127,6 @@ export const likeRouter = router({
         });
       }
 
-      // Update the like counts for each post
       const updatePromises = Object.entries(likeCountChanges).map(
         async ([postId, likeCountChange]) => {
           if (likeCountChange !== 0) {
@@ -146,9 +142,8 @@ export const likeRouter = router({
 
       return { message: "Bulk like operations completed successfully." };
     } catch (error) {
-      console.log("sever error", error);
-      // handleError(error);
-      // throw error;
+      handleError(error);
+      throw error;
     }
   }),
 
