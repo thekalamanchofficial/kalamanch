@@ -22,6 +22,8 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
   const [bulkLikeState, setBulkLikeState] = useState<LikePayload>({});
   const [pendingLikes, setPendingLikes] = useState<LikePayload>({});
   const [rolledBackLikes, setRolledBackLikes] = useState<Record<string, boolean>>({});
+
+  const BULK_LIKE_DEBOUNCE_DELAY = 5000;
   
   const bulkLikeMutation = trpc.likes.bulkLikePost.useMutation({
     onSuccess: () => {
@@ -63,7 +65,7 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     
     const input = { userEmail, likes: bulkLikePayload };
     await bulkLikeMutation.mutateAsync(input);
-  }, 5000);
+  }, BULK_LIKE_DEBOUNCE_DELAY);
 
   const addLikeToBatch = useCallback(
     (payload: LikePayload) => {

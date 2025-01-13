@@ -26,7 +26,6 @@ export function useLike({
 
   useEffect(() => {
     if (postId in rolledBackLikes) {
-      isLikeInProgress.current = false;
       setHasLiked(rolledBackLikes[postId] ?? false);
     }
   }, [rolledBackLikes, postId]);
@@ -44,6 +43,7 @@ export function useLike({
         liked: newLikedState,
       },
     });
+    isLikeInProgress.current = false;
   }, [hasLiked, postId, userEmail, addLikeToBatch]);
 
   return {
