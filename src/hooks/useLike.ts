@@ -1,7 +1,7 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { useFeedContext } from '~/app/(with-sidebar)/myfeed/context/FeedContext';
-import { handleError } from '~/app/_utils/handleError';
-import { trpc } from '~/server/client';
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useFeedContext } from "~/app/(with-sidebar)/myfeed/context/FeedContext";
+import { handleError } from "~/app/_utils/handleError";
+import { trpc } from "~/server/client";
 
 interface UseLikeProps {
   initialLikeCount: number;
@@ -10,7 +10,12 @@ interface UseLikeProps {
   userEmail?: string;
 }
 
-export function useLike({ initialLikeCount, initialIsLiked, postId, userEmail }: UseLikeProps) {
+export function useLike({
+  initialLikeCount,
+  initialIsLiked,
+  postId,
+  userEmail,
+}: UseLikeProps) {
   const [hasLiked, setHasLiked] = useState(initialIsLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const { addLikeToBatch } = useFeedContext();
@@ -31,28 +36,27 @@ export function useLike({ initialLikeCount, initialIsLiked, postId, userEmail }:
 
     // Optimistically update the state
     setHasLiked(newLikedState);
-    setLikeCount(prev => newLikedState ? prev + 1 : prev - 1);
+    setLikeCount((prev) => (newLikedState ? prev + 1 : prev - 1));
     addLikeToBatch({
       [postId]: {
         liked: newLikedState,
-        userId: userEmail,},
+      },
     });
 
     try {
-      const response = await likeMutation.mutateAsync({
-        postId,
-        userEmail,
-      });
-      
+      // const response = await likeMutation.mutateAsync({
+      //   postId,
+      //   userEmail,
+      // });
       // Update with the actual server state if different
-      if (response.liked !== newLikedState) {
-        setHasLiked(response.liked);
-        setLikeCount(prev => newLikedState ? prev - 1 : prev + 1);
-      }
+      // if (response.liked !== newLikedState) {
+      //   setHasLiked(response.liked);
+      //   setLikeCount(prev => newLikedState ? prev - 1 : prev + 1);
+      // }
     } catch (error) {
       // Revert to original state if the API call fails
       setHasLiked(!newLikedState);
-      setLikeCount(prev => newLikedState ? prev - 1 : prev + 1);
+      setLikeCount((prev) => (newLikedState ? prev - 1 : prev + 1));
       console.error("Error liking post:", error);
       handleError(error);
     } finally {
@@ -63,6 +67,6 @@ export function useLike({ initialLikeCount, initialIsLiked, postId, userEmail }:
   return {
     hasLiked,
     likeCount,
-    handleLike
+    handleLike,
   };
 }

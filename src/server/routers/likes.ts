@@ -4,14 +4,15 @@ import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 
-const bulkLikeSchema = yup.array().of(
-  yup.object({
-    postId: yup.string().required('Post ID is required'),
-    userId: yup.string().required('User ID is required'),
-    liked: yup.boolean().required('Liked field is required'),
-  })
-);
-
+const bulkLikeSchema = yup.object({
+  userEmail: yup.string().email().required(),
+  likes: yup.array().of(
+    yup.object({
+      postId: yup.string().required('Post ID is required'),
+      liked: yup.boolean().required('Liked field is required'),
+    })
+  ).required('Likes array is required'),
+});
 
 const getUserDetails = async (userEmail: string) => {
   const userDetails = await prisma.user.findFirst({
@@ -85,6 +86,69 @@ export const likeRouter = router({
     } catch (error) {
       handleError(error);
       throw error;
+    }
+  }),
+
+  bulkLikePost: publicProcedure
+  .input(bulkLikeSchema)
+  .mutation(async ({ input }) => {
+    try {
+      if (!input) {
+        return { message: "No input provided for bulk like operations." };
+      }
+
+      const { id: userId } = await getUserDetails(input.userEmail);
+
+      // Separate likes to be created and deleted
+      const likesToCreate: { postId: string; userId: string }[] = [];
+      const likesToDelete: { postId: string; userId: string }[] = [];
+      const likeCountChanges: Record<string, number> = {};
+
+      for (const { postId, liked } of input.likes) {
+        if (liked) {
+          likesToCreate.push({ postId, userId });
+          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) + 1; // Increment like count
+        } else {
+          likesToDelete.push({ postId, userId });
+          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) - 1; // Decrement like count
+        }
+      }
+
+      // Perform bulk create if there are likes to be created
+      if (likesToCreate.length > 0) {
+        await prisma.like.createMany({
+          data: likesToCreate,
+        });
+      }
+
+      // Perform bulk delete if there are likes to be deleted
+      if (likesToDelete.length > 0) {
+        await prisma.like.deleteMany({
+          where: {
+            OR: likesToDelete.map(({ postId, userId }) => ({ postId, userId })),
+          },
+        });
+      }
+
+      // Update the like counts for each post
+      const updatePromises = Object.entries(likeCountChanges).map(
+        async ([postId, likeCountChange]) => {
+          if (likeCountChange !== 0) {
+            await prisma.post.update({
+              where: { id: postId },
+              data: { likeCount: { increment: likeCountChange } },
+            });
+          }
+        }
+      );
+
+      await Promise.all(updatePromises);
+
+      return { message: "Bulk like operations completed successfully." };
+    } catch (error) {
+      console.log("sever error", error);
+      // handleError(error);
+      // throw error;
     }
   }),
 

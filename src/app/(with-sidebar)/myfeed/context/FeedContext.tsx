@@ -3,8 +3,9 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { trpc } from "~/server/client";
 import { useDebounce } from "~/hooks/useDebounce";
+import { useClerk } from "@clerk/nextjs";
 
-type LikePayload = Record<string, { userId: string; liked: boolean }>;
+type LikePayload = Record<string, { liked: boolean }>;
 
 interface FeedContextValue {
   addLikeToBatch: (payload: LikePayload) => void;
@@ -17,19 +18,30 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [bulkLikeState, setBulkLikeState] = useState<LikePayload>({});
-  // const likeMutation = trpc.likes.bulkLike.useMutation();
+  const bulkLikeMutation = trpc.likes.bulkLikePost.useMutation();
 
-  const debouncedSendLikes = useDebounce(
-    (likedState: LikePayload) => {
-      if (bulkLikeState) {
-        // api call
+  const { user } = useClerk();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
 
-        setBulkLikeState({});
-        console.log("bulkLikeState called api", likedState);
-      }
-    },
-    10000,
-  ); // 1-minute debounce
+  const debouncedSendLikes = useDebounce(async (likedState: LikePayload) => {
+    if (!userEmail) return;
+    if (Object.keys(likedState).length > 0) {
+      // api call
+      const bulkLikePayload = Object.entries(likedState).map(
+        ([postId, { liked }]) => ({
+          postId,
+          liked,
+        }),
+      );
+
+      const input = { userEmail, likes: bulkLikePayload };
+
+      await bulkLikeMutation.mutateAsync(input);
+
+      setBulkLikeState({});
+      console.log("bulkLikeState called api", bulkLikePayload);
+    }
+  }, 5000); // 5 seconds debounce
 
   const addLikeToBatch = useCallback(
     (payload: LikePayload) => {
