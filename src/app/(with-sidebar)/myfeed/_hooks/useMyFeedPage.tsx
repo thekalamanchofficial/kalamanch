@@ -73,7 +73,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     () =>
       posts.map((post) => ({
         ...post,
-        comments: post.comments.map((comment) => ({
+        comments: post.comments?.map((comment) => ({
           ...comment,
           postId: post.id,
         })),
@@ -150,7 +150,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
               ? {
                   ...post,
                   comments: parentId
-                    ? post.comments.map((comment) =>
+                    ? post.comments?.map((comment) =>
                         comment.id === parentId
                           ? {
                               ...comment,
@@ -158,7 +158,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
                             }
                           : comment,
                       )
-                    : [...post.comments, newComment],
+                    : [...post.comments ?? [], newComment],
                 }
               : post,
           ),

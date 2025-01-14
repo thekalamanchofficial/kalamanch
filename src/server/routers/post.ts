@@ -14,9 +14,9 @@ const postSchema = yup.object({
     actors: yup.array(yup.string()).optional(),
     tags: yup.array(yup.string()).optional(),
     thumbnailDetails: yup.object({
-      url: yup.string().required("Thumbnail URL is required."),
-      content: yup.string().optional(),
-      title: yup.string().optional(),
+      url: yup.string().optional(),
+      content: yup.string().optional().nullable(),
+      title: yup.string().optional().nullable(),
     }).required(),
   }).required("Post details are required."),
   authorId: yup.string().required("Author ID is required."),
@@ -70,6 +70,7 @@ export const postRouter = router({
             likes: true,
           },
         });
+        
         const totalPosts = await prisma.post.count({});
 
         let hasMorePosts;
@@ -79,6 +80,7 @@ export const postRouter = router({
         } else {
           hasMorePosts = false;
         }
+
 
         return { posts, hasMorePosts };
       } catch (error) {
@@ -110,11 +112,11 @@ export const postRouter = router({
             postDetails: {
               title: sanitizedInput.postDetails.title,
               targetAudience: sanitizedInput.postDetails.targetAudience,
-              postType: sanitizedInput.postDetails.postType as PostType,
+              postType: sanitizedInput.postDetails.postType.toUpperCase() as PostType,
               actors: sanitizedInput.postDetails.actors,
               tags: sanitizedInput.postDetails.tags,
               thumbnailDetails: {
-                url: sanitizedInput.postDetails.thumbnailDetails.url,
+                url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
                 content: sanitizedInput.postDetails.thumbnailDetails.content ?? null,
                 title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
               },

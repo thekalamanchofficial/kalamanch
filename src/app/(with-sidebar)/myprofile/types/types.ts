@@ -1,4 +1,4 @@
-import { type Post } from "../../myfeed/types/types";
+import { Like, UserToFollow, type Post } from "../../myfeed/types/types";
 
 export enum MyProfileTabsEnum {
   MY_POSTS = "My Posts",
@@ -15,13 +15,24 @@ export type EditProfileDetails = {
 };
 
 export type UserSchema = {
+  id: string;
   name: string;
-  birthdate: Date;
+  email: string;
+  profileImageUrl: string;
+  birthdate?: string | null;
   interests: string[];
-  bio?: string;
-  education?: string[];
+  bio: string | null;
+  education: string[];
   professionalAchievements?: string;
+  following?: string[];
+  followers?: string[];
+  bookmarks?: string[];
+  usersToFollow?: UserToFollow[];
+  likes?: Like[];
+  comments?: Comment[];
+  posts?: Post[];
 };
+
 
 export type UserInfo = {
   name: string;

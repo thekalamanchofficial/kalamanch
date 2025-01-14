@@ -41,12 +41,21 @@ export type Post = {
   content: string;
   postDetails:  PostDetails;
   likeCount: number;
-  likes: Like[];
-  comments: Comment[];
+  likes?: Like[];
+  comments?: Comment[];
   bids?: Bid[];
   createdAt: string;
   updatedAt: string;
 };
+
+export type CreatePostProps = {
+  content: string;
+  authorId: string;
+  authorName: string;
+  authorProfileImageUrl: string;
+  postDetails: PostDetails;
+  
+}
 
 export type PostDetails = {
   title: string;
@@ -59,8 +68,8 @@ export type PostDetails = {
 
 export type ThumbnailDetails = {
   url: string;
-  content: string | null;
-  title: string | null;
+  content?: string | null;
+  title?: string | null;
 }
 export type PostsFeedProps = {
   articlesList: Post[];

@@ -113,9 +113,11 @@ model UserToFollow {
 }
 
 enum PostType {
+  BLOG
   ARTICLE
-  VIDEO
-  PODCAST
+  ANNOUNCEMENT
+  NEWS
+  SCRIPT
 }
 
 type PostDetails {
