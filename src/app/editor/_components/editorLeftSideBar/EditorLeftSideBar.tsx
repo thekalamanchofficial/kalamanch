@@ -11,12 +11,21 @@ import { useRouter } from "next/navigation";
 
 type editorLeftSideBarProps = {
   iterations: Iteration[];
+  selectedIterationId: string;
+  handleIterationSelected: (iterationId: string) => void;
+  handleAddIteration: (iterationName: string) => void;
+  handleSaveLastIterationData: () => void
 };
 
 const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
   iterations,
+  handleIterationSelected,
+  handleAddIteration,
+  selectedIterationId,
+  handleSaveLastIterationData
 }) => {
   const router = useRouter();
+
   return (
     <Grid
       columns={1}
@@ -39,6 +48,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
           cursor: "pointer",
         }}
         onClick={() => {
+          handleSaveLastIterationData();
           router.back();
         }}
       >
@@ -80,7 +90,6 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
         >
           Iterations
         </Typography>
-
         <Button
           sx={{
             display: "flex",
@@ -93,6 +102,8 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
             color: "white",
             py: "10px",
           }}
+          onClick={( ) => handleAddIteration("Iteration - " + (iterations.length + 1))}
+          
         >
           <AddIcon />
           <Typography
@@ -131,37 +142,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
             width: "100%",
           }}
         >
-          <Box
-            sx={{
-              borderRadius: "4px",
-              border: "1px solid ",
-              borderColor: "common.strokePrimary",
-              padding: "8px 10px",
-              marginTop: "8px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "14px",
-                color: "font.secondary",
-              }}
-            >
-              {" "}
-              {iterations[0]?.iterationName !== ""
-                ? iterations[0]?.iterationName
-                : `Iteration 0`}
-            </Typography>
-            <ArrowForwardIosOutlinedIcon
-              sx={{
-                color: "common.gray",
-                fontSize: "12px",
-              }}
-            />
-          </Box>
-          {iterations?.map((item, index) => {
+          {iterations.map((item,index) => {
             return (
               <Box
                 sx={{
@@ -173,22 +154,25 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  cursor: "pointer",
                 }}
-                key={index + 1}
+                key={item.id}
+                onClick={() => handleIterationSelected(item.id)}
               >
                 <Typography
                   sx={{
                     fontSize: "14px",
-                    color: "font.secondary",
+                    color: (item.id) == selectedIterationId  ? "#260EB9" : "font.secondary",
+                    
                   }}
                 >
-                  {iterations[index]?.iterationName != ""
-                    ? iterations[index]?.iterationName
+                  {item?.iterationName != ""
+                    ? item?.iterationName
                     : `Iteration ${index + 1}`}
                 </Typography>
                 <ArrowForwardIosOutlinedIcon
                   sx={{
-                    color: "common.gray",
+                    color: (item.id) == selectedIterationId ? "#260EB9" : "common.gray",
                     fontSize: "12px",
                   }}
                 />

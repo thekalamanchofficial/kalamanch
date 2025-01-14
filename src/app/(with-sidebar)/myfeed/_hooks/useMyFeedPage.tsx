@@ -64,7 +64,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     () =>
       posts.map((post) => ({
         ...post,
-        comments: post.comments.map((comment) => ({
+        comments: post.comments?.map((comment) => ({
           ...comment,
           postId: post.id,
         })),

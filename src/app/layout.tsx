@@ -7,6 +7,7 @@ import { type Metadata } from "next";
 import { ThemeProvider } from "@mui/material/styles";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import theme from "../theme";
+import { UserProvider } from "~/context/userContext";
 
 export const metadata: Metadata = {
   title: "Kalamanach",
@@ -34,7 +35,12 @@ export default function RootLayout({
                 pauseOnHover
                 theme="light"
               />
-              <Provider>{children}</Provider>
+              <Provider>
+                <UserProvider>
+                  {children}
+                </UserProvider>
+              </Provider>
+            
             </ThemeProvider>
           </AppRouterCacheProvider>
         </body>

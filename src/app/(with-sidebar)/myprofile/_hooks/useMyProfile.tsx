@@ -88,7 +88,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
     return (
       post?.map((postItem) => ({
         ...postItem,
-        comments: postItem.comments.map((comment) => ({
+        comments: postItem.comments?.map((comment) => ({
           ...comment,
           postId: postItem.id,
         })),
@@ -195,8 +195,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
     return {
       ...post,
       comments: parentId
-        ? addReplyToParent(post.comments, parentId, { ...newComment, postId })
-        : [...post.comments, { ...newComment, postId }],
+        ? addReplyToParent(post.comments ?? [], parentId, { ...newComment, postId })
+        : [...post.comments ?? [], { ...newComment, postId }],
     };
   };
 
