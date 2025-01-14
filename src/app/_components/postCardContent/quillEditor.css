@@ -1,0 +1,15 @@
+.quill-container .quill {
+  width: 100%;
+}
+.quill-container .ql-container.ql-snow {
+  border: none !important;
+}
+.quill-container .ql-editor {
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  color: #4d5565 !important;
+  font-family: "Inter", sans-serif !important;
+  padding: 0 !important;
+  margin-bottom: 10px !important;
+}
