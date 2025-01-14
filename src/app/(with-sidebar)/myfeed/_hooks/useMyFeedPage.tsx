@@ -85,6 +85,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     if (postData?.posts) {
       setPosts((prev) => {
         const existingPostIds = new Set(prev.map((post) => post.id));
+        // TODO: find a better way to remove duplicate posts, try out using trpc infinite query.
         const newPosts = postData.posts.filter((post) => !existingPostIds.has(post.id));
         return [...prev, ...newPosts];
       });
