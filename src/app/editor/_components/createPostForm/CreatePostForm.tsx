@@ -26,6 +26,8 @@ import { useRouter } from "next/navigation";
 import CloseIcon from "@mui/icons-material/Close";
 import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUploader";
 import { PostType } from "@prisma/client";
+import { trpc } from "~/server/client";
+import { useUser } from "~/context/userContext";
 
 export type CreatePostFormProps = {
   open: boolean;
@@ -48,16 +50,45 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
   });
 
   const router = useRouter();
-
+  const draftPostMutation = trpc.draftPost.addDraftPost.useMutation();
   const postType = watch("postType");
   const [actors, setActors] = useState("");
+  const {user} = useUser();
 
-  const handleFormSubmit = (data: CreatePostFormType) => {
+  const handleFormSubmit = async (data: CreatePostFormType) => {
+
+    if (!user?.id || !user?.name) {
+      console.error("User not found");
+      return;
+    }
+    // create draft post
+    const draftPost = await draftPostMutation.mutateAsync({
+      authorId: user.id,
+      authorName: user.name,
+      authorProfileImageUrl: user.profileImageUrl ?? "",
+      postDetails: {
+        title: data.title,
+        targetAudience: data.targetAudience,
+        postType: data.postType as PostType,
+        actors: data.actors,
+        tags: data.tags,
+        thumbnailDetails: {
+          url: data.thumbnailUrl,
+        },
+      },
+      iterations: [{
+        iterationName: "Iteration - 1",
+        content: "",
+      }]
+    });
+
+
     const queryData = {
       ...data,
       targetAudience: data?.targetAudience?.join(",") ?? "",
       tags: data?.tags?.join(",") ?? "",
       actors: data?.actors?.join(",") ?? "",
+      draftPostId: draftPost?.id
     };
     const query = new URLSearchParams(queryData).toString();
     router.push(`/editor?${query}`);

@@ -5,18 +5,34 @@ import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhoto";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
 import { Box, Button, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import React from "react";
+import React, { use, useEffect } from "react";
 import { type Iteration } from "../../types/types";
 import { useRouter } from "next/navigation";
 
 type editorLeftSideBarProps = {
   iterations: Iteration[];
+  selectedIterationId: string;
+  changeIteration: (iterationId: string) => void;
+  addIteration: (iterationName: string) => void;
+  saveLastIterationData: () => void
 };
 
 const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
   iterations,
+  changeIteration,
+  addIteration,
+  selectedIterationId,
+  saveLastIterationData
 }) => {
   const router = useRouter();
+  const handleAddIteration = () => {
+    const numberOfIterations = iterations.length;
+    addIteration("Iteration - " + (numberOfIterations + 1));
+  }
+  const handleIterationSelected = ( iterationId: string) => {
+    changeIteration(iterationId);
+  };
+
   return (
     <Grid
       columns={1}
@@ -39,6 +55,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
           cursor: "pointer",
         }}
         onClick={() => {
+          saveLastIterationData();
           router.back();
         }}
       >
@@ -80,7 +97,6 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
         >
           Iterations
         </Typography>
-
         <Button
           sx={{
             display: "flex",
@@ -93,6 +109,8 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
             color: "white",
             py: "10px",
           }}
+          onClick={handleAddIteration}
+          
         >
           <AddIcon />
           <Typography
@@ -131,37 +149,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
             width: "100%",
           }}
         >
-          <Box
-            sx={{
-              borderRadius: "4px",
-              border: "1px solid ",
-              borderColor: "common.strokePrimary",
-              padding: "8px 10px",
-              marginTop: "8px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "14px",
-                color: "font.secondary",
-              }}
-            >
-              {" "}
-              {iterations[0]?.iterationName !== ""
-                ? iterations[0]?.iterationName
-                : `Iteration 0`}
-            </Typography>
-            <ArrowForwardIosOutlinedIcon
-              sx={{
-                color: "common.gray",
-                fontSize: "12px",
-              }}
-            />
-          </Box>
-          {iterations?.map((item, index) => {
+          {iterations.map((item,index) => {
             return (
               <Box
                 sx={{
@@ -173,22 +161,25 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  cursor: "pointer",
                 }}
-                key={index + 1}
+                key={item.id}
+                onClick={() => handleIterationSelected(item.id)}
               >
                 <Typography
                   sx={{
                     fontSize: "14px",
-                    color: "font.secondary",
+                    color: (item.id) == selectedIterationId  ? "#260EB9" : "font.secondary",
+                    
                   }}
                 >
-                  {iterations[index]?.iterationName != ""
-                    ? iterations[index]?.iterationName
+                  {item?.iterationName != ""
+                    ? item?.iterationName
                     : `Iteration ${index + 1}`}
                 </Typography>
                 <ArrowForwardIosOutlinedIcon
                   sx={{
-                    color: "common.gray",
+                    color: (item.id) == selectedIterationId ? "#260EB9" : "common.gray",
                     fontSize: "12px",
                   }}
                 />

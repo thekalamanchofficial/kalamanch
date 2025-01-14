@@ -18,20 +18,31 @@ export type Iteration = {
   id: string;
   iterationName: string;
   content: string;
-  editorPostId: string;
+  draftPostId: string;
   createdAt: string;
   updatedAt: string;
 };
 
 
 export type DraftPost = {
-  id: string;
+  id?: string;
   authorName: string;
-  authorProfile: string;
+  authorProfileImageUrl: string;
   authorId: string;
-  content: string;
   postDetails: PostDetails;
   iterations: Iteration[];
   createdAt: string;
   updatedAt: string;
 };
+
+export type QueryParams = {
+  postId: string;
+  draftPostId: string;
+  title: string;
+  targetAudience: string[];
+  postType: string;
+  actors: string[];
+  tags: string[];
+  thumbnailUrl: string;
+};
+

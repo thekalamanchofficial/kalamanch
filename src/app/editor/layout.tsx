@@ -29,26 +29,8 @@ const Layout = ({ children }: { children: ReactElement }) => {
           py: "40px",
         }}
       >
-        <Grid
-          size={2}
-          sx={{
-            mr: 4,
-          }}
-        >
-          <EditorLeftSideBar
-            iterations={editorMockData.editorPost.iterations}
-          />
-        </Grid>
-        <Grid
-          size={7}
-          sx={{
-            backgroundColor: "white",
-            height: "90vh",
-            display: "flex",
-          }}
-        >
           {children}
-        </Grid>
+        
         <Grid
           size={2}
           sx={{

@@ -48,6 +48,15 @@ export type Post = {
   updatedAt: string;
 };
 
+export type CreatePostProps = {
+  content: string;
+  authorId: string;
+  authorName: string;
+  authorProfileImageUrl: string;
+  postDetails: PostDetails;
+  
+}
+
 export type PostDetails = {
   title: string;
   targetAudience: string[];
@@ -59,8 +68,8 @@ export type PostDetails = {
 
 export type ThumbnailDetails = {
   url: string;
-  content: string | null;
-  title: string | null;
+  content?: string | null;
+  title?: string | null;
 }
 export type PostsFeedProps = {
   articlesList: Post[];

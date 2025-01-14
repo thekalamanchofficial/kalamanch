@@ -4,6 +4,7 @@ import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import type { PostType } from "@prisma/client";
+import { nullable } from "zod";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
@@ -15,8 +16,8 @@ const postSchema = yup.object({
     tags: yup.array(yup.string()).optional(),
     thumbnailDetails: yup.object({
       url: yup.string().optional(),
-      content: yup.string().optional(),
-      title: yup.string().optional(),
+      content: yup.string().optional().nullable(),
+      title: yup.string().optional().nullable(),
     }).required(),
   }).required("Post details are required."),
   authorId: yup.string().required("Author ID is required."),
@@ -70,6 +71,7 @@ export const postRouter = router({
             likes: true,
           },
         });
+        
         const totalPosts = await prisma.post.count({});
 
         let hasMorePosts;
@@ -79,6 +81,7 @@ export const postRouter = router({
         } else {
           hasMorePosts = false;
         }
+
 
         return { posts, hasMorePosts };
       } catch (error) {
