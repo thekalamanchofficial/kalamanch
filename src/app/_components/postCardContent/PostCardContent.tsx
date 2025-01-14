@@ -7,7 +7,8 @@ import Link from "next/link";
 import "react-quill/dist/quill.snow.css";
 import "./quillEditor.css";
 import SeeLessButton from "../seeLessButton/SeeLessButton";
-import ReactQuill from "react-quill";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const PostCardContent: React.FC<PostCardContentProps> = ({
   articleTitle,
