@@ -54,7 +54,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
         {!seeMore ? (
           <>
             {articleContent.length > myfeedConfig.ARTICLE_READ_MORE_LENGTH ? (
-              <>
+              <div className="quill-container">
                 <ReactQuill
                   value={articleContent.slice(
                     0,
@@ -65,20 +65,28 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
                   modules={quillCOnfig}
                 />
                 <SeeMoreButton onClick={handleSeeMore} />
-              </>
+              </div>
             ) : (
-              <ReactQuill
-                value={articleContent}
-                readOnly
-                modules={quillCOnfig}
-              />
+              <div className="quill-container">
+                <ReactQuill
+                  value={articleContent}
+                  readOnly
+                  theme="snow"
+                  modules={quillCOnfig}
+                />
+              </div>
             )}
           </>
         ) : (
-          <>
-            <ReactQuill value={articleContent} readOnly modules={quillCOnfig} />
+          <div className="quill-container">
+            <ReactQuill
+              value={articleContent}
+              readOnly
+              theme="snow"
+              modules={quillCOnfig}
+            />
             <SeeLessButton onClick={handleSeeLess} />
-          </>
+          </div>
         )}
       </Box>
       <Link
