@@ -83,7 +83,11 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
 
   useEffect(() => {
     if (postData?.posts) {
-      setPosts((prev) => [...prev, ...postData.posts]);
+      setPosts((prev) => {
+        const existingPostIds = new Set(prev.map((post) => post.id));
+        const newPosts = postData.posts.filter((post) => !existingPostIds.has(post.id));
+        return [...prev, ...newPosts];
+      });
     }
   }, [postData]);
 

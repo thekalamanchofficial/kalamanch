@@ -30,7 +30,7 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
   });
 
   const { comments, handleAddComment } = useComments({
-    initialComments: post.comments,
+    initialComments: post.comments ?? [],
     postId: post.id,
     userEmail,
     userName: user?.fullName ?? userEmail,
