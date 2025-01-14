@@ -5,33 +5,26 @@ import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhoto";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
 import { Box, Button, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import React, { use, useEffect } from "react";
+import React from "react";
 import { type Iteration } from "../../types/types";
 import { useRouter } from "next/navigation";
 
 type editorLeftSideBarProps = {
   iterations: Iteration[];
   selectedIterationId: string;
-  changeIteration: (iterationId: string) => void;
-  addIteration: (iterationName: string) => void;
-  saveLastIterationData: () => void
+  handleIterationSelected: (iterationId: string) => void;
+  handleAddIteration: (iterationName: string) => void;
+  handleSaveLastIterationData: () => void
 };
 
 const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
   iterations,
-  changeIteration,
-  addIteration,
+  handleIterationSelected,
+  handleAddIteration,
   selectedIterationId,
-  saveLastIterationData
+  handleSaveLastIterationData
 }) => {
   const router = useRouter();
-  const handleAddIteration = () => {
-    const numberOfIterations = iterations.length;
-    addIteration("Iteration - " + (numberOfIterations + 1));
-  }
-  const handleIterationSelected = ( iterationId: string) => {
-    changeIteration(iterationId);
-  };
 
   return (
     <Grid
@@ -55,7 +48,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
           cursor: "pointer",
         }}
         onClick={() => {
-          saveLastIterationData();
+          handleSaveLastIterationData();
           router.back();
         }}
       >
@@ -109,7 +102,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
             color: "white",
             py: "10px",
           }}
-          onClick={handleAddIteration}
+          onClick={( ) => handleAddIteration("Iteration - " + (iterations.length + 1))}
           
         >
           <AddIcon />

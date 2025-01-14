@@ -6,6 +6,20 @@ import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FolderIcon from "@mui/icons-material/Folder";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 
+const buttonStyle = {
+  backgroundColor: "secondary.main",
+  minHeight: "auto",
+  color: "primary.main",
+  py: "8px",
+  px: "16px",
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+};
+
+const textStyle = {
+  fontSize: "14px",
+};
 type ActionsBarProps = {
   handleOpen: () => void;
   handleSubmit: () => void;
@@ -43,19 +57,5 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({ handleOpen, handleSubmit,
   </Box>
 );
 
-const buttonStyle = {
-  backgroundColor: "secondary.main",
-  minHeight: "auto",
-  color: "primary.main",
-  py: "8px",
-  px: "16px",
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-};
-
-const textStyle = {
-  fontSize: "14px",
-};
 
 export default EditorActionsBar;

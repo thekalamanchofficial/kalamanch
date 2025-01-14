@@ -41,9 +41,9 @@ const Page = () => {
       >
         <EditorLeftSideBar
           iterations={draftPost?.iterations ?? []}
-          saveLastIterationData={saveLastIterationData}
-          addIteration={addIteration}
-          changeIteration={handleIterationChange}
+          handleSaveLastIterationData={saveLastIterationData}
+          handleAddIteration={addIteration}
+          handleIterationSelected={handleIterationChange}
           selectedIterationId= {selectedIteration?.id ?? ""}
         />
       </Grid>

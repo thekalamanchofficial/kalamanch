@@ -4,7 +4,6 @@ import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import type { PostType } from "@prisma/client";
-import { nullable } from "zod";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),

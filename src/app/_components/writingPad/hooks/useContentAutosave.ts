@@ -29,7 +29,7 @@ export const useContentAutosave = (
 
   const saveDraftInstantly = (showToast?: boolean) => {
     saveContent(content,currentIterationId,showToast); 
-    localStorage.removeItem(currentIterationId)
+    localStorage.removeItem(currentIterationId) // TODO - Use Context instead of local storage
   };
 
   useEffect(() => {

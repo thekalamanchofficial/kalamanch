@@ -15,16 +15,6 @@ export const useEditorState = (draftPostId: string | null) => {
   const updateIterationMutation = trpc.draftPost.updateIteration.useMutation();
   const addIterationMutation = trpc.draftPost.addIteration.useMutation();
 
-  // Initialize the draft post and selected iteration
-  useEffect(() => {
-    if (draftPostData) {
-      setDraftPost(draftPostData);
-      if (draftPostData.iterations?.length) {
-        setSelectedIteration(draftPostData.iterations[0] ?? null);
-      }
-    }
-  }, [draftPostData]);
-
   const addIteration = async (iterationName: string) => {
     if (!draftPostId) return console.warn("Missing draftPostId");   
     saveLastIterationData();
@@ -134,6 +124,16 @@ export const useEditorState = (draftPostId: string | null) => {
     },
     [draftPostId, selectedIteration, updateIterationMutation]
   );
+
+  // Initialize the draft post and selected iteration
+  useEffect(() => {
+    if (draftPostData) {
+      setDraftPost(draftPostData);
+      if (draftPostData.iterations?.length) {
+        setSelectedIteration(draftPostData.iterations[0] ?? null);
+      }
+    }
+  }, [draftPostData]);
 
   return { isLoading,saveLastIterationData, draftPost, selectedIteration, handleIterationChange, handleEditorContentChange,addIteration };
 };

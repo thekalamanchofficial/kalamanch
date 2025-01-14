@@ -2,11 +2,22 @@ import { useState } from "react";
 import { usePost } from "../_hooks/usePost";
 import { useUser } from "~/context/userContext";
 import { QueryParams } from "../types/types";
+import { toast } from "react-toastify";
 
 export const usePostPublishing = (queryParams: QueryParams) => {
   const [isCreatePostFormOpen, setIsCreatePostFormOpen] = useState(false);
   const { publishPost } = usePost();
   const { user } = useUser();
+
+  const formData = {
+    title: queryParams.title,
+    actors: queryParams.actors,
+    thumbnailUrl: queryParams.thumbnailUrl,
+    tags: queryParams.tags,
+    postType: queryParams.postType,
+    targetAudience: queryParams.targetAudience,
+  };
+
 
   const openCreatePostForm = () => setIsCreatePostFormOpen(true);
   const closeCreatePostForm = () => setIsCreatePostFormOpen(false);
@@ -30,17 +41,10 @@ export const usePostPublishing = (queryParams: QueryParams) => {
         },
       },
     });
+    toast.success("Post published successfully!");
     setIsCreatePostFormOpen(false);
   };
 
-  const formData = {
-    title: queryParams.title,
-    actors: queryParams.actors,
-    thumbnailUrl: queryParams.thumbnailUrl,
-    tags: queryParams.tags,
-    postType: queryParams.postType,
-    targetAudience: queryParams.targetAudience,
-  };
 
   return { isCreatePostFormOpen, openCreatePostForm, closeCreatePostForm, handlePublishPost, formData };
 };

@@ -45,7 +45,6 @@ export const draftPostRouter = router({
   getDraftPost: publicProcedure
     .input(yup.string().required())
     .query(async ({ input }: { input: string }) => {
-      console.log("input", input);
       const draftPost = await prisma.draftPost.findUnique({
         where: {
           id: input,
@@ -54,7 +53,6 @@ export const draftPostRouter = router({
             iterations: true
         }
       });
-      console.log("draftPost output", draftPost);
       return draftPost;
     }),
 
