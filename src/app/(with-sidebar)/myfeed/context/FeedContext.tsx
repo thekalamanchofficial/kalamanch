@@ -1,10 +1,10 @@
-// FeedContext.tsx
 "use client";
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { trpc } from "~/server/client";
 import { useDebounce } from "~/hooks/useDebounce";
 import { useClerk } from "@clerk/nextjs";
 import { toast } from "react-toastify";
+import { BULK_LIKE_DEBOUNCE_DELAY } from "../_config/config";
 
 type LikePayload = Record<string, { liked: boolean }>;
 
@@ -12,6 +12,7 @@ interface FeedContextValue {
   addLikeToBatch: (payload: LikePayload) => void;
   bulkLikeState: LikePayload | null;
   rolledBackLikes: Record<string, boolean>;
+  setRolledBackLikes: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
 }
 
 const FeedContext = createContext<FeedContextValue | null>(null);
@@ -20,38 +21,27 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [bulkLikeState, setBulkLikeState] = useState<LikePayload>({});
-  const [pendingLikes, setPendingLikes] = useState<LikePayload>({});
   const [rolledBackLikes, setRolledBackLikes] = useState<Record<string, boolean>>({});
-
-  const BULK_LIKE_DEBOUNCE_DELAY = 5000;
+  const { user } = useClerk();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
   
   const bulkLikeMutation = trpc.likes.bulkLikePost.useMutation({
     onSuccess: () => {
-      setPendingLikes({});
       setBulkLikeState({});
       setRolledBackLikes({});
       console.log("Bulk like operations completed successfully.");
     },
     onError: () => {
       const newRolledBackState: Record<string, boolean> = {};
-      Object.entries(pendingLikes).forEach(([postId, { liked }]) => {
+      Object.entries(bulkLikeState).forEach(([postId, { liked }]) => {
         newRolledBackState[postId] = !liked;
       });
       setRolledBackLikes(newRolledBackState);
-      
-      setPendingLikes({});
       setBulkLikeState({});
-      
-      setTimeout(() => {
-        setRolledBackLikes({});
-      }, 100);
 
       toast.error("Like operations failed. Please try again.");
     },
   });
-
-  const { user } = useClerk();
-  const userEmail = user?.primaryEmailAddress?.emailAddress;
 
   const debouncedSendLikes = useDebounce(async (likedState: LikePayload) => {
     if (!userEmail || Object.keys(likedState).length === 0) return;
@@ -69,9 +59,8 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addLikeToBatch = useCallback(
     (payload: LikePayload) => {
-      setPendingLikes(prev => ({ ...prev, ...payload }));
+      setBulkLikeState(prev => ({ ...prev, ...payload }));
       const likedState = { ...bulkLikeState, ...payload };
-      setBulkLikeState(likedState);
       debouncedSendLikes(likedState);
     },
     [bulkLikeState, debouncedSendLikes],
@@ -82,7 +71,8 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{ 
         addLikeToBatch, 
         bulkLikeState, 
-        rolledBackLikes
+        rolledBackLikes,
+        setRolledBackLikes
       }}
     >
       {children}

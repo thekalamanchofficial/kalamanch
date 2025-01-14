@@ -1,12 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useFeedContext } from "~/app/(with-sidebar)/myfeed/context/FeedContext";
 
-interface UseLikeProps {
+type UseLikeProps = {
   initialLikeCount: number;
   initialIsLiked: boolean;
   postId: string;
   userEmail?: string;
-}
+};
 
 export function useLike({
   initialLikeCount,
@@ -16,19 +16,8 @@ export function useLike({
 }: UseLikeProps) {
   const [hasLiked, setHasLiked] = useState(initialIsLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
-  const { addLikeToBatch, rolledBackLikes } = useFeedContext();
+  const { addLikeToBatch, rolledBackLikes, setRolledBackLikes } = useFeedContext();
   const isLikeInProgress = useRef(false);
-
-  useEffect(() => {
-    setHasLiked(initialIsLiked);
-    setLikeCount(initialLikeCount);
-  }, [initialIsLiked, initialLikeCount]);
-
-  useEffect(() => {
-    if (postId in rolledBackLikes) {
-      setHasLiked(rolledBackLikes[postId] ?? false);
-    }
-  }, [rolledBackLikes, postId]);
 
   const handleLike = useCallback(async () => {
     if (!userEmail || isLikeInProgress.current) return;
@@ -45,6 +34,22 @@ export function useLike({
     });
     isLikeInProgress.current = false;
   }, [hasLiked, postId, userEmail, addLikeToBatch]);
+
+  useEffect(() => {
+    setHasLiked(initialIsLiked);
+    setLikeCount(initialLikeCount);
+  }, [initialIsLiked, initialLikeCount]);
+
+  useEffect(() => {
+    if (postId in rolledBackLikes) {
+      setHasLiked(rolledBackLikes[postId] ?? false);
+      setLikeCount((prev) => (rolledBackLikes[postId] ? prev + 1 : prev - 1));
+      setRolledBackLikes((prev) => {
+        const { [postId]: _, ...newRolledBackState } = prev;
+        return newRolledBackState;
+      });
+    }
+  }, [rolledBackLikes, setRolledBackLikes,postId]);
 
   return {
     hasLiked,

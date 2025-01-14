@@ -3,28 +3,28 @@ import { trpc } from '~/server/client';
 import { type Comment } from '~/app/(with-sidebar)/myfeed/types/types';
 import { handleError } from '~/app/_utils/handleError';
 
-interface UseCommentsProps {
+type UseCommentsProps = {
   initialComments: Comment[];
   postId: string;
   userEmail?: string;
   userName?: string;
   userProfileImageUrl?: string;
-}
+};
 
-interface OptimisticUpdate {
+type OptimisticCommentUpdate = {
   tempId: string;
   parentId: string | null;
-}
+};
 
 export function useComments({ 
   initialComments, 
-  postId, 
+  postId,
   userEmail,
   userName,
   userProfileImageUrl
 }: UseCommentsProps) {
   const [comments, setComments] = useState<Comment[]>(initialComments);
-  const [pendingUpdates, setPendingUpdates] = useState<OptimisticUpdate[]>([]);
+  const [pendingUpdates, setPendingUpdates] = useState<OptimisticCommentUpdate[]>([]);
 
   const commentMutation = trpc.comments.addComment.useMutation();
 
@@ -102,7 +102,7 @@ export function useComments({
     }
 
     const tempComment = createTempComment(content, parentId);
-    const optimisticUpdate: OptimisticUpdate = {
+    const optimisticUpdate: OptimisticCommentUpdate = {
       tempId: tempComment.id,
       parentId: parentId ?? null
     };
