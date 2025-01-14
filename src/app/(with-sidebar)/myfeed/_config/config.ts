@@ -12,3 +12,5 @@ export const tabs: { label: string; value: MyFeedTabsEnum }[] = [
     value: MyFeedTabsEnum.DISCOVERY,
   },
 ];
+
+export const BULK_LIKE_DEBOUNCE_DELAY = 5000;

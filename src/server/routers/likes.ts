@@ -4,6 +4,16 @@ import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 
+const bulkLikeSchema = yup.object({
+  userEmail: yup.string().email().required(),
+  likes: yup.array().of(
+    yup.object({
+      postId: yup.string().required('Post ID is required'),
+      liked: yup.boolean().required('Liked field is required'),
+    })
+  ).required('Likes array is required'),
+});
+
 const getUserDetails = async (userEmail: string) => {
   const userDetails = await prisma.user.findFirst({
     where: {
@@ -73,6 +83,64 @@ export const likeRouter = router({
         });
         return { liked: true };
       }
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  }),
+
+  bulkLikePost: publicProcedure
+  .input(bulkLikeSchema)
+  .mutation(async ({ input }) => {
+    try {
+      if (!input) {
+        return { message: "No input provided for bulk like operations." };
+      }
+
+      const { id: userId } = await getUserDetails(input.userEmail);
+
+      const likesToCreate: { postId: string; userId: string }[] = [];
+      const likesToDelete: { postId: string; userId: string }[] = [];
+      const likeCountChanges: Record<string, number> = {};
+
+      for (const { postId, liked } of input.likes) {
+        if (liked) {
+          likesToCreate.push({ postId, userId });
+          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) + 1;
+        } else {
+          likesToDelete.push({ postId, userId });
+          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) - 1;
+        }
+      }
+
+      if (likesToCreate.length > 0) {
+        await prisma.like.createMany({
+          data: likesToCreate,
+        });
+      }
+
+      if (likesToDelete.length > 0) {
+        await prisma.like.deleteMany({
+          where: {
+            OR: likesToDelete.map(({ postId, userId }) => ({ postId, userId })),
+          },
+        });
+      }
+
+      const updatePromises = Object.entries(likeCountChanges).map(
+        async ([postId, likeCountChange]) => {
+          if (likeCountChange !== 0) {
+            await prisma.post.update({
+              where: { id: postId },
+              data: { likeCount: { increment: likeCountChange } },
+            });
+          }
+        }
+      );
+
+      await Promise.all(updatePromises);
+
+      return { message: "Bulk like operations completed successfully." };
     } catch (error) {
       handleError(error);
       throw error;

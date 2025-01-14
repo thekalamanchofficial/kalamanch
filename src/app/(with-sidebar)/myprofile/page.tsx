@@ -50,8 +50,6 @@ const MyProfile = () => {
             <PostsFeed
               articlesList={postDataWithComments ?? []}
               likedPosts={likedPosts}
-              handleLikeButton={handleLikeButton}
-              addComment={addComment}
             />
           ) : (
             <ShowMessage
@@ -90,8 +88,6 @@ const MyProfile = () => {
           <PostsFeed
             articlesList={userLikedPosts ?? []}
             likedPosts={likedPosts}
-            handleLikeButton={handleLikeButton}
-            addComment={addComment}
           />
           {queryLoading && skip > 0 ? (
             <Loader height="auto" width="auto" title="" />

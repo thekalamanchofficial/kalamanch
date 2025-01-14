@@ -30,6 +30,8 @@ const handleTRPCError = (error: unknown) => {
     toast.error(
       "This email is already registered. Please use a different email or login.",
     );
+  } else {
+    toast.error("An error occurred. Please try again.");
   }
 };
 

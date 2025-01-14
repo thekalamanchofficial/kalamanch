@@ -9,6 +9,7 @@ import Loader from "~/app/_components/loader/Loader";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
 import useMyFeedPage from "./_hooks/useMyFeedPage";
+
 const MyFeed = () => {
   const {
     tab,
@@ -17,45 +18,29 @@ const MyFeed = () => {
     queryLoading,
     hasMorePosts,
     postDataWithComments,
-    handleLikeButton,
     handleTabChange,
-    addComment,
     errorMessage,
   } = useMyFeedPage();
 
   const renderUI = useMemo(() => {
-    if (postDataWithComments?.length === 0 && !queryLoading) {
-      return (
-        <ShowMessage
-          title="No Posts Found."
-          style={{
-            height: "100%",
-            width: "100%",
-          }}
-        />
-      );
+    if (queryLoading && skip === 0) {
+      return <Loader title="Loading Posts..." height="100%" width="100%" />;
     }
 
     if (errorMessage) {
       return <ErrorMessage message={errorMessage} />;
     }
-    if (queryLoading && skip === 0) {
-      return <Loader title="Loading Posts..." height="100%" width="100%" />;
+
+    if (postDataWithComments?.length === 0) {
+      return <ShowMessage title="No Posts Found." style={{ height: "100%", width: "100%" }} />;
     }
 
     if (tab === STATIC_TEXTS.MY_FEED_PAGE.TABS[0]?.value) {
       return (
         <>
-          <PostsFeed
-            articlesList={postDataWithComments ?? []}
-            likedPosts={likedPosts}
-            handleLikeButton={handleLikeButton}
-            addComment={addComment}
-          />
-          {queryLoading && skip > 0 ? (
-            <Loader height="auto" width="auto" title="" />
-          ) : null}
-          {!queryLoading && !hasMorePosts ? (
+          <PostsFeed articlesList={postDataWithComments} likedPosts={likedPosts} />
+          {queryLoading && skip > 0 && <Loader height="auto" width="auto" title="" />}
+          {!queryLoading && !hasMorePosts && (
             <ShowMessage
               title="No More Posts Found."
               style={{
@@ -66,7 +51,7 @@ const MyFeed = () => {
                 backgroundColor: "secondary.main",
               }}
             />
-          ) : null}
+          )}
         </>
       );
     }
@@ -76,25 +61,10 @@ const MyFeed = () => {
     }
 
     return <ShowMessage title="No Posts Found." />;
-  }, [
-    errorMessage,
-    queryLoading,
-    skip,
-    tab,
-    postDataWithComments,
-    likedPosts,
-    handleLikeButton,
-    addComment,
-    hasMorePosts,
-  ]);
+  }, [errorMessage, queryLoading, skip, tab, postDataWithComments, hasMorePosts, likedPosts]);
 
   return (
-    <Box
-      sx={{
-        height: "100%",
-        width: "100%",
-      }}
-    >
+    <Box sx={{ height: "100%", width: "100%" }}>
       <Grid
         size={12}
         sx={{
