@@ -117,8 +117,6 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
         userEmail,
       };
 
-      console.log("BULK COMMENT INPUT CHECK", input);
-
       await bulkCommentMutation.mutateAsync(input);
     },
     5000,
