@@ -100,6 +100,7 @@ export type PostCardContentProps = {
   articleImage?: string;
   articleId: string;
   articleDescription: string;
+  savedDate?: string;
 };
 
 export type FollowButtonProps = {

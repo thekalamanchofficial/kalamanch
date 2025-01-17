@@ -1,4 +1,4 @@
-import { Box, CardMedia, Chip, Typography } from "@mui/material";
+import { Box, Button, CardMedia, Chip, Typography } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { type PostCardContentProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { myfeedConfig } from "~/app/(with-sidebar)/myfeed/_config/config";
@@ -8,6 +8,7 @@ import "react-quill/dist/quill.snow.css";
 import "./quillEditor.css";
 import SeeLessButton from "../seeLessButton/SeeLessButton";
 import dynamic from "next/dynamic";
+import useSavedDateFormatter from "~/app/(with-sidebar)/myfeed/_hooks/useSavedDateFormatter";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const PostCardContent: React.FC<PostCardContentProps> = ({
@@ -17,8 +18,10 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   articleImage = "",
   articleDescription,
   articleId,
+  savedDate
 }) => {
   const [seeMore, setSeeMore] = useState(false);
+  const {formatSavedDate} = useSavedDateFormatter();
 
   const quillCOnfig = {
     toolbar: false,
@@ -39,18 +42,44 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
-          alignItems: "start",
+          alignItems: "flex-start",
         }}
       >
-        <Typography
-          variant="h6"
+        <Box
           sx={{
-            fontWeight: "bold",
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+            alignItems: "center",
             py: "10px",
           }}
         >
-          {articleTitle}
-        </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: "bold",
+            }}
+          >
+            {articleTitle}
+          </Typography>
+          { savedDate && <Button
+            variant="contained"
+            size="small"
+            sx={{
+              backgroundColor: "#F5F7FD",
+              color: "#3A3A3A",
+              fontSize: "14px",
+              borderRadius: "20px",
+              padding: "0px 10px",
+              "&:hover": {
+                backgroundColor: "#F5F7FD",
+              },
+            }}
+          >
+            Saved on: {formatSavedDate(savedDate)}
+          </Button>}
+        </Box>
+
         {!seeMore ? (
           <>
             {articleContent.length > myfeedConfig.ARTICLE_READ_MORE_LENGTH ? (
@@ -149,7 +178,10 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
               {articleDescription.length >
               myfeedConfig.SUMMARY_READ_MORE_LENGTH ? (
                 <>
-                  {`${articleDescription.slice(0, myfeedConfig.SUMMARY_READ_MORE_LENGTH)} ...`}
+                  {`${articleDescription.slice(
+                    0,
+                    myfeedConfig.SUMMARY_READ_MORE_LENGTH,
+                  )} ...`}
                   <SeeMoreButton />
                 </>
               ) : (
@@ -182,3 +214,4 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
 };
 
 export default PostCardContent;
+

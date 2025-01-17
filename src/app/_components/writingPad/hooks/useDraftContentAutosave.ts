@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useState } from "react";
 import throttle from "lodash/throttle";
 
-export const useContentAutosave = (
-  currentIterationId: string,
+export const useDraftContentAutosave = (
+  currentIterationId: string | null | undefined,
   initialContent: string,
   saveContentToDb: (content: string, currentIterationId: string, showToast?: boolean) => void
 ) => {
@@ -22,12 +22,14 @@ export const useContentAutosave = (
   );
 
   const onContentChange = (data: string) => {
+    if(!currentIterationId) return
     setContent(data);
     localStorage.setItem(currentIterationId,data)
     throttledSave(data,currentIterationId);
   };
 
   const saveDraftInstantly = (showToast?: boolean) => {
+    if(!currentIterationId) return
     saveContent(content,currentIterationId,showToast); 
     localStorage.removeItem(currentIterationId) // TODO - Use Context instead of local storage
   };

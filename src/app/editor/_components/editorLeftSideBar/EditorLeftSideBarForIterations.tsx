@@ -9,20 +9,22 @@ import React from "react";
 import { type Iteration } from "../../types/types";
 import { useRouter } from "next/navigation";
 
-type editorLeftSideBarProps = {
+type editorLeftSideBarPropsForIterations = {
   iterations: Iteration[];
   selectedIterationId: string;
   handleIterationSelected: (iterationId: string) => void;
   handleAddIteration: (iterationName: string) => void;
   handleSaveLastIterationData: () => void
+  showIterations?: boolean
 };
 
-const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
+const EditorLeftSideBarForIterations: React.FC<editorLeftSideBarPropsForIterations> = ({
   iterations,
   handleIterationSelected,
   handleAddIteration,
   selectedIterationId,
-  handleSaveLastIterationData
+  handleSaveLastIterationData,
+  showIterations
 }) => {
   const router = useRouter();
 
@@ -48,8 +50,10 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
           cursor: "pointer",
         }}
         onClick={() => {
-          handleSaveLastIterationData();
-          router.back();
+          if(showIterations){
+            handleSaveLastIterationData();
+          }
+          router.push("/");
         }}
       >
         <ArrowBackIosIcon
@@ -74,6 +78,7 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
         }}
       />
 
+      {showIterations && 
       <Grid
         container
         sx={{
@@ -180,9 +185,9 @@ const EditorLeftSideBar: React.FC<editorLeftSideBarProps> = ({
             );
           })}
         </Box>
-      </Grid>
+      </Grid>}
     </Grid>
   );
 };
 
-export default EditorLeftSideBar;
+export default EditorLeftSideBarForIterations;

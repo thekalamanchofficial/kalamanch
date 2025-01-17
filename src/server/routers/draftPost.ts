@@ -2,6 +2,7 @@ import * as yup from "yup";
 import { router, publicProcedure } from "~/server/trpc";
 import prisma from "../db";
 import { PostType } from "@prisma/client";
+import { update } from "lodash";
 
 const userIdSchema = yup.string().required("User ID is required");
 
@@ -18,8 +19,8 @@ const addDraftPostSchema = yup.object({
     tags: yup.array(yup.string()).optional(),
     thumbnailDetails: yup.object({
       url: yup.string().optional(),
-      content: yup.string().optional(),
-      title: yup.string().optional(),
+      content: yup.string().optional().nullable(),
+      title: yup.string().optional().nullable(),
     }).required(),
   }).required(),
   iterations: yup.array().of(
@@ -30,6 +31,25 @@ const addDraftPostSchema = yup.object({
   ).optional()
 });
 
+const updateDraftPostDetailsSchema = yup.object({
+  draftPostId: yup.string().required(),
+  postDetails: yup.object({
+    title: yup.string().required(),
+    targetAudience: yup.array(yup.string()).optional(),
+    postType: yup.string().required(),
+    actors: yup.array(yup.string()).optional(),
+    tags: yup.array(yup.string()).optional(),
+    thumbnailDetails: yup.object({
+      url: yup.string().optional(),
+      content: yup.string().optional().nullable(),
+      title: yup.string().optional().nullable(),
+    }).required(),
+  }).required(),
+})
+
+const cleanArray = (array?: (string | undefined)[]): string[] => 
+  array?.filter((item): item is string => item !== undefined) ?? [];
+
 export const draftPostRouter = router({
   getDraftPostsForUser: publicProcedure
     .input(userIdSchema)
@@ -38,6 +58,12 @@ export const draftPostRouter = router({
         where: {
           authorId: input,
         },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          iterations: true
+        }
       });
       return draftPosts;
     }),
@@ -60,8 +86,7 @@ export const draftPostRouter = router({
     .input(addDraftPostSchema)
     .mutation(async ({ input }) => {
 
-      const cleanArray = (array?: (string | undefined)[]): string[] => 
-            array?.filter((item): item is string => item !== undefined) ?? [];
+  
       const draftPost = await prisma.draftPost.create({
         data: {
           authorId: input.authorId,
@@ -124,5 +149,43 @@ export const draftPostRouter = router({
         },
       });
       return iteration;
+    }),
+    deleteDraftPost: publicProcedure
+    .input(yup.string().required())
+    .mutation(async ({ input: draftPostId }) => {
+      await prisma.draftPost.delete({
+        where: {
+          id: draftPostId,
+        },
+      })
+    }),
+
+    updateDraftPostDetails: publicProcedure
+    .input(updateDraftPostDetailsSchema).
+    mutation(async ({ input }) => {
+      const { draftPostId, postDetails } = input;
+      await prisma.draftPost.update({
+        where: {
+          id: draftPostId,
+        },
+        data: { 
+          postDetails: {
+            update: {
+              title: postDetails.title,
+              targetAudience: cleanArray(postDetails.targetAudience),
+              postType: postDetails.postType as PostType,
+              actors: cleanArray(postDetails.actors),
+              tags: cleanArray(postDetails.tags),
+              thumbnailDetails: {
+                update: {
+                  url: postDetails.thumbnailDetails.url,
+                  content: postDetails.thumbnailDetails.content,
+                  title: postDetails.thumbnailDetails.title,
+                }
+              }
+            }
+          }
+        }
+    })
     }),
 });
