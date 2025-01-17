@@ -4,15 +4,10 @@ import { trpc } from "~/server/client";
 import { useDebounce } from "~/hooks/useDebounce";
 import { useClerk } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { BULK_LIKE_DEBOUNCE_DELAY } from "../_config/config";
-import type { Comment, CommentPayload } from "../types/types";
+import { BULK_COMMENT_DEBOUNCE_DELAY, BULK_LIKE_DEBOUNCE_DELAY } from "../_config/config";
+import type { CommentPayload } from "../types/types";
 
 type LikePayload = Record<string, { liked: boolean }>;
-
-type ProcessedComments = {
-  comments: Comment[];
-  idMappings: { tempId: string; realId: string }[];
-};
 
 type FeedContextValue = {
   addLikeToBatch: (payload: LikePayload) => void;
@@ -25,8 +20,6 @@ type FeedContextValue = {
   bulkCommentsState: CommentPayload[];
   failedComments: CommentPayload[];
   setFailedComments: React.Dispatch<React.SetStateAction<CommentPayload[]>>;
-  processedComments: ProcessedComments;
-  setProcessedComments: React.Dispatch<React.SetStateAction<ProcessedComments>>;
 };
 
 const FeedContext = createContext<FeedContextValue | null>(null);
@@ -42,12 +35,6 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     [],
   );
   const [failedComments, setFailedComments] = useState<CommentPayload[]>([]);
-  const [processedComments, setProcessedComments] = useState<ProcessedComments>(
-    {
-      comments: [],
-      idMappings: [],
-    },
-  );
 
   const { user } = useClerk();
   const userEmail = user?.primaryEmailAddress?.emailAddress;
@@ -56,7 +43,6 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     onSuccess: () => {
       setBulkLikeState({});
       setRolledBackLikes({});
-      console.log("Bulk like operations completed successfully.");
     },
     onError: () => {
       const newRolledBackState: Record<string, boolean> = {};
@@ -72,24 +58,15 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const bulkCommentMutation = trpc.comments.bulkAddComments.useMutation({
     onSuccess: (response) => {
-      console.log("BULK COMMENT RESPONSE", response);
-
-      const { idMappings, comments } = response;
-
-      const processedTempIds = idMappings.map(({ tempId }) => tempId);
+      const { comments } = response;
+      const processedTempIds = comments.map(({ id }) => id);
 
       setBulkCommentsState((prev) =>
         prev.filter((comment) => !processedTempIds.includes(comment.tempId)),
       );
-
-      setProcessedComments((prev) => ({
-        comments: [...prev.comments, ...comments],
-        idMappings: [...prev.idMappings, ...idMappings],
-      }));
     },
     onError: (error, variables) => {
       setFailedComments((prev) => [...prev, ...variables.comments]);
-
       toast.error("Some comments failed to post. Please try again.");
     },
   });
@@ -119,7 +96,7 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
 
       await bulkCommentMutation.mutateAsync(input);
     },
-    5000,
+    BULK_COMMENT_DEBOUNCE_DELAY,
   );
 
   const addLikeToBatch = useCallback(
@@ -153,8 +130,6 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
         bulkCommentsState,
         failedComments,
         setFailedComments,
-        processedComments,
-        setProcessedComments,
       }}
     >
       {children}

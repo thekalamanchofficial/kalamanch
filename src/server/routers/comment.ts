@@ -80,7 +80,6 @@ export const commentRouter = router({
 
         const parentComments: BulkCommentInput[] = [];
         const childComments: BulkCommentInput[] = [];
-        const tempToRealIdMap = new Map<string, string>();
 
         input.comments.forEach((comment) => {
           if (!comment.parentId) {
@@ -97,112 +96,55 @@ export const commentRouter = router({
           userName: comment.userName,
           userProfileImageUrl: comment.userProfileImageUrl,
           parentId: null,
+          id: comment.tempId,
         }));
 
-        const createdParents = await prisma.$transaction(async (tx) => {
-          const parents = await Promise.all(
-            parentCommentData.map((data) =>
-              tx.comment.create({
-                data,
-              }),
-            ),
-          );
+        if (parentCommentData.length > 0) {
+          console.log({
+            parentCommentData,
+          });
+          const createdParents = await prisma.comment.createMany({
+            data: parentCommentData,
+          });
 
-          if (parents.length !== parentCommentData.length) {
+          if (createdParents.count !== parentCommentData.length) {
             throw new Error("Failed to create all parent comments");
           }
-
-          return parents;
-        });
-
-        if (parentComments.length !== createdParents.length) {
-          throw new Error("Created parents count does not match input count");
         }
-
-        parentComments.forEach((comment, index) => {
-          const createdParent = createdParents[index];
-          if (!createdParent?.id) {
-            throw new Error(
-              `Missing ID for created parent comment at index ${index}`,
-            );
-          }
-          tempToRealIdMap.set(comment.tempId, createdParent.id);
-        });
 
         if (childComments.length === 0) {
           return {
-            comments: createdParents,
-            idMappings: Array.from(tempToRealIdMap.entries()).map(
-              ([tempId, realId]) => ({
-                tempId,
-                realId,
-              }),
-            ),
+            comments: parentCommentData,
           };
         }
 
-        const childCommentData = childComments.map((comment) => {
-          const realParentId = comment.parentId
-            ? comment.parentId.startsWith("temp-")
-              ? tempToRealIdMap.get(comment.parentId)
-              : comment.parentId
-            : null;
-          if (!realParentId) {
-            throw new Error(
-              `Parent comment with temp ID ${comment.parentId} not found`,
-            );
-          }
+        const childCommentData = childComments.map((comment) => ({
+          postId: comment.postId,
+          content: comment.content,
+          userId,
+          userName: comment.userName,
+          userProfileImageUrl: comment.userProfileImageUrl,
+          parentId: comment.parentId,
+          id: comment.tempId,
+        }));
 
-          return {
-            postId: comment.postId,
-            content: comment.content,
-            userId,
-            userName: comment.userName,
-            userProfileImageUrl: comment.userProfileImageUrl,
-            parentId: realParentId,
-          };
-        });
+        if (childCommentData.length > 0) {
+          console.log({
+            childCommentData,
+          });
+          const createdChildren = await prisma.comment.createMany({
+            data: childCommentData,
+          });
 
-        const createdChildren = await prisma.$transaction(async (tx) => {
-          const children = await Promise.all(
-            childCommentData.map((data) =>
-              tx.comment.create({
-                data,
-              }),
-            ),
-          );
-
-          if (children.length !== childCommentData.length) {
+          if (createdChildren.count !== childCommentData.length) {
             throw new Error("Failed to create all child comments");
           }
-
-          return children;
-        });
-
-        if (childComments.length !== createdChildren.length) {
-          throw new Error("Created children count does not match input count");
         }
 
-        childComments.forEach((comment, index) => {
-          const createdChild = createdChildren[index];
-          if (!createdChild?.id) {
-            throw new Error(
-              `Missing ID for created child comment at index ${index}`,
-            );
-          }
-          tempToRealIdMap.set(comment.tempId, createdChild.id);
-        });
-
-        const allCreatedComments = [...createdParents, ...createdChildren];
+        const allCreatedComments = [...parentCommentData, ...childCommentData];
 
         return {
           comments: allCreatedComments,
-          idMappings: Array.from(tempToRealIdMap.entries()).map(
-            ([tempId, realId]) => ({
-              tempId,
-              realId,
-            }),
-          ),
         };
       } catch (error) {
         handleError(error);
