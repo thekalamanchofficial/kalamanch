@@ -27,7 +27,7 @@ const commentSchema = yup.object({
 });
 
 const bulkCommentSchema = commentSchema.shape({
-  tempId: yup.string().required(),
+  id: yup.string().required(),
 });
 
 const bulkCommentsInputSchema = yup.object({
@@ -96,7 +96,7 @@ export const commentRouter = router({
           userName: comment.userName,
           userProfileImageUrl: comment.userProfileImageUrl,
           parentId: null,
-          id: comment.tempId,
+          id: comment.id,
         }));
 
         if (parentCommentData.length > 0) {
@@ -122,7 +122,7 @@ export const commentRouter = router({
           userName: comment.userName,
           userProfileImageUrl: comment.userProfileImageUrl,
           parentId: comment.parentId,
-          id: comment.tempId,
+          id: comment.id,
         }));
 
         if (childCommentData.length > 0) {

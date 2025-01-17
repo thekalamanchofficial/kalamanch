@@ -7,7 +7,6 @@ export type MenuItemList = {
 };
 export type Comment = {
   id: string;
-  tempId?: string;
   postId: string;
   userId: string;
   userName: string;
@@ -20,7 +19,7 @@ export type Comment = {
 };
 
 export type CommentPayload = {
-  tempId: string;
+  id: string;
   postId: string;
   content: string;
   parentId?: string | null | undefined;

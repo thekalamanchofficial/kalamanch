@@ -57,7 +57,7 @@ export function useComments({
       if (!parentId) {
         return isRollback
           ? currentComments.filter(
-              (comment) => comment.id !== newComment.tempId,
+              (comment) => comment.id !== newComment.id,
             )
           : ([...currentComments, newComment] as Comment[]);
       }
@@ -66,7 +66,7 @@ export function useComments({
         if (comment.id === parentId) {
           const updatedReplies = isRollback
             ? (comment.replies ?? []).filter(
-                (reply) => reply.id !== newComment.tempId,
+                (reply) => reply.id !== newComment.id,
               )
             : ([...(comment.replies ?? []), newComment] as Comment[]);
 
@@ -94,7 +94,7 @@ export function useComments({
       );
 
       addCommentToBatch({
-        tempId: tempComment.id,
+        id: tempComment.id,
         postId,
         content,
         parentId: parentId ?? null,
