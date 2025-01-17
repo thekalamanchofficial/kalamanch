@@ -100,9 +100,6 @@ export const commentRouter = router({
         }));
 
         if (parentCommentData.length > 0) {
-          console.log({
-            parentCommentData,
-          });
           const createdParents = await prisma.comment.createMany({
             data: parentCommentData,
           });
@@ -129,9 +126,6 @@ export const commentRouter = router({
         }));
 
         if (childCommentData.length > 0) {
-          console.log({
-            childCommentData,
-          });
           const createdChildren = await prisma.comment.createMany({
             data: childCommentData,
           });

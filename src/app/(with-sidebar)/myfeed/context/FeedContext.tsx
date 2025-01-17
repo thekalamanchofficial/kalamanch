@@ -57,13 +57,8 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   const bulkCommentMutation = trpc.comments.bulkAddComments.useMutation({
-    onSuccess: (response) => {
-      const { comments } = response;
-      const processedTempIds = comments.map(({ id }) => id);
-
-      setBulkCommentsState((prev) =>
-        prev.filter((comment) => !processedTempIds.includes(comment.tempId)),
-      );
+    onSuccess: () => {
+      setBulkCommentsState([]);
     },
     onError: (error, variables) => {
       setFailedComments((prev) => [...prev, ...variables.comments]);
