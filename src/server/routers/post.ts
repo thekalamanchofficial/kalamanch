@@ -8,15 +8,15 @@ import type { PostType } from "@prisma/client";
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
   postDetails: yup.object({
-    title: yup.string().required("Title is required."),
+      title: yup.string().required("Title is required."),
     targetAudience: yup.array(yup.string()).required("Target audience is required."),
-    postType: yup.string().required("Post type is required."),
-    actors: yup.array(yup.string()).optional(),
-    tags: yup.array(yup.string()).optional(),
+      postType: yup.string().required("Post type is required."),
+      actors: yup.array(yup.string()).optional(),
+      tags: yup.array(yup.string()).optional(),
     thumbnailDetails: yup.object({
-      url: yup.string().optional(),
-      content: yup.string().optional().nullable(),
-      title: yup.string().optional().nullable(),
+          url: yup.string().optional(),
+          content: yup.string().optional().nullable(),
+          title: yup.string().optional().nullable(),
     }).required(),
   }).required("Post details are required."),
   authorId: yup.string().required("Author ID is required."),
@@ -70,7 +70,7 @@ export const postRouter = router({
             likes: true,
           },
         });
-        
+
         const totalPosts = await prisma.post.count({});
 
         let hasMorePosts;
@@ -88,50 +88,73 @@ export const postRouter = router({
       }
     }),
 
-  addPost: publicProcedure.input(postSchema).mutation(async ({ input }) => {
+  getPost: publicProcedure
+    .input(yup.string().required("Post ID is required."))
+    .query(async ({ input }) => {
       try {
-        // Utility function to clean arrays by removing undefined values
-        const cleanArray = (array?: (string | undefined)[]): string[] => 
-          array?.filter((item): item is string => item !== undefined) ?? [];
-        const sanitizedInput = {
-          ...input,
-          postDetails: {
-            ...input.postDetails,
-            targetAudience: cleanArray(input.postDetails.targetAudience),
-            actors: cleanArray(input.postDetails.actors),
-            tags: cleanArray(input.postDetails.tags),
-          },
-        };
-
-        const post = await prisma.post.create({
-          data: {
-            content: sanitizedInput.content,
-            authorId: sanitizedInput.authorId,
-            authorName: sanitizedInput.authorName,
-            authorProfileImageUrl: sanitizedInput.authorProfileImageUrl ?? "",
-            postDetails: {
-              title: sanitizedInput.postDetails.title,
-              targetAudience: sanitizedInput.postDetails.targetAudience,
-              postType: sanitizedInput.postDetails.postType.toUpperCase() as PostType,
-              actors: sanitizedInput.postDetails.actors,
-              tags: sanitizedInput.postDetails.tags,
-              thumbnailDetails: {
-                url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
-                content: sanitizedInput.postDetails.thumbnailDetails.content ?? null,
-                title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
+        const post = await prisma.post.findUnique({
+          where: { id: input },
+          include: {
+            comments: {
+              include: {
+                replies: true,
               },
             },
-            likes: { create: [] },
-            bids: { create: [] },
-            comments: { create: [] },
+            likes: true,
           },
         });
-        
         return post;
       } catch (error) {
-        handleError(error);
-        throw new Error("Failed to create the post.");
+        if (error instanceof Error) {
+          console.log("Error getting post:", error?.message);
+        }
       }
     }),
+
+  addPost: publicProcedure.input(postSchema).mutation(async ({ input }) => {
+    try {
+      // Utility function to clean arrays by removing undefined values
+      const cleanArray = (array?: (string | undefined)[]): string[] =>
+        array?.filter((item): item is string => item !== undefined) ?? [];
+      const sanitizedInput = {
+        ...input,
+        postDetails: {
+          ...input.postDetails,
+          targetAudience: cleanArray(input.postDetails.targetAudience),
+          actors: cleanArray(input.postDetails.actors),
+          tags: cleanArray(input.postDetails.tags),
+        },
+      };
+
+      const post = await prisma.post.create({
+        data: {
+          content: sanitizedInput.content,
+          authorId: sanitizedInput.authorId,
+          authorName: sanitizedInput.authorName,
+          authorProfileImageUrl: sanitizedInput.authorProfileImageUrl ?? "",
+          postDetails: {
+            title: sanitizedInput.postDetails.title,
+            targetAudience: sanitizedInput.postDetails.targetAudience,
+              postType: sanitizedInput.postDetails.postType.toUpperCase() as PostType,
+            actors: sanitizedInput.postDetails.actors,
+            tags: sanitizedInput.postDetails.tags,
+            thumbnailDetails: {
+              url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
+                content: sanitizedInput.postDetails.thumbnailDetails.content ?? null,
+              title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
+            },
+          },
+          likes: { create: [] },
+          bids: { create: [] },
+          comments: { create: [] },
+        },
+      });
+
+      return post;
+    } catch (error) {
+      handleError(error);
+      throw new Error("Failed to create the post.");
+    }
+  }),
   
 });
