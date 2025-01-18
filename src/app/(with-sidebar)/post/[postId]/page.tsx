@@ -58,6 +58,7 @@ export const generateMetadata = async ({
       title: "Post not found - Kalamanch",
       description: "The post you're looking for is not available on Kalamanch.",
       alternates: {
+        // TODO: get it from env
         canonical: `https://kalamanch.com/posts/${params.postId}`,
       },
       robots: {
@@ -69,6 +70,7 @@ export const generateMetadata = async ({
 
   const description =
     post.content.slice(0, 150) || "Explore the latest post on Kalamanch.";
+    // TODO: get it from env
   const thumbnailUrl =
     post.postDetails.thumbnailDetails.url ||
     "https://kalamanch.com/default-thumbnail.jpg";
@@ -84,6 +86,7 @@ export const generateMetadata = async ({
       images: [thumbnailUrl],
     },
     alternates: {
+      // TODO: get it from env
       canonical: `https://kalamanch.com/posts/${params.postId}`,
     },
     robots: {
@@ -108,17 +111,20 @@ export const generateMetadata = async ({
     authors: [
       {
         name: post.authorName || "Kalamanch",
+        // TODO: get it from env
         url: `https://kalamanch.com/authors/${post.authorId || "default"}`,
       },
     ],
     openGraph: {
       title,
       description,
+      // TODO: get it from env
       url: `https://kalamanch.com/posts/${params.postId}`,
       siteName: "Kalamanch",
       type: "article",
       publishedTime: post.createdAt.toString(),
       modifiedTime: post.updatedAt.toString(),
+      // TODO: get it from env
       authors: [`https://kalamanch.com/authors/${post.authorId || "default"}`],
       images: [
         {
