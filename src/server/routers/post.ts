@@ -7,24 +7,28 @@ import type { PostType } from "@prisma/client";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
-  postDetails: yup.object({
+  postDetails: yup
+    .object({
       title: yup.string().required("Title is required."),
-    targetAudience: yup.array(yup.string()).required("Target audience is required."),
+      targetAudience: yup
+        .array(yup.string())
+        .required("Target audience is required."),
       postType: yup.string().required("Post type is required."),
       actors: yup.array(yup.string()).optional(),
       tags: yup.array(yup.string()).optional(),
-    thumbnailDetails: yup.object({
+      thumbnailDetails: yup
+        .object({
           url: yup.string().optional(),
           content: yup.string().optional().nullable(),
           title: yup.string().optional().nullable(),
-    }).required(),
-  }).required("Post details are required."),
+        })
+        .required(),
+    })
+    .required("Post details are required."),
   authorId: yup.string().required("Author ID is required."),
   authorName: yup.string().required("Author name is required."),
   authorProfileImageUrl: yup.string().optional(),
- 
 });
-
 
 export const postRouter = router({
   getPosts: publicProcedure
@@ -81,7 +85,6 @@ export const postRouter = router({
           hasMorePosts = false;
         }
 
-
         return { posts, hasMorePosts };
       } catch (error) {
         throw error;
@@ -135,12 +138,14 @@ export const postRouter = router({
           postDetails: {
             title: sanitizedInput.postDetails.title,
             targetAudience: sanitizedInput.postDetails.targetAudience,
-              postType: sanitizedInput.postDetails.postType.toUpperCase() as PostType,
+            postType:
+              sanitizedInput.postDetails.postType.toUpperCase() as PostType,
             actors: sanitizedInput.postDetails.actors,
             tags: sanitizedInput.postDetails.tags,
             thumbnailDetails: {
               url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
-                content: sanitizedInput.postDetails.thumbnailDetails.content ?? null,
+              content:
+                sanitizedInput.postDetails.thumbnailDetails.content ?? null,
               title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
             },
           },
@@ -156,5 +161,4 @@ export const postRouter = router({
       throw new Error("Failed to create the post.");
     }
   }),
-  
 });
