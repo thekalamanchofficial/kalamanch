@@ -1,17 +1,15 @@
 import { useSearchParams } from "next/navigation";
 
-export const useQueryParams = () => {
+type QueryParams = {
+  postId : string;
+  draftPostId: string;
+}
+export const useQueryParams = (): QueryParams => {
   const searchParams = useSearchParams();
   const queryParams = Object.fromEntries(searchParams.entries());
 
   return {
     postId: queryParams.postId ?? "",
-    draftPostId: queryParams.draftPostId ?? "",
-    title: queryParams.title ?? "",
-    targetAudience: queryParams.targetAudience?.split(",") ?? [],
-    postType: queryParams.postType ?? "",
-    actors: queryParams.actors ? queryParams.actors.split(",") : [],
-    tags: queryParams.tags?.split(",") ?? [],
-    thumbnailUrl: queryParams.thumbnailUrl ?? "",
+    draftPostId: queryParams.draftPostId ?? ""
   };
 };

@@ -90,9 +90,28 @@ export const STATIC_TEXTS = {
     },
   },
   EDITOR_PAGE: {
-    HEADING: "Editor",
+    HEADING: "Back To Feed",
     ADD_ITERATION: "Add Iteration",
     IMPORT_TEXT: "Import text from image",
     RIGHTSIDEBAR_HEADING: "Technical Accuracy",
+    UNPUBLISH_POST_DIALOG_TITLE: "Unpublish Post",
+    PUBLISH_POST_DIALOG_DESCRIPTION: "Are you sure you want to unpublish this post? This action cannot be undone.",
+    EDIT_DRAFT_POST_BUTTON_TEXT: "Open Editor",
+    EDIT_PUBLISHED_POST_BUTTON_TEXT: "Edit Post",
+    PUBLISH : "Publish",
+    CANCEL: "Cancel",
+    UNPUBLISH : "Unpublish",
+    PUBLISH_DRAFT : "Publish Draft",
+    SELECT_ITERATION_DESCRIPTION: "Select an iteration to publish from the list below",
+    POST_PUBLISHED_SUCCESS_MESSAGE: "Post published successfully",
+    POST_UNPUBLISHED_SUCCESS_MESSAGE: "Post unpublished successfully",
+    POST_UPDATED_SUCCESS_MESSAGE: "Post updated successfully",
+    CREATE: "Create",
+    UPDATE: "Update",
+    DRAFT_DETAILS_UPDATED_MESSAGE: "Draft Details Updated Successfully",
+
+
+
   },
+
 };

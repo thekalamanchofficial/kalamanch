@@ -7,28 +7,46 @@ import type { PostType } from "@prisma/client";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
-  postDetails: yup
-    .object({
-      title: yup.string().required("Title is required."),
-      targetAudience: yup
-        .array(yup.string())
-        .required("Target audience is required."),
-      postType: yup.string().required("Post type is required."),
-      actors: yup.array(yup.string()).optional(),
-      tags: yup.array(yup.string()).optional(),
-      thumbnailDetails: yup
-        .object({
-          url: yup.string().optional(),
-          content: yup.string().optional().nullable(),
-          title: yup.string().optional().nullable(),
-        })
-        .required(),
-    })
-    .required("Post details are required."),
+  postDetails: yup.object({
+    title: yup.string().required("Title is required."),
+    targetAudience: yup.array(yup.string()).required("Target audience is required."),
+    postType: yup.string().required("Post type is required."),
+    actors: yup.array(yup.string()).optional(),
+    tags: yup.array(yup.string()).optional(),
+    thumbnailDetails: yup.object({
+      url: yup.string().optional(),
+      content: yup.string().optional().nullable(),
+      title: yup.string().optional().nullable(),
+    }).required(),
+  }).required("Post details are required."),
   authorId: yup.string().required("Author ID is required."),
   authorName: yup.string().required("Author name is required."),
   authorProfileImageUrl: yup.string().optional(),
+ 
 });
+
+const updatePostContentSchema = yup.object({
+  content: yup.string().required("Content is required."),
+  id: yup.string().required("ID is required."),
+})
+
+const updatePostDetailsSchema = yup.object({
+  id: yup.string().required("ID is required."),
+  postDetails: yup.object({
+    title: yup.string().required("Title is required."),
+    targetAudience: yup.array(yup.string()).required("Target audience is required."),
+    postType: yup.string().required("Post type is required."),
+    actors: yup.array(yup.string()).optional(),
+    tags: yup.array(yup.string()).optional(),
+    thumbnailDetails: yup.object({
+      url: yup.string().optional(),
+      content: yup.string().optional().nullable(),
+      title: yup.string().optional().nullable(),
+    }).required(),
+  })
+})
+const cleanArray = (array?: (string | undefined)[]): string[] => 
+  array?.filter((item): item is string => item !== undefined) ?? [];
 
 export const postRouter = router({
   getPosts: publicProcedure
@@ -74,7 +92,7 @@ export const postRouter = router({
             likes: true,
           },
         });
-
+        
         const totalPosts = await prisma.post.count({});
 
         let hasMorePosts;
@@ -85,80 +103,133 @@ export const postRouter = router({
           hasMorePosts = false;
         }
 
+
         return { posts, hasMorePosts };
       } catch (error) {
         throw error;
       }
     }),
 
-  getPost: publicProcedure
-    .input(yup.string().required("Post ID is required."))
-    .query(async ({ input }) => {
+  addPost: publicProcedure.input(postSchema).mutation(async ({ input }) => {
       try {
-        const post = await prisma.post.findUnique({
-          where: { id: input },
-          include: {
-            comments: {
-              include: {
-                replies: true,
+        const sanitizedInput = {
+          ...input,
+          postDetails: {
+            ...input.postDetails,
+            targetAudience: cleanArray(input.postDetails.targetAudience),
+            actors: cleanArray(input.postDetails.actors),
+            tags: cleanArray(input.postDetails.tags),
+          },
+        };
+
+        const post = await prisma.post.create({
+          data: {
+            content: sanitizedInput.content,
+            authorId: sanitizedInput.authorId,
+            authorName: sanitizedInput.authorName,
+            authorProfileImageUrl: sanitizedInput.authorProfileImageUrl ?? "",
+            postDetails: {
+              title: sanitizedInput.postDetails.title,
+              targetAudience: sanitizedInput.postDetails.targetAudience,
+              postType: sanitizedInput.postDetails.postType.toUpperCase() as PostType,
+              actors: sanitizedInput.postDetails.actors,
+              tags: sanitizedInput.postDetails.tags,
+              thumbnailDetails: {
+                url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
+                content: sanitizedInput.postDetails.thumbnailDetails.content ?? null,
+                title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
               },
             },
-            likes: true,
+            likes: { create: [] },
+            bids: { create: [] },
+            comments: { create: [] },
+          },
+        });
+        
+        return post;
+      } catch (error) {
+        handleError(error);
+        throw new Error("Failed to create the post.");
+      }
+    }),
+    deletePost: publicProcedure.input(yup.string()).mutation(async ({ input: postId }) => {
+      try {
+        const post = await prisma.post.delete({
+          where: {
+            id: postId,
           },
         });
         return post;
       } catch (error) {
-        if (error instanceof Error) {
-          console.log("Error getting post:", error?.message);
-        }
+        handleError(error);
+        throw new Error("Failed to delete the post.");
       }
     }),
-
-  addPost: publicProcedure.input(postSchema).mutation(async ({ input }) => {
-    try {
-      // Utility function to clean arrays by removing undefined values
-      const cleanArray = (array?: (string | undefined)[]): string[] =>
-        array?.filter((item): item is string => item !== undefined) ?? [];
-      const sanitizedInput = {
-        ...input,
-        postDetails: {
-          ...input.postDetails,
-          targetAudience: cleanArray(input.postDetails.targetAudience),
-          actors: cleanArray(input.postDetails.actors),
-          tags: cleanArray(input.postDetails.tags),
-        },
-      };
-
-      const post = await prisma.post.create({
-        data: {
-          content: sanitizedInput.content,
-          authorId: sanitizedInput.authorId,
-          authorName: sanitizedInput.authorName,
-          authorProfileImageUrl: sanitizedInput.authorProfileImageUrl ?? "",
+    getPost : publicProcedure.input(yup.string()).query(async ({ input: postId }) => {
+      try {
+        const post = await prisma.post.findUnique({
+          where: {
+            id: postId,
+          },
+        });
+        return post;
+      } catch (error) {
+        handleError(error);
+        throw new Error("Failed to fetch the post.");
+      }
+    }),
+    updatePostContent: publicProcedure.input(updatePostContentSchema).mutation(async ({ input }) => {
+      try {
+        const post = await prisma.post.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            content: input.content,
+          },
+        });
+        return post;
+      } catch (error) {
+        handleError(error);
+        throw new Error("Failed to update the post.");
+      }
+    }),
+    updatePostDetails: publicProcedure.input(updatePostDetailsSchema).mutation(async ({ input }) => {
+      try {
+        const sanitizedInput = {
+          ...input,
           postDetails: {
-            title: sanitizedInput.postDetails.title,
-            targetAudience: sanitizedInput.postDetails.targetAudience,
-            postType:
-              sanitizedInput.postDetails.postType.toUpperCase() as PostType,
-            actors: sanitizedInput.postDetails.actors,
-            tags: sanitizedInput.postDetails.tags,
-            thumbnailDetails: {
-              url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
-              content:
-                sanitizedInput.postDetails.thumbnailDetails.content ?? null,
-              title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
+            ...input.postDetails,
+            targetAudience: cleanArray(input.postDetails.targetAudience),
+            actors: cleanArray(input.postDetails.actors),
+            tags: cleanArray(input.postDetails.tags),
+          },
+        };
+
+        const post = await prisma.post.update({
+          where: {
+            id: sanitizedInput.id,
+          },
+          data: {
+            postDetails: {
+              title: sanitizedInput.postDetails.title,
+              targetAudience: sanitizedInput.postDetails.targetAudience,
+              postType: sanitizedInput.postDetails.postType as PostType,
+              actors: sanitizedInput.postDetails.actors,
+              tags: sanitizedInput.postDetails.tags,
+              thumbnailDetails: {
+                url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
+                content: sanitizedInput.postDetails.thumbnailDetails.content,
+                title: sanitizedInput.postDetails.thumbnailDetails.title,
+              },
             },
           },
-          likes: { create: [] },
-          bids: { create: [] },
-          comments: { create: [] },
-        },
-      });
-
-      return post;
-    } catch (error) {
-      handleError(error);
-      throw new Error("Failed to create the post.");
-    }
-  }),
+        });
+        return post;
+      } catch (error) {
+        handleError(error);
+        throw new Error("Failed to update the post.");
+      }
+    }),
+  
 });

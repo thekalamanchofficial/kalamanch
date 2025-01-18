@@ -28,17 +28,22 @@ import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUplo
 import { PostType } from "@prisma/client";
 import { trpc } from "~/server/client";
 import { useUser } from "~/context/userContext";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 export type CreatePostFormProps = {
   open: boolean;
   handleClose: () => void;
   createPostFormData: CreatePostFormType;
+  handleFormSubmit: (data: CreatePostFormType)=> void;
+  update?: boolean;
 };
 
 export const CreatePostForm: React.FC<CreatePostFormProps> = ({
   open,
   handleClose,
   createPostFormData,
+  handleFormSubmit,
+  update
 }) => {
   const {
     handleSubmit,
@@ -49,50 +54,8 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
     defaultValues: createPostFormData,
   });
 
-  const router = useRouter();
-  const draftPostMutation = trpc.draftPost.addDraftPost.useMutation();
   const postType = watch("postType");
   const [actors, setActors] = useState("");
-  const {user} = useUser();
-
-  const handleFormSubmit = async (data: CreatePostFormType) => {
-
-    if (!user?.id || !user?.name) {
-      console.error("User not found");
-      return;
-    }
-    // create draft post
-    const draftPost = await draftPostMutation.mutateAsync({
-      authorId: user.id,
-      authorName: user.name,
-      authorProfileImageUrl: user.profileImageUrl ?? "",
-      postDetails: {
-        title: data.title,
-        targetAudience: data.targetAudience,
-        postType: data.postType as PostType,
-        actors: data.actors,
-        tags: data.tags,
-        thumbnailDetails: {
-          url: data.thumbnailUrl,
-        },
-      },
-      iterations: [{
-        iterationName: "Iteration - 1",
-        content: "",
-      }]
-    });
-
-
-    const queryData = {
-      ...data,
-      targetAudience: data?.targetAudience?.join(",") ?? "",
-      tags: data?.tags?.join(",") ?? "",
-      actors: data?.actors?.join(",") ?? "",
-      draftPostId: draftPost?.id
-    };
-    const query = new URLSearchParams(queryData).toString();
-    router.push(`/editor?${query}`);
-  };
 
   return (
     <Dialog
@@ -365,7 +328,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           onClick={handleSubmit(handleFormSubmit)}
           sx={{ width: "100px" }}
         >
-          Create
+          {update ? STATIC_TEXTS.EDITOR_PAGE.UPDATE :STATIC_TEXTS.EDITOR_PAGE.CREATE }
         </Button>
       </DialogActions>
     </Dialog>

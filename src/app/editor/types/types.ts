@@ -35,6 +35,19 @@ export type DraftPost = {
   updatedAt: string;
 };
 
+export type CreateDraftPostProps = {
+  authorName: string;
+  authorProfileImageUrl: string;
+  authorId: string;
+  postDetails: PostDetails;
+  iterations: [{
+    iterationName: string;
+    content: string;
+  }];
+}
+
+
+
 export type QueryParams = {
   postId: string;
   draftPostId: string;
@@ -46,3 +59,7 @@ export type QueryParams = {
   thumbnailUrl: string;
 };
 
+export enum PostStatus {
+  DRAFT,
+  PUBLISHED
+}
