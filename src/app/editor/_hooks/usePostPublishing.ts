@@ -1,50 +1,61 @@
 import { useState } from "react";
 import { usePost } from "../_hooks/usePost";
 import { useUser } from "~/context/userContext";
-import { QueryParams } from "../types/types";
+import { DraftPost, QueryParams } from "../types/types";
 import { toast } from "react-toastify";
+import { useDraftPost } from "./useDraftPost";
+import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
 
-export const usePostPublishing = (queryParams: QueryParams) => {
-  const [isCreatePostFormOpen, setIsCreatePostFormOpen] = useState(false);
-  const { publishPost } = usePost();
+
+type PostPublishingProps = {
+  setPublishedPostsForUser: React.Dispatch<React.SetStateAction<Post[]>>
+}
+
+type UsePostPublishingResponse = {
+  handlePublishDraftPostIteration: (draftpost: DraftPost, iterationId: string) => Promise<void>;
+  handlePostUnPublishing: (postId: string) => Promise<void>;
+};
+
+
+export const usePostPublishing = ({setPublishedPostsForUser}:PostPublishingProps): UsePostPublishingResponse => {
+  const { publishPost,deletePost} = usePost();
   const { user } = useUser();
+  const {deleteDraftPost} = useDraftPost();
 
-  const formData = {
-    title: queryParams.title,
-    actors: queryParams.actors,
-    thumbnailUrl: queryParams.thumbnailUrl,
-    tags: queryParams.tags,
-    postType: queryParams.postType,
-    targetAudience: queryParams.targetAudience,
-  };
-
-
-  const openCreatePostForm = () => setIsCreatePostFormOpen(true);
-  const closeCreatePostForm = () => setIsCreatePostFormOpen(false);
-
-  const handlePublishPost = async (content: string) => {
+  const handlePublishDraftPostIteration = async (draftpost: DraftPost , iterationId: string) => {
+    const iteration = draftpost.iterations.find((i) => i.id == iterationId);
+    if(!iteration){
+      toast.error("Iteration not found");
+      return;
+    }
+    const content = iteration.content;
     await publishPost({
-      content,
+      content: content,
       authorId: user?.id ?? "",
       authorName: user?.name ?? "",
       authorProfileImageUrl: user?.profileImageUrl ?? "",
       postDetails: {
-        title: queryParams.title,
-        targetAudience: queryParams.targetAudience,
-        postType: queryParams.postType,
-        actors: queryParams.actors,
-        tags: queryParams.tags,
+        title: draftpost.postDetails.title,
+        targetAudience: draftpost.postDetails.targetAudience,
+        postType: draftpost.postDetails.postType,
+        actors: draftpost.postDetails.actors,
+        tags: draftpost.postDetails.tags,
         thumbnailDetails: {
-          url: queryParams.thumbnailUrl,
+          url: draftpost.postDetails.thumbnailDetails.url,
           content: "",
           title: "",
         },
       },
     });
-    toast.success("Post published successfully!");
-    setIsCreatePostFormOpen(false);
-  };
+    await deleteDraftPost(draftpost.id ?? "");
+  }
+
+  const handlePostUnPublishing = async (postId: string) => {
+      await deletePost(postId);
+      setPublishedPostsForUser((prev) => prev.filter((post) => post.id !== postId));
+  }
 
 
-  return { isCreatePostFormOpen, openCreatePostForm, closeCreatePostForm, handlePublishPost, formData };
+
+  return {handlePublishDraftPostIteration,handlePostUnPublishing};
 };
