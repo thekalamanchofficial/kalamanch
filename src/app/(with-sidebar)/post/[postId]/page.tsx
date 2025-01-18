@@ -1,13 +1,14 @@
 import { currentUser, getAuth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import Post from "~/app/_components/post/Post";
+import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import { trpcServer } from "~/app/_trpc/server";
 import transformDates from "~/app/_utils/transformDates";
 
-const PostPage = async ({ params }: { params: { posId: string } }) => {
+const PostPage = async ({ params }: { params: { postId: string } }) => {
   const user = await currentUser();
   const userEmail = String(user?.emailAddresses[0]?.emailAddress);
-  const post = await trpcServer.post.getPost(params.posId);
+  const post = await trpcServer.post.getPost(params.postId);
   const userFollowings = await trpcServer.user.getUserFollowings({
     userEmail,
   });
@@ -15,10 +16,21 @@ const PostPage = async ({ params }: { params: { posId: string } }) => {
     userEmail,
   });
 
-  const isLiked = userLikedPosts?.some((post) => post.id === params.posId);
+  const isLiked = userLikedPosts?.some((post) => post.id === params.postId);
 
   if (!post) {
-    return <div>Post not found</div>;
+    return (
+      <ShowMessage
+        title="No Posts Found."
+        style={{
+          height: "200px",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      />
+    );
   }
 
   const processedPost = transformDates(post);
@@ -37,16 +49,16 @@ export default PostPage;
 export const generateMetadata = async ({
   params,
 }: {
-  params: { posId: string };
+  params: { postId: string };
 }): Promise<Metadata> => {
-  const post = await trpcServer.post.getPost(params.posId);
+  const post = await trpcServer.post.getPost(params.postId);
 
   if (!post) {
     return {
       title: "Post not found - Kalamanch",
       description: "The post you're looking for is not available on Kalamanch.",
       alternates: {
-        canonical: `https://kalamanch.com/posts/${params.posId}`,
+        canonical: `https://kalamanch.com/posts/${params.postId}`,
       },
       robots: {
         index: false,
@@ -72,7 +84,7 @@ export const generateMetadata = async ({
       images: [thumbnailUrl],
     },
     alternates: {
-      canonical: `https://kalamanch.com/posts/${params.posId}`,
+      canonical: `https://kalamanch.com/posts/${params.postId}`,
     },
     robots: {
       index: true,
@@ -102,7 +114,7 @@ export const generateMetadata = async ({
     openGraph: {
       title,
       description,
-      url: `https://kalamanch.com/posts/${params.posId}`,
+      url: `https://kalamanch.com/posts/${params.postId}`,
       siteName: "Kalamanch",
       type: "article",
       publishedTime: post.createdAt.toString(),
