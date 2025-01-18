@@ -39,7 +39,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
-          alignItems: "start",
+          alignItems: "center",
         }}
       >
         <Typography
