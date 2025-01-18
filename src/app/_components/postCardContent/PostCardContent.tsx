@@ -42,7 +42,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
-          alignItems: "flex-start",
+          alignItems: "center",
         }}
       >
         <Box

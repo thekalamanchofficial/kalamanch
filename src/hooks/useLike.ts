@@ -17,13 +17,11 @@ export function useLike({
   const [hasLiked, setHasLiked] = useState(initialIsLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const { addLikeToBatch, rolledBackLikes, setRolledBackLikes } = useFeedContext();
-  const isLikeInProgress = useRef(false);
 
   const handleLike = useCallback(async () => {
-    if (!userEmail || isLikeInProgress.current) return;
+    if (!userEmail) return;
 
     const newLikedState = !hasLiked;
-    isLikeInProgress.current = true;
 
     setHasLiked(newLikedState);
     setLikeCount((prev) => (newLikedState ? prev + 1 : prev - 1));
@@ -32,7 +30,6 @@ export function useLike({
         liked: newLikedState,
       },
     });
-    isLikeInProgress.current = false;
   }, [hasLiked, postId, userEmail, addLikeToBatch]);
 
   useEffect(() => {

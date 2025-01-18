@@ -18,6 +18,16 @@ export type Comment = {
   replies?: Comment[];
 };
 
+export type CommentPayload = {
+  id: string;
+  postId: string;
+  content: string;
+  parentId?: string | null | undefined;
+  userEmail: string;
+  userName: string;
+  userProfileImageUrl: string;
+};
+
 export type Like = {
   id: string;
   userId: string;

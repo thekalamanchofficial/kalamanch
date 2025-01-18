@@ -1,7 +1,10 @@
-import { useState, useCallback } from 'react';
-import { trpc } from '~/server/client';
-import { type Comment } from '~/app/(with-sidebar)/myfeed/types/types';
-import { handleError } from '~/app/_utils/handleError';
+import { useState, useCallback, useEffect } from "react";
+import { useFeedContext } from "~/app/(with-sidebar)/myfeed/context/FeedContext";
+import {
+  type CommentPayload,
+  type Comment,
+} from "~/app/(with-sidebar)/myfeed/types/types";
+import { ObjectId } from "mongodb";
 
 type UseCommentsProps = {
   initialComments: Comment[];
@@ -11,160 +14,130 @@ type UseCommentsProps = {
   userProfileImageUrl?: string;
 };
 
-type OptimisticCommentUpdate = {
-  tempId: string;
-  parentId: string | null;
-};
-
-export function useComments({ 
-  initialComments, 
+export function useComments({
+  initialComments,
   postId,
   userEmail,
   userName,
-  userProfileImageUrl
+  userProfileImageUrl,
 }: UseCommentsProps) {
   const [comments, setComments] = useState<Comment[]>(initialComments);
-  const [pendingUpdates, setPendingUpdates] = useState<OptimisticCommentUpdate[]>([]);
+  const {
+    addCommentToBatch,
+    bulkCommentsState,
+    failedComments,
+    setFailedComments,
+  } = useFeedContext();
 
-  const commentMutation = trpc.comments.addComment.useMutation();
+  const createTempComment = useCallback(
+    (content: string, parentId: string | undefined): Comment => {
+      return {
+        id: new ObjectId().toString(),
+        postId,
+        userId: userEmail!,
+        userName: userName ?? userEmail!,
+        parentId: parentId ? parentId : null,
+        userProfileImageUrl: userProfileImageUrl ?? "",
+        content,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        replies: [],
+      };
+    },
+    [userEmail, userName, userProfileImageUrl, postId],
+  );
 
-  const createTempComment = useCallback((
-    content: string, 
-    parentId: string | undefined
-  ): Comment => ({
-    id: `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-    postId,
-    userId: userEmail!,
-    userName: userName ?? userEmail!,
-    parentId: parentId ? parentId : null,
-    userProfileImageUrl: userProfileImageUrl ?? "",
-    content,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    replies: [],
-  }), [userEmail, userName, userProfileImageUrl, postId]);
-
-  const updateCommentsTree = useCallback((
-    currentComments: Comment[], 
-    parentId: string | null, 
-    newComment: Comment, 
-    isRollback = false
-  ): Comment[] => {
-    if (!parentId) {
-      return isRollback 
-        ? currentComments.filter(comment => comment.id !== newComment.id)
-        : [...currentComments, newComment];
-    }
-
-    return currentComments.map(comment => {
-      if (comment.id === parentId) {
-        const updatedReplies = isRollback
-          ? (comment.replies ?? []).filter(reply => reply.id !== newComment.id)
-          : [...(comment.replies ?? []), newComment];
-        
-        return {
-          ...comment,
-          replies: updatedReplies
-        };
+  const updateCommentsTree = useCallback(
+    (
+      currentComments: Comment[],
+      parentId: string | null,
+      newComment: Comment | CommentPayload,
+      isRollback = false,
+    ): Comment[] => {
+      if (!parentId) {
+        return isRollback
+          ? currentComments.filter(
+              (comment) => comment.id !== newComment.id,
+            )
+          : ([...currentComments, newComment] as Comment[]);
       }
-      return comment;
-    });
-  }, []);
 
-  const replaceTemporaryComment = useCallback((
-    currentComments: Comment[],
-    tempId: string,
-    parentId: string | null,
-    serverComment: Comment
-  ): Comment[] => {
-    if (!parentId) {
-      return currentComments.map(comment => 
-        comment.id === tempId ? serverComment : comment
+      return currentComments.map((comment) => {
+        if (comment.id === parentId) {
+          const updatedReplies = isRollback
+            ? (comment.replies ?? []).filter(
+                (reply) => reply.id !== newComment.id,
+              )
+            : ([...(comment.replies ?? []), newComment] as Comment[]);
+
+          return {
+            ...comment,
+            replies: updatedReplies,
+          };
+        }
+        return comment;
+      });
+    },
+    [],
+  );
+
+  const handleAddComment = useCallback(
+    async (content: string, parentId?: string) => {
+      if (!userEmail) {
+        throw new Error("User must be logged in to comment");
+      }
+
+      const tempComment = createTempComment(content, parentId);
+
+      setComments((currentComments) =>
+        updateCommentsTree(currentComments, parentId ?? null, tempComment),
       );
-    }
 
-    return currentComments.map(comment => {
-      if (comment.id === parentId) {
-        return {
-          ...comment,
-          replies: comment.replies?.map(reply =>
-            reply.id === tempId ? serverComment : reply
-          ) ?? []
-        };
-      }
-      return comment;
-    });
-  }, []);
-
-  const handleAddComment = useCallback(async (content: string, parentId?: string) => {
-    if (!userEmail) {
-      throw new Error('User must be logged in to comment');
-    }
-
-    const tempComment = createTempComment(content, parentId);
-    const optimisticUpdate: OptimisticCommentUpdate = {
-      tempId: tempComment.id,
-      parentId: parentId ?? null
-    };
-
-    setComments(currentComments => 
-      updateCommentsTree(currentComments, parentId ?? null, tempComment)
-    );
-    setPendingUpdates(prev => [...prev, optimisticUpdate]);
-
-    try {
-      const response = await commentMutation.mutateAsync({
+      addCommentToBatch({
+        id: tempComment.id,
         postId,
         content,
-        parentId,
+        parentId: parentId ?? null,
         userEmail,
         userName: userName ?? userEmail,
         userProfileImageUrl: userProfileImageUrl ?? "",
       });
+    },
+    [
+      postId,
+      userEmail,
+      userName,
+      userProfileImageUrl,
+      addCommentToBatch,
+      updateCommentsTree,
+      createTempComment,
+    ],
+  );
 
-      setComments(currentComments => 
-        replaceTemporaryComment(
-          currentComments,
-          tempComment.id,
-          parentId ?? null,
-          response
-        )
+  useEffect(() => {
+    failedComments.forEach((failedComment) => {
+      if (failedComment.postId !== postId) {
+        return;
+      }
+      const parentId = failedComment.parentId ?? null;
+      setComments((currentComments) =>
+        updateCommentsTree(currentComments, parentId, failedComment, true),
       );
-      setPendingUpdates(prev => 
-        prev.filter(update => update.tempId !== tempComment.id)
-      );
+    });
 
-    } catch (error) {
-      setComments(currentComments => 
-        updateCommentsTree(
-          currentComments,
-          parentId ?? null,
-          tempComment,
-          true
-        )
+    if (failedComments.length > 0) {
+      setFailedComments((prev) =>
+        prev.filter((comment) => comment.postId !== postId),
       );
-      setPendingUpdates(prev => 
-        prev.filter(update => update.tempId !== tempComment.id)
-      );
-
-      console.error("Error adding comment:", error);
-      handleError(error);
     }
-  }, [
-    postId,
-    userEmail,
-    userName,
-    userProfileImageUrl,
-    commentMutation,
-    updateCommentsTree,
-    replaceTemporaryComment,
-    createTempComment
-  ]);
+  }, [failedComments, comments, updateCommentsTree, setFailedComments, postId]);
 
   return {
     comments,
     handleAddComment,
-    isPending: pendingUpdates.length > 0,
-    pendingCount: pendingUpdates.length
+    isPending: bulkCommentsState.some((comment) => comment.postId === postId),
+    pendingCount: bulkCommentsState.filter(
+      (comment) => comment.postId === postId,
+    ).length,
   };
 }
