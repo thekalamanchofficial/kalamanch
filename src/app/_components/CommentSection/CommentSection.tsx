@@ -51,7 +51,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                   setReplyingState={setReplyingState}
                   replyingState={replyingState}
                   handleReply={(newComment: string) =>
-                    commentButtonClick(newComment, item.id)
+                    commentButtonClick(newComment, replyingState[item.id] ? item.id : "")
                   }
                   isChildren={false}
                 />

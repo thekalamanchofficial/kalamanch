@@ -18,6 +18,7 @@ export const syncUser = inngest.createFunction(
         following: [],
         followers: [],
         bookmarks: [],
+        profileImageUrl: ""
       },
     });
   },

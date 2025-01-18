@@ -1,9 +1,14 @@
 import { Box, CardMedia, Chip, Typography } from "@mui/material";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { type PostCardContentProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { myfeedConfig } from "~/app/(with-sidebar)/myfeed/_config/config";
 import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
 import Link from "next/link";
+import "react-quill/dist/quill.snow.css";
+import "./quillEditor.css";
+import SeeLessButton from "../seeLessButton/SeeLessButton";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const PostCardContent: React.FC<PostCardContentProps> = ({
   articleTitle,
@@ -13,6 +18,20 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   articleDescription,
   articleId,
 }) => {
+  const [seeMore, setSeeMore] = useState(false);
+
+  const quillCOnfig = {
+    toolbar: false,
+  };
+
+  const handleSeeMore = useCallback(() => {
+    setSeeMore(true);
+  }, []);
+
+  const handleSeeLess = useCallback(() => {
+    setSeeMore(false);
+  }, []);
+
   return (
     <>
       <Box
@@ -21,7 +40,6 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
           flexDirection: "column",
           justifyContent: "start",
           alignItems: "start",
-          pr: 10,
         }}
       >
         <Typography
@@ -33,22 +51,43 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
         >
           {articleTitle}
         </Typography>
-        <Typography
-          sx={{
-            color: "text.secondary",
-            fontSize: "15px",
-            marginBottom: "10px",
-          }}
-        >
-          {articleContent.length > myfeedConfig.ARTICLE_READ_MORE_LENGTH ? (
-            <>
-              {`${articleContent.slice(0, myfeedConfig.ARTICLE_READ_MORE_LENGTH)} ...`}
-              <SeeMoreButton />
-            </>
-          ) : (
-            articleContent
-          )}
-        </Typography>
+        {!seeMore ? (
+          <>
+            {articleContent.length > myfeedConfig.ARTICLE_READ_MORE_LENGTH ? (
+              <div className="quill-container">
+                <ReactQuill
+                  value={articleContent.slice(
+                    0,
+                    myfeedConfig.ARTICLE_READ_MORE_LENGTH,
+                  )}
+                  readOnly
+                  theme="snow"
+                  modules={quillCOnfig}
+                />
+                <SeeMoreButton onClick={handleSeeMore} />
+              </div>
+            ) : (
+              <div className="quill-container">
+                <ReactQuill
+                  value={articleContent}
+                  readOnly
+                  theme="snow"
+                  modules={quillCOnfig}
+                />
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="quill-container">
+            <ReactQuill
+              value={articleContent}
+              readOnly
+              theme="snow"
+              modules={quillCOnfig}
+            />
+            <SeeLessButton onClick={handleSeeLess} />
+          </div>
+        )}
       </Box>
       <Link
         href={`${process.env.NEXT_PUBLIC_APP_URL}/articles/${articleId}`}
@@ -72,9 +111,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
             component="img"
             height="140"
             image={
-              articleImage[0] !== ""
-                ? articleImage[0]
-                : "https://picsum.photos/200"
+              articleImage !== "" ? articleImage : "https://picsum.photos/200"
             }
             alt="green iguana"
             sx={{

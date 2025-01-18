@@ -2,31 +2,33 @@ import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { trpc } from "~/server/client";
-import { type FeaturedAuthor } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { UserToFollow } from "~/app/(with-sidebar)/myfeed/types/types";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 
 type useFeaturedAuthorPageProps = {
-  author: FeaturedAuthor[];
+  usersToFollow: UserToFollow[];
   isLoading: boolean;
   userFollowing: string[] | undefined;
 };
 
 const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
-  const [author, setAuthor] = useState<FeaturedAuthor[]>([]);
+
+  const [author, setAuthor] = useState<UserToFollow[]>([]);
   const [skip, setSkip] = useState(0);
   const [hasMoreAuthor, setHasMoreAuthor] = useState<boolean>(true);
 
-  const featuredAuthorMutation = trpc.featuredAuthor;
+  
   const userMutation = trpc.user;
+  const featuredAuthorMutation = trpc.usersToFollow;
 
   const { user } = useClerk();
 
-  const { data: userFollowing } = userMutation.getUserFollowings.useQuery({
+  const { data: userAlreadyFollowing } = userMutation.getUserFollowings.useQuery({
     userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
   });
 
-  const { data, isLoading, error } =
-    featuredAuthorMutation.getFeaturedAuthors.useQuery(
+  const { data: usersToFollowData, isLoading, error } =
+    featuredAuthorMutation.getUsersToFollow.useQuery(
       {
         skip,
         limit:
@@ -39,6 +41,7 @@ const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
       },
     );
 
+
   const { handleScroll } = useLazyLoading({
     queryLoading: isLoading,
     error: error?.message ?? "",
@@ -46,18 +49,18 @@ const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
     limit: config.lazyLoading.limit,
     skip,
     setSkip,
-    hasMoreData: data?.hasMoreAuthor ?? false,
+    hasMoreData: usersToFollowData?.hasMoreAuthor ?? false,
     setHasMoreData: setHasMoreAuthor,
   });
 
   useEffect(() => {
-    setAuthor((prevAuthor) => [...prevAuthor, ...(data?.featuredAuthor ?? [])]);
-  }, [data]);
+    setAuthor((prevAuthor) => [...prevAuthor, ...(usersToFollowData?.featuredAuthor ?? [])]);
+  }, [usersToFollowData]);
 
   return {
-    author,
+    usersToFollow: author,
     isLoading,
-    userFollowing,
+    userFollowing: userAlreadyFollowing,
   };
 };
 

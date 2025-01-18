@@ -1,35 +1,28 @@
 import {
   MyFeedTabsEnum,
-  type ArticlesList,
+  type Post,
 } from "../types/types";
-import { handleError } from "~/app/_utils/handleError";
 import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 
 type useMyFeedPageReturn = {
-  postDataWithComments: ArticlesList[];
+  postDataWithComments: Post[];
   likedPosts: string[];
   queryLoading: boolean;
   hasMorePosts: boolean;
   tab: MyFeedTabsEnum;
   skip: number;
   setSkip: React.Dispatch<React.SetStateAction<number>>;
-  handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
-  handleChangeTab: (newTab: MyFeedTabsEnum) => void;
-  addComment: (
-    postId: string,
-    content: string,
-    parentId?: string,
-  ) => Promise<void>;
+  handleTabChange: (newTab: MyFeedTabsEnum) => void;
   handleScroll: () => void;
   errorMessage: string;
 };
 
 const useMyFeedPage = (): useMyFeedPageReturn => {
-  const [posts, setPosts] = useState<ArticlesList[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
   const [tab, setTab] = useState<MyFeedTabsEnum>(MyFeedTabsEnum.MY_FEED);
   const [skip, setSkip] = useState(0);
@@ -40,7 +33,6 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
 
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
-  const commentMutation = trpc.comments;
 
   const {
     data: postData,
@@ -72,7 +64,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     () =>
       posts.map((post) => ({
         ...post,
-        comments: post.comments.map((comment) => ({
+        comments: post.comments?.map((comment) => ({
           ...comment,
           postId: post.id,
         })),
@@ -85,103 +77,18 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     { enabled: !!userEmail },
   );
 
-  const likePostMutation = likeMutation.likePost.useMutation();
-
-  const handleLikeButton = useCallback(
-    async (postId: string): Promise<{ liked: boolean }> => {
-      if (!userEmail) return { liked: false };
-
-      try {
-        const response = await likePostMutation.mutateAsync({
-          postId,
-          userEmail,
-        });
-
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post.id === postId
-              ? {
-                  ...post,
-                  likeCount: response.liked
-                    ? post.likeCount + 1
-                    : Math.max(0, post.likeCount - 1),
-                }
-              : post,
-          ),
-        );
-
-        setLikedPosts((prev) =>
-          response.liked
-            ? [...prev, postId]
-            : prev.filter((id) => id !== postId),
-        );
-
-        return { liked: response.liked };
-        } catch (error) {
-          handleError(error);
-        return { liked: false };
-      }
-    },
-    [likePostMutation, userEmail],
-  );
-
-  const addCommentMutation = commentMutation.addComment.useMutation();
-
-  const addComment = useCallback(
-    async (postId: string, content: string, parentId?: string) => {
-      if (!content.trim() || !userEmail) return;
-
-      try {
-        const newComment = await addCommentMutation.mutateAsync({
-          postId,
-          userEmail,
-          name:
-            user?.firstName ??
-            ((user?.unsafeMetadata?.name as string) || "Anonymous"),
-          content,
-          profile: user.imageUrl,
-          parentId,
-        });
-
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post.id === postId
-              ? {
-                  ...post,
-                  comments: parentId
-                    ? post.comments.map((comment) =>
-                        comment.id === parentId
-                          ? {
-                              ...comment,
-                              replies: [...(comment.replies ?? []), newComment],
-                            }
-                          : comment,
-                      )
-                    : [...post.comments, newComment],
-                }
-              : post,
-          ),
-        );
-      } catch (error) {
-        handleError(error);
-      }
-    },
-    [
-      addCommentMutation,
-      userEmail,
-      user?.firstName,
-      user?.unsafeMetadata?.name,
-      user?.imageUrl,
-    ],
-  );
-
-  const handleChangeTab = (newTab: MyFeedTabsEnum) => {
+  const handleTabChange = (newTab: MyFeedTabsEnum) => {
     setTab(newTab);
   };
 
   useEffect(() => {
     if (postData?.posts) {
-      setPosts((prev) => [...prev, ...postData.posts]);
+      setPosts((prev) => {
+        const existingPostIds = new Set(prev.map((post) => post.id));
+        // TODO: find a better way to remove duplicate posts, try out using trpc infinite query.
+        const newPosts = postData.posts.filter((post) => !existingPostIds.has(post.id));
+        return [...prev, ...newPosts];
+      });
     }
   }, [postData]);
 
@@ -193,13 +100,11 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     postDataWithComments,
     likedPosts,
     queryLoading,
-    hasMorePosts,
+    hasMorePosts:postData?.hasMorePosts ?? false,
     tab,
     skip,
     setSkip,
-    handleLikeButton,
-    handleChangeTab,
-    addComment,
+    handleTabChange,
     handleScroll,
     errorMessage: error?.message ?? "",
   };

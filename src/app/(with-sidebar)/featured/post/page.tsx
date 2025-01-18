@@ -103,7 +103,7 @@ const Page = () => {
                         cursor: "pointer",
                       },
                     }}
-                    onClick={() => handleClick(item.postId)}
+                    onClick={() => handleClick(item.id)}
                   >
                     <Typography
                       sx={{

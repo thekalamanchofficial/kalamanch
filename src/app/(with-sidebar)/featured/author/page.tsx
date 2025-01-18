@@ -8,7 +8,7 @@ import useFeaturedAuthorPage from "./_hooks/useFeaturedAuthorPage";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 const Page = () => {
-  const { author, isLoading, userFollowing } = useFeaturedAuthorPage();
+  const { usersToFollow: author, isLoading, userFollowing } = useFeaturedAuthorPage();
 
   return (
     <Box
@@ -98,7 +98,7 @@ const Page = () => {
                         }}
                       >
                         <UserNameProfile
-                          AuthorImage={item.profile}
+                          AuthorImage={item.profileImageUrl}
                           AuthorName={item.name}
                         />
                       </Link>
@@ -106,13 +106,13 @@ const Page = () => {
                         Followers: {item.followersCount}
                       </Typography>
                       <Typography variant="caption">
-                        Articles: {item.articlesCount}
+                        Articles: {item.postCount}
                       </Typography>
                     </Box>
                   </Box>
                   <Box>
                     <FollowButton
-                      authorProfileLink={item.userId}
+                      authorProfileLink={item.profileImageUrl}
                       style={{
                         height: "40px",
                         width: "100px",

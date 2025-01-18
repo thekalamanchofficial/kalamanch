@@ -1,4 +1,4 @@
-import { type ArticlesList } from "../../myfeed/types/types";
+import { Like, UserToFollow, type Post } from "../../myfeed/types/types";
 
 export enum MyProfileTabsEnum {
   MY_POSTS = "My Posts",
@@ -15,13 +15,24 @@ export type EditProfileDetails = {
 };
 
 export type UserSchema = {
+  id: string;
   name: string;
-  birthdate: Date;
+  email: string;
+  profileImageUrl: string;
+  birthdate?: string | null;
   interests: string[];
-  bio?: string;
-  education?: string[];
+  bio: string | null;
+  education: string[];
   professionalAchievements?: string;
+  following?: string[];
+  followers?: string[];
+  bookmarks?: string[];
+  usersToFollow?: UserToFollow[];
+  likes?: Like[];
+  comments?: Comment[];
+  posts?: Post[];
 };
+
 
 export type UserInfo = {
   name: string;
@@ -34,14 +45,14 @@ export type UserInfo = {
 
 export type UseMyProfilePage = {
   callSave: (details: SaveUserInfo) => Promise<void>;
-  posts: ArticlesList[];
-  setPosts: React.Dispatch<React.SetStateAction<ArticlesList[]>>;
+  posts: Post[];
+  setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
   likedPosts: string[];
   queryLoading: boolean;
   hasMorePosts: boolean;
   tab: MyProfileTabsEnum;
   skip: number;
-  postDataWithComments: ArticlesList[];
+  postDataWithComments: Post[];
   setSkip: React.Dispatch<React.SetStateAction<number>>;
   handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
   handleChange: (newTab: MyProfileTabsEnum) => void;
@@ -59,7 +70,7 @@ export type UseMyProfilePage = {
   handleEditProfileClose: () => void;
   handleEditProfileOpen: () => void;
   userInfo: UserInfo;
-  userLikedPosts: ArticlesList[];
+  userLikedPosts: Post[];
   handleSave: (details: UserInfo) => Promise<void>;
 };
 

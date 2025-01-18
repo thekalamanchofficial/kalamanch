@@ -9,8 +9,8 @@ const featuredAuthorSchema = yup.object({
   profile: yup.string().required(),
 });
 
-export const featuredAuthorRouter = router({
-  addFeaturedAuthor: publicProcedure
+export const UsersToFollowRouter = router({
+  addUserToFollow: publicProcedure
     .input(yup.array(featuredAuthorSchema))
     .mutation(async ({ input }) => {
       try {
@@ -19,11 +19,11 @@ export const featuredAuthorRouter = router({
         }
         for (const author of input) {
           const { userId, name, profile } = author;
-          await prisma.featuredAuthor.create({
+          await prisma.userToFollow.create({
             data: {
               userId,
               name,
-              profile,
+              profileImageUrl: profile,
             },
           });
         }
@@ -34,7 +34,7 @@ export const featuredAuthorRouter = router({
       }
     }),
 
-  getFeaturedAuthors: publicProcedure
+  getUsersToFollow: publicProcedure
     .input(
       yup.object({
         limit: yup.number().min(1).default(5),
@@ -47,13 +47,13 @@ export const featuredAuthorRouter = router({
 
         let hasMore = false;
 
-        const count = await prisma.featuredAuthor.count();
+        const count = await prisma.userToFollow.count();
 
         if (count > limit + skip) {
           hasMore = true;
         }
 
-        const featuredAuthors = await prisma.featuredAuthor.findMany({
+        const usersToFollow = await prisma.userToFollow.findMany({
           take: limit,
           skip: skip,
           include: {
@@ -64,13 +64,16 @@ export const featuredAuthorRouter = router({
               },
             },
           },
+        }).catch((error) => {
+          console.error("Error fetching featured authors:", error);
+          throw error;
         });
 
-        const authorsWithCounts = featuredAuthors.map((author) => {
+        const authorsWithCounts = usersToFollow.map((author) => {
           return {
             ...author,
             followersCount: author.user.followers.length,
-            articlesCount: author.user.posts.length,
+            postCount: author.user.posts.length,
           };
         });
 

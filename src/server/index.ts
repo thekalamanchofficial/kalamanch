@@ -3,15 +3,17 @@ import { userRouter } from "./routers/user";
 import { postRouter } from "./routers/post";
 import { likeRouter } from "./routers/likes";
 import { commentRouter } from "./routers/comment";
-import { featuredAuthorRouter } from "./routers/featuredAuthor";
 import { featuredPostRouter } from "./routers/featuredPost";
+import { UsersToFollowRouter } from "./routers/usersToFollow";
+import { draftPostRouter } from "./routers/draftPost";
 
 export const appRouter = router({
   user: userRouter,
   post: postRouter,
+  draftPost: draftPostRouter,
   likes: likeRouter,
   comments: commentRouter,
-  featuredAuthor: featuredAuthorRouter,
+  usersToFollow: UsersToFollowRouter,
   featuredPost: featuredPostRouter,
 });
 
