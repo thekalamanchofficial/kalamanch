@@ -1,6 +1,10 @@
 import { useSearchParams } from "next/navigation";
 
-export const useQueryParams = () => {
+type QueryParams = {
+  postId : string;
+  draftPostId: string;
+}
+export const useQueryParams = (): QueryParams => {
   const searchParams = useSearchParams();
   const queryParams = Object.fromEntries(searchParams.entries());
 

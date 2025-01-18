@@ -4,7 +4,20 @@ import { useUser } from "~/context/userContext";
 import { DraftPost, EditorTabsEnum } from "../types/types";
 import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
 
-export const useUserPostsState = (activeTab: EditorTabsEnum) => {
+type UseUserPostsStateProps = {
+  activeTab: EditorTabsEnum;
+};
+
+type UseUserPostsStateResponse = {
+  draftPostsForUser: DraftPost[];
+  publishedPostsForUser: Post[];
+  setDraftPostsForUser: React.Dispatch<React.SetStateAction<DraftPost[]>>;
+  setPublishedPostsForUser: React.Dispatch<React.SetStateAction<Post[]>>;
+};
+
+export const useUserPostsState = ({
+  activeTab,
+}: UseUserPostsStateProps): UseUserPostsStateResponse => {
   const { user } = useUser();
   const [draftPostsForUser, setDraftPostsForUser] = useState<DraftPost[]>([]);
   const [publishedPostsForUser, setPublishedPostsForUser] = useState<Post[]>([]);

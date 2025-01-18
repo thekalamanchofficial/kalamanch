@@ -24,8 +24,8 @@ const EditorLeftSideBarForPosts: React.FC<EditorLeftSideBarPropsForPosts> = ({
   postStatus
 }) => {
   const router = useRouter();
-  const {selectedDraftPostId , setSelectedDraftPostId} = useSelectedDraftPost();
-  const {selectedPublishedPostId, setSelectedPublishedPostId} = useSelectedPublishedPost();
+  const {selectedDraftPostId ,setSelectedDraftPostIdInLeftSideBar} = useSelectedDraftPost();
+  const {selectedPublishedPostId,setSelectedPublishedPostIdInLeftSideBar} = useSelectedPublishedPost();
 
   return (
     <Grid
@@ -114,12 +114,12 @@ const EditorLeftSideBarForPosts: React.FC<EditorLeftSideBarPropsForPosts> = ({
                   cursor: "pointer",
                 }}
                 key={item.id}
-                onClick={() => setSelectedDraftPostId(item.id ?? "")}
+                onClick={() => setSelectedDraftPostIdInLeftSideBar(item.id ?? "")}
               >
                 <Typography
                   sx={{
                     fontSize: "14px",
-                    color: (item.id) == selectedDraftPostId  ? "#260EB9" : "font.secondary",
+                    color: (item.id) == selectedDraftPostId  ? "primary.main" : "font.secondary",
                     
                   }}
                 >
@@ -157,7 +157,7 @@ const EditorLeftSideBarForPosts: React.FC<EditorLeftSideBarPropsForPosts> = ({
                   cursor: "pointer",
                 }}
                 key={item.id}
-                onClick={() => setSelectedPublishedPostId(item.id ?? "")}
+                onClick={() => setSelectedPublishedPostIdInLeftSideBar(item.id ?? "")}
               >
                 <Typography
                   sx={{

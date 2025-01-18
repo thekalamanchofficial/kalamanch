@@ -18,7 +18,7 @@ import DescriptionOutlinedIcon from '@mui/icons-material/Publish'
 import { Iteration } from '../../types/types'
 import { STATIC_TEXTS } from '~/app/_components/static/staticText'
 
-export interface PublishDialogProps {
+export type PublishDialogProps = {
   iterations: Iteration[]
   onPublish: (iterationId: string) => Promise<void>
   onCancel?: () => void
@@ -29,7 +29,7 @@ export interface PublishDialogProps {
 
 const StyledRadio = styled(Radio)(({ theme }) => ({
   '&.Mui-checked': {
-    color: '#4B0082',
+    color: 'primary.main', 
   },
 }))
 
@@ -44,8 +44,8 @@ export default function PublishDraftDialog({
   const [selectedIteration, setSelectedIteration] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
 
-  const handleOnPublish = async (selectedIteration: string)=> {
-    await onPublish(selectedIteration);
+  const handleOnPublish = async (selectedIteration: string) => {
+    await onPublish(selectedIteration)
   }
 
   return (
@@ -78,13 +78,13 @@ export default function PublishDraftDialog({
                     </Typography>
                   }
                   sx={{
-                    border: '1px solid #e0e0e0',
+                    border: `1px solid`,
                     borderRadius: 1,
                     width: '100%',
                     mb: 1,
                     p: 1,
                     '&:hover': {
-                      backgroundColor: '#f5f5f5',
+                      backgroundColor: "action.hover",
                     },
                   }}
                 />
@@ -93,14 +93,18 @@ export default function PublishDraftDialog({
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" sx={{
-            color: 'primary.main',
-            backgroundColor: 'secondary.main',
-            textTransform: 'none',
-            '&:hover': {
-              backgroundColor: 'secondary.dark',
-            },
-          }} onClick={onCancel}>
+          <Button 
+            variant="contained" 
+            sx={{
+              color: 'primary.main', 
+              backgroundColor: 'secondary.main',
+              textTransform: 'none',
+              '&:hover': {
+                backgroundColor: 'secondary.dark',
+              },
+            }} 
+            onClick={onCancel}
+          >
             {STATIC_TEXTS.EDITOR_PAGE.CANCEL}
           </Button>
           <Button
@@ -123,4 +127,3 @@ export default function PublishDraftDialog({
     </>
   )
 }
-

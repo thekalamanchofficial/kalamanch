@@ -2,10 +2,19 @@ import { trpc } from "~/server/client";
 import { handleError } from "~/app/_utils/handleError";
 import { toast } from "react-toastify";
 import { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
-import { CreateDraftPostProps, DraftPost } from "../types/types";
+import { CreateDraftPostProps, DraftPost, Iteration } from "../types/types";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
-export const useDraftPost = () => {
+type UseDraftPostRespone = {
+  addDraftPost: (draftPost: CreateDraftPostProps) => Promise<DraftPost | null | undefined>;
+  getDraftPost: (draftPostId: string | null | undefined) => DraftPost | undefined | null; 
+  addDraftIteration: (draftPostId: string, iterationName: string) => Promise<Iteration>;
+  updateDraftDetails: (draftPostId: string, postDetails: PostDetails) => Promise<void>;
+  updateDraftIteration: (iterationId: string, iterationName: string, content: string) => Promise<Iteration>;
+  deleteDraftPost: (postId: string) => Promise<void>;
+};
+
+export const useDraftPost = (): UseDraftPostRespone => {
 
 
   const createMutationOptions = (successMessage: string) => ({

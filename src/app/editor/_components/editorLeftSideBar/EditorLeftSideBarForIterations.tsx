@@ -9,7 +9,7 @@ import React from "react";
 import { type Iteration } from "../../types/types";
 import { useRouter } from "next/navigation";
 
-type editorLeftSideBarPropsForIterations = {
+type EditorLeftSideBarPropsForIterations = {
   iterations: Iteration[];
   selectedIterationId: string;
   handleIterationSelected: (iterationId: string) => void;
@@ -18,7 +18,7 @@ type editorLeftSideBarPropsForIterations = {
   showIterations?: boolean
 };
 
-const EditorLeftSideBarForIterations: React.FC<editorLeftSideBarPropsForIterations> = ({
+const EditorLeftSideBarForIterations: React.FC<EditorLeftSideBarPropsForIterations> = ({
   iterations,
   handleIterationSelected,
   handleAddIteration,

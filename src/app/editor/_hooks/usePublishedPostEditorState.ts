@@ -7,19 +7,23 @@ import { CreatePostFormType } from "../types/types";
 import { PostType } from "@prisma/client";
 import { usePost } from "./usePost";
 
-export const usePublishedPostEditorState = (postId?: string | undefined) => {
+type UsePublishedPostEditorStateResponse = {
+  publishedPost: Post | null;
+  setPublishedPost: React.Dispatch<React.SetStateAction<Post | null>>;
+  updatePostContent: (content: string) => Promise<void>;
+  updatePostDetails: (createPostFormDetails: CreatePostFormType) => Promise<void>;
+};
+type UsePublishedPostEditorStateProps = {
+  postId? : string | undefined;
+}
+
+export const usePublishedPostEditorState = ({postId}: UsePublishedPostEditorStateProps): UsePublishedPostEditorStateResponse => {
   const [publishedPost, setPublishedPost] = useState<Post | null>(null);
   const {updatePostDetails: updatePostDetailsCallBack , updatePostContent: updatePostContentCallBack} = usePost();
 
   const { data: post } = trpc.post.getPost.useQuery(postId, {
     enabled: Boolean(postId),
   });
-
-  useEffect(() => {
-    if (post) {
-      setPublishedPost(post);
-    }
-  }, [post]);
 
   const updatePostContent = async (content: string) => {
     if (!publishedPost) return;
@@ -57,6 +61,12 @@ export const usePublishedPostEditorState = (postId?: string | undefined) => {
       };
     });
   };
+
+  useEffect(() => {
+    if (post) {
+      setPublishedPost(post);
+    }
+  }, [post]);
 
   return {
     publishedPost,

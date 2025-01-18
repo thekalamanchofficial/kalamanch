@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Card, CardContent, Box } from "@mui/material";
 import EditorPostFooter from "../editorPostFooter/EditorPostFooter";
 import PostCardContent from "~/app/_components/postCardContent/PostCardContent";
@@ -8,7 +8,7 @@ import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import { PostStatus } from "../../types/types";
 import { useSelectedPublishedPost } from "../../contexts/SelectedPublishedPostContext";
 
-interface Props {
+interface EditorPublishedPostsSectionProps {
   posts: Post[];
   handleOnPostUnpublish: (postId: string) => void;
   handleOnPostEdit: (postId: string) => void;
@@ -18,49 +18,56 @@ export default function EditorPublishedPostsSection({
   posts,
   handleOnPostUnpublish,
   handleOnPostEdit
-}: Props) {
-  const { selectedPublishedPostId, setSelectedPublishedPostId } = useSelectedPublishedPost();
+}: EditorPublishedPostsSectionProps) {
+  const { selectedPublishedPostId, setSelectedPublishedPostId,selectedPublishedPostIdInLeftSideBar,setSelectedPublishedPostIdInLeftSideBar } = useSelectedPublishedPost();
   const postRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
-  const [isUserScrolling, setIsUserScrolling] = useState(false);
-  
-  const handleScroll = () => {
-    setIsUserScrolling(true);
-    const visiblePost = posts.find((post) => {
-      const ref = postRefs.current.get(post.id ?? "");
-      if (ref) {
-        const rect = ref.getBoundingClientRect();
-        return rect.top >= 0 && rect.top <= window.innerHeight;
-      }
-      return false;
-    });
 
-    if (visiblePost) {
-      setSelectedPublishedPostId(visiblePost.id ?? "");
-    }
-  };
+  const handleIntersection = useCallback(
+      (entries: IntersectionObserverEntry[]) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const postId = entry.target.getAttribute("data-post-id");
+            if (postId) {
+              setSelectedPublishedPostId(postId);
+              break; 
+            }
+          }
+        }
+      },
+      [selectedPublishedPostId]
+    );
 
   useEffect(() => {
+        const observer = new IntersectionObserver(handleIntersection, {
+          root: null, 
+          rootMargin: "0px",
+          threshold: 0.9,
+        });
+    
+        postRefs.current.forEach((ref) => {
+          if (ref) {
+            observer.observe(ref);
+          }
+        });
+    
+        return () => {
+          observer.disconnect();
+        };
+  }, [posts, handleIntersection]);
+  
+  useEffect(() => {
     setSelectedPublishedPostId(posts[0]?.id ?? "");
+    setSelectedPublishedPostIdInLeftSideBar(posts[0]?.id ?? "");
   }, [posts]);
 
   useEffect(() => {
-    if (!isUserScrolling) return;
-    const timeout = setTimeout(() => {
-      setIsUserScrolling(false);
-    }, 400);
+      const selectedPostRef = postRefs.current.get(selectedPublishedPostIdInLeftSideBar ?? "");
+      if (selectedPostRef) {
+        selectedPostRef.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      setSelectedPublishedPostId(selectedPublishedPostIdInLeftSideBar)
+    }, [selectedPublishedPostIdInLeftSideBar]);
 
-    return () => clearTimeout(timeout);
-  }, [isUserScrolling]);
-
-  useEffect(() => {
-    if (!isUserScrolling && selectedPublishedPostId) {
-      postRefs.current.get(selectedPublishedPostId)?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-      setIsUserScrolling(false);
-    }
-  }, [selectedPublishedPostId, posts]);
 
   return (
     <Box
@@ -70,7 +77,6 @@ export default function EditorPublishedPostsSection({
         overflowY: "scroll",
         scrollbarWidth: "none",
       }}
-      onScroll={handleScroll}
     >
       {posts.map((post) => (
         <div
@@ -78,6 +84,7 @@ export default function EditorPublishedPostsSection({
           ref={(el) => {
             postRefs.current.set(post.id ?? "",el);
           }}
+          data-post-id={post.id}
         >
           <Card  sx={{ mb: 2, boxShadow: "none" }}>
             <CardContent>

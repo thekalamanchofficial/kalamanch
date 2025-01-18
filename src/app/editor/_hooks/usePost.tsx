@@ -5,12 +5,19 @@ import { handleError } from "~/app/_utils/handleError";
 import { CreatePostProps, PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
+type UsePostResponse = {
+  publishPost: (postData: CreatePostProps) => Promise<void>;
+  deletePost: (postId: string) => Promise<void>;
+  updatePostContent: (postId: string, content: string) => Promise<void>;
+  updatePostDetails: (postId: string, postDetails: PostDetails) => Promise<void>;
+};
+
 const createMutationOptions = (successMessage: string) => ({
   onSuccess: () => toast.success(successMessage),
   onError: (error: unknown) => handleError(error),
 });
 
-export const usePost = () => {
+export const usePost = (): UsePostResponse => {
   const router = useRouter();
   const addPostMutation = trpc.post.addPost.useMutation(
     createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_PUBLISHED_SUCCESS_MESSAGE)

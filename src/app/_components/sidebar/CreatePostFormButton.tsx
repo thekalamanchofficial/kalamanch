@@ -53,7 +53,7 @@ const CreatePostFormButton = () => {
 
 
     const queryData = {
-      draftPostId: draftPost?.id
+      draftPostId: draftPost?.id ?? ""
     };
     const query = new URLSearchParams(queryData).toString();
     router.push(`/editor?${query}`);

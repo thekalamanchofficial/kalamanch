@@ -26,11 +26,11 @@ const WritingPad: React.FC<WritingPadProps> = ({
 }) => {
   const { handleSubmit, control } = useContentForm();
 
-  const { onContentChange, saveDraftInstantly } = useDraftContentAutosave(
+  const { onContentChange, saveDraftInstantly } = useDraftContentAutosave({
     currentIterationId,
-    defaultContentToDisplay,
-    handleEditorContentChange
-  );
+    initialContent:defaultContentToDisplay,
+    saveContentToDb:handleEditorContentChange
+});
 
   const onPublishPost = (data: { content: string }) => {
     handlePublish(data.content);

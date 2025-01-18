@@ -13,26 +13,17 @@ import { tabs } from "./_config/config";
 import { useTabs } from "./_hooks/useTabs";
 import { CreatePostFormType, EditorTabsEnum, PostStatus } from "./types/types";
 import EditorDraftPostsSection from "./_components/editorDraftPostsSection/EditorDraftPostsSection";
-import { trpc } from "~/server/client";
 import EditorPublishedPostsSection from "./_components/editorPublishedPostsSection/EditorPublishedPostsSection";
 import EditorLeftSideBarForPosts from "./_components/editorLeftSideBar/EditorLeftSideBarForPosts";
-import { toast } from "react-toastify";
 import { useUserPostsState } from "./_hooks/useUserPosts";
 import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
 import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
-import { useRouter } from "next/navigation";
+import { useNavigateToPostEditor } from "./_hooks/useNavigateToPostEditor";
 
 const Page = () => {
   const { activeTab, changeTab } = useTabs();
   const {postId,draftPostId} = useQueryParams();
-  const {draftPostsForUser, publishedPostsForUser,setDraftPostsForUser,setPublishedPostsForUser } = useUserPostsState(activeTab); // Needed for Published,Draft Posts Tab
-  const postUnpublishingMutation = trpc.post.deletePost.useMutation();  
-  const router =  useRouter()
-  const handlePostUnPublishing = async (postId: string) => {
-    await postUnpublishingMutation.mutateAsync(postId);
-    setPublishedPostsForUser((prev) => prev.filter((post) => post.id !== postId));
-    toast.success("Post unpublished successfully!");
-  }
+  const {draftPostsForUser, publishedPostsForUser,setPublishedPostsForUser } = useUserPostsState({activeTab}); // Needed for Published,Draft Posts Tab
   const {
     draftPost,
     setDraftPost,
@@ -43,52 +34,12 @@ const Page = () => {
     addIteration,
     handlePublishEditorDraftIteration,
     updateDraftPostDetails,
-  } = useDraftEditorState(draftPostId);
+  } = useDraftEditorState({draftPostId});
 
-  const {publishedPost,setPublishedPost, updatePostContent,updatePostDetails } = usePublishedPostEditorState(postId);
-  const {isCreatePostFormOpen,openCreatePostForm, closeCreatePostForm, formData } = useCreatePostFormDataState(draftPost ? draftPost.postDetails : publishedPost?.postDetails);
-  const {handlePublishDraftPostIteration } = usePostPublishing();
-
-  const handlePublishOrUpdateEditorPost = async (content: string) => {
-    if(publishedPost){
-      await updatePostContent(content)
-    }
-    else{
-      await handlePublishEditorDraftIteration(content)
-    }
-  }
-
-
-  const handleCreateUpdateDetailsFormSubmit = async (postDetails : CreatePostFormType) => {
-    if(publishedPost){
-      await updatePostDetails(postDetails);
-    }
-    else{
-      await updateDraftPostDetails(postDetails);
-    }
-    closeCreatePostForm();
-  }
-
-  const navigateToPostEditor = (postId: string, postStatus: PostStatus) => {
-    let queryData = {};
-    if(postStatus === PostStatus.DRAFT){
-      queryData = {
-        draftPostId: postId
-      }
-      setPublishedPost(null);
-    }
-    else{
-      queryData = {
-        postId: postId
-      }
-      setDraftPost(null);
-    }
-    const query = new URLSearchParams(queryData).toString();
-    router.push(`/editor?${query}`);
-    changeTab(EditorTabsEnum.EDITOR);
-
-  }
-
+  const {publishedPost,setPublishedPost, updatePostContent,updatePostDetails } = usePublishedPostEditorState({postId});
+  const {isCreatePostFormOpen,openCreatePostForm, closeCreatePostForm, formData } = useCreatePostFormDataState({ postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails});
+  const {handlePublishDraftPostIteration,handlePostUnPublishing } = usePostPublishing({setPublishedPostsForUser});
+  const {navigateToPostEditor} = useNavigateToPostEditor({setDraftPost,setPublishedPost,changeTab});
 
   return (
     <>
@@ -148,7 +99,13 @@ const Page = () => {
                 key = {draftPost ? selectedIteration?.id : publishedPost?.content}
                 currentIterationId={selectedIteration?.id}
                 handleOpen={() => openCreatePostForm()}
-                handlePublish={handlePublishOrUpdateEditorPost}
+                handlePublish={async (content) => {
+                  if (publishedPost) {
+                    await updatePostContent(content);
+                  } else {
+                    await handlePublishEditorDraftIteration(content);
+                  }
+                }}
                 defaultContentToDisplay={(draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""}
                 handleEditorContentChange={handleEditorContentChange}
                 postStatus= {draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
@@ -174,7 +131,15 @@ const Page = () => {
               handleClose={() => closeCreatePostForm()}
               open={isCreatePostFormOpen}
               createPostFormData={formData}
-              handleFormSubmit={handleCreateUpdateDetailsFormSubmit}
+              handleFormSubmit={async(details) => {
+                if(publishedPost){
+                  await updatePostDetails(details);
+                }
+                else{
+                  await updateDraftPostDetails(details);
+                }
+                closeCreatePostForm();
+              }}
               update = {Boolean(publishedPost ?? draftPost)}
             />
           )}

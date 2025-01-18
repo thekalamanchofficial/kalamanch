@@ -7,36 +7,9 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#4318FF',
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          borderRadius: '8px',
-          padding: '8px 16px',
-        },
-      },
-    },
-    MuiDialog: {
-      styleOverrides: {
-        paper: {
-          borderRadius: '16px',
-          padding: '8px',
-        },
-      },
-    },
-  },
-})
 
-interface GenericDialogProps {
+type GenericDialogProps = {
   open: boolean
   onClose: () => void
   title: string
@@ -61,7 +34,6 @@ export default function GenericDialog({
   }
 
   return (
-    <ThemeProvider theme={theme}>
       <Dialog
         open={open}
         onClose={onClose}
@@ -77,14 +49,11 @@ export default function GenericDialog({
         <DialogTitle id="alert-dialog-title" sx={{
           fontSize: '1.25rem',
           fontWeight: 600,
-          color: '#1A1A1A',
         }}>
           {title}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description" sx={{
-            color: '#666666',
-          }}>
+          <DialogContentText id="alert-dialog-description">
             {content}
           </DialogContentText>
         </DialogContent>
@@ -92,11 +61,13 @@ export default function GenericDialog({
           <Button
             onClick={onClose}
             sx={{
-              color: '#666666',
-              '&:hover': {
-                backgroundColor: '#F5F5F5',
+              color: "primary.main",
+              backgroundColor: "secondary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "secondary.dark",
               },
-            }}
+            }}    
           >
             {cancelText}
           </Button>
@@ -105,9 +76,10 @@ export default function GenericDialog({
             variant="contained"
             autoFocus
             sx={{
-              backgroundColor: '#4318FF',
-              '&:hover': {
-                backgroundColor: '#3311DD',
+              backgroundColor: "primary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "primary.dark",
               },
             }}
           >
@@ -115,7 +87,6 @@ export default function GenericDialog({
           </Button>
         </DialogActions>
       </Dialog>
-    </ThemeProvider>
   )
 }
 

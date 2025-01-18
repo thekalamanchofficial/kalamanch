@@ -6,7 +6,7 @@ import GenericDialog from "~/app/_components/genericDialog/GenericDialog";
 import React from "react";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
-interface EditorPostFooterProps {
+type EditorPostFooterProps = {
   postStatus: PostStatus;
   handleEditButtonClick: () => void;
   handlePublishOrUnpublishButtonClick: () => void;

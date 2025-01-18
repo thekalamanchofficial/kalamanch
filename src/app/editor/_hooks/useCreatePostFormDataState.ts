@@ -1,8 +1,25 @@
 import { useState } from "react";
-import { QueryParams } from "../types/types";
-import { Post, PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 
- export const useCreatePostFormDataState = (postDetails?: PostDetails) => {
+
+type CreatePostFormDataStateProps = {
+    postDetails?: PostDetails
+}
+type CreatePostFormState ={
+    formData: {
+      title: string;
+      actors?: string[];
+      thumbnailUrl?: string;
+      tags?: string[];
+      postType?: string;
+      targetAudience?: string[];
+    };
+    isCreatePostFormOpen: boolean;
+    openCreatePostForm: () => void;
+    closeCreatePostForm: () => void;
+  }
+
+ export const useCreatePostFormDataState = ({postDetails}:CreatePostFormDataStateProps): CreatePostFormState=> {
     const [isCreatePostFormOpen, setIsCreatePostFormOpen] = useState(false);
     const formData = {
         title: postDetails?.title ?? "",

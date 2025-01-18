@@ -111,6 +111,9 @@ export const draftPostRouter = router({
             })),
           },
         },
+        include: {
+          iterations: true
+        }
       });
       return draftPost;
     }),

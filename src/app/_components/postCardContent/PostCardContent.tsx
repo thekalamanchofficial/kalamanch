@@ -62,7 +62,8 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
           >
             {articleTitle}
           </Typography>
-          { savedDate && <Button
+          {/* TODO - Replace with appropriate MUI component */}
+          { savedDate && <Button 
             variant="contained"
             size="small"
             sx={{

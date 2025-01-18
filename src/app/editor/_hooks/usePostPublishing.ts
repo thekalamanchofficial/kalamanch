@@ -4,14 +4,26 @@ import { useUser } from "~/context/userContext";
 import { DraftPost, QueryParams } from "../types/types";
 import { toast } from "react-toastify";
 import { useDraftPost } from "./useDraftPost";
+import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
 
-export const usePostPublishing = () => {
+
+type PostPublishingProps = {
+  setPublishedPostsForUser: React.Dispatch<React.SetStateAction<Post[]>>
+}
+
+type UsePostPublishingResponse = {
+  handlePublishDraftPostIteration: (draftpost: DraftPost, iterationId: string) => Promise<void>;
+  handlePostUnPublishing: (postId: string) => Promise<void>;
+};
+
+
+export const usePostPublishing = ({setPublishedPostsForUser}:PostPublishingProps): UsePostPublishingResponse => {
   const { publishPost,deletePost} = usePost();
   const { user } = useUser();
   const {deleteDraftPost} = useDraftPost();
 
   const handlePublishDraftPostIteration = async (draftpost: DraftPost , iterationId: string) => {
-    const iteration = draftpost.iterations.find((i) => i.id === iterationId);
+    const iteration = draftpost.iterations.find((i) => i.id == iterationId);
     if(!iteration){
       toast.error("Iteration not found");
       return;
@@ -38,7 +50,12 @@ export const usePostPublishing = () => {
     await deleteDraftPost(draftpost.id ?? "");
   }
 
+  const handlePostUnPublishing = async (postId: string) => {
+      await deletePost(postId);
+      setPublishedPostsForUser((prev) => prev.filter((post) => post.id !== postId));
+  }
 
 
-  return {handlePublishDraftPostIteration };
+
+  return {handlePublishDraftPostIteration,handlePostUnPublishing};
 };
