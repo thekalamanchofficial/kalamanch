@@ -14,12 +14,10 @@ export const createTRPCContext = async (opts: {
 
 const trpc = initTRPC.context<typeof createTRPCContext>().create();
 
-/** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = trpc.middleware(({ ctx, next }) => {
   if (!ctx.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  // Make ctx.userId non-nullable in protected procedures
   return next({ ctx: { userId: ctx.userId } });
 });
 
