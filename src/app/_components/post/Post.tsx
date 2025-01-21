@@ -71,6 +71,7 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
           isLiked={hasLiked}
           handleLikeButton={handleLike}
           openCommentBox={toggleComments}
+          postId={post.id}
         />
         {isCommentOpen && (
           <CommentSection

@@ -18,6 +18,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   isLiked,
   handleLikeButton,
   openCommentBox,
+  postId,
 }) => {
   const [open, setOpen] = React.useState(false);
   const handleAction = (actionType: string) => {
@@ -89,7 +90,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           label=""
           onClick={() => handleAction("share")}
         />
-        <SharePostDialog open={open} onClose={() => setOpen(false)} />
+        <SharePostDialog open={open} onClose={() => setOpen(false)} postId={postId} />
       </Box>
       <Box>
         <PostActionButton

@@ -15,12 +15,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IconButton, InputAdornment } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { useClerk } from "@clerk/nextjs";
+import { trpc } from "~/server/client";
 
 const schema = yup.object().shape({
   email: yup
     .string()
     .email("Invalid email address")
-    .required("Email is required")
     .test("unique", "This email is already added", (value, context) => {
       const { options } = context;
       const emails = options.context?.emails || [];
@@ -31,11 +32,16 @@ const schema = yup.object().shape({
 export default function SharePostDialog({
   open,
   onClose,
+  postId,
 }: {
   open: boolean;
   onClose: () => void;
+  postId: string;
 }) {
   const [emails, setEmails] = React.useState<string[]>([]);
+  const { user } = useClerk();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
+  const sharePostProcedure = trpc.post.sharePost.useMutation();
 
   const { handleSubmit, control, reset, setError, clearErrors } = useForm({
     resolver: yupResolver(schema),
@@ -43,12 +49,14 @@ export default function SharePostDialog({
     defaultValues: { email: "" },
   });
 
-  const handleAddEmail = (data: { email: string }) => {
-    if (emails.includes(data.email)) {
+  const handleAddEmail = (data: { email?: string }) => {
+    const { email } = data;
+    if (!email) return;
+    if (emails.includes(email)) {
       setError("email", { message: "This email is already added" });
       return;
     }
-    setEmails((prev) => [...prev, data.email]);
+    setEmails((prev) => [...prev, email]);
     clearErrors("email");
     reset();
   };
@@ -57,8 +65,9 @@ export default function SharePostDialog({
     setEmails((prev) => prev.filter((email) => email !== emailToDelete));
   };
 
-  const onSubmit = () => {
-    console.log("Sharing post with:", emails);
+  const onSubmit = async () => {
+    if (!userEmail) return;
+    await sharePostProcedure.mutateAsync({ userEmail,postId, emails });
     onClose();
   };
 
