@@ -9,6 +9,7 @@ import ShareIcon from "@mui/icons-material/Share";
 
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import PostActionButton from "../postActionButton/PostActionButton";
+import SharePostDialog from "../sharePostDialog/SharePostDialog";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,
@@ -17,7 +18,9 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   isLiked,
   handleLikeButton,
   openCommentBox,
+  postId,
 }) => {
+  const [open, setOpen] = React.useState(false);
   const handleAction = (actionType: string) => {
     switch (actionType) {
       case "like":
@@ -28,6 +31,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         break;
       case "share":
         console.log("share");
+        setOpen(true);
         break;
       case "bid":
         console.log("bid");
@@ -60,7 +64,13 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         }}
       >
         <PostActionButton
-          icon={isLiked ? <FavoriteIcon sx={iconSx} /> : <FavoriteBorderIcon sx={iconSx} />}
+          icon={
+            isLiked ? (
+              <FavoriteIcon sx={iconSx} />
+            ) : (
+              <FavoriteBorderIcon sx={iconSx} />
+            )
+          }
           label={likes && likes > 0 ? likes : "0"}
           onClick={handleLikeButton}
         />
@@ -73,13 +83,14 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         <PostActionButton
           icon={<TollIcon sx={iconSx} />}
           label={bids && bids.length > 0 ? bids.length : "0"}
-          onClick={() => handleAction("share")}
+          onClick={() => handleAction("bid")}
         />
         <PostActionButton
           icon={<ShareIcon sx={iconSx} />}
           label=""
-          onClick={() => handleAction("bid")}
+          onClick={() => handleAction("share")}
         />
+        <SharePostDialog open={open} onClose={() => setOpen(false)} postId={postId} />
       </Box>
       <Box>
         <PostActionButton

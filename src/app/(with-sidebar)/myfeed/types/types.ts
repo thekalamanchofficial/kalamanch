@@ -93,6 +93,7 @@ export type PostCardFooterProps = {
   isLiked?: boolean;
   handleLikeButton: () => void;
   openCommentBox: () => void;
+  postId: string;
 };
 
 export type UserNameProfileProps = {
