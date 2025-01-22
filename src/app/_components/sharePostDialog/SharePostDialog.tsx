@@ -17,14 +17,18 @@ import { IconButton, InputAdornment } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useClerk } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
+import { toast } from "react-toastify";
+
+// TODO: Add loading and error states
 
 const schema = yup.object().shape({
   email: yup
     .string()
     .email("Invalid email address")
     .test("unique", "This email is already added", (value, context) => {
+      if (!value) return true;
       const { options } = context;
-      const emails = options.context?.emails || [];
+      const emails = options.context?.emails as string[] || [];
       return !emails.includes(value);
     }),
 });
@@ -41,7 +45,16 @@ export default function SharePostDialog({
   const [emails, setEmails] = React.useState<string[]>([]);
   const { user } = useClerk();
   const userEmail = user?.primaryEmailAddress?.emailAddress;
-  const sharePostProcedure = trpc.post.sharePost.useMutation();
+  const sharePostProcedure = trpc.post.sharePost.useMutation({
+    onSuccess: () => {
+      setEmails([]);
+      toast.success("Post shared successfully.");
+      onClose();
+    },
+    onError: () => {
+      toast.error("Failed to share post. Please try again.");
+    },
+  });
 
   const { handleSubmit, control, reset, setError, clearErrors } = useForm({
     resolver: yupResolver(schema),
@@ -68,7 +81,6 @@ export default function SharePostDialog({
   const onSubmit = async () => {
     if (!userEmail) return;
     await sharePostProcedure.mutateAsync({ userEmail,postId, emails });
-    onClose();
   };
 
   const handleCancel = () => {
@@ -89,7 +101,7 @@ export default function SharePostDialog({
       <DialogContent>
         <DialogContentText>
           Enter the email addresses of the people you want to share this post
-          with. Press "Enter" or "," after typing an email address.
+          with. Press &quot;Enter&quot; or &quot;,&quot; after typing an email address.
         </DialogContentText>
         <Box
           sx={{
@@ -144,11 +156,11 @@ export default function SharePostDialog({
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === ",") {
                   event.preventDefault();
-                  handleSubmit(handleAddEmail)();
+                  void handleSubmit(handleAddEmail)();
                 }
               }}
               helperText={
-                fieldState.error?.message ||
+                fieldState.error?.message ??
                 "Press 'Enter' or ',' to add an email"
               }
               error={!!fieldState.error}

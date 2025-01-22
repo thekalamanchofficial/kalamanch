@@ -263,7 +263,7 @@ export const postRouter = router({
         const { postId, userEmail, emails } = input;
 
         await inngest.send({
-          name: "post/shared",
+          name: "post/post.share",
           data: {
             postId,
             userEmail,

@@ -1,14 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import prisma from "~/server/db";
 import { inngest } from "./client";
 import { sendEmail } from "~/app/_utils/sendEmail";
 export const sharePostViaEmail = inngest.createFunction(
-  { id: "share-post-via-email" }, // Unique identifier for the function
-  { event: "post/shared" }, // Triggering event for the function
+  { id: "share-post-via-email" },
+  { event: "post/post.share" },
   async ({ event }) => {
     const { postId, userEmail, emails } = event.data;
-    // Fetch the post details from the database
     const post = await prisma.post.findUnique({
       where: { id: postId },
     });
@@ -40,7 +37,6 @@ export const sharePostViaEmail = inngest.createFunction(
 
     try {
       await sendEmail(mailOptions);
-      console.log(`Emails sent successfully to ${emails.join(", ")}`);
     } catch (error) {
       console.error("Error sending emails:", error);
       throw error;
