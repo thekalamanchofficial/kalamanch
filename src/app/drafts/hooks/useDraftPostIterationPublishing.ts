@@ -1,24 +1,16 @@
-import { useState } from "react";
-import { usePost } from "../_hooks/usePost";
+import { usePost } from "../../_hooks/usePost";
 import { useUser } from "~/context/userContext";
-import { DraftPost, QueryParams } from "../types/types";
+import { DraftPost} from "../../editor/types/types";
 import { toast } from "react-toastify";
-import { useDraftPost } from "./useDraftPost";
-import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import { useDraftPost } from "../../_hooks/useDraftPost";
 
 
-type PostPublishingProps = {
-  setPublishedPostsForUser: React.Dispatch<React.SetStateAction<Post[]>>
-}
-
-type UsePostPublishingResponse = {
+type UseDraftPostIterationPublishingResponse = {
   handlePublishDraftPostIteration: (draftpost: DraftPost, iterationId: string) => Promise<void>;
-  handlePostUnPublishing: (postId: string) => Promise<void>;
 };
 
-
-export const usePostPublishing = ({setPublishedPostsForUser}:PostPublishingProps): UsePostPublishingResponse => {
-  const { publishPost,deletePost} = usePost();
+export const useDraftPostIterationPublishing = ():UseDraftPostIterationPublishingResponse => {
+  const { publishPost} = usePost();
   const { user } = useUser();
   const {deleteDraftPost} = useDraftPost();
 
@@ -50,12 +42,7 @@ export const usePostPublishing = ({setPublishedPostsForUser}:PostPublishingProps
     await deleteDraftPost(draftpost.id ?? "");
   }
 
-  const handlePostUnPublishing = async (postId: string) => {
-      await deletePost(postId);
-      setPublishedPostsForUser((prev) => prev.filter((post) => post.id !== postId));
-  }
 
 
-
-  return {handlePublishDraftPostIteration,handlePostUnPublishing};
+  return {handlePublishDraftPostIteration};
 };

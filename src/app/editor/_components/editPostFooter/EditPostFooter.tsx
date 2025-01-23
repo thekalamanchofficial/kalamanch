@@ -6,17 +6,17 @@ import GenericDialog from "~/app/_components/genericDialog/GenericDialog";
 import React from "react";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
-type EditorPostFooterProps = {
+type EditPostFooterProps = {
   postStatus: PostStatus;
   handleEditButtonClick: () => void;
   handlePublishOrUnpublishButtonClick: () => void;
 }
 
-export default function EditorPostFooter({
+export default function EditPostFooter({
   postStatus,
   handleEditButtonClick,
   handlePublishOrUnpublishButtonClick,
-}: EditorPostFooterProps) {
+}: EditPostFooterProps) {
   const [openPublishOrUnPublishDialog, setOpenPublishOrUnPublishDialog] =
     React.useState(false);
 

@@ -1,3 +1,4 @@
+
 export const MENU_ITEMS = [
   {
     label: "Home",
@@ -28,6 +29,11 @@ export const MENU_ITEMS = [
     label: "Saved",
     icon: "BookmarkBorderOutlinedIcon",
     route: "/saved",
+  },
+  {
+    label: "Drafts",
+    icon: "ModeEditOutlinedIcon",
+    route: "/drafts",
   },
   {
     label: "My Deals",

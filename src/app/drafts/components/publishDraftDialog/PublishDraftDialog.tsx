@@ -15,8 +15,8 @@ import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
 import { styled } from '@mui/material/styles'
 import DescriptionOutlinedIcon from '@mui/icons-material/Publish'
-import { Iteration } from '../../types/types'
 import { STATIC_TEXTS } from '~/app/_components/static/staticText'
+import { Iteration } from '~/app/editor/types/types'
 
 export type PublishDialogProps = {
   iterations: Iteration[]
