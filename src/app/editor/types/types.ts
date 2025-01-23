@@ -1,4 +1,4 @@
-import { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 
 export enum EditorTabsEnum {
   EDITOR = "Editor",

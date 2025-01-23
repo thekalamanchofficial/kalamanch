@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { usePost } from "../_hooks/usePost";
 import { useUser } from "~/context/userContext";
-import { DraftPost, QueryParams } from "../types/types";
+import { type DraftPost } from "../types/types";
 import { toast } from "react-toastify";
 import { useDraftPost } from "./useDraftPost";
-import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
 
 
 type PostPublishingProps = {

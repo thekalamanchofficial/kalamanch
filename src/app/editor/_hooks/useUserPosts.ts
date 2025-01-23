@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { trpc } from "~/server/client";
 import { useUser } from "~/context/userContext";
-import { DraftPost, EditorTabsEnum } from "../types/types";
-import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type DraftPost, EditorTabsEnum } from "../types/types";
+import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
 
 type UseUserPostsStateProps = {
   activeTab: EditorTabsEnum;

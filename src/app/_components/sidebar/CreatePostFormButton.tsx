@@ -6,9 +6,9 @@ import { STATIC_TEXTS } from "../static/staticText";
 import WriteLogo from "~/assets/svg/WriteLogo.svg";
 import CreatePostForm from "~/app/editor/_components/createPostForm/CreatePostForm";
 import { useRouter } from "next/navigation";
-import { CreatePostFormType } from "~/app/editor/types/types";
+import { type CreatePostFormType } from "~/app/editor/types/types";
 import { useUser } from "~/context/userContext";
-import { PostType } from "@prisma/client";
+import { type PostType } from "@prisma/client";
 import { useDraftPost } from "~/app/editor/_hooks/useDraftPost";
 
 const CreatePostFormButton = () => {

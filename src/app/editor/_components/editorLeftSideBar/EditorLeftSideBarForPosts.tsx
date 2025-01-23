@@ -1,14 +1,12 @@
 "use client";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import AddIcon from "@mui/icons-material/Add";
-import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhoto";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
-import { Box, Button, Divider, Grid2 as Grid, Typography } from "@mui/material";
+import { Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import React from "react";
-import { DraftPost, PostStatus } from "../../types/types";
+import { type DraftPost, PostStatus } from "../../types/types";
 import { useRouter } from "next/navigation";
-import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import { useSelectedDraftPost } from "../../contexts/SelectedDraftPostContext";
 import { useSelectedPublishedPost } from "../../contexts/SelectedPublishedPostContext";
 
@@ -99,7 +97,7 @@ const EditorLeftSideBarForPosts: React.FC<EditorLeftSideBarPropsForPosts> = ({
           
           }}
         >
-          {draftPosts.map((item,index) => {
+          {draftPosts.map((item, _index) => {
             return (
               <Box
                 sx={{
@@ -142,7 +140,7 @@ const EditorLeftSideBarForPosts: React.FC<EditorLeftSideBarPropsForPosts> = ({
             width: "100%",
           }}
         >
-          {publishedPosts.map((item,index) => {
+          {publishedPosts.map((item, _index) => {
             return (
               <Box
                 sx={{

@@ -1,6 +1,6 @@
 "use client";
 import React, { Fragment, useEffect, useRef, useState, useCallback } from "react";
-import { DraftPost, PostStatus } from "../../types/types";
+import { type DraftPost, PostStatus } from "../../types/types";
 import { Card, CardContent, Box } from "@mui/material";
 import EditorPostFooter from "../editorPostFooter/EditorPostFooter";
 import PostCardContent from "~/app/_components/postCardContent/PostCardContent";

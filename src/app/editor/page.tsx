@@ -11,7 +11,7 @@ import { useDraftEditorState } from "./_hooks/useDraftEditorState";
 import { usePostPublishing } from "./_hooks/usePostPublishing";
 import { tabs } from "./_config/config";
 import { useTabs } from "./_hooks/useTabs";
-import { CreatePostFormType, EditorTabsEnum, PostStatus } from "./types/types";
+import { EditorTabsEnum, PostStatus } from "./types/types";
 import EditorDraftPostsSection from "./_components/editorDraftPostsSection/EditorDraftPostsSection";
 import EditorPublishedPostsSection from "./_components/editorPublishedPostsSection/EditorPublishedPostsSection";
 import EditorLeftSideBarForPosts from "./_components/editorLeftSideBar/EditorLeftSideBarForPosts";

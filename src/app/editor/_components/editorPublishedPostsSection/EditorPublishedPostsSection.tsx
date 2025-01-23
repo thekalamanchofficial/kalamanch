@@ -1,10 +1,10 @@
 "use client";
 
-import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef } from "react";
 import { Card, CardContent, Box } from "@mui/material";
 import EditorPostFooter from "../editorPostFooter/EditorPostFooter";
 import PostCardContent from "~/app/_components/postCardContent/PostCardContent";
-import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import { PostStatus } from "../../types/types";
 import { useSelectedPublishedPost } from "../../contexts/SelectedPublishedPostContext";
 
