@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { CreatePostFormType, DraftPost, Iteration } from "../types/types";
+import type { CreatePostFormType, DraftPost, Iteration } from "../types/types";
 import { handleError } from "~/app/_utils/handleError";
 import { toast } from "react-toastify";
 import { useDraftPost } from "./useDraftPost";
 import { useUser } from "~/context/userContext";
 import { usePost } from "./usePost";
-import { PostType } from "@prisma/client";
-import { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type PostType } from "@prisma/client";
+import { type PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 
 type DraftEditorStateProps = {
   draftPostId : string | null;
