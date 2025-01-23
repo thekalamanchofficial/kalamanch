@@ -185,7 +185,6 @@ const updateDraftPostDetails = async (createPostFormDetails: CreatePostFormType)
   };
   // Initialize the draft post and selected iteration
   useEffect(() => {
-    console.log
     if (draftPostData) {
       setDraftPost(draftPostData);
       if (draftPostData.iterations?.length) {
