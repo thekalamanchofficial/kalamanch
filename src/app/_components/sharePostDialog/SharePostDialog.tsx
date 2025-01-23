@@ -54,10 +54,6 @@ export default function SharePostDialog({
     },
   });
 
-  console.log({
-    isPending: sharePostProcedure.isPending,
-  });
-
   const { handleSubmit, control, reset, setError, clearErrors } = useForm({
     resolver: yupResolver(schema),
     context: { emails },
