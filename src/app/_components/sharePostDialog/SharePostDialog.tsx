@@ -19,8 +19,6 @@ import { useClerk } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
 import { toast } from "react-toastify";
 
-// TODO: Add loading and error states
-
 const schema = yup.object().shape({
   email: yup
     .string()
@@ -28,7 +26,7 @@ const schema = yup.object().shape({
     .test("unique", "This email is already added", (value, context) => {
       if (!value) return true;
       const { options } = context;
-      const emails = options.context?.emails as string[] || [];
+      const emails = (options.context?.emails as string[]) || [];
       return !emails.includes(value);
     }),
 });
@@ -80,7 +78,9 @@ export default function SharePostDialog({
 
   const onSubmit = async () => {
     if (!userEmail) return;
-    await sharePostProcedure.mutateAsync({ userEmail,postId, emails });
+    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    await delay(5000);
+    await sharePostProcedure.mutateAsync({ userEmail, postId, emails });
   };
 
   const handleCancel = () => {
@@ -101,7 +101,8 @@ export default function SharePostDialog({
       <DialogContent>
         <DialogContentText>
           Enter the email addresses of the people you want to share this post
-          with. Press &quot;Enter&quot; or &quot;,&quot; after typing an email address.
+          with. Press &quot;Enter&quot; or &quot;,&quot; after typing an email
+          address.
         </DialogContentText>
         <Box
           sx={{
@@ -216,7 +217,11 @@ export default function SharePostDialog({
           }}
           disabled={emails.length === 0}
         >
-          Share Post
+          {sharePostProcedure.isPending ? (
+            "Sharing..."
+          ) : (
+            "Share Post"
+          )}
         </Button>
       </DialogActions>
     </Dialog>

@@ -9,7 +9,7 @@
     "lint": "next lint",
     "start": "next start",
     "postinstall": "prisma generate",
-    "inngest:dev": "npx inngest-cli@latest dev -u http://localhost:3000/api/inngest"
+    "inngest:dev": "inngest-cli dev -u http://localhost:3000/api/inngest"
   },
   "dependencies": {
     "@clerk/elements": "^0.15.7",
@@ -63,6 +63,7 @@
     "@typescript-eslint/parser": "^8.1.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.23",
+    "inngest-cli": "^1.4.2",
     "npx": "^10.2.2",
     "postcss": "^8.4.39",
     "prettier": "^3.3.2",

@@ -1,11 +1,59 @@
 import prisma from "~/server/db";
 import { inngest } from "./client";
 import { sendEmail } from "~/app/_utils/sendEmail";
+import type { EventPayload, FailureEventArgs } from "inngest";
+import type { SharePostPayload } from "./types";
+
+const onFailure = async ({ event, error: _error }: FailureEventArgs<EventPayload<SharePostPayload["data"]>>) => {
+  const originalEventData = event?.data?.event?.data;
+  if (!originalEventData) {
+    throw new Error(
+      "Failed to send failure notification email: original event data not found",
+    );
+  }
+  const { postId, userEmail, emails } = originalEventData;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://kalamanch.org";
+
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    select: { postDetails: true },
+  });
+
+  const sender = await prisma.user.findUnique({
+    where: { email: userEmail },
+    select: { name: true, email: true },
+  });
+
+  const senderName = sender?.name ?? "";
+  const postTitle = post?.postDetails?.title ?? "Post";
+
+  try {
+    await sendEmail({
+      to: userEmail,
+      subject: `Failed to Share Post: ${postTitle}`,
+      template: "share-post-failure",
+      context: {
+        senderName,
+        failedEmails: emails,
+        postTitle,
+        postUrl: `${baseUrl}/post/${postId}`,
+      },
+    });
+  } catch (notificationError) {
+    console.error(
+      `Error sending failure notification email to ${userEmail}:`,
+      notificationError,
+    );
+  }
+};
+
 export const sharePostViaEmail = inngest.createFunction(
-  { id: "share-post-via-email" },
+  { id: "share-post-via-email", retries: 1, onFailure },
   { event: "post/post.share" },
   async ({ event }) => {
     const { postId, userEmail, emails } = event.data;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://kalamanch.org";
+
     const post = await prisma.post.findUnique({
       where: { id: postId },
     });
@@ -29,9 +77,9 @@ export const sharePostViaEmail = inngest.createFunction(
       template: "share-post",
       context: {
         senderName: sender.name,
-        postContent: post.content,
+        postDescription: post.content,
         postTitle: post.postDetails.title,
-        postUrl: `https://kalamanch.org/post/${postId}`,
+        postUrl: `${baseUrl}/post/${postId}`,
       },
     };
 
