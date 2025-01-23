@@ -13,7 +13,7 @@ import Box from "@mui/material/Box";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { IconButton, InputAdornment } from "@mui/material";
+import { CircularProgress, IconButton, InputAdornment } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useClerk } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
@@ -54,6 +54,10 @@ export default function SharePostDialog({
     },
   });
 
+  console.log({
+    isPending: sharePostProcedure.isPending,
+  });
+
   const { handleSubmit, control, reset, setError, clearErrors } = useForm({
     resolver: yupResolver(schema),
     context: { emails },
@@ -78,8 +82,6 @@ export default function SharePostDialog({
 
   const onSubmit = async () => {
     if (!userEmail) return;
-    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-    await delay(5000);
     await sharePostProcedure.mutateAsync({ userEmail, postId, emails });
   };
 
@@ -204,11 +206,12 @@ export default function SharePostDialog({
           type="submit"
           sx={{
             height: "40px",
+            width: "100px",
             px: "12px",
             backgroundColor: "primary.main",
             color: "white",
             display: "flex",
-            justifyContent: "start",
+            justifyContent: "center",
             alignItems: "center",
             ":disabled": {
               backgroundColor: "common.lightGray",
@@ -218,7 +221,7 @@ export default function SharePostDialog({
           disabled={emails.length === 0}
         >
           {sharePostProcedure.isPending ? (
-            "Sharing..."
+            <CircularProgress size={20} thickness={2} sx={{ color: "white" }} />
           ) : (
             "Share Post"
           )}

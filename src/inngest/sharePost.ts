@@ -36,7 +36,7 @@ const onFailure = async ({ event, error: _error }: FailureEventArgs<EventPayload
         senderName,
         failedEmails: emails,
         postTitle,
-        postUrl: `${baseUrl}/post/${postId}`,
+        postUrl: `${baseUrl}/posts/${postId}`,
       },
     });
   } catch (notificationError) {
@@ -77,9 +77,10 @@ export const sharePostViaEmail = inngest.createFunction(
       template: "share-post",
       context: {
         senderName: sender.name,
-        postDescription: post.content,
+        authorName: post.authorName,
         postTitle: post.postDetails.title,
-        postUrl: `${baseUrl}/post/${postId}`,
+        postUrl: `${baseUrl}/posts/${postId}`,
+        tags: post.postDetails.tags,
       },
     };
 

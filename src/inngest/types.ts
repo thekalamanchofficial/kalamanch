@@ -1,5 +1,4 @@
 import type { UserJSON } from "@clerk/nextjs/server";
-import { FailureEventArgs } from "inngest";
 
 export type ClerkUserEventPayload = {
   data: UserJSON;
