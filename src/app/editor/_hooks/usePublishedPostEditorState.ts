@@ -5,7 +5,7 @@ import { handleError } from "~/app/_utils/handleError";
 import { trpc } from "~/server/client";
 import { CreatePostFormType } from "../types/types";
 import { PostType } from "@prisma/client";
-import { usePost } from "./usePost";
+import { usePost } from "../../_hooks/usePost";
 
 type UsePublishedPostEditorStateResponse = {
   publishedPost: Post | null;

@@ -12,6 +12,7 @@ import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlin
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import { type MenuItemList } from "~/app/(with-sidebar)/myfeed/types/types";
 
  type LeftSideBarNavLinksProps = {
@@ -31,6 +32,7 @@ const LeftSideBarNavLinks: React.FC<LeftSideBarNavLinksProps> = ({ menuItems }) 
     ShoppingCartOutlinedIcon: ShoppingCartOutlinedIcon,
     SettingsOutlinedIcon: SettingsOutlinedIcon,
     AccountCircleOutlinedIcon: AccountCircleOutlinedIcon,
+    ModeEditOutlinedIcon: ModeEditOutlinedIcon
   };
 
   return (

@@ -4,12 +4,10 @@ import { Grid2 as Grid, Box } from "@mui/material";
 import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
 import editorMockData from "./mockDataEditor/mockdata";
 import { SelectedPublishedPostProvider } from "./contexts/SelectedPublishedPostContext";
-import { SelectedDraftPostProvider } from "./contexts/SelectedDraftPostContext";
 
 const Layout = ({ children }: { children: ReactElement }) => {
   return (
     <SelectedPublishedPostProvider>
-      <SelectedDraftPostProvider>
         <Box
           sx={{
             flexGrow: 1,
@@ -49,7 +47,6 @@ const Layout = ({ children }: { children: ReactElement }) => {
             </Grid>
           </Grid>
         </Box>
-    </SelectedDraftPostProvider>
     </SelectedPublishedPostProvider>
   );
 };

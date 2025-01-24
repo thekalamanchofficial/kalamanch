@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { CreatePostFormType, DraftPost, Iteration } from "../types/types";
 import { handleError } from "~/app/_utils/handleError";
 import { toast } from "react-toastify";
-import { useDraftPost } from "./useDraftPost";
+import { useDraftPost } from "../../_hooks/useDraftPost";
 import { useUser } from "~/context/userContext";
-import { usePost } from "./usePost";
+import { usePost } from "../../_hooks/usePost";
 import { PostType } from "@prisma/client";
 import { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 
@@ -190,6 +190,9 @@ const updateDraftPostDetails = async (createPostFormDetails: CreatePostFormType)
       if (draftPostData.iterations?.length) {
         setSelectedIteration(draftPostData.iterations[0] ?? null);
       }
+    }
+    else {
+      setDraftPost(null);
     }
   }, [draftPostData]);
 
