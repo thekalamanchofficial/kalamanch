@@ -5,11 +5,13 @@ type PostUnpublishingProps = {
   setPublishedPostsForUser: React.Dispatch<React.SetStateAction<Post[]>>
 }
 
-type UsePostUnpublishingResponse = {
+type UsePostUnpublishingReturn = {
   handlePostUnPublishing: (postId: string) => Promise<void>;
 };
 
-export const usePostUnpublishing = ({setPublishedPostsForUser}:PostUnpublishingProps): UsePostUnpublishingResponse => {
+type UsePostUnpublishing = (props: PostUnpublishingProps) => UsePostUnpublishingReturn;
+
+export const usePostUnpublishing : UsePostUnpublishing = ({setPublishedPostsForUser}) => {
   const {deletePost} = usePost();
   const handlePostUnPublishing = async (postId: string) => {
       await deletePost(postId);
