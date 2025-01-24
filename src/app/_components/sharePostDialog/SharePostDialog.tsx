@@ -18,6 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useClerk } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
 import { toast } from "react-toastify";
+import { TRPCClientError } from "@trpc/client";
 
 const schema = yup.object().shape({
   email: yup
@@ -49,9 +50,6 @@ export default function SharePostDialog({
       toast.success("Post shared successfully.");
       onClose();
     },
-    onError: () => {
-      toast.error("Failed to share post. Please try again.");
-    },
   });
 
   const { handleSubmit, control, reset, setError, clearErrors } = useForm({
@@ -78,7 +76,18 @@ export default function SharePostDialog({
 
   const onSubmit = async () => {
     if (!userEmail) return;
-    await sharePostProcedure.mutateAsync({ userEmail, postId, emails });
+    try {
+      await sharePostProcedure.mutateAsync({ userEmail, postId, emails });
+    } catch (error) {
+      if (
+        error instanceof TRPCClientError &&
+        error.message.includes("Invalid Emails:")
+      ) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to share post. the emails and try again.");
+      }
+    }
   };
 
   const handleCancel = () => {

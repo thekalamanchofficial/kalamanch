@@ -1,10 +1,13 @@
+import type { EventPayload, FailureEventArgs } from "inngest";
+import { sendEmail } from "~/app/_utils/sendEmail";
 import prisma from "~/server/db";
 import { inngest } from "./client";
-import { sendEmail } from "~/app/_utils/sendEmail";
-import type { EventPayload, FailureEventArgs } from "inngest";
 import type { SharePostPayload } from "./types";
 
-const onFailure = async ({ event, error: _error }: FailureEventArgs<EventPayload<SharePostPayload["data"]>>) => {
+const onFailure = async ({
+  event,
+  error: _error,
+}: FailureEventArgs<EventPayload<SharePostPayload["data"]>>) => {
   const originalEventData = event?.data?.event?.data;
   if (!originalEventData) {
     throw new Error(
@@ -37,7 +40,6 @@ const onFailure = async ({ event, error: _error }: FailureEventArgs<EventPayload
         failedEmails: emails,
         postTitle,
         postUrl: `${baseUrl}/posts/${postId}`,
-        thumbnailContent: post?.postDetails?.thumbnailDetails?.content ?? "Random Thumbnail",
       },
     });
   } catch (notificationError) {
@@ -82,6 +84,9 @@ export const sharePostViaEmail = inngest.createFunction(
         postTitle: post.postDetails.title,
         postUrl: `${baseUrl}/posts/${postId}`,
         tags: post.postDetails.tags,
+        thumbnailContent:
+          post?.postDetails?.thumbnailDetails?.content ??
+          "Placeholder thumbnail content",
       },
     };
 
