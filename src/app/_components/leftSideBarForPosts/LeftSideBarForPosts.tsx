@@ -4,19 +4,19 @@ import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutl
 import { Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import React from "react";
-import { type DraftPost, PostStatus } from "../../types/types";
+import { type DraftPost, PostStatus } from "../../editor/types/types";
 import { useRouter } from "next/navigation";
-import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
-import { useSelectedDraftPost } from "../../contexts/SelectedDraftPostContext";
-import { useSelectedPublishedPost } from "../../contexts/SelectedPublishedPostContext";
+import type { Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import { useSelectedDraftPost } from "../../drafts/contexts/SelectedDraftPostContext";
+import { useSelectedPublishedPost } from "../../editor/contexts/SelectedPublishedPostContext";
 
-type EditorLeftSideBarPropsForPosts = {
+type LeftSideBarPropsForPosts = {
   draftPosts: DraftPost[];
   publishedPosts: Post[];
   postStatus: PostStatus;
 };
 
-const EditorLeftSideBarForPosts: React.FC<EditorLeftSideBarPropsForPosts> = ({
+const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
   draftPosts,
   publishedPosts,
   postStatus
@@ -181,4 +181,4 @@ const EditorLeftSideBarForPosts: React.FC<EditorLeftSideBarPropsForPosts> = ({
   );
 };
 
-export default EditorLeftSideBarForPosts;
+export default LeftSideBarForPosts;

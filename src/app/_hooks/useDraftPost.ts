@@ -2,7 +2,7 @@ import { trpc } from "~/server/client";
 import { handleError } from "~/app/_utils/handleError";
 import { toast } from "react-toastify";
 import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
-import type { CreateDraftPostProps, DraftPost, Iteration } from "../types/types";
+import type { CreateDraftPostProps, DraftPost, Iteration } from "../editor/types/types";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 type UseDraftPostRespone = {

@@ -8,8 +8,8 @@ import CreatePostForm from "~/app/editor/_components/createPostForm/CreatePostFo
 import { useRouter } from "next/navigation";
 import { type CreatePostFormType } from "~/app/editor/types/types";
 import { useUser } from "~/context/userContext";
-import { type PostType } from "@prisma/client";
-import { useDraftPost } from "~/app/editor/_hooks/useDraftPost";
+import type { PostType } from "@prisma/client";
+import { useDraftPost } from "~/app/_hooks/useDraftPost";
 
 const CreatePostFormButton = () => {
   const [createPostFormOpen, setCreatePostFormOpen] = useState(false);

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import type { Post, PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
-import { type CreatePostFormType } from "../types/types";
-import { type PostType } from "@prisma/client";
-import { usePost } from "./usePost";
+import type { CreatePostFormType } from "../types/types";
+import type { PostType } from "@prisma/client";
+import { usePost } from "../../_hooks/usePost";
 
 type UsePublishedPostEditorStateResponse = {
   publishedPost: Post | null;

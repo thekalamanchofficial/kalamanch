@@ -2,7 +2,6 @@ import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 
 export enum EditorTabsEnum {
   EDITOR = "Editor",
-  DRAFTS = "Drafts",
   PUBLISHED = "Published",
 }
 export type CreatePostFormType = {
