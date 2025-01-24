@@ -26,7 +26,7 @@ const schema = yup.object().shape({
     .test("unique", "This email is already added", (value, context) => {
       if (!value) return true;
       const { options } = context;
-      const emails = (options.context?.emails as string[]) || [];
+      const emails = (options.context?.emails as string[]) ?? [];
       return !emails.includes(value);
     }),
 });

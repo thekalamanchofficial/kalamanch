@@ -37,6 +37,7 @@ const onFailure = async ({ event, error: _error }: FailureEventArgs<EventPayload
         failedEmails: emails,
         postTitle,
         postUrl: `${baseUrl}/posts/${postId}`,
+        thumbnailContent: post?.postDetails?.thumbnailDetails?.content ?? "Random Thumbnail",
       },
     });
   } catch (notificationError) {
