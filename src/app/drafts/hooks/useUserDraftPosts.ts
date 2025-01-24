@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
 import { trpc } from "~/server/client";
 import { useUser } from "~/context/userContext";
-import { DraftPost } from "~/app/editor/types/types";
+import type { DraftPost } from "~/app/editor/types/types";
 
 type useUserDraftPostsStateResponse = {
   draftPostsForUser: DraftPost[];
@@ -15,6 +14,6 @@ export const useUserDraftPostsState = (): useUserDraftPostsStateResponse => {
   });
 
   return {
-    draftPostsForUser: draftPostsQuery.data || [], 
+    draftPostsForUser: draftPostsQuery.data ?? [], 
   };
 };

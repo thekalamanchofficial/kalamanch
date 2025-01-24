@@ -1,5 +1,5 @@
 import { usePost } from "../../_hooks/usePost";
-import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { Post } from "~/app/(with-sidebar)/myfeed/types/types";
 
 type PostUnpublishingProps = {
   setPublishedPostsForUser: React.Dispatch<React.SetStateAction<Post[]>>
