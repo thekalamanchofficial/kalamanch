@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import type { PostType } from "@prisma/client";
 import { inngest } from "~/inngest/client";
-import { sendEmail } from "~/app/_utils/sendEmail";
+import validate from "deep-email-validator";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
@@ -262,8 +262,22 @@ export const postRouter = router({
       try {
         const { postId, userEmail, emails } = input;
 
+        const validatedEmailsRes = await Promise.all(
+          emails.map(async (email) => {
+            return await validate(email);
+          }),
+        );
+
+        const invalidEmails = emails.filter(
+          (email, index) => !validatedEmailsRes[index]?.valid,
+        );
+
+        if (invalidEmails.length > 0) {
+          throw new Error(`Invalid Emails: ${invalidEmails.join(", ")}`);
+        }
+
         await inngest.send({
-          name: "post/shared",
+          name: "post/post.share",
           data: {
             postId,
             userEmail,
@@ -273,7 +287,7 @@ export const postRouter = router({
       } catch (error) {
         // handleError(error);
         console.log(error);
-        throw new Error("Failed to share the post.");
+        throw error;
       }
     }),
 });

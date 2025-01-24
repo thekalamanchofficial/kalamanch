@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useClerk } from "@clerk/nextjs";
 import { trpc } from "../server/client";
-import { UserSchema } from "~/app/(with-sidebar)/myprofile/types/types";
+import { type UserSchema } from "~/app/(with-sidebar)/myprofile/types/types";
 
 export const UserContext = createContext<{
   user: UserSchema | null;

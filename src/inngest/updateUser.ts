@@ -1,15 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import prisma from "~/server/db";
 import { inngest } from "./client";
 
 export const updateUser = inngest.createFunction(
-  { id: "update-user-from-clerk" }, // ←The 'id' is an arbitrary string used to identify the function in the dashboard
-  { event: "clerk/user.updated" }, // ← This is the function's triggering event
+  { id: "update-user-from-clerk" },
+  { event: "clerk/user.updated" },
   async ({ event }) => {
     const email = event.data.email_addresses[0]?.email_address;
+
+    if (!email) {
+      throw new Error("Email not found when updating user");
+    }
+
     await prisma.user.update({
-      where: { email: email },
+      where: { email },
       data: {
         interests: (event.data.public_metadata.interests as string[]) ?? [],
       },

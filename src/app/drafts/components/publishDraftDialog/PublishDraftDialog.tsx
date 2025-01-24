@@ -16,7 +16,7 @@ import Alert from '@mui/material/Alert'
 import { styled } from '@mui/material/styles'
 import DescriptionOutlinedIcon from '@mui/icons-material/Publish'
 import { STATIC_TEXTS } from '~/app/_components/static/staticText'
-import { Iteration } from '~/app/editor/types/types'
+import { type Iteration } from '~/app/editor/types/types'
 
 export type PublishDialogProps = {
   iterations: Iteration[]
@@ -42,7 +42,7 @@ export default function PublishDraftDialog({
   description = STATIC_TEXTS.EDITOR_PAGE.SELECT_ITERATION_DESCRIPTION
 }: PublishDialogProps) {
   const [selectedIteration, setSelectedIteration] = useState<string>('')
-  const [error, setError] = useState<string | null>(null)
+  const [error] = useState<string | null>(null)
 
   const handleOnPublish = async (selectedIteration: string) => {
     await onPublish(selectedIteration)

@@ -4,9 +4,9 @@ import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutl
 import { Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import React from "react";
-import { DraftPost, PostStatus } from "../../editor/types/types";
+import { type DraftPost, PostStatus } from "../../editor/types/types";
 import { useRouter } from "next/navigation";
-import { Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import { useSelectedDraftPost } from "../../drafts/contexts/SelectedDraftPostContext";
 import { useSelectedPublishedPost } from "../../editor/contexts/SelectedPublishedPostContext";
 
@@ -97,7 +97,7 @@ const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
           
           }}
         >
-          {draftPosts.map((item,index) => {
+          {draftPosts.map((item, _index) => {
             return (
               <Box
                 sx={{
@@ -140,7 +140,7 @@ const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
             width: "100%",
           }}
         >
-          {publishedPosts.map((item,index) => {
+          {publishedPosts.map((item, _index) => {
             return (
               <Box
                 sx={{

@@ -11,7 +11,6 @@ import {
   TextField,
   Typography,
   Box,
-  InputLabel,
   Select,
   MenuItem,
   FormHelperText,
@@ -22,12 +21,9 @@ import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
 import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
 import { useState } from "react";
 import { TARGET_AUDIENCE_OPTIONS } from "~/app/editor/_config/config";
-import { useRouter } from "next/navigation";
 import CloseIcon from "@mui/icons-material/Close";
 import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUploader";
 import { PostType } from "@prisma/client";
-import { trpc } from "~/server/client";
-import { useUser } from "~/context/userContext";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 export type CreatePostFormProps = {
