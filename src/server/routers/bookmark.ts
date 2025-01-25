@@ -3,7 +3,6 @@ import prisma from "~/server/db";
 
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
-import { clerkClient } from "@clerk/nextjs/server";
 
 const bulkBookmarkSchema = yup.object({
   userEmail: yup.string().email().required(),
