@@ -17,6 +17,7 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
   });
   const userBookmarks = await trpcServer.bookmarks.getUserBookmarkPosts({
     limit: null,
+    userEmail,
   });
 
   const isLiked = userLikedPosts?.some((post) => post.id === params.postId);

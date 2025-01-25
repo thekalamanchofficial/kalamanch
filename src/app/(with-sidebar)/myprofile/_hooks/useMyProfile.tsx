@@ -56,7 +56,10 @@ const useMyProfilePage = (): UseMyProfilePage => {
   );
 
   const { data: bookmarkedPostData } =
-    bookmarkProcedure.getUserBookmarkPosts.useQuery({ limit: null });
+    bookmarkProcedure.getUserBookmarkPosts.useQuery({
+      limit: null,
+      userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+    });
 
   useEffect(() => {
     setUserInfo({

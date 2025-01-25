@@ -9,16 +9,19 @@ import Loader from "~/app/_components/loader/Loader";
 type BookmarkPostFeedProps = {
   userFollowing: string[];
   userLikes: string[];
+  userEnail: string;
 };
 
 export default function BookmarkPostFeed({
   userFollowing,
   userLikes,
+  userEnail,
 }: BookmarkPostFeedProps) {
   const { data, isFetchingNextPage, hasNextPage, fetchNextPage, isLoading } =
     trpc.bookmarks.getUserBookmarkPosts.useInfiniteQuery(
       {
         limit: 10,
+        userEmail: userEnail,
       },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,

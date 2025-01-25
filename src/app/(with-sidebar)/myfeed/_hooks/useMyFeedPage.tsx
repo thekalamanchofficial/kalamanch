@@ -78,7 +78,10 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
   );
 
   const { data: bookmarkedPostData } =
-    bookmarkProcedure.getUserBookmarkPosts.useQuery({ limit: null });
+    bookmarkProcedure.getUserBookmarkPosts.useQuery({
+      limit: null,
+      userEmail: userEmail ?? "",
+    });
 
   const handleTabChange = (newTab: MyFeedTabsEnum) => {
     setTab(newTab);

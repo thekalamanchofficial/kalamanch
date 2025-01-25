@@ -13,6 +13,10 @@ export default async function SavedPage() {
     userEmail,
   });
   return (
-      <BookmarkPostFeed userFollowing={userFollowing ?? []} userLikes={userLikes ?? []} />
+    <BookmarkPostFeed
+      userFollowing={userFollowing ?? []}
+      userLikes={userLikes ?? []}
+      userEnail={userEmail}
+    />
   );
 }

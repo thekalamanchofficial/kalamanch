@@ -20,6 +20,7 @@ const bulkBookmarkSchema = yup.object({
 const bookmarkPaginationSchema = yup.object({
   limit: yup.number().min(1).max(100).nullable(),
   cursor: yup.string().nullable(),
+  userEmail: yup.string().email().required(),
 });
 
 const getUserDetails = async (userEmail: string) => {
@@ -85,15 +86,15 @@ export const bookmarkRouter = router({
 
   getUserBookmarkPosts: protectedProcedure
     .input(bookmarkPaginationSchema)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx: _, input }) => {
       try {
         const limit = input.limit ?? null;
+        const userEmail = input.userEmail;
         const { cursor } = input;
 
-        const clerkUser = await clerkClient().users.getUser(ctx.userId);
-        const userEmail = clerkUser.emailAddresses.find(
-          (email) => email.id === clerkUser.primaryEmailAddressId,
-        )?.emailAddress;
+        if (!userEmail) {
+          throw new Error("User email is required");
+        }
 
         const user = await prisma.user.findUnique({
           where: {
