@@ -23,7 +23,7 @@ export const completeOnboarding = async (formData: OnboardingDataType) => {
     return {
       message: res.publicMetadata,
     };
-  } catch (err) {
+  } catch {
     return { error: "There was an error updating the user metadata." };
   }
 };

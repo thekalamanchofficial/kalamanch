@@ -32,7 +32,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
 
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
-  const bookmarkMutation = trpc.bookmarks;
+  const bookmarkProcedure = trpc.bookmarks;
 
   const {
     data: postData,
@@ -78,7 +78,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
   );
 
   const { data: bookmarkedPostData } =
-    bookmarkMutation.getUserBookmarkPosts.useQuery({ limit: null });
+    bookmarkProcedure.getUserBookmarkPosts.useQuery({ limit: null });
 
   const handleTabChange = (newTab: MyFeedTabsEnum) => {
     setTab(newTab);

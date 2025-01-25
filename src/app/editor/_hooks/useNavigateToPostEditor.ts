@@ -1,6 +1,5 @@
 import { useRouter } from "next/navigation";
-import { PostStatus, EditorTabsEnum, type DraftPost } from "../types/types";
-import type { Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import { PostStatus, EditorTabsEnum } from "../types/types";
 
 type UseNavigateToPostEditorReturnType = {
     navigateToPostEditor: (postId: string, postStatus: PostStatus) => void;

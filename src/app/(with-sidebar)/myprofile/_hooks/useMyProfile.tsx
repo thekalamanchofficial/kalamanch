@@ -4,7 +4,6 @@ import {
 } from "~/app/(with-sidebar)/myprofile/types/types";
 import {
   type Post,
-  type Comment,
 } from "~/app/(with-sidebar)/myfeed/types/types";
 
 import { handleError } from "~/app/_utils/handleError";
@@ -26,6 +25,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean | undefined>(true);
   const [post, setPosts] = useState<Post[]>([]);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<string[]>([]);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
@@ -39,8 +39,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
 
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
-  const commentMutation = trpc.comments;
   const userMutation = trpc.user;
+  const bookmarkProcedure = trpc.bookmarks;
 
   const { data: userDetails } = userMutation.getUserDetails.useQuery(
     user?.primaryEmailAddress?.emailAddress,
@@ -54,6 +54,9 @@ const useMyProfilePage = (): UseMyProfilePage => {
       enabled: !!user?.primaryEmailAddress?.emailAddress,
     },
   );
+
+  const { data: bookmarkedPostData } =
+    bookmarkProcedure.getUserBookmarkPosts.useQuery({ limit: null });
 
   useEffect(() => {
     setUserInfo({
@@ -103,8 +106,6 @@ const useMyProfilePage = (): UseMyProfilePage => {
     },
   );
 
-  const likePostMutation = likeMutation.likePost.useMutation();
-
   const handleEditProfileOpen = () => {
     setIsEditProfileOpen(true);
   };
@@ -112,134 +113,6 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const handleEditProfileClose = () => {
     setIsEditProfileOpen(false);
   };
-
-  const handleLikeButton = useCallback(
-    async (postId: string): Promise<{ liked: boolean }> => {
-      if (user?.primaryEmailAddress?.emailAddress) {
-        try {
-          const response = await likePostMutation.mutateAsync({
-            postId,
-            userEmail: user?.primaryEmailAddress?.emailAddress,
-          });
-
-          const updatePostLikeCount = (
-            post: Post,
-            postId: string,
-            liked: boolean,
-          ) => {
-            if (post.id !== postId) return post;
-
-            return {
-              ...post,
-              likeCount: liked
-                ? post.likeCount + 1
-                : Math.max(0, post.likeCount - 1),
-            };
-          };
-
-          setPosts((prevPosts) =>
-            prevPosts.map((post) =>
-              updatePostLikeCount(post, postId, response.liked),
-            ),
-          );
-
-          if (response.liked) {
-            setLikedPosts((prevLikedPosts) => [...prevLikedPosts, postId]);
-          } else {
-            setLikedPosts((prevLikedPosts) =>
-              prevLikedPosts.filter((id) => id !== postId),
-            );
-          }
-
-          return { liked: response.liked };
-        } catch (error) {
-          handleError(error);
-          return { liked: false };
-        }
-      }
-
-      return { liked: false };
-    },
-    [likePostMutation, user?.primaryEmailAddress?.emailAddress],
-  );
-
-  const addCommentMutation = commentMutation.addComment.useMutation();
-
-  const updatePostComments = (
-    post: Post,
-    postId: string,
-    newComment: Comment,
-    parentId?: string,
-  ): Post => {
-    if (post.id !== postId) return post;
-
-    const addReplyToParent = (
-      comments: Comment[],
-      parentId: string,
-      newReply: Comment,
-    ): Comment[] => {
-      return comments.map((comment) => {
-        if (comment.id === parentId) {
-          return {
-            ...comment,
-            replies: [...(comment.replies ?? []), newReply],
-          };
-        }
-        return {
-          ...comment,
-          replies: addReplyToParent(comment.replies ?? [], parentId, newReply),
-        };
-      });
-    };
-
-    return {
-      ...post,
-      comments: parentId
-        ? addReplyToParent(post.comments ?? [], parentId, { ...newComment, postId })
-        : [...post.comments ?? [], { ...newComment, postId }],
-    };
-  };
-
-  const addComment = useCallback(
-    async (
-      postId: string,
-      content: string,
-      parentId?: string,
-    ): Promise<void> => {
-      if (!content.trim()) return;
-
-      if (user?.primaryEmailAddress?.emailAddress) {
-        try {
-          const newComment = await addCommentMutation.mutateAsync({
-            postId,
-            userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-            userName:
-              user?.firstName === null
-                ? (user?.unsafeMetadata?.name as string)
-                : user?.firstName,
-            content,
-            userProfileImageUrl: user.imageUrl ?? "",
-            parentId,
-          });
-
-          setPosts((prevPosts) =>
-            prevPosts.map((post) =>
-              updatePostComments(post, postId, newComment, parentId),
-            ),
-          );
-        } catch (error) {
-          handleError(error);
-        }
-      }
-    },
-    [
-      addCommentMutation,
-      user?.firstName,
-      user?.imageUrl,
-      user?.primaryEmailAddress?.emailAddress,
-      user?.unsafeMetadata?.name,
-    ],
-  );
 
   const handleChange = (newTab: MyProfileTabsEnum) => {
     setTab(newTab);
@@ -354,6 +227,12 @@ const useMyProfilePage = (): UseMyProfilePage => {
     }
   }, [likedPostData]);
 
+  useEffect(() => {
+    if (bookmarkedPostData) {
+      setBookmarkedPosts(bookmarkedPostData.items.map((post) => post.id));
+    }
+  }, [bookmarkedPostData]);
+
   return {
     posts: postDataWithComments,
     setPosts,
@@ -364,10 +243,9 @@ const useMyProfilePage = (): UseMyProfilePage => {
     tab,
     skip,
     setSkip,
-    handleLikeButton,
+    bookmarkedPosts,
     handleChange,
     errorMessage: error?.message ?? "",
-    addComment,
     handleScroll,
     userProfile: user?.imageUrl ?? "",
     postCount: userDetails?.posts.length ?? 0,
