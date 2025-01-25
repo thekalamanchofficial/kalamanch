@@ -1,7 +1,4 @@
-import {
-  MyFeedTabsEnum,
-  type Post,
-} from "../types/types";
+import { MyFeedTabsEnum, type Post } from "../types/types";
 import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
@@ -11,6 +8,7 @@ import useLazyLoading from "~/app/_hooks/useLazyLoading";
 type useMyFeedPageReturn = {
   postDataWithComments: Post[];
   likedPosts: string[];
+  bookmarkedPosts: string[];
   queryLoading: boolean;
   hasMorePosts: boolean;
   tab: MyFeedTabsEnum;
@@ -24,6 +22,7 @@ type useMyFeedPageReturn = {
 const useMyFeedPage = (): useMyFeedPageReturn => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<string[]>([]);
   const [tab, setTab] = useState<MyFeedTabsEnum>(MyFeedTabsEnum.MY_FEED);
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState(true);
@@ -33,6 +32,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
 
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
+  const bookmarkMutation = trpc.bookmarks;
 
   const {
     data: postData,
@@ -77,6 +77,9 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     { enabled: !!userEmail },
   );
 
+  const { data: bookmarkedPostData } =
+    bookmarkMutation.getUserBookmarkPosts.useQuery({ limit: null });
+
   const handleTabChange = (newTab: MyFeedTabsEnum) => {
     setTab(newTab);
   };
@@ -86,7 +89,9 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
       setPosts((prev) => {
         const existingPostIds = new Set(prev.map((post) => post.id));
         // TODO: find a better way to remove duplicate posts, try out using trpc infinite query.
-        const newPosts = postData.posts.filter((post) => !existingPostIds.has(post.id));
+        const newPosts = postData.posts.filter(
+          (post) => !existingPostIds.has(post.id),
+        );
         return [...prev, ...newPosts];
       });
     }
@@ -96,11 +101,17 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     if (likedPostData) setLikedPosts(likedPostData);
   }, [likedPostData]);
 
+  useEffect(() => {
+    if (bookmarkedPostData)
+      setBookmarkedPosts(bookmarkedPostData.items.map((post) => post.id));
+  }, [bookmarkedPostData]);
+
   return {
     postDataWithComments,
     likedPosts,
+    bookmarkedPosts,
     queryLoading,
-    hasMorePosts:postData?.hasMorePosts ?? false,
+    hasMorePosts: postData?.hasMorePosts ?? false,
     tab,
     skip,
     setSkip,

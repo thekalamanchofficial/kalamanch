@@ -15,13 +15,14 @@ const MyFeed = () => {
     tab,
     skip,
     likedPosts,
+    bookmarkedPosts,
     queryLoading,
     hasMorePosts,
     postDataWithComments,
     handleTabChange,
     errorMessage,
   } = useMyFeedPage();
-
+  
   const renderUI = useMemo(() => {
     if (queryLoading && skip === 0) {
       return <Loader title="Loading Posts..." height="100%" width="100%" />;
@@ -32,14 +33,25 @@ const MyFeed = () => {
     }
 
     if (postDataWithComments?.length === 0) {
-      return <ShowMessage title="No Posts Found." style={{ height: "100%", width: "100%" }} />;
+      return (
+        <ShowMessage
+          title="No Posts Found."
+          style={{ height: "100%", width: "100%" }}
+        />
+      );
     }
 
     if (tab === STATIC_TEXTS.MY_FEED_PAGE.TABS[0]?.value) {
       return (
         <>
-          <PostsFeed articlesList={postDataWithComments} likedPosts={likedPosts} />
-          {queryLoading && skip > 0 && <Loader height="auto" width="auto" title="" />}
+          <PostsFeed
+            articlesList={postDataWithComments}
+            likedPosts={likedPosts}
+            bookmarkedPosts={bookmarkedPosts}
+          />
+          {queryLoading && skip > 0 && (
+            <Loader height="auto" width="auto" title="" />
+          )}
           {!queryLoading && !hasMorePosts && (
             <ShowMessage
               title="No More Posts Found."
@@ -61,7 +73,16 @@ const MyFeed = () => {
     }
 
     return <ShowMessage title="No Posts Found." />;
-  }, [errorMessage, queryLoading, skip, tab, postDataWithComments, hasMorePosts, likedPosts]);
+  }, [
+    errorMessage,
+    queryLoading,
+    skip,
+    tab,
+    postDataWithComments,
+    hasMorePosts,
+    likedPosts,
+    bookmarkedPosts,
+  ]);
 
   return (
     <Box sx={{ height: "100%", width: "100%" }}>
