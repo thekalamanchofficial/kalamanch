@@ -25,6 +25,7 @@ model User {
   comments                Comment[]
   bids                    Bid[]
   posts                   Post[]
+  iterationsToReview      DraftPostIterationReviews[]
 }
 
 model Post {
@@ -58,20 +59,26 @@ type ThumbnailDetails {
 
 model Like {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  postId    String   @db.ObjectId
+  postId    String?   @db.ObjectId
+  iterationId    String?   @db.ObjectId
+  postStatus PostStatus @default(PUBLISHED)
   userId    String   @db.ObjectId
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  iteration Iteration @relation(fields: [iterationId], references: [id], onDelete: Cascade)
 
   @@index([postId])
+  @@index([iterationId])
   @@index([userId])
 }
 
 model Comment {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  postId    String   @db.ObjectId
+  postId    String?   @db.ObjectId
+  iterationId    String?   @db.ObjectId
+  postStatus PostStatus @default(PUBLISHED)
   userId    String   @db.ObjectId
   parentId  String?  @db.ObjectId
   userName  String
@@ -82,10 +89,12 @@ model Comment {
 
   user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   post    Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  iteration    Iteration      @relation(fields: [iterationId], references: [id], onDelete: Cascade)
   parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies Comment[] @relation("CommentReplies")
 
   @@index([postId])
+  @@index([iterationId])
   @@index([userId])
   @@index([parentId])
 }
@@ -120,6 +129,11 @@ enum PostType {
   SCRIPT
 }
 
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
 type PostDetails {
   title          String
   targetAudience String[]
@@ -135,6 +149,10 @@ model Iterations {
   content       String
   draftPostId   String     @db.ObjectId
   DraftPost     DraftPost  @relation(fields: [draftPostId], references: [id], onDelete: Cascade)
+
+  likes        Like[]
+  comments     Comment[]
+  reviewers    DraftPostIterationReviews[]
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }
@@ -150,5 +168,18 @@ model DraftPost {
   updatedAt     DateTime     @updatedAt
 
   @@index([authorId])
+}
+
+model DraftPostIterationReviews {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  iterationId String @db.ObjectId
+  userId    String @db.ObjectId
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  iteration Iteration @relation(fields: [iterationId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  
+  @@index([iterationId])
+  @@index([userId])
 }
 
