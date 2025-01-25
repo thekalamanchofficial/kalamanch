@@ -25,7 +25,6 @@ model User {
   comments                Comment[]
   bids                    Bid[]
   posts                   Post[]
-  iterationsToReview      DraftPostIterationReviews[]
 }
 
 model Post {
@@ -173,9 +172,11 @@ model DraftPost {
 model DraftPostIterationReviews {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   iterationId String @db.ObjectId
-  userId    String @db.ObjectId
+  reviewerId    String @db.ObjectId
+  requestorId   String @db.ObjectId
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requestor User @relation(fields: [requestorId], references: [id], onDelete: Cascade)
+  reviewer User @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
   iteration Iteration @relation(fields: [iterationId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   
