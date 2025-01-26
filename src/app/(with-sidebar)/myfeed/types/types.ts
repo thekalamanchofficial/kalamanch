@@ -1,4 +1,5 @@
 import { type SxProps } from "@mui/material";
+import { PostStatus } from "~/app/editor/types/types";
 
 export type MenuItemList = {
   label: string;
@@ -94,6 +95,7 @@ export type PostCardFooterProps = {
   handleLikeButton: () => void;
   openCommentBox: () => void;
   postId: string;
+  postStatus: PostStatus;
 };
 
 export type UserNameProfileProps = {

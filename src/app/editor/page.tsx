@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Box, Grid2 as Grid } from "@mui/material";
 import WritingPad from "../_components/writingPad/WritingPad";
 import CustomTabs from "../_components/CustomTabs/CustomTabs";
@@ -18,6 +18,10 @@ import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState"
 import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 import { useNavigateToPostEditor } from "./_hooks/useNavigateToPostEditor";
 import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
+import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
+import { trpc } from "~/server/client";
+import { useUser } from "~/context/userContext";
+import { toast } from "react-toastify";
 
 const Page = () => {
   const { activeTab, changeTab } = useTabs();
@@ -38,6 +42,20 @@ const Page = () => {
   const {isCreatePostFormOpen,openCreatePostForm, closeCreatePostForm, formData } = useCreatePostFormDataState({ postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails});
   const {handlePostUnPublishing } = usePostUnpublishing({setPublishedPostsForUser});
   const {navigateToPostEditor} = useNavigateToPostEditor({changeTab});
+  const [sendForReviewDialogOpen , setSendForReviewDialogOpen] = useState(false);
+  const handleSendForReviewMutation = trpc.draftPostIterationReview.saveDraftPostIterationReviewers.useMutation();
+
+  const { user } = useUser(); 
+  const handleSendForReview = (selectedUsersForReview: string[]) => {   
+    setSendForReviewDialogOpen(false);
+    if (!selectedIteration) return;
+    handleSendForReviewMutation.mutateAsync({
+      requesterId: user?.id ?? "",
+      iterationId: selectedIteration.id,
+      reviewers: selectedUsersForReview,
+    });
+    toast.success("Sent for review successfully");
+  };
 
   return (
     <>
@@ -97,6 +115,7 @@ const Page = () => {
                 defaultContentToDisplay={(draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""}
                 handleEditorContentChange={handleEditorContentChange}
                 postStatus= {draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
+                handleSendForReview={() => setSendForReviewDialogOpen(true)}
               />
             )}
             {activeTab === EditorTabsEnum.PUBLISHED  && ( 
@@ -124,6 +143,7 @@ const Page = () => {
               update = {Boolean(publishedPost ?? draftPost)}
             />
           )}
+          {sendForReviewDialogOpen && <SendForReviewDialog open={sendForReviewDialogOpen} onClose={() => setSendForReviewDialogOpen(false)} onSubmit={(selectedUsersForReview: string[]) => handleSendForReview(selectedUsersForReview)} />}
         </Box>
       </Grid>
     </>

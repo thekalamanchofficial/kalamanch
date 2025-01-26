@@ -6,6 +6,7 @@ import { commentRouter } from "./routers/comment";
 import { featuredPostRouter } from "./routers/featuredPost";
 import { UsersToFollowRouter } from "./routers/usersToFollow";
 import { draftPostRouter } from "./routers/draftPost";
+import { draftPostIterationReviewsRouter } from "./routers/draftPostIterationReviews";
 
 export const appRouter = router({
   user: userRouter,
@@ -15,6 +16,7 @@ export const appRouter = router({
   comments: commentRouter,
   usersToFollow: UsersToFollowRouter,
   featuredPost: featuredPostRouter,
+  draftPostIterationReview: draftPostIterationReviewsRouter
 });
 
 export type AppRouter = typeof appRouter;

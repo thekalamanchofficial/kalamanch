@@ -10,6 +10,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import PostActionButton from "../postActionButton/PostActionButton";
 import SharePostDialog from "../sharePostDialog/SharePostDialog";
+import { PostStatus } from "~/app/editor/types/types";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,
@@ -19,6 +20,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   handleLikeButton,
   openCommentBox,
   postId,
+  postStatus
 }) => {
   const [open, setOpen] = React.useState(false);
   const handleAction = (actionType: string) => {
@@ -80,19 +82,19 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           label={comments && comments.length > 0 ? comments.length : "0"}
           onClick={() => openCommentBox()}
         />
-        <PostActionButton
+        { postStatus === PostStatus.PUBLISHED && <PostActionButton
           icon={<TollIcon sx={iconSx} />}
           label={bids && bids.length > 0 ? bids.length : "0"}
           onClick={() => handleAction("bid")}
-        />
-        <PostActionButton
+        />}
+        { postStatus === PostStatus.PUBLISHED && <PostActionButton
           icon={<ShareIcon sx={iconSx} />}
           label=""
           onClick={() => handleAction("share")}
-        />
+        />}
         <SharePostDialog open={open} onClose={() => setOpen(false)} postId={postId} />
       </Box>
-      <Box>
+      { postStatus === PostStatus.PUBLISHED && <Box>
         <PostActionButton
           icon={<BookmarkBorderIcon sx={iconSx} />}
           label=""
@@ -102,7 +104,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
             minHeight: "24px",
           }}
         />
-      </Box>
+      </Box>}
     </Box>
   );
 };

@@ -10,14 +10,16 @@ import CommentSection from "../CommentSection/CommentSection";
 import { useClerk } from "@clerk/nextjs";
 import { useLike } from "~/hooks/useLike";
 import { useComments } from "~/hooks/useComments";
+import { PostStatus } from "~/app/editor/types/types";
 
 interface PostProps {
   post: PostType;
   userFollowing?: string[];
   isLiked: boolean;
+  postStatus: PostStatus;
 }
 
-const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
+const Post = memo<PostProps>(({ post, userFollowing, isLiked, postStatus }) => {
   const { user } = useClerk();
   const userEmail = user?.primaryEmailAddress?.emailAddress;
   const [isCommentOpen, setIsCommentOpen] = useState(false);
@@ -72,6 +74,7 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
           handleLikeButton={handleLike}
           openCommentBox={toggleComments}
           postId={post.id}
+          postStatus={postStatus}
         />
         {isCommentOpen && (
           <CommentSection
