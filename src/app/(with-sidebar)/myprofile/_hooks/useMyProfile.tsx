@@ -2,9 +2,7 @@ import {
   MyProfileTabsEnum,
   type SaveUserInfo,
 } from "~/app/(with-sidebar)/myprofile/types/types";
-import {
-  type Post,
-} from "~/app/(with-sidebar)/myfeed/types/types";
+import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
 
 import { handleError } from "~/app/_utils/handleError";
 import config from "~/app/_config/config";
@@ -16,16 +14,15 @@ import {
   type UserInfo,
   type UseMyProfilePage,
 } from "~/app/(with-sidebar)/myprofile/types/types";
+import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
+import useLikePosts from "~/app/_hooks/useLikePosts";
 
 const useMyProfilePage = (): UseMyProfilePage => {
   const { user } = useClerk();
-  const [likedPosts, setLikedPosts] = useState<string[]>([]);
-
   const [tab, setTab] = useState(MyProfileTabsEnum.MY_POSTS);
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean | undefined>(true);
   const [post, setPosts] = useState<Post[]>([]);
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<string[]>([]);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
@@ -40,7 +37,6 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const postMutation = trpc.post;
   const likeMutation = trpc.likes;
   const userMutation = trpc.user;
-  const bookmarkProcedure = trpc.bookmarks;
 
   const { data: userDetails } = userMutation.getUserDetails.useQuery(
     user?.primaryEmailAddress?.emailAddress,
@@ -54,12 +50,6 @@ const useMyProfilePage = (): UseMyProfilePage => {
       enabled: !!user?.primaryEmailAddress?.emailAddress,
     },
   );
-
-  const { data: bookmarkedPostData } =
-    bookmarkProcedure.getUserBookmarkPosts.useQuery({
-      limit: null,
-      userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-    });
 
   useEffect(() => {
     setUserInfo({
@@ -101,13 +91,6 @@ const useMyProfilePage = (): UseMyProfilePage => {
       })) ?? []
     );
   }, [post]);
-
-  const { data: likedPostData } = likeMutation.getUserLikes.useQuery(
-    { userEmail: user?.primaryEmailAddress?.emailAddress ?? "" },
-    {
-      enabled: !!user?.primaryEmailAddress?.emailAddress,
-    },
-  );
 
   const handleEditProfileOpen = () => {
     setIsEditProfileOpen(true);
@@ -224,17 +207,13 @@ const useMyProfilePage = (): UseMyProfilePage => {
     };
   }, [handleScroll, hasMorePosts, queryLoading]);
 
-  useEffect(() => {
-    if (likedPostData) {
-      setLikedPosts(likedPostData);
-    }
-  }, [likedPostData]);
+  const { likedPosts } = useLikePosts({
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
 
-  useEffect(() => {
-    if (bookmarkedPostData) {
-      setBookmarkedPosts(bookmarkedPostData.items.map((post) => post.id));
-    }
-  }, [bookmarkedPostData]);
+  const { bookmarkedPosts } = useBookmarkPosts({
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
 
   return {
     posts: postDataWithComments,

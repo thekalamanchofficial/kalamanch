@@ -7,13 +7,21 @@ type UseBookmarkProps = {
   userEmail?: string;
 };
 
-export function useBookmark({
+type UseBookmarkReturn = {
+  hasBookmarked: boolean;
+  handleBookmark: () => Promise<void>;
+};
+
+type UseBookmark = (props: UseBookmarkProps) => UseBookmarkReturn;
+
+export const useBookmark: UseBookmark = ({
   initialIsBookmarked,
   postId,
   userEmail,
-}: UseBookmarkProps) {
+}) => {
   const [hasBookmarked, setHasBookmarked] = useState(initialIsBookmarked);
-  const { addBookmarkToBatch, rolledBackBookmarks, setRolledBackBookmarks } = useFeedContext();
+  const { addBookmarkToBatch, rolledBackBookmarks, setRolledBackBookmarks } =
+    useFeedContext();
 
   const handleBookmark = useCallback(async () => {
     if (!userEmail) return;
@@ -46,4 +54,4 @@ export function useBookmark({
     hasBookmarked,
     handleBookmark,
   };
-}
+};

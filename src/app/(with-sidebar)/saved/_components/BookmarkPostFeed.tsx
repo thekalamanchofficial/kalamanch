@@ -5,23 +5,24 @@ import Post from "~/app/_components/post/Post";
 import { trpc } from "~/server/client";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import Loader from "~/app/_components/loader/Loader";
+import { Box } from "@mui/material";
 
 type BookmarkPostFeedProps = {
   userFollowing: string[];
   userLikes: string[];
-  userEnail: string;
+  userEmail: string;
 };
 
 export default function BookmarkPostFeed({
   userFollowing,
   userLikes,
-  userEnail,
+  userEmail,
 }: BookmarkPostFeedProps) {
-  const { data, isFetchingNextPage, hasNextPage, fetchNextPage, isLoading } =
+  const { data, isFetchingNextPage, hasNextPage, fetchNextPage, isPending } =
     trpc.bookmarks.getUserBookmarkPosts.useInfiniteQuery(
       {
         limit: 10,
-        userEmail: userEnail,
+        userEmail,
       },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -51,8 +52,8 @@ export default function BookmarkPostFeed({
       },
     );
 
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
+    if (scrollDiv) {
+      observer.observe(scrollDiv);
     }
 
     return () => {
@@ -63,8 +64,7 @@ export default function BookmarkPostFeed({
   }, [loadMorePosts]);
 
   return (
-    <div>
-      <ul>
+    <Box>
         {bookmarkedPosts.map((post) => (
           <Post
             key={post.id}
@@ -74,13 +74,12 @@ export default function BookmarkPostFeed({
             isBookmarked={true}
           />
         ))}
-      </ul>
 
       {isFetchingNextPage && (
         <Loader title="Loading Posts..." height="100%" width="100%" />
       )}
 
-      {!isLoading && !hasNextPage && (
+      {!isPending && !hasNextPage && (
         <ShowMessage
           title="No More Posts Found."
           style={{
@@ -95,6 +94,6 @@ export default function BookmarkPostFeed({
 
       {/* Empty div to trigger the scroll detection */}
       <div ref={loadMoreRef} />
-    </div>
+    </Box>
   );
 }

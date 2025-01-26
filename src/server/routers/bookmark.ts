@@ -3,6 +3,7 @@ import prisma from "~/server/db";
 
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import getUserDetails from "../utils/getUserDetails";
 
 const bulkBookmarkSchema = yup.object({
   userEmail: yup.string().email().required(),
@@ -21,19 +22,6 @@ const bookmarkPaginationSchema = yup.object({
   cursor: yup.string().nullable(),
   userEmail: yup.string().email().required(),
 });
-
-const getUserDetails = async (userEmail: string) => {
-  const userDetails = await prisma.user.findFirst({
-    where: {
-      email: userEmail,
-    },
-  });
-
-  if (!userDetails) {
-    throw new Error("User not found");
-  }
-  return userDetails;
-};
 
 export const bookmarkRouter = router({
   bulkBookmarkPost: publicProcedure

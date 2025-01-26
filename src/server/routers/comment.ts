@@ -3,19 +3,7 @@ import prisma from "~/server/db";
 
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
-
-const getUserDetails = async (userEmail: string) => {
-  const userDetails = await prisma.user.findFirst({
-    where: {
-      email: userEmail,
-    },
-  });
-
-  if (!userDetails) {
-    throw new Error("User not found");
-  }
-  return userDetails;
-};
+import getUserDetails from "../utils/getUserDetails";
 
 const commentSchema = yup.object({
   userEmail: yup.string().email().required(),

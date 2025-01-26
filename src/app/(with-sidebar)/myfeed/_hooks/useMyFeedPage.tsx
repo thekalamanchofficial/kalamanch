@@ -4,6 +4,8 @@ import { useClerk } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
+import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
+import useLikePosts from "~/app/_hooks/useLikePosts";
 
 type useMyFeedPageReturn = {
   postDataWithComments: Post[];
@@ -21,8 +23,6 @@ type useMyFeedPageReturn = {
 
 const useMyFeedPage = (): useMyFeedPageReturn => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [likedPosts, setLikedPosts] = useState<string[]>([]);
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<string[]>([]);
   const [tab, setTab] = useState<MyFeedTabsEnum>(MyFeedTabsEnum.MY_FEED);
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState(true);
@@ -31,8 +31,6 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
   const userEmail = user?.primaryEmailAddress?.emailAddress;
 
   const postMutation = trpc.post;
-  const likeMutation = trpc.likes;
-  const bookmarkProcedure = trpc.bookmarks;
 
   const {
     data: postData,
@@ -72,16 +70,13 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     [posts],
   );
 
-  const { data: likedPostData } = likeMutation.getUserLikes.useQuery(
-    { userEmail: userEmail ?? "" },
-    { enabled: !!userEmail },
-  );
+  const { likedPosts } = useLikePosts({
+    userEmail: userEmail ?? "",
+  });
 
-  const { data: bookmarkedPostData } =
-    bookmarkProcedure.getUserBookmarkPosts.useQuery({
-      limit: null,
-      userEmail: userEmail ?? "",
-    });
+  const { bookmarkedPosts } = useBookmarkPosts({
+    userEmail: userEmail ?? "",
+  });
 
   const handleTabChange = (newTab: MyFeedTabsEnum) => {
     setTab(newTab);
@@ -99,15 +94,6 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
       });
     }
   }, [postData]);
-
-  useEffect(() => {
-    if (likedPostData) setLikedPosts(likedPostData);
-  }, [likedPostData]);
-
-  useEffect(() => {
-    if (bookmarkedPostData)
-      setBookmarkedPosts(bookmarkedPostData.items.map((post) => post.id));
-  }, [bookmarkedPostData]);
 
   return {
     postDataWithComments,

@@ -16,7 +16,7 @@ export default async function SavedPage() {
     <BookmarkPostFeed
       userFollowing={userFollowing ?? []}
       userLikes={userLikes ?? []}
-      userEnail={userEmail}
+      userEmail={userEmail}
     />
   );
 }
