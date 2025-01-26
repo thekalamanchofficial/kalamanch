@@ -10,14 +10,16 @@ import CommentSection from "../CommentSection/CommentSection";
 import { useClerk } from "@clerk/nextjs";
 import { useLike } from "~/hooks/useLike";
 import { useComments } from "~/hooks/useComments";
+import { useBookmark } from "~/hooks/useBookmark";
 
 interface PostProps {
   post: PostType;
   userFollowing?: string[];
   isLiked: boolean;
+  isBookmarked: boolean;
 }
 
-const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
+const Post = memo<PostProps>(({ post, userFollowing, isLiked, isBookmarked }) => {
   const { user } = useClerk();
   const userEmail = user?.primaryEmailAddress?.emailAddress;
   const [isCommentOpen, setIsCommentOpen] = useState(false);
@@ -25,6 +27,12 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
   const { hasLiked, likeCount, handleLike } = useLike({
     initialLikeCount: post.likeCount,
     initialIsLiked: isLiked,
+    postId: post.id,
+    userEmail
+  });
+
+  const { hasBookmarked, handleBookmark } = useBookmark({
+    initialIsBookmarked: isBookmarked,
     postId: post.id,
     userEmail
   });
@@ -69,9 +77,11 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
           comments={comments}
           bids={post.bids ?? []}
           isLiked={hasLiked}
+          isBookmarked={hasBookmarked}
           handleLikeButton={handleLike}
           openCommentBox={toggleComments}
           postId={post.id}
+          handleBookmark={handleBookmark}
         />
         {isCommentOpen && (
           <CommentSection

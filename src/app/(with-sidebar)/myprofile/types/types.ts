@@ -1,4 +1,4 @@
-import { Like, UserToFollow, type Post } from "../../myfeed/types/types";
+import type { Like, UserToFollow, Post } from "../../myfeed/types/types";
 
 export enum MyProfileTabsEnum {
   MY_POSTS = "My Posts",
@@ -48,19 +48,14 @@ export type UseMyProfilePage = {
   posts: Post[];
   setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
   likedPosts: string[];
+  bookmarkedPosts: string[];
   queryLoading: boolean;
   hasMorePosts: boolean;
   tab: MyProfileTabsEnum;
   skip: number;
   postDataWithComments: Post[];
   setSkip: React.Dispatch<React.SetStateAction<number>>;
-  handleLikeButton: (postId: string) => Promise<{ liked: boolean }>;
   handleChange: (newTab: MyProfileTabsEnum) => void;
-  addComment: (
-    postId: string,
-    content: string,
-    parent: string,
-  ) => Promise<void>;
   handleScroll: () => void;
   errorMessage: string;
   userProfile: string;
