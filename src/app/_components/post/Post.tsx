@@ -10,16 +10,15 @@ import CommentSection from "../CommentSection/CommentSection";
 import { useClerk } from "@clerk/nextjs";
 import { useLike } from "~/hooks/useLike";
 import { useComments } from "~/hooks/useComments";
-import { PostStatus } from "~/app/editor/types/types";
+import { PostEntityType, PostStatus } from "~/app/editor/types/types";
 
 interface PostProps {
   post: PostType;
   userFollowing?: string[];
   isLiked: boolean;
-  postStatus: PostStatus;
 }
 
-const Post = memo<PostProps>(({ post, userFollowing, isLiked, postStatus }) => {
+const Post = memo<PostProps>(({ post, userFollowing, isLiked }) => {
   const { user } = useClerk();
   const userEmail = user?.primaryEmailAddress?.emailAddress;
   const [isCommentOpen, setIsCommentOpen] = useState(false);
@@ -28,12 +27,14 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked, postStatus }) => {
     initialLikeCount: post.likeCount,
     initialIsLiked: isLiked,
     postId: post.id,
+    postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
     userEmail
   });
 
   const { comments, handleAddComment } = useComments({
     initialComments: post.comments ?? [],
     postId: post.id,
+    postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
     userEmail,
     userName: user?.fullName ?? userEmail,
     userProfileImageUrl: user?.imageUrl
@@ -74,7 +75,11 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked, postStatus }) => {
           handleLikeButton={handleLike}
           openCommentBox={toggleComments}
           postId={post.id}
-          postStatus={postStatus}
+          showLikes={true}
+          showComments={true}
+          showBids={true}
+          showBookmark={true}
+          showShare={true}
         />
         {isCommentOpen && (
           <CommentSection

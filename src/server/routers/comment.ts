@@ -3,6 +3,7 @@ import prisma from "~/server/db";
 
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import { PostStatus } from "@prisma/client";
 
 const getUserDetails = async (userEmail: string) => {
   const userDetails = await prisma.user.findFirst({
@@ -21,8 +22,10 @@ const commentSchema = yup.object({
   userEmail: yup.string().email().required(),
   userName: yup.string().required(),
   content: yup.string().required().min(1),
-  postId: yup.string().required(),
-  userProfileImageUrl: yup.string().required(),
+  postId: yup.string().optional().nullable(),
+  iterationId: yup.string().optional().nullable(),
+  postStatus: yup.string().required(),
+  userProfileImageUrl: yup.string().optional(),
   parentId: yup.string().nullable(),
 });
 
@@ -43,6 +46,8 @@ export const commentRouter = router({
     .mutation(async ({ input }) => {
       try {
         const {
+          iterationId,
+          postStatus,
           postId,
           userEmail,
           userName,
@@ -58,8 +63,10 @@ export const commentRouter = router({
           data: {
             userId,
             postId,
+            iterationId,
+            postStatus: postStatus.toUpperCase() as PostStatus,
             userName,
-            userProfileImageUrl,
+            userProfileImageUrl: userProfileImageUrl ?? "",
             content,
             parentId: parentId === "" ? null : parentId,
           },
@@ -91,10 +98,12 @@ export const commentRouter = router({
 
         const parentCommentData = parentComments.map((comment) => ({
           postId: comment.postId,
+          iterationId: comment.iterationId,
+          postStatus: comment.postStatus as PostStatus,
           content: comment.content,
           userId,
           userName: comment.userName,
-          userProfileImageUrl: comment.userProfileImageUrl,
+          userProfileImageUrl: comment.userProfileImageUrl ?? "",
           parentId: null,
           id: comment.id,
         }));
@@ -117,10 +126,12 @@ export const commentRouter = router({
 
         const childCommentData = childComments.map((comment) => ({
           postId: comment.postId,
+          iterationId: comment.iterationId,
+          postStatus: comment.postStatus as PostStatus,
           content: comment.content,
           userId,
           userName: comment.userName,
-          userProfileImageUrl: comment.userProfileImageUrl,
+          userProfileImageUrl: comment.userProfileImageUrl ?? "",
           parentId: comment.parentId,
           id: comment.id,
         }));

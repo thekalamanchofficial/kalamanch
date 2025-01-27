@@ -12,30 +12,35 @@ export const draftPostIterationReviewsRouter = router({
     })).mutation(async ({ input }) => {
         try {
             const { requesterId, iterationId, reviewers } = input;
+          
             await Promise.all(
-                reviewers.map((reviewerId) =>
-                    prisma.draftPostIterationReviews.upsert({
-                        where: {
-                            iterationId_reviewerId: {
-                                iterationId,
-                                reviewerId,
-                            },
-                        },
-                        update: {}, 
-                        create: {
-                            requesterId,
-                            iterationId,
-                            reviewerId,
-                        },
-                    })
-                )
+              reviewers.map((reviewerId) => {
+                if (!reviewerId) {
+                  handleError(new Error("Invalid input: reviewerId is required."));
+                  return;
+                }
+                return prisma.draftPostIterationReviews.upsert({
+                  where: {
+                    iterationId_reviewerId: {
+                      iterationId,
+                      reviewerId,
+                    },
+                  },
+                  update: {},
+                  create: {
+                    requesterId,
+                    iterationId,
+                    reviewerId,
+                  },
+                });
+              })
             );
-
+          
             return true;
-        } catch (error) {
+          } catch (error) {
             handleError(error);
             throw error;
-        }
+          }
     }),
     getDraftPostIterationsToReview: publicProcedure.input(yup.object({
         limit: yup.number().min(1).default(5),
@@ -48,12 +53,9 @@ export const draftPostIterationReviewsRouter = router({
                 where: {
                     reviewerId: userId,
                 },
-                include: {
-                    reviewer: true,
+                select: {
                     iteration: {
-                        include: {
-                            DraftPost: true,
-                        },
+                        include: { DraftPost: true, likes: true, comments: { include: { replies: true } } },
                     },
                 },
                 take: limit,
@@ -75,16 +77,13 @@ export const draftPostIterationReviewsRouter = router({
     })).query(async ({ input }) => {
         try {
             const { limit, skip, userId } = input;
-            const draftPosts = await prisma.draftPostIterationReviews.findMany({
+            const draftPostIterations = await prisma.draftPostIterationReviews.findMany({
                 where: {
                     requesterId: userId,
                 },
-                include: {
-                    requester: true,
+                select: {
                     iteration: {
-                        include: {
-                            DraftPost: true,
-                        },
+                        include: { DraftPost: true, likes: true, comments: { include: { replies: true } } },
                     },
                 },
                 take: limit,
@@ -93,7 +92,13 @@ export const draftPostIterationReviewsRouter = router({
                     createdAt: "desc",
                 },
             });
-            return draftPosts;
+            // Retain only unique iteration IDs
+            const uniqueIterations = Array.from(
+                new Map(
+                    draftPostIterations.map((item) => [item.iteration.id, item])
+                ).values()
+            );
+            return uniqueIterations;
         } catch (error) {
             handleError(error);
             throw error;

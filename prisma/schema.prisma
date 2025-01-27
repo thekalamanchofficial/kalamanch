@@ -150,6 +150,7 @@ model Iterations {
   content       String
   draftPostId   String     @db.ObjectId
   DraftPost     DraftPost  @relation(fields: [draftPostId], references: [id], onDelete: Cascade)
+  likeCount     Int        @default(0)
 
   likes        Like[]
   comments     Comment[]

@@ -6,16 +6,18 @@ import { useClerk } from "@clerk/nextjs";
 import { toast } from "react-toastify";
 import { BULK_COMMENT_DEBOUNCE_DELAY, BULK_LIKE_DEBOUNCE_DELAY } from "../_config/config";
 import type { CommentPayload } from "../types/types";
+import { Like } from "@prisma/client";
+import { PostStatus } from "~/app/editor/types/types";
 
-type LikePayload = Record<string, { liked: boolean }>;
+type LikePayload = Record<string, { liked: boolean , postStatus: string }>;
 
 type FeedContextValue = {
   addLikeToBatch: (payload: LikePayload) => void;
   addCommentToBatch: (payload: CommentPayload) => void;
   bulkLikeState: LikePayload | null;
-  rolledBackLikes: Record<string, boolean>;
+  rolledBackLikes: LikePayload;
   setRolledBackLikes: React.Dispatch<
-    React.SetStateAction<Record<string, boolean>>
+    React.SetStateAction<LikePayload>
   >;
   bulkCommentsState: CommentPayload[];
   failedComments: CommentPayload[];
@@ -28,9 +30,7 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [bulkLikeState, setBulkLikeState] = useState<LikePayload>({});
-  const [rolledBackLikes, setRolledBackLikes] = useState<
-    Record<string, boolean>
-  >({});
+  const [rolledBackLikes, setRolledBackLikes] = useState<LikePayload>({});
   const [bulkCommentsState, setBulkCommentsState] = useState<CommentPayload[]>(
     [],
   );
@@ -45,9 +45,9 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
       setRolledBackLikes({});
     },
     onError: () => {
-      const newRolledBackState: Record<string, boolean> = {};
-      Object.entries(bulkLikeState).forEach(([postId, { liked }]) => {
-        newRolledBackState[postId] = !liked;
+      const newRolledBackState: Record<string, { liked: boolean, postStatus: string }> = {};
+      Object.entries(bulkLikeState).forEach(([postOrIterationId, { liked, postStatus }]) => {
+        newRolledBackState[postOrIterationId] = { liked: !liked, postStatus };
       });
       setRolledBackLikes(newRolledBackState);
       setBulkLikeState({});
@@ -61,7 +61,13 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
       setBulkCommentsState([]);
     },
     onError: (error, variables) => {
-      setFailedComments((prev) => [...prev, ...variables.comments]);
+      setFailedComments((prev) => [
+        ...prev,
+        ...variables.comments.map((comment) => ({
+          ...comment,
+          userProfileImageUrl: comment.userProfileImageUrl || "",
+        })),
+      ]);
       toast.error("Some comments failed to post. Please try again.");
     },
   });
@@ -70,9 +76,11 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!userEmail || Object.keys(likedState).length === 0) return;
 
     const bulkLikePayload = Object.entries(likedState).map(
-      ([postId, { liked }]) => ({
-        postId,
+      ([postOrIterationId, { liked, postStatus }]) => ({
+        postId: postStatus === PostStatus.PUBLISHED.toString().toUpperCase() ? postOrIterationId : null,
+        iterationId: postStatus === PostStatus.DRAFT.toString().toUpperCase() ? postOrIterationId : null,
         liked,
+        postStatus
       }),
     );
 

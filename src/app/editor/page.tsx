@@ -11,7 +11,7 @@ import { useDraftEditorState } from "./_hooks/useDraftEditorState";
 import { usePostUnpublishing } from "./_hooks/usePostUnpublishing";
 import { tabs } from "./_config/config";
 import { useTabs } from "./_hooks/useTabs";
-import { EditorTabsEnum, PostStatus } from "./types/types";
+import { EditorTabsEnum, PostEntityType, PostStatus } from "./types/types";
 import EditorPublishedPostsSection from "./_components/editorPublishedPostsSection/EditorPublishedPostsSection";
 import { useUserPostsState } from "./_hooks/useUserPosts";
 import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
@@ -69,8 +69,9 @@ const Page = () => {
           activeTab === EditorTabsEnum.PUBLISHED && (
             <LeftSideBarForPosts
               draftPosts={[]}
+              draftIterationsSentForReview={[]}
               publishedPosts={publishedPostsForUser}
-              postStatus={PostStatus.PUBLISHED}
+              entityType={PostEntityType.PUBLISHED_POST}
             />
           )
         }

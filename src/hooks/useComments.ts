@@ -5,10 +5,13 @@ import {
   type Comment,
 } from "~/app/(with-sidebar)/myfeed/types/types";
 import { ObjectId } from "mongodb";
+import { PostStatus } from "~/app/editor/types/types";
 
 type UseCommentsProps = {
   initialComments: Comment[];
-  postId: string;
+  postId?: string | null | undefined;
+  iterationId?: string | null | undefined;
+  postStatus: string;
   userEmail?: string;
   userName?: string;
   userProfileImageUrl?: string;
@@ -17,6 +20,8 @@ type UseCommentsProps = {
 export function useComments({
   initialComments,
   postId,
+  iterationId,
+  postStatus,
   userEmail,
   userName,
   userProfileImageUrl,
@@ -28,12 +33,21 @@ export function useComments({
     failedComments,
     setFailedComments,
   } = useFeedContext();
+  const isPending = postStatus == PostStatus.PUBLISHED.toString().toUpperCase()
+    ? bulkCommentsState.some((comment) => comment.postId === postId)
+    : bulkCommentsState.some((comment) => comment.iterationId === iterationId);
+
+  const pendingCount = postStatus == PostStatus.PUBLISHED.toString().toUpperCase()
+    ? bulkCommentsState.filter((comment) => comment.postId === postId).length
+    : bulkCommentsState.filter((comment) => comment.iterationId === iterationId).length;
 
   const createTempComment = useCallback(
     (content: string, parentId: string | undefined): Comment => {
       return {
         id: new ObjectId().toString(),
         postId,
+        iterationId,
+        postStatus,
         userId: userEmail!,
         userName: userName ?? userEmail!,
         parentId: parentId ? parentId : null,
@@ -44,7 +58,7 @@ export function useComments({
         replies: [],
       };
     },
-    [userEmail, userName, userProfileImageUrl, postId],
+    [userEmail, userName, userProfileImageUrl, postId, iterationId, postStatus],
   );
 
   const updateCommentsTree = useCallback(
@@ -96,6 +110,8 @@ export function useComments({
       addCommentToBatch({
         id: tempComment.id,
         postId,
+        iterationId,
+        postStatus,
         content,
         parentId: parentId ?? null,
         userEmail,
@@ -105,6 +121,8 @@ export function useComments({
     },
     [
       postId,
+      iterationId,
+      postStatus,
       userEmail,
       userName,
       userProfileImageUrl,
@@ -116,7 +134,11 @@ export function useComments({
 
   useEffect(() => {
     failedComments.forEach((failedComment) => {
-      if (failedComment.postId !== postId) {
+    
+      if (postStatus == PostStatus.PUBLISHED.toString().toUpperCase() && failedComment.postId !== postId) {
+        return;
+      }
+      if (postStatus == PostStatus.DRAFT.toString().toUpperCase() && failedComment.iterationId !== iterationId) {
         return;
       }
       const parentId = failedComment.parentId ?? null;
@@ -126,18 +148,20 @@ export function useComments({
     });
 
     if (failedComments.length > 0) {
-      setFailedComments((prev) =>
+      postStatus == PostStatus.PUBLISHED.toString().toUpperCase() && setFailedComments((prev) =>
         prev.filter((comment) => comment.postId !== postId),
       );
+      postStatus == PostStatus.DRAFT.toString().toUpperCase() && setFailedComments((prev) =>
+        prev.filter((comment) => comment.iterationId !== iterationId),
+      );
     }
-  }, [failedComments, comments, updateCommentsTree, setFailedComments, postId]);
+    
+  }, [failedComments, comments, updateCommentsTree, setFailedComments, postId, iterationId, postStatus]);
 
   return {
     comments,
     handleAddComment,
-    isPending: bulkCommentsState.some((comment) => comment.postId === postId),
-    pendingCount: bulkCommentsState.filter(
-      (comment) => comment.postId === postId,
-    ).length,
+    isPending,
+    pendingCount,
   };
 }

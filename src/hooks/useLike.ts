@@ -1,10 +1,12 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useFeedContext } from "~/app/(with-sidebar)/myfeed/context/FeedContext";
 
 type UseLikeProps = {
   initialLikeCount: number;
   initialIsLiked: boolean;
-  postId: string;
+  postId?: string | null | undefined;
+  iterationId?: string | null | undefined;
+  postStatus: string;
   userEmail?: string;
 };
 
@@ -12,6 +14,8 @@ export function useLike({
   initialLikeCount,
   initialIsLiked,
   postId,
+  iterationId,
+  postStatus,
   userEmail,
 }: UseLikeProps) {
   const [hasLiked, setHasLiked] = useState(initialIsLiked);
@@ -20,16 +24,26 @@ export function useLike({
 
   const handleLike = useCallback(async () => {
     if (!userEmail) return;
-
     const newLikedState = !hasLiked;
-
     setHasLiked(newLikedState);
     setLikeCount((prev) => (newLikedState ? prev + 1 : prev - 1));
-    addLikeToBatch({
-      [postId]: {
-        liked: newLikedState,
-      },
-    });
+    if(postId){
+      addLikeToBatch({
+        [postId]: {
+          liked: newLikedState,
+          postStatus: postStatus,
+        },
+      });
+    }
+    else if(iterationId){
+      addLikeToBatch({
+        [iterationId]: {
+          liked: newLikedState,
+          postStatus: postStatus,
+        },
+      });
+
+    }
   }, [hasLiked, postId, userEmail, addLikeToBatch]);
 
   useEffect(() => {
@@ -38,15 +52,17 @@ export function useLike({
   }, [initialIsLiked, initialLikeCount]);
 
   useEffect(() => {
-    if (postId in rolledBackLikes) {
-      setHasLiked(rolledBackLikes[postId] ?? false);
-      setLikeCount((prev) => (rolledBackLikes[postId] ? prev + 1 : prev - 1));
+    if (!postId && !iterationId) return; // Ensures at least one is provided
+    const postOrIterationId = postId ?? iterationId;
+    if (postOrIterationId && postOrIterationId in rolledBackLikes) {
+      setHasLiked(rolledBackLikes[postOrIterationId]?.liked ?? false);
+      setLikeCount((prev) => (rolledBackLikes[postOrIterationId] ? prev + 1 : prev - 1));
       setRolledBackLikes((prev) => {
-        const { [postId]: _, ...newRolledBackState } = prev;
+        const { [postOrIterationId]: _, ...newRolledBackState } = prev;
         return newRolledBackState;
       });
     }
-  }, [rolledBackLikes, setRolledBackLikes,postId]);
+  }, [rolledBackLikes, setRolledBackLikes,postId,iterationId,postStatus]);
 
   return {
     hasLiked,

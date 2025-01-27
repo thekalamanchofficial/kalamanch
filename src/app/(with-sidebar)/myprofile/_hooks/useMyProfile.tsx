@@ -17,6 +17,7 @@ import {
   type UserInfo,
   type UseMyProfilePage,
 } from "~/app/(with-sidebar)/myprofile/types/types";
+import { PostStatus } from "~/app/editor/types/types";
 
 const useMyProfilePage = (): UseMyProfilePage => {
   const { user } = useClerk();
@@ -49,6 +50,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const { data: userLikedPosts } = likeMutation.getUserLikedPost.useQuery(
     {
       userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+      postStatus: PostStatus.PUBLISHED.toString().toUpperCase()
     },
     {
       enabled: !!user?.primaryEmailAddress?.emailAddress,
@@ -97,7 +99,9 @@ const useMyProfilePage = (): UseMyProfilePage => {
   }, [post]);
 
   const { data: likedPostData } = likeMutation.getUserLikes.useQuery(
-    { userEmail: user?.primaryEmailAddress?.emailAddress ?? "" },
+    { userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+      postStatus: PostStatus.PUBLISHED.toString().toUpperCase()
+     },
     {
       enabled: !!user?.primaryEmailAddress?.emailAddress,
     },
@@ -120,6 +124,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
           const response = await likePostMutation.mutateAsync({
             postId,
             userEmail: user?.primaryEmailAddress?.emailAddress,
+            postStatus: PostStatus.PUBLISHED.toString().toUpperCase()
           });
 
           const updatePostLikeCount = (
@@ -212,6 +217,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
         try {
           const newComment = await addCommentMutation.mutateAsync({
             postId,
+            postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
             userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
             userName:
               user?.firstName === null

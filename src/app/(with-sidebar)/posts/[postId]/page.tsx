@@ -1,4 +1,5 @@
 import { currentUser, getAuth } from "@clerk/nextjs/server";
+import { PostStatus } from "@prisma/client";
 import { Metadata } from "next";
 import Post from "~/app/_components/post/Post";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
@@ -14,6 +15,7 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
   });
   const userLikedPosts = await trpcServer.likes.getUserLikedPost({
     userEmail,
+    postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
   });
 
   const isLiked = userLikedPosts?.some((post) => post.id === params.postId);
