@@ -1,9 +1,7 @@
-"use client";
 import React, { useState, type ReactNode } from "react";
 import {
   Grid2 as Grid,
   Box,
-  // useMediaQuery,
   type Theme,
   AppBar,
   Toolbar,
