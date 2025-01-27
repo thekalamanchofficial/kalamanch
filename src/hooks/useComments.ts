@@ -4,8 +4,8 @@ import {
   type CommentPayload,
   type Comment,
 } from "~/app/(with-sidebar)/myfeed/types/types";
-import { ObjectId } from "mongodb";
 import { PostStatus } from "~/app/editor/types/types";
+import ObjectId from "bson-objectid";
 
 type UseCommentsProps = {
   initialComments: Comment[];
@@ -44,7 +44,7 @@ export function useComments({
   const createTempComment = useCallback(
     (content: string, parentId: string | undefined): Comment => {
       return {
-        id: new ObjectId().toString(),
+        id: new ObjectId().toHexString(),
         postId,
         iterationId,
         postStatus,
@@ -70,9 +70,7 @@ export function useComments({
     ): Comment[] => {
       if (!parentId) {
         return isRollback
-          ? currentComments.filter(
-              (comment) => comment.id !== newComment.id,
-            )
+          ? currentComments.filter((comment) => comment.id !== newComment.id)
           : ([...currentComments, newComment] as Comment[]);
       }
 

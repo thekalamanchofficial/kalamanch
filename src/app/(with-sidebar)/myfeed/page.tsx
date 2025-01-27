@@ -19,6 +19,7 @@ const MyFeed = () => {
   const {
     skip,
     likedPosts,
+    bookmarkedPosts,
     queryLoading,
     hasMorePosts,
     postDataWithComments,
@@ -49,8 +50,14 @@ const MyFeed = () => {
     if (activeTab === STATIC_TEXTS.MY_FEED_PAGE.TABS[0]?.value) {
       return (
         <>
-          <PostsFeed articlesList={postDataWithComments} likedPosts={likedPosts} />
-          {queryLoading && skip > 0 && <Loader height="auto" width="auto" title="" />}
+          <PostsFeed
+            articlesList={postDataWithComments}
+            likedPosts={likedPosts}
+            bookmarkedPosts={bookmarkedPosts}
+          />
+          {queryLoading && skip > 0 && (
+            <Loader height="auto" width="auto" title="" />
+          )}
           {!queryLoading && !hasMorePosts && (
             <ShowMessage
               title="No More Posts Found."
@@ -92,7 +99,7 @@ const MyFeed = () => {
     }
 
     return <ShowMessage title="No Posts Found." />;
-  }, [errorMessage, queryLoading, skip, activeTab, postDataWithComments, hasMorePosts, likedPosts, iterationsToReview, likedDraftIterations, draftIterationsQueryLoading, hasMoreDraftIterations, draftIterationsSkip]);
+  }, [errorMessage, queryLoading, skip, activeTab, postDataWithComments, hasMorePosts, likedPosts,bookmarkedPosts, iterationsToReview, likedDraftIterations, draftIterationsQueryLoading, hasMoreDraftIterations, draftIterationsSkip]);
 
   return (
     <Box sx={{ height: "100%", width: "100%" }}>

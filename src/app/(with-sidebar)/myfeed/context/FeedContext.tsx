@@ -4,20 +4,31 @@ import { trpc } from "~/server/client";
 import { useDebounce } from "~/hooks/useDebounce";
 import { useClerk } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { BULK_COMMENT_DEBOUNCE_DELAY, BULK_LIKE_DEBOUNCE_DELAY } from "../_config/config";
+import {
+  BULK_COMMENT_DEBOUNCE_DELAY,
+  BULK_LIKE_DEBOUNCE_DELAY,
+  BULK_BOOKMARK_DEBOUNCE_DELAY,
+} from "../_config/config";
 import type { CommentPayload } from "../types/types";
 import { Like } from "@prisma/client";
 import { PostStatus } from "~/app/editor/types/types";
 
 type LikePayload = Record<string, { liked: boolean , postStatus: string }>;
+type BookmarkPayload = Record<string, { bookmarked: boolean }>;
 
 type FeedContextValue = {
   addLikeToBatch: (payload: LikePayload) => void;
+  addBookmarkToBatch: (payload: BookmarkPayload) => void;
   addCommentToBatch: (payload: CommentPayload) => void;
   bulkLikeState: LikePayload | null;
   rolledBackLikes: LikePayload;
+  bulkBookmarkState: BookmarkPayload | null;
+  rolledBackBookmarks: Record<string, boolean>;
   setRolledBackLikes: React.Dispatch<
     React.SetStateAction<LikePayload>
+  >;
+  setRolledBackBookmarks: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
   >;
   bulkCommentsState: CommentPayload[];
   failedComments: CommentPayload[];
@@ -31,6 +42,12 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [bulkLikeState, setBulkLikeState] = useState<LikePayload>({});
   const [rolledBackLikes, setRolledBackLikes] = useState<LikePayload>({});
+  const [bulkBookmarkState, setBulkBookmarkState] = useState<BookmarkPayload>(
+    {},
+  );
+  const [rolledBackBookmarks, setRolledBackBookmarks] = useState<
+    Record<string, boolean>
+  >({});
   const [bulkCommentsState, setBulkCommentsState] = useState<CommentPayload[]>(
     [],
   );
@@ -53,6 +70,23 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
       setBulkLikeState({});
 
       toast.error("Like operations failed. Please try again.");
+    },
+  });
+
+  const bulkBookmarkMutation = trpc.bookmarks.bulkBookmarkPost.useMutation({
+    onSuccess: () => {
+      setBulkBookmarkState({});
+      setRolledBackBookmarks({});
+    },
+    onError: () => {
+      const newRolledBackState: Record<string, boolean> = {};
+      Object.entries(bulkBookmarkState).forEach(([postId, { bookmarked }]) => {
+        newRolledBackState[postId] = !bookmarked;
+      });
+      setRolledBackBookmarks(newRolledBackState);
+      setBulkBookmarkState({});
+
+      toast.error("Bookmark operations failed. Please try again.");
     },
   });
 
@@ -88,6 +122,23 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     await bulkLikeMutation.mutateAsync(input);
   }, BULK_LIKE_DEBOUNCE_DELAY);
 
+  const debouncedSendBookmarks = useDebounce(
+    async (bookmarkedState: BookmarkPayload) => {
+      if (!userEmail || Object.keys(bookmarkedState).length === 0) return;
+
+      const bulkBookmarkPayload = Object.entries(bookmarkedState).map(
+        ([postId, { bookmarked }]) => ({
+          postId,
+          bookmarked,
+        }),
+      );
+
+      const input = { userEmail, bookmarks: bulkBookmarkPayload };
+      await bulkBookmarkMutation.mutateAsync(input);
+    },
+    BULK_BOOKMARK_DEBOUNCE_DELAY,
+  );
+
   const debouncedSendComments = useDebounce(
     async (comments: CommentPayload[]) => {
       if (!userEmail || comments.length === 0) return;
@@ -111,6 +162,15 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     [bulkLikeState, debouncedSendLikes],
   );
 
+  const addBookmarkToBatch = useCallback(
+    (payload: BookmarkPayload) => {
+      setBulkBookmarkState((prev) => ({ ...prev, ...payload }));
+      const bookmarkedState = { ...bulkBookmarkState, ...payload };
+      debouncedSendBookmarks(bookmarkedState);
+    },
+    [bulkBookmarkState, debouncedSendBookmarks],
+  );
+
   const addCommentToBatch = useCallback(
     (payload: CommentPayload) => {
       setBulkCommentsState((prev) => {
@@ -126,10 +186,14 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     <FeedContext.Provider
       value={{
         addLikeToBatch,
+        addBookmarkToBatch,
         addCommentToBatch,
         bulkLikeState,
+        bulkBookmarkState,
         rolledBackLikes,
+        rolledBackBookmarks,
         setRolledBackLikes,
+        setRolledBackBookmarks,
         bulkCommentsState,
         failedComments,
         setFailedComments,

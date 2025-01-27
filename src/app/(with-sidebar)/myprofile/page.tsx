@@ -21,9 +21,8 @@ const MyProfile = () => {
     queryLoading,
     hasMorePosts,
     postDataWithComments,
-    handleLikeButton,
     handleChange,
-    addComment,
+    bookmarkedPosts,
     errorMessage,
     postCount,
     followerCount,
@@ -50,6 +49,7 @@ const MyProfile = () => {
             <PostsFeed
               articlesList={postDataWithComments ?? []}
               likedPosts={likedPosts}
+              bookmarkedPosts={bookmarkedPosts}
             />
           ) : (
             <ShowMessage
@@ -88,6 +88,7 @@ const MyProfile = () => {
           <PostsFeed
             articlesList={userLikedPosts ?? []}
             likedPosts={likedPosts}
+            bookmarkedPosts={bookmarkedPosts}
           />
           {queryLoading && skip > 0 ? (
             <Loader height="auto" width="auto" title="" />
@@ -116,10 +117,9 @@ const MyProfile = () => {
     tab,
     postDataWithComments,
     likedPosts,
-    handleLikeButton,
-    addComment,
     hasMorePosts,
     userLikedPosts,
+    bookmarkedPosts,
   ]);
   return (
     <Grid columns={1}>

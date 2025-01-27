@@ -1,17 +1,17 @@
-import {
-  MyFeedTabsEnum,
-  type Post,
-} from "../types/types";
+import { MyFeedTabsEnum, type Post } from "../types/types";
 import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 import { PostStatus } from "@prisma/client";
+import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
+import useLikePosts from "~/app/_hooks/useLikePosts";
 
 type useMyFeedPageReturn = {
   postDataWithComments: Post[];
   likedPosts: string[];
+  bookmarkedPosts: string[];
   queryLoading: boolean;
   hasMorePosts: boolean;
   skip: number;
@@ -22,7 +22,6 @@ type useMyFeedPageReturn = {
 
 const useMyFeedPage = (): useMyFeedPageReturn => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [likedPosts, setLikedPosts] = useState<string[]>([]);
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState(true);
 
@@ -30,7 +29,6 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
   const userEmail = user?.primaryEmailAddress?.emailAddress;
 
   const postMutation = trpc.post;
-  const likeMutation = trpc.likes;
 
   const {
     data: postData,
@@ -70,28 +68,32 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     [posts],
   );
 
-  const { data: likedPostData } = likeMutation.getUserLikes.useQuery(
-    { userEmail: userEmail ?? "", postStatus: PostStatus.PUBLISHED.toString().toUpperCase() },
-    { enabled: !!userEmail },
-  );
+  const { likedPosts } = useLikePosts({
+    userEmail: userEmail ?? "",
+    postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
+  });
+
+  const { bookmarkedPosts } = useBookmarkPosts({
+    userEmail: userEmail ?? "",
+  });
+
   useEffect(() => {
     if (postData?.posts) {
       setPosts((prev) => {
         const existingPostIds = new Set(prev.map((post) => post.id));
         // TODO: find a better way to remove duplicate posts, try out using trpc infinite query.
-        const newPosts = postData.posts.filter((post) => !existingPostIds.has(post.id));
+        const newPosts = postData.posts.filter(
+          (post) => !existingPostIds.has(post.id),
+        );
         return [...prev, ...newPosts];
       });
     }
   }, [postData]);
 
-  useEffect(() => {
-    if (likedPostData) setLikedPosts(likedPostData);
-  }, [likedPostData]);
-
   return {
     postDataWithComments,
     likedPosts,
+    bookmarkedPosts,
     queryLoading,
     hasMorePosts:postData?.hasMorePosts ?? false,
     skip,

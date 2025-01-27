@@ -5,7 +5,7 @@ import WritingPadEditor from "../writingPagEditor/WritingPadEditor";
 import { useContentForm } from "./hooks/useContentForm";
 import { useDraftContentAutosave } from "./hooks/useDraftContentAutosave";
 import EditorActionsBar from "../editorActionsBar/EditorActionsBar";
-import { PostStatus } from "~/app/editor/types/types";
+import { type PostStatus } from "~/app/editor/types/types";
 
 type WritingPadProps = {
   handleOpen: () => void;

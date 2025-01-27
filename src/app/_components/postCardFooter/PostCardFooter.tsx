@@ -4,6 +4,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
 import TollIcon from "@mui/icons-material/Toll";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -18,6 +19,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   comments,
   bids,
   isLiked,
+  isBookmarked,
   handleLikeButton,
   openCommentBox,
   postId,
@@ -27,17 +29,17 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   showBookmark,
   showShare,
   showEditPost,
-  handleEditPost
-
+  handleEditPost,
+  handleBookmark,
 }) => {
   const [open, setOpen] = React.useState(false);
   const handleAction = (actionType: string) => {
     switch (actionType) {
       case "like":
-        console.log("like");
+        handleLikeButton();
         break;
       case "comment":
-        console.log("comment");
+        openCommentBox();
         break;
       case "share":
         console.log("share");
@@ -47,7 +49,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         console.log("bid");
         break;
       case "bookmark":
-        console.log("bookmark");
+        handleBookmark();
         break;
       default:
         console.log("default");
@@ -82,7 +84,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
             )
           }
           label={likes && likes > 0 ? likes : "0"}
-          onClick={handleLikeButton}
+          onClick={() => handleAction("like")}
         />
         }
 
@@ -105,7 +107,13 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
       </Box>
       { showBookmark && <Box>
         <PostActionButton
-          icon={<BookmarkBorderIcon sx={iconSx} />}
+          icon={
+            isBookmarked ? (
+              <BookmarkIcon sx={iconSx} />
+            ) : (
+              <BookmarkBorderIcon sx={iconSx} />
+            )
+          }
           label=""
           onClick={() => handleAction("bookmark")}
           sx={{

@@ -14,11 +14,8 @@ import { useClerk } from "@clerk/nextjs";
 import RightSideBarSkeletonAuthor from "./RightSideBarSkeletonAuthor";
 import RightSideBarSkeletonPost from "./RightSideBarSkeletonPost";
 import { STATIC_TEXTS } from "../static/staticText";
-import type { FeaturedPost, UserToFollow } from "~/app/(with-sidebar)/myfeed/types/types";
 
 const RightSideBar = () => {
-  const USERS_TO_FOLLOW_LIMIT = 5;
-
   const { user } = useClerk();
   const router = useRouter();
   const featuredPostMutation = trpc.featuredPost;

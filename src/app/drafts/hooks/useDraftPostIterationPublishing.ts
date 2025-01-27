@@ -1,6 +1,6 @@
 import { usePost } from "../../_hooks/usePost";
 import { useUser } from "~/context/userContext";
-import { DraftPost} from "../../editor/types/types";
+import type { DraftPost} from "../../editor/types/types";
 import { toast } from "react-toastify";
 import { useDraftPost } from "../../_hooks/useDraftPost";
 

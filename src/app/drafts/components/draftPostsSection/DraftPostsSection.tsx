@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useRef, useState, useCallback } from "react
 import { Card, CardContent, Box } from "@mui/material";
 import PostCardContent from "~/app/_components/postCardContent/PostCardContent";
 import PublishDraftDialog from "../publishDraftDialog/PublishDraftDialog";
-import { DraftPost, PostStatus } from "~/app/editor/types/types";
+import { type DraftPost, PostStatus } from "~/app/editor/types/types";
 import EditPostFooter from "~/app/editor/_components/editPostFooter/EditPostFooter";
 import { useSelectedDraftPost } from "../../contexts/SelectedDraftPostContext";
 

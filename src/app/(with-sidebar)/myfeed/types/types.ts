@@ -91,6 +91,7 @@ export type ThumbnailDetails = {
 export type PostsFeedProps = {
   articlesList: Post[];
   likedPosts: string[];
+  bookmarkedPosts: string[];
 };
 
 export type PostCardFooterProps = {
@@ -98,6 +99,7 @@ export type PostCardFooterProps = {
   comments: Comment[];
   bids: Bid[];
   isLiked?: boolean;
+  isBookmarked?: boolean;
   handleLikeButton: () => void;
   openCommentBox: () => void;
   postId: string;
@@ -108,6 +110,7 @@ export type PostCardFooterProps = {
   showShare?: boolean;
   showEditPost?: boolean;
   handleEditPost?: () => void;
+  handleBookmark: () => void;
 };
 
 export type UserNameProfileProps = {
