@@ -19,9 +19,7 @@ const Page = () => {
     errorMessage,
     likedDraftIterations,
   } = useReviewFeedbackData();
-  console.log("query loading",queryLoading)
-
-
+  
   const renderUI = useMemo(() => {
     if (queryLoading && skip === 0) {
       return <Loader title="Loading Draft Posts ..." height="100%" width="100%" />;

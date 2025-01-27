@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useUser } from "~/context/userContext";
 import config from "~/app/_config/config";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
@@ -45,21 +45,27 @@ const useReviewFeedbackData = (): useReviewFeedbackDataReturn => {
     setHasMoreData: setHasMoreDraftIterations,
   });
 
-  useEffect(() => {
-    if (!iterationsSentForReviewData) return;
+  const newIterationsData = useMemo(() => {
+    if (!iterationsSentForReviewData) return { newIterations: [], hasMore: false };
+
     const transformedData = iterationsSentForReviewData.map(item => ({
       ...item.iteration,
       likes: item.iteration.likes,
       DraftPost: item.iteration.DraftPost,
     }));
-    setIterationsSentForReview((prev) => {
-      const newIterations = transformedData.filter(
-        (newItem) => !prev.some((prevItem) => prevItem.id === newItem.id)
-      );
-      return [...prev, ...newIterations];
-    });
-    setHasMoreDraftIterations(iterationsSentForReviewData.length >= config.lazyLoading.limit);
-  }, [iterationsSentForReviewData]);
+
+    const newIterations = transformedData.filter(
+      (newItem) => !iterationsSentForReview.some((prevItem) => prevItem.id === newItem.id)
+    );
+
+    const hasMore = newIterations.length >= config.lazyLoading.limit;
+    return { newIterations, hasMore };
+  }, [iterationsSentForReviewData, iterationsSentForReview]);
+
+  if (newIterationsData.newIterations.length > 0) {
+    setIterationsSentForReview((prev) => [...prev, ...newIterationsData.newIterations]);
+    setHasMoreDraftIterations(newIterationsData.hasMore);
+  }
 
   return {
     iterationsSentForReview,

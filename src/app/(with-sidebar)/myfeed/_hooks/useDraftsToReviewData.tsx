@@ -7,10 +7,10 @@ import { trpc } from "~/server/client";
 import { PostStatus } from "~/app/editor/types/types";
 
 
-type useDraftsToReviewDataProps = {
+type UseDraftsToReviewDataProps = {
   activeTab: MyFeedTabsEnum;
 };
-type useDraftsToReviewDataReturn = {
+type UseDraftsToReviewDataReturn = {
   iterationsToReview: IterationWithReviews[];
   hasMoreDraftIterations: boolean;
   skip: number;
@@ -22,7 +22,7 @@ type useDraftsToReviewDataReturn = {
 };
 
 
-type useDraftsToReviewDataType = (props: useDraftsToReviewDataProps) => useDraftsToReviewDataReturn;
+type useDraftsToReviewDataType = (props: UseDraftsToReviewDataProps) => UseDraftsToReviewDataReturn;
 
 const useDraftsToReviewData: useDraftsToReviewDataType = ({activeTab}) => {
   const {user} = useUser();
