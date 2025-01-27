@@ -46,10 +46,10 @@ const Page = () => {
   const handleSendForReviewMutation = trpc.draftPostIterationReview.saveDraftPostIterationReviewers.useMutation();
 
   const { user } = useUser(); 
-  const handleSendForReview = (selectedUsersForReview: string[]) => {   
+  const handleSendForReview = async (selectedUsersForReview: string[]) => {   
     setSendForReviewDialogOpen(false);
     if (!selectedIteration) return;
-    handleSendForReviewMutation.mutateAsync({
+    await handleSendForReviewMutation.mutateAsync({
       requesterId: user?.id ?? "",
       iterationId: selectedIteration.id,
       reviewers: selectedUsersForReview,

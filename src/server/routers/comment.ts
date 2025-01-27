@@ -4,7 +4,7 @@ import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import getUserDetails from "../utils/getUserDetails";
-import { PostStatus } from "@prisma/client";
+import type { PostStatus } from "@prisma/client";
 
 const commentSchema = yup.object({
   userEmail: yup.string().email().required(),

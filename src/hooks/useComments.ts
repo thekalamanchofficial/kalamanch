@@ -146,12 +146,16 @@ export function useComments({
     });
 
     if (failedComments.length > 0) {
-      postStatus == PostStatus.PUBLISHED.toString().toUpperCase() && setFailedComments((prev) =>
-        prev.filter((comment) => comment.postId !== postId),
-      );
-      postStatus == PostStatus.DRAFT.toString().toUpperCase() && setFailedComments((prev) =>
-        prev.filter((comment) => comment.iterationId !== iterationId),
-      );
+      if(postStatus == PostStatus.PUBLISHED.toString().toUpperCase()){
+        setFailedComments((prev) =>
+          prev.filter((comment) => comment.postId !== postId),
+        );
+      }
+      if(postStatus == PostStatus.DRAFT.toString().toUpperCase()){
+        setFailedComments((prev) =>
+          prev.filter((comment) => comment.iterationId !== iterationId),
+        );
+      }
     }
     
   }, [failedComments, comments, updateCommentsTree, setFailedComments, postId, iterationId, postStatus]);

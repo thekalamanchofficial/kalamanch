@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "~/context/userContext";
-import { IterationWithReviews, MyFeedTabsEnum } from "../types/types";
+import { type IterationWithReviews, MyFeedTabsEnum } from "../types/types";
 import config from "~/app/_config/config";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 import { trpc } from "~/server/client";

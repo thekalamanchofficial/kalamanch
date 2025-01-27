@@ -5,7 +5,7 @@ import { Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import React from "react";
 import { type DraftPost, PostEntityType } from "../../editor/types/types";
-import { IterationWithReviews,type Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { IterationWithReviews, Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import { useRouter } from "next/navigation";
 import { useSelectedDraftPost } from "../../drafts/contexts/SelectedDraftPostContext";
 import { useSelectedPublishedPost } from "../../editor/contexts/SelectedPublishedPostContext";
@@ -187,7 +187,7 @@ const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
           
           }}
         >
-          {draftIterationsSentForReview.map((item,index) => {
+          {draftIterationsSentForReview.map((item) => {
             return (
               <Box
                 sx={{

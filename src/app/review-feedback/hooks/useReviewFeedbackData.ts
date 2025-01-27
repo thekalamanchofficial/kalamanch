@@ -4,7 +4,7 @@ import config from "~/app/_config/config";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 import { trpc } from "~/server/client";
 import { PostStatus } from "~/app/editor/types/types";
-import { IterationWithReviews } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { IterationWithReviews } from "~/app/(with-sidebar)/myfeed/types/types";
 
 type useReviewFeedbackDataReturn = {
   iterationsSentForReview: IterationWithReviews[];

@@ -1,6 +1,6 @@
 "use client";
 import { Box, Grid2 as Grid } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
 import CustomTabs from "~/app/_components/CustomTabs/CustomTabs";
 import { tabs } from "./_config/config";
@@ -99,7 +99,7 @@ const MyFeed = () => {
     }
 
     return <ShowMessage title="No Posts Found." />;
-  }, [errorMessage, queryLoading, skip, activeTab, postDataWithComments, hasMorePosts, likedPosts,bookmarkedPosts, iterationsToReview, likedDraftIterations, draftIterationsQueryLoading, hasMoreDraftIterations, draftIterationsSkip]);
+  }, [errorMessage, queryLoading, skip, activeTab, postDataWithComments, hasMorePosts, likedPosts,bookmarkedPosts, iterationsToReview, likedDraftIterations, draftIterationsQueryLoading,draftIterationsErrorMessage, hasMoreDraftIterations, draftIterationsSkip]);
 
   return (
     <Box sx={{ height: "100%", width: "100%" }}>

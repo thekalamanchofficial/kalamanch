@@ -10,7 +10,6 @@ import {
   BULK_BOOKMARK_DEBOUNCE_DELAY,
 } from "../_config/config";
 import type { CommentPayload } from "../types/types";
-import { Like } from "@prisma/client";
 import { PostStatus } from "~/app/editor/types/types";
 
 type LikePayload = Record<string, { liked: boolean , postStatus: string }>;
@@ -99,7 +98,7 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
         ...prev,
         ...variables.comments.map((comment) => ({
           ...comment,
-          userProfileImageUrl: comment.userProfileImageUrl || "",
+          userProfileImageUrl: comment.userProfileImageUrl ?? "",
         })),
       ]);
       toast.error("Some comments failed to post. Please try again.");

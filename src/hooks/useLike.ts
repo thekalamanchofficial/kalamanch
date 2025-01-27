@@ -44,7 +44,7 @@ export function useLike({
       });
 
     }
-  }, [hasLiked, postId, userEmail, addLikeToBatch]);
+  }, [hasLiked, postId, userEmail, addLikeToBatch,iterationId,postStatus]);
 
   useEffect(() => {
     setHasLiked(initialIsLiked);

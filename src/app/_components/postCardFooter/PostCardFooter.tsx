@@ -11,7 +11,6 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import PostActionButton from "../postActionButton/PostActionButton";
 import SharePostDialog from "../sharePostDialog/SharePostDialog";
-import { PostEntityType, PostStatus } from "~/app/editor/types/types";
 import { STATIC_TEXTS } from "../static/staticText";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
@@ -49,7 +48,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         console.log("bid");
         break;
       case "bookmark":
-        handleBookmark();
+        handleBookmark?.();
         break;
       default:
         console.log("default");
@@ -91,7 +90,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         { showComments && <PostActionButton
           icon={<MessageIcon sx={iconSx} />}
           label={comments && comments.length > 0 ? comments.length : "0"}
-          onClick={() => openCommentBox()}
+          onClick={() => handleAction("comment")}
         />}
         { showBids&& <PostActionButton
           icon={<TollIcon sx={iconSx} />}

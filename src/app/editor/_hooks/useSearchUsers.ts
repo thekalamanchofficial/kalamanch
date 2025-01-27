@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { debounce } from "lodash"
 import { trpc } from "~/server/client"
-import { UserSchema } from "~/app/(with-sidebar)/myprofile/types/types"
+import type { UserSchema } from "~/app/(with-sidebar)/myprofile/types/types"
 import { useUser } from "~/context/userContext"
 
 type UseSearchUsersReturn = {
@@ -61,7 +61,7 @@ export const useSearchUsers = (): UseSearchUsersReturn => {
     }
   }, [users, hasMore])
 
-  const handleSearchChange = debounce((query: string) => {
+  const handleSearchChange = debounce(() => {
     setIsUserTyping(false)
   }, 1000)
 
@@ -72,7 +72,7 @@ export const useSearchUsers = (): UseSearchUsersReturn => {
     setUsers([]) // Reset users for fresh search results
     setHasMore(true)
     setSkip(0) // Reset pagination
-    handleSearchChange(query)
+    handleSearchChange()
   }
 
   return { searchTerm,users, handleSearch, secondLastUserRef }

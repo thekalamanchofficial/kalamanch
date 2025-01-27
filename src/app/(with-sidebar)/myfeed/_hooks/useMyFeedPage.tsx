@@ -1,4 +1,4 @@
-import { MyFeedTabsEnum, type Post } from "../types/types";
+import {type Post } from "../types/types";
 import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";

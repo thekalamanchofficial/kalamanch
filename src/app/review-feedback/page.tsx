@@ -59,7 +59,7 @@ const Page = () => {
         </Grid>
       </>
     );
-  }, [iterationsSentForReview, queryLoading, errorMessage, skip, hasMoreDraftIterations, likedDraftIterations]);
+  }, [iterationsSentForReview, queryLoading, errorMessage, skip, hasMoreDraftIterations, likedDraftIterations,handleScroll]);
 
   return (
     <>

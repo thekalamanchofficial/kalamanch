@@ -1,5 +1,5 @@
 "use client";
-import { IterationWithReviews, ReviewScreen, type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type IterationWithReviews, ReviewScreen } from "~/app/(with-sidebar)/myfeed/types/types";
 import { Fragment, memo } from "react";
 import { useClerk } from "@clerk/nextjs";
 import { trpc } from "~/server/client";

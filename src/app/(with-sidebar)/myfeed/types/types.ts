@@ -1,5 +1,5 @@
 import { type SxProps } from "@mui/material";
-import { DraftPost, Iteration, PostEntityType, PostStatus } from "~/app/editor/types/types";
+import { DraftPost, Iteration } from "~/app/editor/types/types";
 
 export type MenuItemList = {
   label: string;
@@ -110,7 +110,7 @@ export type PostCardFooterProps = {
   showShare?: boolean;
   showEditPost?: boolean;
   handleEditPost?: () => void;
-  handleBookmark: () => void;
+  handleBookmark?: () => void;
 };
 
 export type UserNameProfileProps = {

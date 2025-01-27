@@ -1,7 +1,7 @@
 "use client";
-import React, { Fragment, useEffect, useRef, useState, useCallback } from "react";
-import { Card, CardContent, Box, Divider } from "@mui/material";
-import { IterationWithReviews, ReviewScreen } from "~/app/(with-sidebar)/myfeed/types/types";
+import React, { Fragment, useEffect, useRef, useCallback } from "react";
+import {Box, Divider } from "@mui/material";
+import { type IterationWithReviews, ReviewScreen } from "~/app/(with-sidebar)/myfeed/types/types";
 import { useSelectedDraftIteration } from "~/app/review-feedback/contexts/SelectedDraftIterationContext";
 import DraftIterationReviewPost from "~/app/_components/draftIterationReviewPost/DraftIterationReviewPost";
 import { useClerk } from "@clerk/nextjs";

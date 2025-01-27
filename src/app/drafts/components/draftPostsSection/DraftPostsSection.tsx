@@ -69,12 +69,12 @@ export default function DraftPostsSection({
       selectedPostRef.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     setSelectedDraftPostId(selectedDraftPostIdInLeftSideBar)
-  }, [selectedDraftPostIdInLeftSideBar]);
+  }, [selectedDraftPostIdInLeftSideBar,setSelectedDraftPostId]);
 
   useEffect(() => {
     setSelectedDraftPostId(draftPosts[0]?.id ?? "");
     setSelectedDraftPostIdInLeftSideBar(draftPosts[0]?.id ?? "")
-  }, [draftPosts]);
+  }, [draftPosts,setSelectedDraftPostId,setSelectedDraftPostIdInLeftSideBar]);
 
   return (
     <Box

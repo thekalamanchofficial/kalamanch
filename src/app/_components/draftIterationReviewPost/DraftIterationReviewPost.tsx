@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent, Box } from "@mui/material";
 import { memo, useState, useCallback } from "react";
-import { IterationWithReviews, ReviewScreen, type Post as PostType } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type IterationWithReviews, ReviewScreen } from "~/app/(with-sidebar)/myfeed/types/types";
 import UserNameProfile from "../userNameProfile/UserNameProfile";
 import PostCardContent from "../postCardContent/PostCardContent";
 import PostCardFooter from "../postCardFooter/PostCardFooter";
@@ -83,7 +83,6 @@ const DraftIterationReviewPost = memo<DraftIterationReviewPostProps>(({ draftIte
           showComments={true}
           showEditPost={ReviewScreen.REVIEW_FEEDBACK_SCREEN === reviewScreen}
           handleEditPost={()=> {navigateToPostEditor(draftIterationReviewPost.DraftPost.id ?? "",PostStatus.DRAFT)}}
-
         />
         {isCommentOpen && (
           <CommentSection
