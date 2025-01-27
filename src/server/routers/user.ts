@@ -186,84 +186,86 @@ export const userRouter = router({
         console.log(error);
       }
     }),
-    searchUsersSortedByFollowing: publicProcedure
-  .input(
-    yup.object({
-      searchTerm: yup.string().default(""),
-      skip: yup.number().default(0),
-      limit: yup.number().default(10),
-      userFollowing: yup.array(yup.string()).default([]),
-    })
-  )
-  .query(async ({ input }) => {
-    const {searchTerm, skip, limit, userFollowing} = input;
+  searchUsersSortedByFollowing: publicProcedure
+    .input(
+      yup.object({
+        searchTerm: yup.string().default(""),
+        skip: yup.number().default(0),
+        limit: yup.number().default(10),
+        userFollowing: yup.array(yup.string()).default([]),
+      }),
+    )
+    .query(async ({ input }) => {
+      const { searchTerm, skip, limit, userFollowing } = input;
 
-
-    const searchResults = await prisma.user.findMany({
-      where: {
-        AND: [
-        {OR: [
-          {
-            name: {
-              contains: searchTerm,
-              mode: "insensitive", // Case-insensitive search
+      const searchResults = await prisma.user.findMany({
+        where: {
+          AND: [
+            {
+              OR: [
+                {
+                  name: {
+                    contains: searchTerm,
+                    mode: "insensitive", // Case-insensitive search
+                  },
+                },
+                {
+                  email: {
+                    contains: searchTerm,
+                    mode: "insensitive",
+                  },
+                },
+              ],
             },
-          },
-          {
-            email: {
-              contains: searchTerm,
-              mode: "insensitive",
-            },
-          },
-        ]},
-        { id: { in: cleanArray(userFollowing) } },
-        ],
-      },
-      skip,
-      take: limit,
-      orderBy: [
-        {
-          name: "asc", 
+            { id: { in: cleanArray(userFollowing) } },
+          ],
         },
-      ],
-    });
+        skip,
+        take: limit,
+        orderBy: [
+          {
+            name: "asc",
+          },
+        ],
+      });
 
-    if(searchResults?.length >= limit){
+      if (searchResults?.length >= limit) {
+        return searchResults;
+      }
+      const newSkip = skip + searchResults?.length;
+      const newLimit = limit - searchResults?.length;
+
+      const remainingResults = await prisma.user.findMany({
+        where: {
+          AND: [
+            {
+              OR: [
+                {
+                  name: {
+                    contains: searchTerm,
+                    mode: "insensitive", // Case-insensitive search
+                  },
+                },
+                {
+                  email: {
+                    contains: searchTerm,
+                    mode: "insensitive",
+                  },
+                },
+              ],
+            },
+            { id: { notIn: cleanArray(userFollowing) } },
+          ],
+        },
+        skip: newSkip,
+        take: newLimit,
+        orderBy: [
+          {
+            name: "asc",
+          },
+        ],
+      });
+      searchResults.push(...remainingResults);
       return searchResults;
-    }
-    const newSkip = skip + searchResults?.length;
-    const newLimit = limit - searchResults?.length;
-
-    const remainingResults = await prisma.user.findMany({
-      where: {
-        AND: [
-          {OR: [
-            {
-              name: {
-                contains: searchTerm,
-                mode: "insensitive", // Case-insensitive search
-              },
-            },
-            {
-              email: {
-                contains: searchTerm,
-                mode: "insensitive",
-              },
-            },
-            
-           ]},
-          { id: { notIn: cleanArray(userFollowing) } },
-        ],
-      },
-      skip: newSkip,
-      take: newLimit,
-      orderBy: [
-        {
-          name: "asc", 
-        },
-      ],
-    });
-    searchResults.push(...remainingResults);
-    return searchResults;
-  }),
+    }),
 });

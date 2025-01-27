@@ -23,7 +23,7 @@ interface ReviewDialogProps {
 }
 
 export default function SendForReviewDialog({ open, onClose, onSubmit }: ReviewDialogProps) {
-  const { searchTerm,users ,handleSearch, secondLastUserRef } = useSearchUsers();
+  const { searchTerm,users ,handleSearch, handleScroll } = useSearchUsers();
   const { selectedUsers, toggleUserSelection } = useSelectedUsers()
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -47,9 +47,9 @@ export default function SendForReviewDialog({ open, onClose, onSubmit }: ReviewD
           }}
         />
       </Box>
-      <DialogContent sx={{ pt: 0, maxHeight: "500px", overflowY: "scroll" }}>
+      <DialogContent sx={{ pt: 0, maxHeight: "500px", overflowY: "scroll" }} onScroll={handleScroll}>
         <List>
-          {users.map((user, index) => (
+          {users.map((user) => (
             <ListItem key={user.id} disablePadding>
               <ListItemButton
                 onClick={() => toggleUserSelection(user.id)}
@@ -69,9 +69,6 @@ export default function SendForReviewDialog({ open, onClose, onSubmit }: ReviewD
                   }}
                 />
               </ListItemButton>
-              {index === users.length - 1 && (
-                <div ref={secondLastUserRef} style={{ height: 1 }} />
-              )}
             </ListItem>
           ))}
         </List>

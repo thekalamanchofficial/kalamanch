@@ -19,9 +19,7 @@ import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorStat
 import { useNavigateToPostEditor } from "./_hooks/useNavigateToPostEditor";
 import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
-import { trpc } from "~/server/client";
-import { useUser } from "~/context/userContext";
-import { toast } from "react-toastify";
+import { useSendForReview } from "./_hooks/useSendForReview";
 
 const Page = () => {
   const { activeTab, changeTab } = useTabs();
@@ -42,20 +40,8 @@ const Page = () => {
   const {isCreatePostFormOpen,openCreatePostForm, closeCreatePostForm, formData } = useCreatePostFormDataState({ postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails});
   const {handlePostUnPublishing } = usePostUnpublishing({setPublishedPostsForUser});
   const {navigateToPostEditor} = useNavigateToPostEditor({changeTab});
-  const [sendForReviewDialogOpen , setSendForReviewDialogOpen] = useState(false);
-  const handleSendForReviewMutation = trpc.draftPostIterationReview.saveDraftPostIterationReviewers.useMutation();
+  const { sendForReviewDialogOpen, setSendForReviewDialogOpen, handleSendForReview } = useSendForReview();
 
-  const { user } = useUser(); 
-  const handleSendForReview = async (selectedUsersForReview: string[]) => {   
-    setSendForReviewDialogOpen(false);
-    if (!selectedIteration) return;
-    await handleSendForReviewMutation.mutateAsync({
-      requesterId: user?.id ?? "",
-      iterationId: selectedIteration.id,
-      reviewers: selectedUsersForReview,
-    });
-    toast.success("Sent for review successfully");
-  };
 
   return (
     <>
@@ -144,7 +130,7 @@ const Page = () => {
               update = {Boolean(publishedPost ?? draftPost)}
             />
           )}
-          {sendForReviewDialogOpen && <SendForReviewDialog open={sendForReviewDialogOpen} onClose={() => setSendForReviewDialogOpen(false)} onSubmit={(selectedUsersForReview: string[]) => handleSendForReview(selectedUsersForReview)} />}
+          {sendForReviewDialogOpen && <SendForReviewDialog open={sendForReviewDialogOpen} onClose={() => setSendForReviewDialogOpen(false)} onSubmit={(selectedUsersForReview: string[]) => handleSendForReview(selectedUsersForReview,selectedIteration?.id)} />}
         </Box>
       </Grid>
     </>

@@ -1,36 +1,48 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { debounce } from "lodash"
 import { trpc } from "~/server/client"
 import type { UserSchema } from "~/app/(with-sidebar)/myprofile/types/types"
 import { useUser } from "~/context/userContext"
+import useLazyLoading from "~/app/_hooks/useLazyLoading"
+import config from "~/app/_config/config";
+
 
 type UseSearchUsersReturn = {
   searchTerm: string
   users: UserSchema[]
   handleSearch: (event: React.ChangeEvent<HTMLInputElement>) => void
-  secondLastUserRef: React.RefObject<HTMLDivElement>
+  handleScroll: () => void
 }
 
 export const useSearchUsers = (): UseSearchUsersReturn => {
-  const limit = 20
   const { user } = useUser()  
   const [users, setUsers] = useState<UserSchema[]>([])
   const [skip, setSkip] = useState(0)
-  const [hasMore, setHasMore] = useState(true)
+  const [hasMoreUsers, setHasMoreUsers] = useState(true)
   const [isUserTyping, setIsUserTyping] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   
-  const { data } = trpc.user.searchUsersSortedByFollowing.useQuery(
-    { searchTerm, skip, limit, userFollowing: user?.following ?? [] },
-    { enabled: !isUserTyping }
+  const { data, isLoading: queryLoading , error } = trpc.user.searchUsersSortedByFollowing.useQuery(
+    { searchTerm, skip, limit: skip == 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit, userFollowing: user?.following ?? [] },
+    { enabled: Boolean(!isUserTyping && hasMoreUsers) }
   )
 
-  const secondLastUserRef = useRef<HTMLDivElement | null>(null)
+
+  const { handleScroll } = useLazyLoading({
+    queryLoading,
+    error: error?.message ?? "",
+    initialLimit: config.lazyLoading.initialLimit,
+    limit: config.lazyLoading.limit,
+    skip,
+    setSkip,
+    hasMoreData: hasMoreUsers,
+    setHasMoreData: setHasMoreUsers,
+  });
 
   useEffect(() => {
     if (data) {
-      if (data.length < limit) {
-        setHasMore(false)
+      if (data.length < config.lazyLoading.limit) {
+        setHasMoreUsers(false)
       }
       setUsers((prev) =>{
         const existingUserIds = new Set(prev.map((user) => user.id));
@@ -40,26 +52,6 @@ export const useSearchUsers = (): UseSearchUsersReturn => {
     }
   }, [data])
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting && hasMore) {
-          setSkip((prevSkip) => prevSkip + limit)
-        }
-      },
-      { rootMargin: "100px" }
-    )
-
-    if (secondLastUserRef.current) {
-      observer.observe(secondLastUserRef.current)
-    }
-
-    return () => {
-      if (secondLastUserRef.current) {
-        observer.unobserve(secondLastUserRef.current)
-      }
-    }
-  }, [users, hasMore])
 
   const handleSearchChange = debounce(() => {
     setIsUserTyping(false)
@@ -70,10 +62,10 @@ export const useSearchUsers = (): UseSearchUsersReturn => {
     setSearchTerm(query)
     setIsUserTyping(true)
     setUsers([]) // Reset users for fresh search results
-    setHasMore(true)
+    setHasMoreUsers(true)
     setSkip(0) // Reset pagination
     handleSearchChange()
   }
 
-  return { searchTerm,users, handleSearch, secondLastUserRef }
+  return { searchTerm,users, handleSearch,handleScroll }
 }
