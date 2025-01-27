@@ -1,5 +1,5 @@
-import { currentUser, getAuth } from "@clerk/nextjs/server";
-import { Metadata } from "next";
+import { currentUser } from "@clerk/nextjs/server";
+import type { Metadata } from "next";
 import Post from "~/app/_components/post/Post";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import { trpcServer } from "~/app/_trpc/server";
@@ -15,8 +15,13 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
   const userLikedPosts = await trpcServer.likes.getUserLikedPost({
     userEmail,
   });
+  const userBookmarks = await trpcServer.bookmarks.getUserBookmarkPosts({
+    limit: null,
+    userEmail,
+  });
 
   const isLiked = userLikedPosts?.some((post) => post.id === params.postId);
+  const isBookmarked = userBookmarks.items?.some((post) => post.id === params.postId);
 
   if (!post) {
     return (
@@ -40,6 +45,7 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
       post={processedPost}
       isLiked={isLiked}
       userFollowing={userFollowings}
+      isBookmarked={isBookmarked}
     />
   );
 };

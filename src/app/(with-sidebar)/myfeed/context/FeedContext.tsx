@@ -4,17 +4,28 @@ import { trpc } from "~/server/client";
 import { useDebounce } from "~/hooks/useDebounce";
 import { useClerk } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { BULK_COMMENT_DEBOUNCE_DELAY, BULK_LIKE_DEBOUNCE_DELAY } from "../_config/config";
+import {
+  BULK_COMMENT_DEBOUNCE_DELAY,
+  BULK_LIKE_DEBOUNCE_DELAY,
+  BULK_BOOKMARK_DEBOUNCE_DELAY,
+} from "../_config/config";
 import type { CommentPayload } from "../types/types";
 
 type LikePayload = Record<string, { liked: boolean }>;
+type BookmarkPayload = Record<string, { bookmarked: boolean }>;
 
 type FeedContextValue = {
   addLikeToBatch: (payload: LikePayload) => void;
+  addBookmarkToBatch: (payload: BookmarkPayload) => void;
   addCommentToBatch: (payload: CommentPayload) => void;
   bulkLikeState: LikePayload | null;
+  bulkBookmarkState: BookmarkPayload | null;
   rolledBackLikes: Record<string, boolean>;
+  rolledBackBookmarks: Record<string, boolean>;
   setRolledBackLikes: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
+  >;
+  setRolledBackBookmarks: React.Dispatch<
     React.SetStateAction<Record<string, boolean>>
   >;
   bulkCommentsState: CommentPayload[];
@@ -28,7 +39,13 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [bulkLikeState, setBulkLikeState] = useState<LikePayload>({});
+  const [bulkBookmarkState, setBulkBookmarkState] = useState<BookmarkPayload>(
+    {},
+  );
   const [rolledBackLikes, setRolledBackLikes] = useState<
+    Record<string, boolean>
+  >({});
+  const [rolledBackBookmarks, setRolledBackBookmarks] = useState<
     Record<string, boolean>
   >({});
   const [bulkCommentsState, setBulkCommentsState] = useState<CommentPayload[]>(
@@ -56,6 +73,23 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   });
 
+  const bulkBookmarkMutation = trpc.bookmarks.bulkBookmarkPost.useMutation({
+    onSuccess: () => {
+      setBulkBookmarkState({});
+      setRolledBackBookmarks({});
+    },
+    onError: () => {
+      const newRolledBackState: Record<string, boolean> = {};
+      Object.entries(bulkBookmarkState).forEach(([postId, { bookmarked }]) => {
+        newRolledBackState[postId] = !bookmarked;
+      });
+      setRolledBackBookmarks(newRolledBackState);
+      setBulkBookmarkState({});
+
+      toast.error("Bookmark operations failed. Please try again.");
+    },
+  });
+
   const bulkCommentMutation = trpc.comments.bulkAddComments.useMutation({
     onSuccess: () => {
       setBulkCommentsState([]);
@@ -80,6 +114,23 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     await bulkLikeMutation.mutateAsync(input);
   }, BULK_LIKE_DEBOUNCE_DELAY);
 
+  const debouncedSendBookmarks = useDebounce(
+    async (bookmarkedState: BookmarkPayload) => {
+      if (!userEmail || Object.keys(bookmarkedState).length === 0) return;
+
+      const bulkBookmarkPayload = Object.entries(bookmarkedState).map(
+        ([postId, { bookmarked }]) => ({
+          postId,
+          bookmarked,
+        }),
+      );
+
+      const input = { userEmail, bookmarks: bulkBookmarkPayload };
+      await bulkBookmarkMutation.mutateAsync(input);
+    },
+    BULK_BOOKMARK_DEBOUNCE_DELAY,
+  );
+
   const debouncedSendComments = useDebounce(
     async (comments: CommentPayload[]) => {
       if (!userEmail || comments.length === 0) return;
@@ -103,6 +154,15 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     [bulkLikeState, debouncedSendLikes],
   );
 
+  const addBookmarkToBatch = useCallback(
+    (payload: BookmarkPayload) => {
+      setBulkBookmarkState((prev) => ({ ...prev, ...payload }));
+      const bookmarkedState = { ...bulkBookmarkState, ...payload };
+      debouncedSendBookmarks(bookmarkedState);
+    },
+    [bulkBookmarkState, debouncedSendBookmarks],
+  );
+
   const addCommentToBatch = useCallback(
     (payload: CommentPayload) => {
       setBulkCommentsState((prev) => {
@@ -118,10 +178,14 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     <FeedContext.Provider
       value={{
         addLikeToBatch,
+        addBookmarkToBatch,
         addCommentToBatch,
         bulkLikeState,
+        bulkBookmarkState,
         rolledBackLikes,
+        rolledBackBookmarks,
         setRolledBackLikes,
+        setRolledBackBookmarks,
         bulkCommentsState,
         failedComments,
         setFailedComments,

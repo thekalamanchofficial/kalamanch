@@ -1,8 +1,7 @@
 import * as yup from "yup";
 import { router, publicProcedure } from "~/server/trpc";
 import prisma from "../db";
-import { PostType } from "@prisma/client";
-import { update } from "lodash";
+import { type PostType } from "@prisma/client";
 
 const userIdSchema = yup.string().required("User ID is required");
 

@@ -5,7 +5,6 @@ import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import type { PostType } from "@prisma/client";
 import { inngest } from "~/inngest/client";
-import { sendEmail } from "~/app/_utils/sendEmail";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
@@ -263,7 +262,7 @@ export const postRouter = router({
         const { postId, userEmail, emails } = input;
 
         await inngest.send({
-          name: "post/shared",
+          name: "post/post.share",
           data: {
             postId,
             userEmail,
@@ -273,7 +272,7 @@ export const postRouter = router({
       } catch (error) {
         // handleError(error);
         console.log(error);
-        throw new Error("Failed to share the post.");
+        throw error;
       }
     }),
 });

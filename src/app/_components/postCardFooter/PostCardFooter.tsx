@@ -4,6 +4,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
 import TollIcon from "@mui/icons-material/Toll";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 
@@ -16,18 +17,20 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   comments,
   bids,
   isLiked,
+  isBookmarked,
   handleLikeButton,
   openCommentBox,
   postId,
+  handleBookmark,
 }) => {
   const [open, setOpen] = React.useState(false);
   const handleAction = (actionType: string) => {
     switch (actionType) {
       case "like":
-        console.log("like");
+        handleLikeButton();
         break;
       case "comment":
-        console.log("comment");
+        openCommentBox();
         break;
       case "share":
         console.log("share");
@@ -37,7 +40,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         console.log("bid");
         break;
       case "bookmark":
-        console.log("bookmark");
+        handleBookmark();
         break;
       default:
         console.log("default");
@@ -72,13 +75,13 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
             )
           }
           label={likes && likes > 0 ? likes : "0"}
-          onClick={handleLikeButton}
+          onClick={() => handleAction("like")}
         />
 
         <PostActionButton
           icon={<MessageIcon sx={iconSx} />}
           label={comments && comments.length > 0 ? comments.length : "0"}
-          onClick={() => openCommentBox()}
+          onClick={() => handleAction("comment")}
         />
         <PostActionButton
           icon={<TollIcon sx={iconSx} />}
@@ -90,11 +93,21 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           label=""
           onClick={() => handleAction("share")}
         />
-        <SharePostDialog open={open} onClose={() => setOpen(false)} postId={postId} />
+        <SharePostDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          postId={postId}
+        />
       </Box>
       <Box>
         <PostActionButton
-          icon={<BookmarkBorderIcon sx={iconSx} />}
+          icon={
+            isBookmarked ? (
+              <BookmarkIcon sx={iconSx} />
+            ) : (
+              <BookmarkBorderIcon sx={iconSx} />
+            )
+          }
           label=""
           onClick={() => handleAction("bookmark")}
           sx={{

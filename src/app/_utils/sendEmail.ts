@@ -1,4 +1,4 @@
-import nodemailer, { SentMessageInfo } from "nodemailer";
+import nodemailer, { type SentMessageInfo } from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
 
@@ -13,7 +13,7 @@ interface EmailOptions {
 
 export const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST!,
-  port: 465,
+  port: Number(process.env.EMAIL_PORT!),
   secure: true,
   auth: {
     user: process.env.EMAIL_FROM!,
