@@ -1,5 +1,12 @@
 "use client";
-import { Typography, Grid2 as Grid, Box, Chip } from "@mui/material";
+import {
+  Typography,
+  Grid2 as Grid,
+  Box,
+  Chip,
+  useMediaQuery,
+  type Theme,
+} from "@mui/material";
 import Image from "next/image";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -14,10 +21,11 @@ import { useClerk } from "@clerk/nextjs";
 import RightSideBarSkeletonAuthor from "./RightSideBarSkeletonAuthor";
 import RightSideBarSkeletonPost from "./RightSideBarSkeletonPost";
 import { STATIC_TEXTS } from "../static/staticText";
-import type { FeaturedPost, UserToFollow } from "~/app/(with-sidebar)/myfeed/types/types";
 
 const RightSideBar = () => {
-  const USERS_TO_FOLLOW_LIMIT = 5;
+  const isSmallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("md"),
+  );
 
   const { user } = useClerk();
   const router = useRouter();
@@ -25,16 +33,15 @@ const RightSideBar = () => {
   const userMutation = trpc.user;
   const featuredAuthorMutation = trpc.usersToFollow;
 
-
-  const { data: usersAlreadyFollowing } = userMutation.getUserFollowings.useQuery({
-    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-  });
+  const { data: usersAlreadyFollowing } =
+    userMutation.getUserFollowings.useQuery({
+      userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+    });
   const { data: usersToFollowData, isLoading: usersToFollowLoading } =
     featuredAuthorMutation.getUsersToFollow.useQuery({
       limit: 5,
       skip: 0,
     });
-
 
   const { data: featuredPostData, isLoading: featuredPostLoading } =
     featuredPostMutation.getFeaturedPosts.useQuery({
@@ -52,7 +59,7 @@ const RightSideBar = () => {
         sx={{
           backgroundColor: "white",
           borderRadius: "5px",
-          width: "100%",
+          width: isSmallScreen ? "auto" : "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
@@ -167,7 +174,7 @@ const RightSideBar = () => {
         sx={{
           backgroundColor: "white",
           borderRadius: "5px",
-          width: "100%",
+          width: isSmallScreen ? "auto" : "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
@@ -273,7 +280,7 @@ const RightSideBar = () => {
               {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_AUTHOR}
             </Typography>
           )}
-          {usersToFollowData?.hasMoreAuthor  ? (
+          {usersToFollowData?.hasMoreAuthor ? (
             <SeeMoreButton onClick={() => handleSeeMore("/featured/author")} />
           ) : null}
         </Grid>
