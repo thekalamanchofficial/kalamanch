@@ -29,7 +29,7 @@ const DraftIterationReviewPost = memo<DraftIterationReviewPostProps>(({ draftIte
     initialLikeCount: draftIterationReviewPost.likeCount,
     initialIsLiked: isLiked,
     iterationId: draftIterationReviewPost.id,
-    postStatus: PostStatus.DRAFT.toString().toUpperCase(),
+    postStatus: PostStatus.DRAFT,
     userEmail
   });
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { type ReactElement } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
-import { SelectedDraftPostProvider } from "./contexts/SelectedDraftPostContext";
+import { SelectedDraftPostProvider } from "./_contexts/SelectedDraftPostContext";
 
 const Layout = ({ children }: { children: ReactElement }) => {
   return (

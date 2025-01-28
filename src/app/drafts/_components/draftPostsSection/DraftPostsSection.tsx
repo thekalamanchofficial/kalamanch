@@ -5,7 +5,7 @@ import PostCardContent from "~/app/_components/postCardContent/PostCardContent";
 import PublishDraftDialog from "../publishDraftDialog/PublishDraftDialog";
 import { type DraftPost, PostStatus } from "~/app/editor/types/types";
 import EditPostFooter from "~/app/editor/_components/editPostFooter/EditPostFooter";
-import { useSelectedDraftPost } from "../../contexts/SelectedDraftPostContext";
+import { useSelectedDraftPost } from "../../_contexts/SelectedDraftPostContext";
 
 type DraftPostProps = {
   draftPosts: DraftPost[];

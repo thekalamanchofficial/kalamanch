@@ -29,7 +29,7 @@ const Post = memo<PostProps>(({ post, userFollowing, isLiked, isBookmarked }) =>
     initialLikeCount: post.likeCount,
     initialIsLiked: isLiked,
     postId: post.id,
-    postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
+    postStatus: PostStatus.PUBLISHED,
     userEmail
   });
 

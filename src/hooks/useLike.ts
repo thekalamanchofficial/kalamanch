@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
-import { useFeedContext } from "~/app/(with-sidebar)/myfeed/context/FeedContext";
+import { useFeedContext } from "~/app/(with-sidebar)/myfeed/_context/FeedContext";
+import type { PostStatus } from "~/app/editor/types/types";
 
 type UseLikeProps = {
   initialLikeCount: number;
   initialIsLiked: boolean;
   postId?: string | null | undefined;
   iterationId?: string | null | undefined;
-  postStatus: string;
+  postStatus: PostStatus;
   userEmail?: string;
 };
 

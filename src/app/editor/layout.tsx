@@ -3,7 +3,7 @@ import React, { type ReactElement } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
 import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
 import editorMockData from "./mockDataEditor/mockdata";
-import { SelectedPublishedPostProvider } from "./contexts/SelectedPublishedPostContext";
+import { SelectedPublishedPostProvider } from "./_contexts/SelectedPublishedPostContext";
 
 const Layout = ({ children }: { children: ReactElement }) => {
   return (

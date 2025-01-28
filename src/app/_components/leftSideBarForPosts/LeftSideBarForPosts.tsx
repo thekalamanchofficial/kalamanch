@@ -7,9 +7,9 @@ import React from "react";
 import { type DraftPost, PostEntityType } from "../../editor/types/types";
 import type { IterationWithReviews, Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import { useRouter } from "next/navigation";
-import { useSelectedDraftPost } from "../../drafts/contexts/SelectedDraftPostContext";
-import { useSelectedPublishedPost } from "../../editor/contexts/SelectedPublishedPostContext";
-import { useSelectedDraftIteration } from "~/app/review-feedback/contexts/SelectedDraftIterationContext";
+import { useSelectedDraftPost } from "../../drafts/_contexts/SelectedDraftPostContext";
+import { useSelectedPublishedPost } from "../../editor/_contexts/SelectedPublishedPostContext";
+import { useSelectedDraftIteration } from "~/app/review-feedback/_contexts/SelectedDraftIterationContext";
 
 type LeftSideBarPropsForPosts = {
   draftPosts: DraftPost[];

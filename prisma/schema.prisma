@@ -8,48 +8,47 @@ datasource db {
 }
 
 model User {
-  id                      String           @id @default(auto()) @map("_id") @db.ObjectId
-  email                   String           @unique
+  id                      String                      @id @default(auto()) @map("_id") @db.ObjectId
+  email                   String                      @unique
   name                    String
-  profileImageUrl          String
+  profileImageUrl         String
   birthdate               DateTime?
   interests               String[]
   bio                     String?
-  education               String[]         @default([])
-  professionalCredentials String           @default("")
-  following               String[]         @db.ObjectId
-  followers               String[]         @db.ObjectId
-  bookmarks               String[]         @db.ObjectId
+  education               String[]                    @default([])
+  professionalCredentials String                      @default("")
+  following               String[]                    @db.ObjectId
+  followers               String[]                    @db.ObjectId
+  bookmarks               String[]                    @db.ObjectId
   usersToFollow           UserToFollow[]
   likes                   Like[]
   comments                Comment[]
   bids                    Bid[]
   posts                   Post[]
-  requestedReviews DraftPostIterationReviews[] @relation("RequesterRelation")
-  draftsToReview   DraftPostIterationReviews[] @relation("ReviewerRelation")
+  requestedReviews        DraftPostIterationReviews[] @relation("RequesterRelation")
+  draftsToReview          DraftPostIterationReviews[] @relation("ReviewerRelation")
 }
 
 model Post {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  authorId      String   @db.ObjectId
-  authorName    String
-  authorProfileImageUrl  String
-  content       String
-  postDetails   PostDetails
-  likeCount     Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                    String      @id @default(auto()) @map("_id") @db.ObjectId
+  authorId              String      @db.ObjectId
+  authorName            String
+  authorProfileImageUrl String
+  content               String
+  postDetails           PostDetails
+  likeCount             Int         @default(0)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
 
-  author       User           @relation(fields: [authorId], references: [id])
-  likes        Like[]
-  comments     Comment[]
-  bids         Bid[]
-  isFeatured   Boolean    @default(false)
+  author     User      @relation(fields: [authorId], references: [id])
+  likes      Like[]
+  comments   Comment[]
+  bids       Bid[]
+  isFeatured Boolean   @default(false)
 
   @@index([authorId])
   @@index([createdAt])
   @@index([isFeatured])
-
 }
 
 type ThumbnailDetails {
@@ -59,15 +58,15 @@ type ThumbnailDetails {
 }
 
 model Like {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  postId    String?   @db.ObjectId
-  iterationId    String?   @db.ObjectId
-  postStatus PostStatus @default(PUBLISHED)
-  userId    String   @db.ObjectId
-  createdAt DateTime @default(now())
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  postId      String?    @db.ObjectId
+  iterationId String?    @db.ObjectId
+  postStatus  PostStatus @default(PUBLISHED)
+  userId      String     @db.ObjectId
+  createdAt   DateTime   @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post?       @relation(fields: [postId], references: [id], onDelete: Cascade)
   iteration Iterations? @relation(fields: [iterationId], references: [id], onDelete: Cascade)
 
   @@index([postId])
@@ -76,23 +75,23 @@ model Like {
 }
 
 model Comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  postId    String?   @db.ObjectId
-  iterationId    String?   @db.ObjectId
-  postStatus PostStatus @default(PUBLISHED)
-  userId    String   @db.ObjectId
-  parentId  String?  @db.ObjectId
-  userName  String
-  userProfileImageUrl  String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String     @id @default(auto()) @map("_id") @db.ObjectId
+  postId              String?    @db.ObjectId
+  iterationId         String?    @db.ObjectId
+  postStatus          PostStatus @default(PUBLISHED)
+  userId              String     @db.ObjectId
+  parentId            String?    @db.ObjectId
+  userName            String
+  userProfileImageUrl String
+  content             String
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
 
-  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post    Post?      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  iteration    Iterations?      @relation(fields: [iterationId], references: [id], onDelete: Cascade)
-  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  replies Comment[] @relation("CommentReplies")
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post?       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  iteration Iterations? @relation(fields: [iterationId], references: [id], onDelete: Cascade)
+  parent    Comment?    @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   Comment[]   @relation("CommentReplies")
 
   @@index([postId])
   @@index([iterationId])
@@ -115,11 +114,11 @@ model Bid {
 }
 
 model UserToFollow {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  userId  String @db.ObjectId
-  name    String
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String @db.ObjectId
+  name            String
   profileImageUrl String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum PostType {
@@ -136,56 +135,55 @@ enum PostStatus {
 }
 
 type PostDetails {
-  title          String
-  targetAudience String[]
-  postType       PostType
-  actors         String[]     @default([])
-  tags           String[]
-  thumbnailDetails  ThumbnailDetails
+  title            String
+  targetAudience   String[]
+  postType         PostType
+  actors           String[]         @default([])
+  tags             String[]
+  thumbnailDetails ThumbnailDetails
 }
 
 model Iterations {
-  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
   iterationName String
   content       String
-  draftPostId   String     @db.ObjectId
-  DraftPost     DraftPost  @relation(fields: [draftPostId], references: [id], onDelete: Cascade)
-  likeCount     Int        @default(0)
+  draftPostId   String    @db.ObjectId
+  DraftPost     DraftPost @relation(fields: [draftPostId], references: [id], onDelete: Cascade)
+  likeCount     Int       @default(0)
 
-  likes        Like[]
-  comments     Comment[]
-  reviewers    DraftPostIterationReviews[]
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  likes     Like[]
+  comments  Comment[]
+  reviewers DraftPostIterationReviews[]
+  createdAt DateTime                    @default(now())
+  updatedAt DateTime                    @updatedAt
 }
 
 model DraftPost {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  authorId      String       @db.ObjectId
-  authorName    String
-  authorProfileImageUrl  String
-  postDetails   PostDetails
-  iterations    Iterations[] 
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id                    String       @id @default(auto()) @map("_id") @db.ObjectId
+  authorId              String       @db.ObjectId
+  authorName            String
+  authorProfileImageUrl String
+  postDetails           PostDetails
+  iterations            Iterations[]
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
 
   @@index([authorId])
 }
 
 model DraftPostIterationReviews {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
   iterationId String @db.ObjectId
-  reviewerId    String @db.ObjectId
-  requesterId   String @db.ObjectId
+  reviewerId  String @db.ObjectId
+  requesterId String @db.ObjectId
 
-  requester User @relation("RequesterRelation",fields: [requesterId], references: [id], onDelete: Cascade)
-  reviewer User @relation("ReviewerRelation",fields: [reviewerId], references: [id], onDelete: Cascade)
+  requester User       @relation("RequesterRelation", fields: [requesterId], references: [id], onDelete: Cascade)
+  reviewer  User       @relation("ReviewerRelation", fields: [reviewerId], references: [id], onDelete: Cascade)
   iteration Iterations @relation(fields: [iterationId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  
+  createdAt DateTime   @default(now())
+
+  @@unique([iterationId, reviewerId])
   @@index([iterationId])
   @@index([reviewerId])
   @@index([requesterId])
-  @@unique([iterationId, reviewerId])
 }
-

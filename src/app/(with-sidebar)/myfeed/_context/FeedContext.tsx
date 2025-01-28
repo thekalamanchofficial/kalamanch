@@ -12,7 +12,7 @@ import {
 import type { CommentPayload } from "../types/types";
 import { PostStatus } from "~/app/editor/types/types";
 
-type LikePayload = Record<string, { liked: boolean , postStatus: string }>;
+type LikePayload = Record<string, { liked: boolean , postStatus: PostStatus }>;
 type BookmarkPayload = Record<string, { bookmarked: boolean }>;
 
 type FeedContextValue = {
@@ -61,7 +61,7 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
       setRolledBackLikes({});
     },
     onError: () => {
-      const newRolledBackState: Record<string, { liked: boolean, postStatus: string }> = {};
+      const newRolledBackState: Record<string, { liked: boolean, postStatus: PostStatus }> = {};
       Object.entries(bulkLikeState).forEach(([postOrIterationId, { liked, postStatus }]) => {
         newRolledBackState[postOrIterationId] = { liked: !liked, postStatus };
       });
@@ -110,10 +110,10 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const bulkLikePayload = Object.entries(likedState).map(
       ([postOrIterationId, { liked, postStatus }]) => ({
-        postId: postStatus === PostStatus.PUBLISHED.toString().toUpperCase() ? postOrIterationId : null,
-        iterationId: postStatus === PostStatus.DRAFT.toString().toUpperCase() ? postOrIterationId : null,
+        postId: postStatus === PostStatus.PUBLISHED ? postOrIterationId : null,
+        iterationId: postStatus === PostStatus.DRAFT ? postOrIterationId : null,
         liked,
-        postStatus
+        postStatus: postStatus.toString()
       }),
     );
 
