@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Box, Grid2 as Grid } from "@mui/material";
 import WritingPad from "../_components/writingPad/WritingPad";
 import CustomTabs from "../_components/CustomTabs/CustomTabs";
@@ -18,11 +18,13 @@ import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState"
 import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 import { useNavigateToPostEditor } from "./_hooks/useNavigateToPostEditor";
 import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
+import FileUploader from "./_components/textUploader/TextUploader";
 
 const Page = () => {
   const { activeTab, changeTab } = useTabs();
   const {postId,draftPostId} = useQueryParams();
   const {publishedPostsForUser,setPublishedPostsForUser } = useUserPostsState({activeTab}); // Needed for Published Posts Tab
+  const [isTextUploaderOpen, setIsTextUploaderOpen] = useState(true);
   const {
     draftPost,
     saveLastIterationData,
@@ -124,6 +126,8 @@ const Page = () => {
               update = {Boolean(publishedPost ?? draftPost)}
             />
           )}
+          <FileUploader open={isTextUploaderOpen} onClose={() => setIsTextUploaderOpen(false)} onFileSelect={() => setIsTextUploaderOpen(true)} />
+          
         </Box>
       </Grid>
     </>
