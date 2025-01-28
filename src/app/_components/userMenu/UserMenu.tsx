@@ -64,7 +64,6 @@ const UserMenu = () => {
       </Box>
       <Box>
         <Button
-          startIcon={<MoreHorizOutlinedIcon />}
           sx={{
             color: "text.secondary",
             height: "auto",
@@ -75,7 +74,9 @@ const UserMenu = () => {
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
           onClick={handleClick}
-        />
+        >
+          <MoreHorizOutlinedIcon />
+        </Button>
         <Menu
           id="basic-menu"
           anchorEl={anchorEl}
