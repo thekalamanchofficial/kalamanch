@@ -8,20 +8,26 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
-import { type DraftPost, type PostStatus } from "~/app/editor/types/types";
-import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type PostEntityType, type DraftPost } from "~/app/editor/types/types";
+import {
+  type IterationWithReviews,
+  type Post,
+} from "~/app/(with-sidebar)/myfeed/types/types";
 import LeftSideBarForPosts from "~/app/_components/leftSideBarForPosts/LeftSideBarForPosts";
 
 type DraftAppBarProps = {
   draftPosts: DraftPost[];
   publishedPosts: Post[];
-  postStatus: PostStatus;
+
+  draftIterationsSentForReview: IterationWithReviews[];
+  entityType: PostEntityType;
 };
 
 export const DraftAppBar: React.FC<DraftAppBarProps> = ({
   draftPosts,
   publishedPosts,
-  postStatus,
+  draftIterationsSentForReview,
+  entityType,
 }) => {
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
 
@@ -76,7 +82,8 @@ export const DraftAppBar: React.FC<DraftAppBarProps> = ({
           <LeftSideBarForPosts
             draftPosts={draftPosts}
             publishedPosts={publishedPosts}
-            postStatus={postStatus}
+            entityType={entityType}
+            draftIterationsSentForReview={draftIterationsSentForReview}
           />
         </Drawer>
       </>

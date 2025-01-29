@@ -7,7 +7,7 @@ import { useUserDraftPostsState } from "./_hooks/useUserDraftPosts";
 import DraftPostsSection from "./_components/draftPostsSection/DraftPostsSection";
 import { useDraftPostIterationPublishing } from "./_hooks/useDraftPostIterationPublishing";
 import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
-import { DraftAppBar } from "./components/draftAppBar/DraftAppBar";
+import { DraftAppBar } from "./_components/draftAppBar/DraftAppBar";
 
 const Page = () => {
   const { draftPostsForUser } = useUserDraftPostsState(); // Needed to get all draft posts
@@ -18,8 +18,9 @@ const Page = () => {
     <>
       <DraftAppBar
         draftPosts={draftPostsForUser}
-        publishedPosts={[]}
-        postStatus={PostStatus.DRAFT}
+        publishedPosts={[]} // TODO: Remove this
+        draftIterationsSentForReview={[]}
+        entityType={PostEntityType.DRAFT_POST}
       />
       <Grid
         size={2}
@@ -35,7 +36,7 @@ const Page = () => {
       >
         <LeftSideBarForPosts
           draftPosts={draftPostsForUser}
-          publishedPosts={[]}
+          publishedPosts={[]} // TODO: Remove this
           draftIterationsSentForReview={[]}
           entityType={PostEntityType.DRAFT_POST}
         />
