@@ -63,6 +63,7 @@ const sharePostSchema = yup.object({
 const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
 
+// Todo: Add a better way to get Post with isBookmarked and isLiked flags by user
 export const postRouter = router({
   getPosts: publicProcedure
     .input(

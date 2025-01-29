@@ -11,7 +11,7 @@ import { useDraftEditorState } from "./_hooks/useDraftEditorState";
 import { usePostUnpublishing } from "./_hooks/usePostUnpublishing";
 import { tabs } from "./_config/config";
 import { useTabs } from "./_hooks/useTabs";
-import { EditorTabsEnum, PostStatus } from "./types/types";
+import { EditorTabsEnum, PostEntityType, PostStatus } from "./types/types";
 import EditorPublishedPostsSection from "./_components/editorPublishedPostsSection/EditorPublishedPostsSection";
 import { useUserPostsState } from "./_hooks/useUserPosts";
 import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
@@ -19,6 +19,8 @@ import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorStat
 import { useNavigateToPostEditor } from "./_hooks/useNavigateToPostEditor";
 import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
 import FileUploader from "./_components/textUploader/TextUploader";
+import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
+import { useSendForReview } from "./_hooks/useSendForReview";
 
 const Page = () => {
   const { activeTab, changeTab } = useTabs();
@@ -40,6 +42,8 @@ const Page = () => {
   const {isCreatePostFormOpen,openCreatePostForm, closeCreatePostForm, formData } = useCreatePostFormDataState({ postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails});
   const {handlePostUnPublishing } = usePostUnpublishing({setPublishedPostsForUser});
   const {navigateToPostEditor} = useNavigateToPostEditor({changeTab});
+  const { sendForReviewDialogOpen, setSendForReviewDialogOpen, handleSendForReview } = useSendForReview();
+
 
   return (
     <>
@@ -53,8 +57,9 @@ const Page = () => {
           activeTab === EditorTabsEnum.PUBLISHED && (
             <LeftSideBarForPosts
               draftPosts={[]}
+              draftIterationsSentForReview={[]}
               publishedPosts={publishedPostsForUser}
-              postStatus={PostStatus.PUBLISHED}
+              entityType={PostEntityType.PUBLISHED_POST}
             />
           )
         }
@@ -99,6 +104,7 @@ const Page = () => {
                 defaultContentToDisplay={(draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""}
                 handleEditorContentChange={handleEditorContentChange}
                 postStatus= {draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
+                handleSendForReview={() => setSendForReviewDialogOpen(true)}
               />
             )}
             {activeTab === EditorTabsEnum.PUBLISHED  && ( 
@@ -127,7 +133,7 @@ const Page = () => {
             />
           )}
           <FileUploader open={isTextUploaderOpen} onClose={() => setIsTextUploaderOpen(false)} onFileSelect={() => setIsTextUploaderOpen(true)} />
-          
+          {sendForReviewDialogOpen && <SendForReviewDialog open={sendForReviewDialogOpen} onClose={() => setSendForReviewDialogOpen(false)} onSubmit={(selectedUsersForReview: string[]) => handleSendForReview(selectedUsersForReview,selectedIteration?.id)} />}
         </Box>
       </Grid>
     </>

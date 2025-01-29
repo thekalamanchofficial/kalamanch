@@ -1,9 +1,10 @@
-import { MyFeedTabsEnum, type Post } from "../types/types";
+import {type Post } from "../types/types";
 import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
+import { PostStatus } from "@prisma/client";
 import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
 import useLikePosts from "~/app/_hooks/useLikePosts";
 
@@ -13,17 +14,14 @@ type useMyFeedPageReturn = {
   bookmarkedPosts: string[];
   queryLoading: boolean;
   hasMorePosts: boolean;
-  tab: MyFeedTabsEnum;
   skip: number;
   setSkip: React.Dispatch<React.SetStateAction<number>>;
-  handleTabChange: (newTab: MyFeedTabsEnum) => void;
   handleScroll: () => void;
   errorMessage: string;
 };
 
 const useMyFeedPage = (): useMyFeedPageReturn => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [tab, setTab] = useState<MyFeedTabsEnum>(MyFeedTabsEnum.MY_FEED);
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState(true);
 
@@ -72,15 +70,12 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
 
   const { likedPosts } = useLikePosts({
     userEmail: userEmail ?? "",
+    postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
   });
 
   const { bookmarkedPosts } = useBookmarkPosts({
     userEmail: userEmail ?? "",
   });
-
-  const handleTabChange = (newTab: MyFeedTabsEnum) => {
-    setTab(newTab);
-  };
 
   useEffect(() => {
     if (postData?.posts) {
@@ -100,11 +95,9 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     likedPosts,
     bookmarkedPosts,
     queryLoading,
-    hasMorePosts: postData?.hasMorePosts ?? false,
-    tab,
+    hasMorePosts:postData?.hasMorePosts ?? false,
     skip,
     setSkip,
-    handleTabChange,
     handleScroll,
     errorMessage: error?.message ?? "",
   };

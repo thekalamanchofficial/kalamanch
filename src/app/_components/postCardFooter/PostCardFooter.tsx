@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
@@ -7,10 +7,11 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
-
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import PostActionButton from "../postActionButton/PostActionButton";
 import SharePostDialog from "../sharePostDialog/SharePostDialog";
+import { STATIC_TEXTS } from "../static/staticText";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,
@@ -21,6 +22,13 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   handleLikeButton,
   openCommentBox,
   postId,
+  showLikes,
+  showComments,
+  showBids,
+  showBookmark,
+  showShare,
+  showEditPost,
+  handleEditPost,
   handleBookmark,
 }) => {
   const [open, setOpen] = React.useState(false);
@@ -40,7 +48,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         console.log("bid");
         break;
       case "bookmark":
-        handleBookmark();
+        handleBookmark?.();
         break;
       default:
         console.log("default");
@@ -66,7 +74,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           gap: "10px",
         }}
       >
-        <PostActionButton
+        { showLikes && <PostActionButton
           icon={
             isLiked ? (
               <FavoriteIcon sx={iconSx} />
@@ -77,29 +85,26 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           label={likes && likes > 0 ? likes : "0"}
           onClick={() => handleAction("like")}
         />
+        }
 
-        <PostActionButton
+        { showComments && <PostActionButton
           icon={<MessageIcon sx={iconSx} />}
           label={comments && comments.length > 0 ? comments.length : "0"}
           onClick={() => handleAction("comment")}
-        />
-        <PostActionButton
+        />}
+        { showBids&& <PostActionButton
           icon={<TollIcon sx={iconSx} />}
           label={bids && bids.length > 0 ? bids.length : "0"}
           onClick={() => handleAction("bid")}
-        />
-        <PostActionButton
+        />}
+        { showShare && <PostActionButton
           icon={<ShareIcon sx={iconSx} />}
           label=""
           onClick={() => handleAction("share")}
-        />
-        <SharePostDialog
-          open={open}
-          onClose={() => setOpen(false)}
-          postId={postId}
-        />
+        />}
+        <SharePostDialog open={open} onClose={() => setOpen(false)} postId={postId} />
       </Box>
-      <Box>
+      { showBookmark && <Box>
         <PostActionButton
           icon={
             isBookmarked ? (
@@ -115,7 +120,22 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
             minHeight: "24px",
           }}
         />
-      </Box>
+      </Box>}
+      { showEditPost && <Button
+        variant="contained"
+        startIcon={<EditOutlinedIcon />}
+        onClick={handleEditPost}
+        sx={{
+          color: "primary.main",
+          backgroundColor: "secondary.main",
+          textTransform: "none",
+          "&:hover": {
+            backgroundColor: "secondary.dark",
+          },
+        }}
+      >
+        {STATIC_TEXTS.EDITOR_PAGE.EDIT_DRAFT_POST_BUTTON_TEXT}
+      </Button>}
     </Box>
   );
 };

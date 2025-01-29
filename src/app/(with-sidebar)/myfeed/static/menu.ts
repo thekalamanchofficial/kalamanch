@@ -36,6 +36,11 @@ export const MENU_ITEMS = [
     route: "/drafts",
   },
   {
+    label: "Review Feedback",
+    icon: "FeedbackOutlinedIcon",
+    route: "/review-feedback",
+  },
+  {
     label: "My Deals",
     icon: "ShoppingCartOutlinedIcon",
     route: "/deals",

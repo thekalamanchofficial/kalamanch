@@ -1,13 +1,13 @@
 "use client";
 import React, { type ReactElement } from "react";
 import { Grid2 as Grid, Box } from "@mui/material";
-import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
-import editorMockData from "./mockDataEditor/mockdata";
-import { SelectedPublishedPostProvider } from "./_contexts/SelectedPublishedPostContext";
+import { SelectedDraftIterationProvider } from "./_contexts/SelectedDraftIterationContext";
+import { FeedProvider } from "../(with-sidebar)/myfeed/_context/FeedContext";
 
 const Layout = ({ children }: { children: ReactElement }) => {
   return (
-    <SelectedPublishedPostProvider>
+    <FeedProvider>
+      <SelectedDraftIterationProvider>
         <Box
           sx={{
             flexGrow: 1,
@@ -30,24 +30,11 @@ const Layout = ({ children }: { children: ReactElement }) => {
               py: "40px",
             }}
           >
-              {children}
-            
-            <Grid
-              size={2}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "start",
-                alignItems: "center",
-                ml: 4,
-                gap: "12px",
-              }}
-            >
-              <EditorRightSideBar accuracy={editorMockData.accuracy} />
-            </Grid>
+            {children}
           </Grid>
         </Box>
-    </SelectedPublishedPostProvider>
+      </SelectedDraftIterationProvider>
+    </FeedProvider>
   );
 };
 
