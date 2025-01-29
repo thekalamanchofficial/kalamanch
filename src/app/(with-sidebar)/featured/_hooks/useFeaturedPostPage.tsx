@@ -45,7 +45,7 @@ const useFeaturedPostPage = (): useFeaturedPostPageProps => {
   });
 
   const handleClick = (postId: string) => {
-    router.push(`/article/${postId}`);
+    router.push(`/posts/${postId}`);
   };
 
   useEffect(() => {
