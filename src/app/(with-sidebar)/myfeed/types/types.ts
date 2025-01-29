@@ -1,4 +1,5 @@
 import { type SxProps } from "@mui/material";
+import { DraftPost, Iteration } from "~/app/editor/types/types";
 
 export type MenuItemList = {
   label: string;
@@ -7,7 +8,9 @@ export type MenuItemList = {
 };
 export type Comment = {
   id: string;
-  postId: string;
+  postId?: string | null | undefined;
+  iterationId?: string | null | undefined;
+  postStatus: string;
   userId: string;
   userName: string;
   userProfileImageUrl: string;
@@ -20,7 +23,9 @@ export type Comment = {
 
 export type CommentPayload = {
   id: string;
-  postId: string;
+  postId?: string | null | undefined;
+  iterationId?: string | null | undefined;
+  postStatus: string;
   content: string;
   parentId?: string | null | undefined;
   userEmail: string;
@@ -31,7 +36,9 @@ export type CommentPayload = {
 export type Like = {
   id: string;
   userId: string;
-  postId: string;
+  postId?: string | null | undefined;
+  iterationId?: string | null | undefined;
+  postStatus: string;
   createdAt: string;
 }
 
@@ -96,7 +103,14 @@ export type PostCardFooterProps = {
   handleLikeButton: () => void;
   openCommentBox: () => void;
   postId: string;
-  handleBookmark: () => void;
+  showLikes?: boolean;
+  showComments?: boolean;
+  showBids?: boolean;
+  showBookmark?: boolean;
+  showShare?: boolean;
+  showEditPost?: boolean;
+  handleEditPost?: () => void;
+  handleBookmark?: () => void;
 };
 
 export type UserNameProfileProps = {
@@ -133,7 +147,7 @@ export type CommentCardProps = {
 
 export enum MyFeedTabsEnum {
   MY_FEED = "My Feed",
-  DISCOVERY = "Discover",
+  REVIEWS = "Reviews",
 }
 
 
@@ -154,3 +168,16 @@ export type UserToFollow = {
   followersCount: number;
   postCount: number;
 };
+
+export type IterationWithReviews = Iteration & {
+  DraftPost: Omit<DraftPost, "iterations"> & {
+    postDetails: PostDetails;
+  };
+  likes: Like[]; 
+  comments: Comment[]; 
+};
+
+export enum ReviewScreen {
+  REVIEWS_MY_FEED_SUBTAB,
+  REVIEW_FEEDBACK_SCREEN
+}

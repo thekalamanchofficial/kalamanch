@@ -6,7 +6,7 @@ import EditorPostFooter from "../editPostFooter/EditPostFooter";
 import PostCardContent from "~/app/_components/postCardContent/PostCardContent";
 import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import { PostStatus } from "../../types/types";
-import { useSelectedPublishedPost } from "../../contexts/SelectedPublishedPostContext";
+import { useSelectedPublishedPost } from "../../_contexts/SelectedPublishedPostContext";
 
 interface EditorPublishedPostsSectionProps {
   posts: Post[];

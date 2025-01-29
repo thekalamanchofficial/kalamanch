@@ -4,26 +4,30 @@ import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutl
 import { Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import React from "react";
-import { type DraftPost, PostStatus } from "../../editor/types/types";
+import { type DraftPost, PostEntityType } from "../../editor/types/types";
+import type { IterationWithReviews, Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import { useRouter } from "next/navigation";
-import type { Post } from "~/app/(with-sidebar)/myfeed/types/types";
-import { useSelectedDraftPost } from "../../drafts/contexts/SelectedDraftPostContext";
-import { useSelectedPublishedPost } from "../../editor/contexts/SelectedPublishedPostContext";
+import { useSelectedDraftPost } from "../../drafts/_contexts/SelectedDraftPostContext";
+import { useSelectedPublishedPost } from "../../editor/_contexts/SelectedPublishedPostContext";
+import { useSelectedDraftIteration } from "~/app/review-feedback/_contexts/SelectedDraftIterationContext";
 
 type LeftSideBarPropsForPosts = {
   draftPosts: DraftPost[];
   publishedPosts: Post[];
-  postStatus: PostStatus;
+  draftIterationsSentForReview: IterationWithReviews[]
+  entityType: PostEntityType;
 };
 
 const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
   draftPosts,
   publishedPosts,
-  postStatus
+  draftIterationsSentForReview,
+  entityType
 }) => {
   const router = useRouter();
   const {selectedDraftPostId ,setSelectedDraftPostIdInLeftSideBar} = useSelectedDraftPost();
   const {selectedPublishedPostId,setSelectedPublishedPostIdInLeftSideBar} = useSelectedPublishedPost();
+  const {selectedDraftIterationId,setSelectedDraftIterationIdInLeftSideBar} = useSelectedDraftIteration();
 
   return (
     <Grid
@@ -88,9 +92,9 @@ const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
             fontSize: "16px",
           }}
         >
-          {postStatus === PostStatus.DRAFT ? "Draft Posts" :"Published Posts"}
+          {entityType.toString()}
         </Typography>
-        { postStatus === PostStatus.DRAFT && <Box
+        { entityType === PostEntityType.DRAFT_POST && <Box
           sx={{
             color: "black",
             width: "100%",
@@ -133,7 +137,7 @@ const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
             );
           })}
         </Box>}
-        {postStatus === PostStatus.PUBLISHED && 
+        { entityType === PostEntityType.PUBLISHED_POST && 
         <Box 
           sx={{
             color: "black",
@@ -169,6 +173,49 @@ const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
                 <ArrowForwardIosOutlinedIcon
                   sx={{
                     color: (item.id) == selectedPublishedPostId ? "#260EB9" : "common.gray",
+                    fontSize: "12px",
+                  }}
+                />
+              </Box>
+            );
+          })}
+        </Box>}
+        { entityType === PostEntityType.DRAFT_ITERATION_SENT_FOR_REVIEW && <Box
+          sx={{
+            color: "black",
+            width: "100%",
+          
+          }}
+        >
+          {draftIterationsSentForReview.map((item) => {
+            return (
+              <Box
+                sx={{
+                  borderRadius: "4px",
+                  border: "1px solid ",
+                  borderColor: "common.strokePrimary",
+                  padding: "8px 10px",
+                  marginTop: "10px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                key={item.id}
+                onClick={() => setSelectedDraftIterationIdInLeftSideBar(item.id ?? "")}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    color: (item.id) == selectedDraftIterationId  ? "primary.main" : "font.secondary",
+                    
+                  }}
+                >
+                  {item.DraftPost.postDetails.title + " - " + item.iterationName}
+                </Typography>
+                <ArrowForwardIosOutlinedIcon
+                  sx={{
+                    color: (item.id) == selectedDraftIterationId ? "primary.main" : "common.gray",
                     fontSize: "12px",
                   }}
                 />

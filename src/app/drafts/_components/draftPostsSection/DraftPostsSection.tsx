@@ -5,7 +5,7 @@ import PostCardContent from "~/app/_components/postCardContent/PostCardContent";
 import PublishDraftDialog from "../publishDraftDialog/PublishDraftDialog";
 import { type DraftPost, PostStatus } from "~/app/editor/types/types";
 import EditPostFooter from "~/app/editor/_components/editPostFooter/EditPostFooter";
-import { useSelectedDraftPost } from "../../contexts/SelectedDraftPostContext";
+import { useSelectedDraftPost } from "../../_contexts/SelectedDraftPostContext";
 
 type DraftPostProps = {
   draftPosts: DraftPost[];
@@ -69,12 +69,12 @@ export default function DraftPostsSection({
       selectedPostRef.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     setSelectedDraftPostId(selectedDraftPostIdInLeftSideBar)
-  }, [selectedDraftPostIdInLeftSideBar]);
+  }, [selectedDraftPostIdInLeftSideBar,setSelectedDraftPostId]);
 
   useEffect(() => {
     setSelectedDraftPostId(draftPosts[0]?.id ?? "");
     setSelectedDraftPostIdInLeftSideBar(draftPosts[0]?.id ?? "")
-  }, [draftPosts]);
+  }, [draftPosts,setSelectedDraftPostId,setSelectedDraftPostIdInLeftSideBar]);
 
   return (
     <Box
