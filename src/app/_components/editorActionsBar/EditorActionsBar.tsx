@@ -26,9 +26,10 @@ type ActionsBarProps = {
   handleSubmit: () => void;
   handleSaveDraft: (showToast?: boolean) => void;
   postStatus: PostStatus;
+  handleSendForReview: () => void;
 };
 
-const EditorActionsBar: React.FC<ActionsBarProps> = ({ handleOpen,postStatus, handleSubmit, handleSaveDraft }) => (
+const EditorActionsBar: React.FC<ActionsBarProps> = ({ handleOpen,postStatus, handleSubmit, handleSaveDraft,handleSendForReview }) => (
   <Box
     sx={{
       display: "flex",
@@ -44,7 +45,7 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({ handleOpen,postStatus, ha
       <EditNoteIcon />
       <Typography sx={textStyle}>Edit details</Typography>
     </Button>
-    <Button sx={buttonStyle}>
+    <Button sx={buttonStyle} onClick={handleSendForReview}>
       <ChecklistIcon />
       <Typography sx={textStyle}>Send for review</Typography>
     </Button>

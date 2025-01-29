@@ -6,15 +6,16 @@ type UseLikeReturn = {
 
 type UseLikeInput = {
   userEmail: string;
+  postStatus: string;
 };
 
 type UseLikeHook = (input: UseLikeInput) => UseLikeReturn;
 
-const useLikePosts: UseLikeHook = ({ userEmail }) => {
+const useLikePosts: UseLikeHook = ({ userEmail,postStatus }) => {
   const likeProcedure = trpc.likes;
 
   const { data: likedPostData } = likeProcedure.getUserLikes.useQuery(
-    { userEmail: userEmail ?? "" },
+    { userEmail: userEmail ?? "",postStatus },
     { enabled: !!userEmail },
   );
 

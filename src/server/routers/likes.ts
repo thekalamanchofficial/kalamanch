@@ -3,79 +3,115 @@ import prisma from "~/server/db";
 
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import { PostStatus } from "@prisma/client";
 import getUserDetails from "../utils/getUserDetails";
 
 const bulkLikeSchema = yup.object({
   userEmail: yup.string().email().required(),
   likes: yup.array().of(
     yup.object({
-      postId: yup.string().required('Post ID is required'),
+      postId: yup.string().optional().nullable(),
+      iterationId: yup.string().optional().nullable(),
+      postStatus: yup.string().required(),
       liked: yup.boolean().required('Liked field is required'),
     })
   ).required('Likes array is required'),
 });
 
 const likeSchema = yup.object({
-  postId: yup.string().required(),
+  postId: yup.string().optional().nullable(),
+  iterationId: yup.string().optional().nullable(),
+  postStatus: yup.string().required(),
   userEmail: yup.string().email().required(),
 });
 
 export const likeRouter = router({
-  likePost: publicProcedure.input(likeSchema).mutation(async ({ input }) => {
-    try {
-      const { postId, userEmail } = input;
 
-      const userDetails = await getUserDetails(userEmail);
-      const { id: userId } = userDetails;
-
-      const existingLike = await prisma.like.findFirst({
-        where: {
-          postId: input.postId,
-          userId,
-        },
-      });
-      if (existingLike) {
-        await prisma.like.delete({
+    likePost: publicProcedure.input(likeSchema).mutation(async ({ input }) => {
+      try {
+        const { postId, userEmail, postStatus, iterationId } = input;
+  
+        // Fetch user details
+        const userDetails = await getUserDetails(userEmail);
+        const { id: userId } = userDetails;
+  
+        const isPublished = postStatus === PostStatus.PUBLISHED.toString().toUpperCase();
+        const targetId = isPublished ? postId : iterationId;
+        if (!targetId) {
+          throw new Error("Neither postId nor iterationId is provided.");
+        }
+        // Check for existing like
+        const existingLike = await prisma.like.findFirst({
           where: {
-            id: existingLike.id,
+            userId,
+            ...(isPublished ? { postId } : { iterationId }),
           },
         });
-        await prisma.post.update({
-          where: {
-            id: postId,
-          },
-          data: {
-            likeCount: {
-              decrement: existingLike ? 1 : 0,
+  
+        if (existingLike) {
+          // Remove the like
+          await prisma.like.delete({
+            where: { id: existingLike.id },
+          });
+  
+          if (isPublished) {
+            await prisma.post.update({
+              where: { id: targetId },
+              data: {
+                likeCount: {
+                  decrement: 1,
+                },
+              },
+            });
+          } else {
+            await prisma.iterations.update({
+              where: { id: targetId },
+              data: {
+                likeCount: {
+                  decrement: 1,
+                },
+              },
+            });
+          }
+  
+          return { liked: false };
+        } else {
+          // Add a new like
+          await prisma.like.create({
+            data: {
+              userId,
+              ...(isPublished ? { postId } : { iterationId }),
             },
-          },
-        });
-
-        return { liked: false };
-      } else {
-        await prisma.like.create({
-          data: {
-            userId: userId,
-            postId: postId,
-          },
-        });
-        await prisma.post.update({
-          where: {
-            id: postId,
-          },
-          data: {
-            likeCount: {
-              increment: 1,
-            },
-          },
-        });
-        return { liked: true };
+          });
+  
+          // Update like count in the respective table
+          if(isPublished){
+              await prisma.post.update({
+                where: { id: targetId },
+                data: {
+                  likeCount: {
+                    increment: 1,
+                  },
+                },
+            });
+          } else {
+            await prisma.iterations.update({
+              where: { id: targetId },
+              data: {
+                likeCount: {
+                  increment: 1,
+                },
+              },
+            });
+          }
+  
+          return { liked: true };
+        }
+      } catch (error) {
+        handleError(error);
+        throw error;
       }
-    } catch (error) {
-      handleError(error);
-      throw error;
-    }
-  }),
+    }), 
 
   bulkLikePost: publicProcedure
   .input(bulkLikeSchema)
@@ -87,17 +123,29 @@ export const likeRouter = router({
 
       const { id: userId } = await getUserDetails(input.userEmail);
 
-      const likesToCreate: { postId: string; userId: string }[] = [];
-      const likesToDelete: { postId: string; userId: string }[] = [];
-      const likeCountChanges: Record<string, number> = {};
+      const likesToCreate: { postId?: string | null | undefined; iterationId?: string | null | undefined; userId: string ,postStatus: PostStatus }[] = [];
+      const likesToDelete: {  postId?: string | null | undefined; iterationId?: string | null | undefined; userId: string ,postStatus: PostStatus}[] = [];
+      const postLikeCountChanges: Record<string, number> = {};
+      const iterationLikeCountChanges: Record<string, number> = {};
 
-      for (const { postId, liked } of input.likes) {
+      for (const { postId,iterationId, liked, postStatus } of input.likes) {
+        const postStatusEnum = postStatus.toUpperCase() as PostStatus;
         if (liked) {
-          likesToCreate.push({ postId, userId });
-          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) + 1;
+          likesToCreate.push({ postId,iterationId, userId ,postStatus:postStatusEnum});
+          if(postId){
+            postLikeCountChanges[postId] = (postLikeCountChanges[postId] ?? 0) + 1;
+          }
+          else if (iterationId){
+            iterationLikeCountChanges[iterationId] = (iterationLikeCountChanges[iterationId] ?? 0) + 1;
+          }
         } else {
-          likesToDelete.push({ postId, userId });
-          likeCountChanges[postId] = (likeCountChanges[postId] ?? 0) - 1;
+          likesToDelete.push({ postId, userId,postStatus: PostStatus.PUBLISHED });
+          if(postId){
+            postLikeCountChanges[postId] = (postLikeCountChanges[postId] ?? 0) - 1;
+          }
+          else if (iterationId){
+            iterationLikeCountChanges[iterationId] = (iterationLikeCountChanges[iterationId] ?? 0) - 1;
+          }
         }
       }
 
@@ -114,9 +162,8 @@ export const likeRouter = router({
           },
         });
       }
-
-      const updatePromises = Object.entries(likeCountChanges).map(
-        async ([postId, likeCountChange]) => {
+      const updatePostLikeCountPromises = Object.entries(postLikeCountChanges).map(
+        async ([postId,likeCountChange]) => {
           if (likeCountChange !== 0) {
             await prisma.post.update({
               where: { id: postId },
@@ -125,8 +172,20 @@ export const likeRouter = router({
           }
         }
       );
+      const updateIterationLikeCountPromises = Object.entries(iterationLikeCountChanges).map(
+        async ([iterationId,likeCountChange]) => {
+          if (likeCountChange !== 0) {
+            await prisma.iterations.update({
+              where: { id: iterationId },
+              data: { likeCount: { increment: likeCountChange } },
+            });
+          }
+        }
+      );
+  
 
-      await Promise.all(updatePromises);
+      await Promise.all(updatePostLikeCountPromises);
+      await Promise.all(updateIterationLikeCountPromises);
 
       return { message: "Bulk like operations completed successfully." };
     } catch (error) {
@@ -139,6 +198,7 @@ export const likeRouter = router({
     .input(
       yup.object({
         userEmail: yup.string().email().required(),
+        postStatus: yup.string().required(),
       }),
     )
     .query(async ({ input }) => {
@@ -152,15 +212,19 @@ export const likeRouter = router({
         const userLikes = await prisma.like.findMany({
           where: {
             userId: userId,
+            postStatus: input.postStatus.toUpperCase() as PostStatus,
           },
           select: {
             postId: true,
+            iterationId: true,
           },
         });
-
-        const likedPostIds = userLikes.map((like) => like.postId);
-
-        return likedPostIds;
+        if(input.postStatus === PostStatus.PUBLISHED.toString().toUpperCase()){
+          const likedPostIds = userLikes.map((like) => like.postId).filter((postId) => postId !== null);
+          return likedPostIds;
+        }
+        const likedIterationIds = userLikes.map((like) => like.iterationId).filter((iterationId) => iterationId !== null);
+        return likedIterationIds;
       } catch (error) {
         handleError(error);
         throw error;
@@ -170,6 +234,7 @@ export const likeRouter = router({
     .input(
       yup.object({
         userEmail: yup.string().email().required(),
+        postStatus: yup.string().required(),
       }),
     )
     .query(async ({ input }) => {
@@ -181,6 +246,7 @@ export const likeRouter = router({
         const likedPost = await prisma.like.findMany({
           where: {
             userId: userDetails.id,
+            postStatus: input.postStatus.toUpperCase() as PostStatus,
           },
           select: {
             post: {
@@ -196,7 +262,7 @@ export const likeRouter = router({
           },
         });
 
-        const formattedLikedPost = likedPost.map((like) => like.post);
+        const formattedLikedPost = likedPost.map((like) => like.post).filter((post) => post !== null);
 
         return formattedLikedPost;
       } catch (error) {

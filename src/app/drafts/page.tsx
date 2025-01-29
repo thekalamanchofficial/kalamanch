@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import { Box, Grid2 as Grid } from "@mui/material";
-import { PostStatus } from "../editor/types/types";
+import { PostEntityType, PostStatus } from "../editor/types/types";
 import { useNavigateToPostEditor } from "../editor/_hooks/useNavigateToPostEditor";
-import { useUserDraftPostsState } from "./hooks/useUserDraftPosts";
-import DraftPostsSection from "./components/draftPostsSection/DraftPostsSection";
-import { useDraftPostIterationPublishing } from "./hooks/useDraftPostIterationPublishing";
+import { useUserDraftPostsState } from "./_hooks/useUserDraftPosts";
+import DraftPostsSection from "./_components/draftPostsSection/DraftPostsSection";
+import { useDraftPostIterationPublishing } from "./_hooks/useDraftPostIterationPublishing";
 import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
 
 const Page = () => {
@@ -24,7 +24,8 @@ const Page = () => {
         <LeftSideBarForPosts
           draftPosts={draftPostsForUser}
           publishedPosts={[]}
-          postStatus={PostStatus.DRAFT}
+          draftIterationsSentForReview={[]}
+          entityType={PostEntityType.DRAFT_POST}
         />
       </Grid>
 

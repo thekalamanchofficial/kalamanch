@@ -74,7 +74,7 @@ export const STATIC_TEXTS = {
   MY_FEED_PAGE: {
     TABS: [
       { label: "My Feed", value: "My Feed" },
-      { label: "Discover", value: "Discover" },
+      { label: "Reviews", value: "Reviews" },
     ],
   },
   MY_PROFILE_PAGE: {
@@ -109,6 +109,7 @@ export const STATIC_TEXTS = {
     CREATE: "Create",
     UPDATE: "Update",
     DRAFT_DETAILS_UPDATED_MESSAGE: "Draft Details Updated Successfully",
+    SAVE_REVIEWERS_SUCCESS_MESSAGE: "Reviewers Saved Successfully",
 
 
 

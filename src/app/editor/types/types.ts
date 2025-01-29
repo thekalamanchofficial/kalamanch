@@ -18,6 +18,7 @@ export type Iteration = {
   iterationName: string;
   content: string;
   draftPostId: string;
+  likeCount: number;
   createdAt: string;
   updatedAt: string;
 };
@@ -59,6 +60,12 @@ export type QueryParams = {
 };
 
 export enum PostStatus {
-  DRAFT,
-  PUBLISHED
+  DRAFT = "DRAFT",
+  PUBLISHED = "PUBLISHED",
+}
+
+export enum PostEntityType{
+  DRAFT_POST = "Draft Posts",
+  PUBLISHED_POST = "Published Posts",
+  DRAFT_ITERATION_SENT_FOR_REVIEW = "Draft Iterations Sent for Review",
 }

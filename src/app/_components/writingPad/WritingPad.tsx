@@ -14,6 +14,7 @@ type WritingPadProps = {
   handleEditorContentChange: (data: string,iterationId: string,  showToast?: boolean) => void;
   currentIterationId?: string;
   postStatus: PostStatus;
+  handleSendForReview: () => void;
 };
 
 const WritingPad: React.FC<WritingPadProps> = ({
@@ -22,7 +23,8 @@ const WritingPad: React.FC<WritingPadProps> = ({
   handlePublish,
   defaultContentToDisplay,
   handleEditorContentChange,
-  postStatus
+  postStatus,
+  handleSendForReview
 }) => {
   const { handleSubmit, control } = useContentForm();
 
@@ -41,7 +43,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
         <Box sx={{ flex: 1, height: "calc(100vh - 300px)", padding: "10px" }}>
           <WritingPadEditor control={control} name="content" defaultValue={defaultContentToDisplay} onChange={onContentChange} />
         </Box>
-        <EditorActionsBar postStatus = {postStatus} handleOpen={handleOpen} handleSubmit={handleSubmit(onPublishPost)}  handleSaveDraft={saveDraftInstantly} />
+        <EditorActionsBar postStatus = {postStatus} handleOpen={handleOpen} handleSubmit={handleSubmit(onPublishPost)}  handleSaveDraft={saveDraftInstantly} handleSendForReview={handleSendForReview}/>
       </Box>
   );
 };

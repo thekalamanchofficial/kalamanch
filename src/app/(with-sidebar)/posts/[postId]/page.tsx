@@ -1,3 +1,4 @@
+import { PostStatus } from "@prisma/client";
 import { currentUser } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import Post from "~/app/_components/post/Post";
@@ -14,6 +15,7 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
   });
   const userLikedPosts = await trpcServer.likes.getUserLikedPost({
     userEmail,
+    postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
   });
   const userBookmarks = await trpcServer.bookmarks.getUserBookmarkPosts({
     limit: null,

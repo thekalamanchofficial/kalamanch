@@ -17,6 +17,8 @@ const userSchema = yup.object({
   following: yup.array(yup.string()).default([]),
   bookmarks: yup.array(yup.string()).default([]),
 });
+const cleanArray = (array?: (string | undefined)[]): string[] =>
+  array?.filter((item): item is string => item !== undefined) ?? [];
 
 export const userRouter = router({
   getUsers: publicProcedure.query(async () => {
@@ -183,5 +185,87 @@ export const userRouter = router({
         handleError(error);
         console.log(error);
       }
+    }),
+  searchUsersSortedByFollowing: publicProcedure
+    .input(
+      yup.object({
+        searchTerm: yup.string().default(""),
+        skip: yup.number().default(0),
+        limit: yup.number().default(10),
+        userFollowing: yup.array(yup.string()).default([]),
+      }),
+    )
+    .query(async ({ input }) => {
+      const { searchTerm, skip, limit, userFollowing } = input;
+
+      const searchResults = await prisma.user.findMany({
+        where: {
+          AND: [
+            {
+              OR: [
+                {
+                  name: {
+                    contains: searchTerm,
+                    mode: "insensitive", // Case-insensitive search
+                  },
+                },
+                {
+                  email: {
+                    contains: searchTerm,
+                    mode: "insensitive",
+                  },
+                },
+              ],
+            },
+            { id: { in: cleanArray(userFollowing) } },
+          ],
+        },
+        skip,
+        take: limit,
+        orderBy: [
+          {
+            name: "asc",
+          },
+        ],
+      });
+
+      if (searchResults?.length >= limit) {
+        return searchResults;
+      }
+      const newSkip = skip + searchResults?.length;
+      const newLimit = limit - searchResults?.length;
+
+      const remainingResults = await prisma.user.findMany({
+        where: {
+          AND: [
+            {
+              OR: [
+                {
+                  name: {
+                    contains: searchTerm,
+                    mode: "insensitive", // Case-insensitive search
+                  },
+                },
+                {
+                  email: {
+                    contains: searchTerm,
+                    mode: "insensitive",
+                  },
+                },
+              ],
+            },
+            { id: { notIn: cleanArray(userFollowing) } },
+          ],
+        },
+        skip: newSkip,
+        take: newLimit,
+        orderBy: [
+          {
+            name: "asc",
+          },
+        ],
+      });
+      searchResults.push(...remainingResults);
+      return searchResults;
     }),
 });
