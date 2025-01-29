@@ -8,8 +8,8 @@ export const myfeedConfig = {
 export const tabs: { label: string; value: MyFeedTabsEnum }[] = [
   { label: MyFeedTabsEnum.MY_FEED, value: MyFeedTabsEnum.MY_FEED },
   {
-    label: MyFeedTabsEnum.DISCOVERY,
-    value: MyFeedTabsEnum.DISCOVERY,
+    label: MyFeedTabsEnum.REVIEWS,
+    value: MyFeedTabsEnum.REVIEWS,
   },
 ];
 

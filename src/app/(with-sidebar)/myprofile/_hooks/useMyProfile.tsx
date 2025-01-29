@@ -14,6 +14,7 @@ import {
   type UserInfo,
   type UseMyProfilePage,
 } from "~/app/(with-sidebar)/myprofile/types/types";
+import { PostStatus } from "~/app/editor/types/types";
 import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
 import useLikePosts from "~/app/_hooks/useLikePosts";
 
@@ -45,6 +46,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const { data: userLikedPosts } = likeMutation.getUserLikedPost.useQuery(
     {
       userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+      postStatus: PostStatus.PUBLISHED.toString().toUpperCase()
     },
     {
       enabled: !!user?.primaryEmailAddress?.emailAddress,
@@ -209,6 +211,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
 
   const { likedPosts } = useLikePosts({
     userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+    postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
   });
 
   const { bookmarkedPosts } = useBookmarkPosts({

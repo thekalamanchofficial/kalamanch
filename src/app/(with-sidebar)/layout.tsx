@@ -3,7 +3,7 @@ import { Grid2 as Grid, Box } from "@mui/material";
 import RightSideBar from "~/app/_components/sidebar/RightSideBar";
 import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
 import LeftSideBar from "../_components/sidebar/LeftSideBar";
-import { FeedProvider } from "./myfeed/context/FeedContext";
+import { FeedProvider } from "./myfeed/_context/FeedContext";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (

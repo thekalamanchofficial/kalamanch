@@ -6,6 +6,7 @@ import { commentRouter } from "./routers/comment";
 import { featuredPostRouter } from "./routers/featuredPost";
 import { UsersToFollowRouter } from "./routers/usersToFollow";
 import { draftPostRouter } from "./routers/draftPost";
+import { draftPostIterationReviewsRouter } from "./routers/draftPostIterationReviews";
 import { bookmarkRouter } from "./routers/bookmark";
 
 export const appRouter = router({
@@ -16,6 +17,7 @@ export const appRouter = router({
   comments: commentRouter,
   usersToFollow: UsersToFollowRouter,
   featuredPost: featuredPostRouter,
+  draftPostIterationReview: draftPostIterationReviewsRouter,
   bookmarks: bookmarkRouter,
 });
 

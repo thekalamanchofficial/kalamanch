@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useFeedContext } from "~/app/(with-sidebar)/myfeed/context/FeedContext";
+import { useFeedContext } from "~/app/(with-sidebar)/myfeed/_context/FeedContext";
 
 type UseBookmarkProps = {
   initialIsBookmarked: boolean;
