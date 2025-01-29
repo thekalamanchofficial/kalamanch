@@ -2,7 +2,7 @@
 
 import Script from "next/script";
 
-const GA_TRACKING_ID = process.env.GA_TRACKING_ID; // Replace with your GA ID
+const GA_TRACKING_ID = "G-SV5YZ3CXBW"; // Replace with your GA ID
 
 export default function Analytics() {
   return (
