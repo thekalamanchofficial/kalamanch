@@ -7,15 +7,39 @@ import {
   Typography,
   Drawer,
 } from "@mui/material";
-import { useState } from "react";
-import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
-import LeftSideBar from "../sidebar/LeftSideBar";
-import RightSideBar from "../sidebar/RightSideBar";
+import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import FeaturedPlayListOutlinedIcon from "@mui/icons-material/FeaturedPlayListOutlined";
 import { usePathname } from "next/navigation";
+import EditorRightSideBar from "../editorRightSideBar/EditorRightSideBar";
+import editorMockData from "../../mockDataEditor/mockdata";
+import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import LeftSideBarForPosts from "~/app/_components/leftSideBarForPosts/LeftSideBarForPosts";
+import {
+  type DraftPost,
+  EditorTabsEnum,
+  PostEntityType,
+} from "../../types/types";
+import EditorLeftSideBarForIterations from "../editorLeftSideBar/EditorLeftSideBarForIterations";
 
-export const AppBarMenu = () => {
+type EditorAppBarProps = {
+  activeTab: EditorTabsEnum;
+  publishedPosts: Post[];
+  draftPost: DraftPost | null;
+  handleSaveLastIterationData: () => void;
+  handleAddIteration: (iterationName: string) => void;
+  handleIterationSelected: (iterationId: string) => void;
+  selectedIterationId: string;
+};
+export const EditorAppBar: React.FC<EditorAppBarProps> = ({
+  activeTab,
+  publishedPosts,
+  draftPost,
+  handleSaveLastIterationData,
+  handleAddIteration,
+  handleIterationSelected,
+  selectedIterationId,
+}) => {
   const pathname = usePathname();
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
   const [featuredDrawerOpen, setFeaturedDrawerOpen] = useState(false);
@@ -81,7 +105,24 @@ export const AppBarMenu = () => {
             display: { xs: "flex", sm: "flex", md: "none", lg: "none" },
           }}
         >
-          <LeftSideBar menuItems={MENU_ITEMS} />
+          {activeTab === EditorTabsEnum.PUBLISHED && (
+            <LeftSideBarForPosts
+              draftPosts={[]}
+              draftIterationsSentForReview={[]}
+              publishedPosts={publishedPosts}
+              entityType={PostEntityType.PUBLISHED_POST}
+            />
+          )}
+          {activeTab === EditorTabsEnum.EDITOR && (
+            <EditorLeftSideBarForIterations
+              showIterations={Boolean(draftPost)}
+              iterations={draftPost?.iterations ?? []}
+              handleSaveLastIterationData={handleSaveLastIterationData}
+              handleAddIteration={handleAddIteration}
+              handleIterationSelected={handleIterationSelected}
+              selectedIterationId={selectedIterationId}
+            />
+          )}
         </Drawer>
         <Drawer
           anchor="right"
@@ -94,7 +135,7 @@ export const AppBarMenu = () => {
             },
           }}
         >
-          <RightSideBar />
+          <EditorRightSideBar accuracy={editorMockData.accuracy} />
         </Drawer>
       </>
     </>
