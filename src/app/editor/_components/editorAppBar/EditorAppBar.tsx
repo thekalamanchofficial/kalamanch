@@ -79,7 +79,7 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
             }}
           >
             <Typography variant="h3" color="primary">
-              Kalamanch
+              Editor
             </Typography>
           </Box>
           <IconButton
@@ -87,7 +87,6 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
             color="primary"
             aria-label="menu"
             onClick={() => toggleFeaturedDrawer(true)}
-            sx={{ display: pathname === "/featured" ? "none" : "flex" }}
           >
             <FeaturedPlayListOutlinedIcon />
           </IconButton>
