@@ -27,10 +27,10 @@ const UploadBox = styled(Box)(({ theme }) => ({
 interface FileUploaderProps {
   open: boolean
   onClose: () => void
-  onFileSelect?: (file: File) => void
+  onFileUpload?: (file: File) => void
 }
 
-export default function FileUploader({ open, onClose, onFileSelect }: FileUploaderProps) {
+export default function FileUploader({ open, onClose, onFileUpload }: FileUploaderProps) {
   const [file, setFile] = useState<File | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -44,7 +44,6 @@ export default function FileUploader({ open, onClose, onFileSelect }: FileUpload
     if (validateFile(selectedFile)) {
       setFile(selectedFile)
       setError(null)
-      onFileSelect?.(selectedFile)
     } else {
       setError("Please upload a .txt or .doc file")
       setFile(null)
@@ -52,7 +51,7 @@ export default function FileUploader({ open, onClose, onFileSelect }: FileUpload
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       handleFile(e.target.files[0])
     }
   }
@@ -60,6 +59,18 @@ export default function FileUploader({ open, onClose, onFileSelect }: FileUpload
   const handleRemove = () => {
     setFile(null)
     setError(null)
+  }
+  const handleImportText = () => {
+    if (file) {
+      onFileUpload?.(file)
+      setFile(null);
+      onClose()
+    }
+    else{
+      setFile(null);
+      setError("Please select a file to import")
+    }
+
   }
 
   const handleClose = () => {
@@ -153,7 +164,7 @@ export default function FileUploader({ open, onClose, onFileSelect }: FileUpload
 
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" color="primary" disabled={!file} onClick={handleClose}>
+          <Button variant="contained" color="primary" disabled={!file} onClick={handleImportText}>
             Import
           </Button>
         </Box>

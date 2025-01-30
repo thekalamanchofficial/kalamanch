@@ -92,7 +92,7 @@ export const STATIC_TEXTS = {
   EDITOR_PAGE: {
     HEADING: "Back To Feed",
     ADD_ITERATION: "Add Iteration",
-    IMPORT_TEXT: "Import text from image",
+    IMPORT_TEXT: "Import text from a file",
     RIGHTSIDEBAR_HEADING: "Technical Accuracy",
     UNPUBLISH_POST_DIALOG_TITLE: "Unpublish Post",
     PUBLISH_POST_DIALOG_DESCRIPTION: "Are you sure you want to unpublish this post? This action cannot be undone.",

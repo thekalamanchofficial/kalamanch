@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import { Box, Grid2 as Grid } from "@mui/material";
 import WritingPad from "../_components/writingPad/WritingPad";
 import CustomTabs from "../_components/CustomTabs/CustomTabs";
@@ -21,12 +20,12 @@ import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarF
 import FileUploader from "./_components/textUploader/TextUploader";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
 import { useSendForReview } from "./_hooks/useSendForReview";
+import useUploadTextFromFile from "./_hooks/useFileToText";
 
 const Page = () => {
   const { activeTab, changeTab } = useTabs();
   const {postId,draftPostId} = useQueryParams();
   const {publishedPostsForUser,setPublishedPostsForUser } = useUserPostsState({activeTab}); // Needed for Published Posts Tab
-  const [isTextUploaderOpen, setIsTextUploaderOpen] = useState(true);
   const {
     draftPost,
     saveLastIterationData,
@@ -43,7 +42,7 @@ const Page = () => {
   const {handlePostUnPublishing } = usePostUnpublishing({setPublishedPostsForUser});
   const {navigateToPostEditor} = useNavigateToPostEditor({changeTab});
   const { sendForReviewDialogOpen, setSendForReviewDialogOpen, handleSendForReview } = useSendForReview();
-
+  const { isTextUploaderOpen, setIsTextUploaderOpen, setFileContentinNewIteration } = useUploadTextFromFile({handleEditorContentChange,selectedIterationId: selectedIteration?.id ?? "",addIteration});
 
   return (
     <>
@@ -72,6 +71,7 @@ const Page = () => {
             handleAddIteration={addIteration}
             handleIterationSelected={handleIterationChange}
             selectedIterationId= {selectedIteration?.id ?? ""}
+            handleImportText={() => setIsTextUploaderOpen(true)}
         />)
         }
       </Grid>
@@ -91,7 +91,7 @@ const Page = () => {
           <Grid size={12} sx={{ height: "100%", width: "100%" }}>
             {activeTab === EditorTabsEnum.EDITOR  && ( 
               <WritingPad
-                key = {draftPost ? selectedIteration?.id : publishedPost?.content}
+                key = {draftPost ? selectedIteration?.id  : publishedPost?.content}
                 currentIterationId={selectedIteration?.id}
                 handleOpen={() => openCreatePostForm()}
                 handlePublish={async (content) => {
@@ -132,7 +132,7 @@ const Page = () => {
               update = {Boolean(publishedPost ?? draftPost)}
             />
           )}
-          <FileUploader open={isTextUploaderOpen} onClose={() => setIsTextUploaderOpen(false)} onFileSelect={() => setIsTextUploaderOpen(true)} />
+          <FileUploader open={isTextUploaderOpen} onClose={() => setIsTextUploaderOpen(false)} onFileUpload={(file) => setFileContentinNewIteration(file)} />
           {sendForReviewDialogOpen && <SendForReviewDialog open={sendForReviewDialogOpen} onClose={() => setSendForReviewDialogOpen(false)} onSubmit={(selectedUsersForReview: string[]) => handleSendForReview(selectedUsersForReview,selectedIteration?.id)} />}
         </Box>
       </Grid>
