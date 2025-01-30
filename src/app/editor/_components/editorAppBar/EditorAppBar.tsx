@@ -40,7 +40,6 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
   handleIterationSelected,
   selectedIterationId,
 }) => {
-  const pathname = usePathname();
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
   const [featuredDrawerOpen, setFeaturedDrawerOpen] = useState(false);
 
