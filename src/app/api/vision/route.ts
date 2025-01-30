@@ -3,8 +3,7 @@ import { ImageAnnotatorClient } from "@google-cloud/vision";
 
 // Initialize Google Cloud Vision Client
 const client = new ImageAnnotatorClient({
-  keyFilename:
-    "C:/Users/rj900/Desktop/RoshanWS/kalamanch/src/app/api/vision/kalamanch-ocr-key.json", // Replace with actual path
+  keyFilename: "path to json", // Replace with actual path
 });
 
 // Define the expected request body type
