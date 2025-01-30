@@ -165,7 +165,7 @@ const RightSideBar = () => {
             </Typography>
           )}
           {featuredPostData?.hasMore ? (
-            <SeeMoreButton onClick={() => handleSeeMore("/featured/post")} />
+            <SeeMoreButton onClick={() => handleSeeMore("/featured")} />
           ) : null}
         </Grid>
       </Box>
