@@ -24,8 +24,10 @@ import useUploadTextFromFile from "./_hooks/useFileToText";
 
 const Page = () => {
   const { activeTab, changeTab } = useTabs();
-  const {postId,draftPostId} = useQueryParams();
-  const {publishedPostsForUser,setPublishedPostsForUser } = useUserPostsState({activeTab}); // Needed for Published Posts Tab
+  const { postId, draftPostId } = useQueryParams();
+  const { publishedPostsForUser, setPublishedPostsForUser } = useUserPostsState(
+    { activeTab },
+  ); // Needed for Published Posts Tab
   const {
     draftPost,
     saveLastIterationData,
@@ -35,14 +37,36 @@ const Page = () => {
     addIteration,
     handlePublishEditorDraftIteration,
     updateDraftPostDetails,
-  } = useDraftEditorState({draftPostId});
+  } = useDraftEditorState({ draftPostId });
 
-  const {publishedPost, updatePostContent,updatePostDetails } = usePublishedPostEditorState({postId});
-  const {isCreatePostFormOpen,openCreatePostForm, closeCreatePostForm, formData } = useCreatePostFormDataState({ postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails});
-  const {handlePostUnPublishing } = usePostUnpublishing({setPublishedPostsForUser});
-  const {navigateToPostEditor} = useNavigateToPostEditor({changeTab});
-  const { sendForReviewDialogOpen, setSendForReviewDialogOpen, handleSendForReview } = useSendForReview();
-  const { isTextUploaderOpen, setIsTextUploaderOpen, setFileContentinNewIteration } = useUploadTextFromFile({handleEditorContentChange,selectedIterationId: selectedIteration?.id ?? "",addIteration});
+  const { publishedPost, updatePostContent, updatePostDetails } =
+    usePublishedPostEditorState({ postId });
+  const {
+    isCreatePostFormOpen,
+    openCreatePostForm,
+    closeCreatePostForm,
+    formData,
+  } = useCreatePostFormDataState({
+    postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails,
+  });
+  const { handlePostUnPublishing } = usePostUnpublishing({
+    setPublishedPostsForUser,
+  });
+  const { navigateToPostEditor } = useNavigateToPostEditor({ changeTab });
+  const {
+    sendForReviewDialogOpen,
+    setSendForReviewDialogOpen,
+    handleSendForReview,
+  } = useSendForReview();
+  const {
+    isTextUploaderOpen,
+    setIsTextUploaderOpen,
+    setFileContentinNewIteration,
+  } = useUploadTextFromFile({
+    handleEditorContentChange,
+    selectedIterationId: selectedIteration?.id ?? "",
+    addIteration,
+  });
 
   return (
     <>
@@ -52,28 +76,25 @@ const Page = () => {
           mr: 4,
         }}
       >
-        {
-          activeTab === EditorTabsEnum.PUBLISHED && (
-            <LeftSideBarForPosts
-              draftPosts={[]}
-              draftIterationsSentForReview={[]}
-              publishedPosts={publishedPostsForUser}
-              entityType={PostEntityType.PUBLISHED_POST}
-            />
-          )
-        }
-        {
-           activeTab === EditorTabsEnum.EDITOR && (
+        {activeTab === EditorTabsEnum.PUBLISHED && (
+          <LeftSideBarForPosts
+            draftPosts={[]}
+            draftIterationsSentForReview={[]}
+            publishedPosts={publishedPostsForUser}
+            entityType={PostEntityType.PUBLISHED_POST}
+          />
+        )}
+        {activeTab === EditorTabsEnum.EDITOR && (
           <EditorLeftSideBarForIterations
-            showIterations = {Boolean(draftPost)}
+            showIterations={Boolean(draftPost)}
             iterations={draftPost?.iterations ?? []}
             handleSaveLastIterationData={saveLastIterationData}
             handleAddIteration={addIteration}
             handleIterationSelected={handleIterationChange}
-            selectedIterationId= {selectedIteration?.id ?? ""}
+            selectedIterationId={selectedIteration?.id ?? ""}
             handleImportText={() => setIsTextUploaderOpen(true)}
-        />)
-        }
+          />
+        )}
       </Grid>
 
       <Grid
@@ -85,13 +106,26 @@ const Page = () => {
         }}
       >
         <Box sx={{ height: "100%", width: "100%" }}>
-          <Grid size={12} sx={{ display: "flex", justifyContent: "start", alignItems: "start", px: "4px", pt: "8px" }}>
-            <CustomTabs tabs={tabs} activeTab={activeTab} onTabChange={changeTab} />
+          <Grid
+            size={12}
+            sx={{
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "start",
+              px: "4px",
+              pt: "8px",
+            }}
+          >
+            <CustomTabs
+              tabs={tabs}
+              activeTab={activeTab}
+              onTabChange={changeTab}
+            />
           </Grid>
           <Grid size={12} sx={{ height: "100%", width: "100%" }}>
-            {activeTab === EditorTabsEnum.EDITOR  && ( 
+            {activeTab === EditorTabsEnum.EDITOR && (
               <WritingPad
-                key = {draftPost ? selectedIteration?.id  : publishedPost?.content}
+                key={draftPost ? selectedIteration?.id : publishedPost?.content}
                 currentIterationId={selectedIteration?.id}
                 handleOpen={() => openCreatePostForm()}
                 handlePublish={async (content) => {
@@ -101,17 +135,23 @@ const Page = () => {
                     await handlePublishEditorDraftIteration(content);
                   }
                 }}
-                defaultContentToDisplay={(draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""}
+                defaultContentToDisplay={
+                  (draftPost
+                    ? selectedIteration?.content
+                    : publishedPost?.content) ?? ""
+                }
                 handleEditorContentChange={handleEditorContentChange}
-                postStatus= {draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
+                postStatus={draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
                 handleSendForReview={() => setSendForReviewDialogOpen(true)}
               />
             )}
-            {activeTab === EditorTabsEnum.PUBLISHED  && ( 
+            {activeTab === EditorTabsEnum.PUBLISHED && (
               <EditorPublishedPostsSection
                 posts={publishedPostsForUser}
                 handleOnPostUnpublish={handlePostUnPublishing}
-                handleOnPostEdit={(postId: string) => navigateToPostEditor(postId,PostStatus.PUBLISHED)}
+                handleOnPostEdit={(postId: string) =>
+                  navigateToPostEditor(postId, PostStatus.PUBLISHED)
+                }
               />
             )}
           </Grid>
@@ -120,20 +160,34 @@ const Page = () => {
               handleClose={() => closeCreatePostForm()}
               open={isCreatePostFormOpen}
               createPostFormData={formData}
-              handleFormSubmit={async(details) => {
-                if(publishedPost){
+              handleFormSubmit={async (details) => {
+                if (publishedPost) {
                   await updatePostDetails(details);
-                }
-                else{
+                } else {
                   await updateDraftPostDetails(details);
                 }
                 closeCreatePostForm();
               }}
-              update = {Boolean(publishedPost ?? draftPost)}
+              update={Boolean(publishedPost ?? draftPost)}
             />
           )}
-          <FileUploader open={isTextUploaderOpen} onClose={() => setIsTextUploaderOpen(false)} onFileUpload={(file) => setFileContentinNewIteration(file)} />
-          {sendForReviewDialogOpen && <SendForReviewDialog open={sendForReviewDialogOpen} onClose={() => setSendForReviewDialogOpen(false)} onSubmit={(selectedUsersForReview: string[]) => handleSendForReview(selectedUsersForReview,selectedIteration?.id)} />}
+          <FileUploader
+            open={isTextUploaderOpen}
+            onClose={() => setIsTextUploaderOpen(false)}
+            onFileUpload={(file) => setFileContentinNewIteration(file)}
+          />
+          {sendForReviewDialogOpen && (
+            <SendForReviewDialog
+              open={sendForReviewDialogOpen}
+              onClose={() => setSendForReviewDialogOpen(false)}
+              onSubmit={(selectedUsersForReview: string[]) =>
+                handleSendForReview(
+                  selectedUsersForReview,
+                  selectedIteration?.id,
+                )
+              }
+            />
+          )}
         </Box>
       </Grid>
     </>
