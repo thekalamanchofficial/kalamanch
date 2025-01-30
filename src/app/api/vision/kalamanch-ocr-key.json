@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "kalamanch-438217",
+  "private_key_id": "be0204ad85fc8826e3ec62515b03110555b8fa11",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDjglS14TRpVoC1\nKofuzBdajRJ9FUfPK4bpoMuB4DAueOpSmc+Xn7ODOb9ilVljKqpJBgT79m3ds+V+\ng94hZw47wChbSJ18pF1/a0mLSeLeU67oK7n2rVN+2yXgFsyoiZlGNff2idMJylXY\ndIV00cTM1bRbGbBWmNIiVKza/Z3thlOvSh4qZ/ipPkP1pT6d35mkGtXjMRPJNd3g\nDini1nbVYrw+zNL03Dy4XAyWpUJqdfQn7R3wMrcx07gBr7gJ985Oyf7ik08wNtVJ\nFFpUONreozzSde4Z//M4c2ApKy/6XXylh4sveOBk9UCP94a4y4eBKY95cxIw1kgb\nqdBZvUEDAgMBAAECggEAXuarQlEmJTiVqLyMhlJw/W8yQqYBVcxA0yylJ1BmmMQM\nbpdFbmiKH5eTm2JULpcKADr4EkhJrPzRIrSMEJ/l4ou16doBA5CmhbOxsl4IOhhr\nMeKniFvlo9lzU6X/CeCX5J83h4oXU5Kou4ljcAbeklkkignNslm98d8jWZgIbB7e\nSvQzLkJYxIDR9SF+u48sEMOVj9InvOErw7YkESlAoS2dlUebEy/xTEkN4nYtPqae\nqiklcUQ8JkU4cQr9h6k6+d+46RyehWoKQz4j8zRwcCZpDLMcBUslQD4RlaumC98a\nmeprpzbX+CdelwViOpeIbBcs3/qcnvhqCnOWB6gN1QKBgQD6GYlwVWWDsCwgwCvS\nuMWb0QMCxDiqXIOZrXJ6N7v1eFtjBHGnfTpAcrgI8eulBl7x+YmAPDVstW9++JTn\nJnKAZHP1RrQ/mLO/+OayEnaukUla/vZ8QtZbvCp8IlMNjLjqc6OE7cLez/Gtdckk\n+FyNO0u+d8I/LTcgEkeBM5E9VQKBgQDo4FvuO0rTMJitNoAJ6OUfm3skB89iviTx\nGoJ6r7GcliBBZrHmWIKKMnfpLyKoiBVUTyz+C4zBN6hnN+w++bxCGeacvCQPujFP\nudCN6CWK1c+ZuBPKB+camQ3OuG3Xbt90cHHj4h+lAWFvyQ1/DtIXMGliWIIpECam\ncZEW3w7E9wKBgBpZwHJWfQif8jZNKRDdqOxe3DtZY0MH1lHFxY78+k/Fq5NGL5df\nCVkq/RrsKlDL2AsUqJkbPuHCSAoPtNiZ42yFqPYJygn9U8sBNYVDjr+bzSfKPzwe\naqllrPBBSZDe58jEAFGMH4EMVcFZ7KR5in7S5Yse4Rd48xrs8h25yi61AoGAfjRg\n/enaMjvq8ixQFY7G5WtAwBUPekbsBFJGljCzQ9ZEYs1B6kDbdgPF4nSuBsHBNXC3\nRHKD9I6yUEYJXVPAh947kYOQ04kngjqEYPOHrQcUvAz7hIjl4Q9DYV2oAZHPve3W\nexan6aem44sFKm+gwfp1klu/JnvfRmLTq551BZ8CgYA9kvFPDBH64LbF/A0UY6At\n43iCmjRcKquG7xQjUS2ftXSbNzw0rnbqt5+f4e/NHE/guLb8TTm76fdDir62r2ZP\nU3J8oYheMQGG6zO29H84vAecZ1FHQa6d2NT8RkJIRA1fiYBGKMxmLCDkNPID3Z7s\nCSBKvy4W28yr1rI462aWwA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "kalamanch-ocr@kalamanch-438217.iam.gserviceaccount.com",
+  "client_id": "107221598916163752862",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/kalamanch-ocr%40kalamanch-438217.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
