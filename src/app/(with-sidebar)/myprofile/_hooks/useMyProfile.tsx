@@ -46,7 +46,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const { data: userLikedPosts } = likeMutation.getUserLikedPost.useQuery(
     {
       userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-      postStatus: PostStatus.PUBLISHED.toString().toUpperCase()
+      postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
     },
     {
       enabled: !!user?.primaryEmailAddress?.emailAddress,

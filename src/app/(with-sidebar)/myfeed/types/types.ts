@@ -92,6 +92,7 @@ export type PostsFeedProps = {
   articlesList: Post[];
   likedPosts: string[];
   bookmarkedPosts: string[];
+  setPosts?: React.Dispatch<React.SetStateAction<Post[]>>;
 };
 
 export type PostCardFooterProps = {
@@ -109,8 +110,12 @@ export type PostCardFooterProps = {
   showBookmark?: boolean;
   showShare?: boolean;
   showEditPost?: boolean;
+  showEditPublishedPost?: boolean;
+  showUnpublishPost?: boolean;
   handleEditPost?: () => void;
   handleBookmark?: () => void;
+  handleUnpublishPost?: (postId: string) => Promise<void>;
+  handleEditPublishedPost?: (postId: string) => void;
 };
 
 export type UserNameProfileProps = {

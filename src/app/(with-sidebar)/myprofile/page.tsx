@@ -32,6 +32,7 @@ const MyProfile = () => {
     callSave,
     userInfo,
     userLikedPosts,
+    setPosts,
   } = UseMyProfilePage();
 
   const renderUI = useMemo(() => {
@@ -50,6 +51,7 @@ const MyProfile = () => {
               articlesList={postDataWithComments ?? []}
               likedPosts={likedPosts}
               bookmarkedPosts={bookmarkedPosts}
+              setPosts={setPosts}
             />
           ) : (
             <ShowMessage
@@ -120,6 +122,7 @@ const MyProfile = () => {
     hasMorePosts,
     userLikedPosts,
     bookmarkedPosts,
+    setPosts,
   ]);
   return (
     <Grid columns={1}>
