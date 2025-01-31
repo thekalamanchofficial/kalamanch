@@ -3,7 +3,7 @@ import { ImageAnnotatorClient } from "@google-cloud/vision";
 
 // Initialize Google Cloud Vision Client
 const client = new ImageAnnotatorClient({
-  keyFilename: "path to json", // Replace with actual path
+  keyFilename: process.env.GOOGLE_VISION_CREDENTIALS, // Replace with actual path
 });
 
 // Define the expected request body type

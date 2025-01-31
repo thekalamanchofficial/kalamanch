@@ -73,7 +73,7 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({ addIteration }) => {
         const data = await response.json();
         console.log("vision response", data);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-        resolve(`<pre>${data.text}</pre>`); // TODO: FIx all these type errors
+        resolve(data.text); // TODO: FIx all these type errors
       };
       reader.onerror = () => reject(new Error("Error reading file"));
     });
