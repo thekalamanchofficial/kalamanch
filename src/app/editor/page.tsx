@@ -80,6 +80,7 @@ const Page = () => {
         handleAddIteration={addIteration}
         handleIterationSelected={handleIterationChange}
         selectedIterationId={selectedIteration?.id ?? ""}
+        handleImportText={() => setIsTextUploaderOpen(true)}
       />
       <Grid
         size={2}

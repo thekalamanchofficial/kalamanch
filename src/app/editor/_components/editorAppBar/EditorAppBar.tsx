@@ -10,7 +10,6 @@ import {
 import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import FeaturedPlayListOutlinedIcon from "@mui/icons-material/FeaturedPlayListOutlined";
-import { usePathname } from "next/navigation";
 import EditorRightSideBar from "../editorRightSideBar/EditorRightSideBar";
 import editorMockData from "../../mockDataEditor/mockdata";
 import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
@@ -27,9 +26,10 @@ type EditorAppBarProps = {
   publishedPosts: Post[];
   draftPost: DraftPost | null;
   handleSaveLastIterationData: () => void;
-  handleAddIteration: (iterationName: string) => void;
+  handleAddIteration: (content?: string) => void;
   handleIterationSelected: (iterationId: string) => void;
   selectedIterationId: string;
+  handleImportText: () => void;
 };
 export const EditorAppBar: React.FC<EditorAppBarProps> = ({
   activeTab,
@@ -39,6 +39,7 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
   handleAddIteration,
   handleIterationSelected,
   selectedIterationId,
+  handleImportText,
 }) => {
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
   const [featuredDrawerOpen, setFeaturedDrawerOpen] = useState(false);
@@ -119,6 +120,7 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
               handleAddIteration={handleAddIteration}
               handleIterationSelected={handleIterationSelected}
               selectedIterationId={selectedIterationId}
+              handleImportText={handleImportText}
             />
           )}
         </Drawer>
