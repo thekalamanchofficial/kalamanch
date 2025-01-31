@@ -1,37 +1,38 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormControl from '@mui/material/FormControl'
-import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
-import { styled } from '@mui/material/styles'
-import DescriptionOutlinedIcon from '@mui/icons-material/Publish'
-import { STATIC_TEXTS } from '~/app/_components/static/staticText'
-import { type Iteration } from '~/app/editor/types/types'
+import React, { useState } from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
+import { styled } from "@mui/material/styles";
+import DescriptionOutlinedIcon from "@mui/icons-material/Publish";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { type Iteration } from "~/app/editor/types/types";
 
 export type PublishDialogProps = {
-  iterations: Iteration[]
-  onPublish: (iterationId: string) => Promise<void>
-  onCancel?: () => void
-  open: boolean
-  title?: string
-  description?: string
-}
+  iterations: Iteration[];
+  onPublish: (iterationId: string) => Promise<void>;
+  onCancel?: () => void;
+  open: boolean;
+  title?: string;
+  description?: string;
+};
 
 const StyledRadio = styled(Radio)(({ theme }) => ({
-  '&.Mui-checked': {
-    color: 'primary.main', 
+  // TODO: lint error
+  "&.Mui-checked": {
+    color: "primary.main",
   },
-}))
+}));
 
 export default function PublishDraftDialog({
   iterations,
@@ -39,14 +40,14 @@ export default function PublishDraftDialog({
   onCancel,
   open,
   title = STATIC_TEXTS.EDITOR_PAGE.PUBLISH_DRAFT,
-  description = STATIC_TEXTS.EDITOR_PAGE.SELECT_ITERATION_DESCRIPTION
+  description = STATIC_TEXTS.EDITOR_PAGE.SELECT_ITERATION_DESCRIPTION,
 }: PublishDialogProps) {
-  const [selectedIteration, setSelectedIteration] = useState<string>('')
-  const [error] = useState<string | null>(null)
+  const [selectedIteration, setSelectedIteration] = useState<string>("");
+  const [error] = useState<string | null>(null);
 
   const handleOnPublish = async (selectedIteration: string) => {
-    await onPublish(selectedIteration)
-  }
+    await onPublish(selectedIteration);
+  };
 
   return (
     <>
@@ -59,7 +60,7 @@ export default function PublishDraftDialog({
               {error}
             </Alert>
           )}
-          <FormControl component="fieldset" sx={{ mt: 2, width: '100%' }}>
+          <FormControl component="fieldset" sx={{ mt: 2, width: "100%" }}>
             <RadioGroup
               value={selectedIteration}
               onChange={(e) => setSelectedIteration(e.target.value)}
@@ -71,19 +72,22 @@ export default function PublishDraftDialog({
                   control={<StyledRadio />}
                   label={
                     <Typography component="div">
-                      <Typography variant="subtitle1">{iteration.iterationName}</Typography>
+                      <Typography variant="subtitle1">
+                        {iteration.iterationName}
+                      </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Last modified: {new Date(iteration.updatedAt).toLocaleDateString()}
+                        Last modified:{" "}
+                        {new Date(iteration.updatedAt).toLocaleDateString()}
                       </Typography>
                     </Typography>
                   }
                   sx={{
                     border: `1px solid`,
                     borderRadius: 1,
-                    width: '100%',
+                    width: "100%",
                     mb: 1,
                     p: 1,
-                    '&:hover': {
+                    "&:hover": {
                       backgroundColor: "action.hover",
                     },
                   }}
@@ -93,16 +97,16 @@ export default function PublishDraftDialog({
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             sx={{
-              color: 'primary.main', 
-              backgroundColor: 'secondary.main',
-              textTransform: 'none',
-              '&:hover': {
-                backgroundColor: 'secondary.dark',
+              color: "primary.main",
+              backgroundColor: "secondary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "secondary.dark",
               },
-            }} 
+            }}
             onClick={onCancel}
           >
             {STATIC_TEXTS.EDITOR_PAGE.CANCEL}
@@ -110,13 +114,15 @@ export default function PublishDraftDialog({
           <Button
             variant="contained"
             sx={{
-              backgroundColor: 'primary.main',
-              textTransform: 'none',
-              '&:hover': {
-                backgroundColor: 'primary.dark',
+              backgroundColor: "primary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "primary.dark",
               },
             }}
-            onClick={async () => { await handleOnPublish(selectedIteration) }}
+            onClick={async () => {
+              await handleOnPublish(selectedIteration);
+            }}
             disabled={!selectedIteration}
             startIcon={<DescriptionOutlinedIcon />}
           >
@@ -125,5 +131,5 @@ export default function PublishDraftDialog({
         </DialogActions>
       </Dialog>
     </>
-  )
+  );
 }

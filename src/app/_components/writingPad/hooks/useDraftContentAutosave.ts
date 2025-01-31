@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from "react";
 import throttle from "lodash/throttle";
 
@@ -10,43 +9,56 @@ type UseDraftContentAutosaveReturn = {
 type UseDraftContentAutosaveProps = {
   currentIterationId: string | null | undefined;
   initialContent: string;
-  saveContentToDb: (content: string, currentIterationId: string, showToast?: boolean) => void;
+  saveContentToDb: (
+    content: string,
+    currentIterationId: string,
+    showToast?: boolean,
+  ) => void;
 };
 
-export const useDraftContentAutosave = ({currentIterationId,initialContent,saveContentToDb}:UseDraftContentAutosaveProps
-): UseDraftContentAutosaveReturn => {
+export const useDraftContentAutosave = ({
+  currentIterationId,
+  initialContent,
+  saveContentToDb,
+}: UseDraftContentAutosaveProps): UseDraftContentAutosaveReturn => {
   const [content, setContent] = useState<string>(initialContent);
-  const [lastSavedContent, setLastSavedContent] = useState<string>(initialContent);
+  const [lastSavedContent, setLastSavedContent] =
+    useState<string>(initialContent);
 
-  const saveContent = (data: string,iterationId: string, showToast?: boolean) => {
+  const saveContent = (
+    data: string,
+    iterationId: string,
+    showToast?: boolean,
+  ) => {
     if (data === lastSavedContent) return;
     setLastSavedContent(data);
-    saveContentToDb(data,iterationId,showToast);
+    saveContentToDb(data, iterationId, showToast);
   };
 
   const throttledSave = useCallback(
+    // TODO: lint error
     throttle(saveContent, 60000), // Save every 1 minute
-    [currentIterationId]
+    [currentIterationId],
   );
 
   const onContentChange = (data: string) => {
-    if(!currentIterationId) return
+    if (!currentIterationId) return;
     setContent(data);
-    localStorage.setItem(currentIterationId,data)
-    throttledSave(data,currentIterationId);
+    localStorage.setItem(currentIterationId, data);
+    throttledSave(data, currentIterationId);
   };
 
   const saveDraftInstantly = (showToast?: boolean) => {
-    if(!currentIterationId) return
-    saveContent(content,currentIterationId,showToast); 
-    localStorage.removeItem(currentIterationId) // TODO - Use Context instead of local storage
+    if (!currentIterationId) return;
+    saveContent(content, currentIterationId, showToast);
+    localStorage.removeItem(currentIterationId); // TODO - Use Context instead of local storage
   };
 
   useEffect(() => {
     return () => {
       throttledSave.cancel();
-    }
-  },[])
+    };
+  }, []); // TODO: lint error
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -70,5 +82,5 @@ export const useDraftContentAutosave = ({currentIterationId,initialContent,saveC
     };
   }, [content, lastSavedContent]);
 
-  return { onContentChange,currentIterationId, saveDraftInstantly };
+  return { onContentChange, currentIterationId, saveDraftInstantly };
 };

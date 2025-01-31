@@ -12,37 +12,37 @@ type useFeaturedAuthorPageProps = {
 };
 
 const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
-
   const [author, setAuthor] = useState<UserToFollow[]>([]);
   const [skip, setSkip] = useState(0);
   const [hasMoreAuthor, setHasMoreAuthor] = useState<boolean>(true);
 
-  
   const userMutation = trpc.user;
   const featuredAuthorMutation = trpc.usersToFollow;
 
   const { user } = useClerk();
 
-  const { data: userAlreadyFollowing } = userMutation.getUserFollowings.useQuery({
-    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-  });
+  const { data: userAlreadyFollowing } =
+    userMutation.getUserFollowings.useQuery({
+      userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+    });
 
-  const { data: usersToFollowData, isLoading, error } =
-    featuredAuthorMutation.getUsersToFollow.useQuery(
-      {
-        skip,
-        limit:
-          skip === 0
-            ? config.lazyLoading.initialLimit
-            : config.lazyLoading.limit,
-      },
-      {
-        enabled: skip >= 0 && hasMoreAuthor === true,
-      },
-    );
-
+  const {
+    data: usersToFollowData,
+    isLoading,
+    error,
+  } = featuredAuthorMutation.getUsersToFollow.useQuery(
+    {
+      skip,
+      limit:
+        skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
+    },
+    {
+      enabled: skip >= 0 && hasMoreAuthor === true,
+    },
+  );
 
   const { handleScroll } = useLazyLoading({
+    // TODO: lint error
     queryLoading: isLoading,
     error: error?.message ?? "",
     initialLimit: config.lazyLoading.initialLimit,
@@ -54,7 +54,10 @@ const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
   });
 
   useEffect(() => {
-    setAuthor((prevAuthor) => [...prevAuthor, ...(usersToFollowData?.featuredAuthor ?? [])]);
+    setAuthor((prevAuthor) => [
+      ...prevAuthor,
+      ...(usersToFollowData?.featuredAuthor ?? []),
+    ]);
   }, [usersToFollowData]);
 
   return {

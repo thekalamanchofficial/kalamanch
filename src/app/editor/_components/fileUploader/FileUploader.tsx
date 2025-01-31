@@ -33,7 +33,7 @@ export default function FileUploader({
   const [error, setError] = useState<string | null>(null);
 
   const validateFile = (file: File) => {
-    const validTypes = [".txt", ".doc", ".docx"];
+    const validTypes = [".txt", ".doc", ".docx", ".jpeg", ".png"];
     const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
     return validTypes.includes(fileExtension);
   };
@@ -102,8 +102,8 @@ export default function FileUploader({
       <DialogContent>
         <Box sx={{ py: 2 }}>
           <Typography
-            variant="body2"
-            color="text.secondary"
+            variant="h3"
+            color="primary.main"
             sx={{ mb: 2, textAlign: "center" }}
           >
             {STATIC_TEXTS.EDITOR_PAGE.UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE}
@@ -160,7 +160,7 @@ export default function FileUploader({
             >
               <input
                 type="file"
-                accept=".txt,.doc,.docx"
+                accept=".txt,.doc,.docx,.jpeg,.png"
                 onChange={handleChange}
                 style={{ display: "none" }}
                 id="file-input"

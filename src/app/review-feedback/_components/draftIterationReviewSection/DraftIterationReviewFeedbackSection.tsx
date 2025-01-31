@@ -1,7 +1,10 @@
 "use client";
 import React, { Fragment, useEffect, useRef, useCallback } from "react";
-import {Box, Divider } from "@mui/material";
-import { type IterationWithReviews, ReviewScreen } from "~/app/(with-sidebar)/myfeed/types/types";
+import { Box, Divider } from "@mui/material";
+import {
+  type IterationWithReviews,
+  ReviewScreen,
+} from "~/app/(with-sidebar)/myfeed/types/types";
 import { useSelectedDraftIteration } from "~/app/review-feedback/_contexts/SelectedDraftIterationContext";
 import DraftIterationReviewPost from "~/app/_components/draftIterationReviewPost/DraftIterationReviewPost";
 import { useClerk } from "@clerk/nextjs";
@@ -14,9 +17,15 @@ type DraftIterationReviewFeedbackSectionProps = {
 };
 
 export default function DraftIterationReviewFeedbackSection({
-    draftIterations,likedDraftIterations,handleScroll
+  draftIterations,
+  likedDraftIterations,
+  handleScroll,
 }: DraftIterationReviewFeedbackSectionProps) {
-  const {setSelectedDraftIterationId,selectedDraftIterationIdInLeftSideBar,setSelectedDraftIterationIdInLeftSideBar} = useSelectedDraftIteration();
+  const {
+    setSelectedDraftIterationId,
+    selectedDraftIterationIdInLeftSideBar,
+    setSelectedDraftIterationIdInLeftSideBar,
+  } = useSelectedDraftIteration();
   const postRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
 
   const { user } = useClerk();
@@ -31,7 +40,6 @@ export default function DraftIterationReviewFeedbackSection({
     },
   );
 
-
   const handleIntersection = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       for (const entry of entries) {
@@ -39,17 +47,17 @@ export default function DraftIterationReviewFeedbackSection({
           const postId = entry.target.getAttribute("data-post-id");
           if (postId) {
             setSelectedDraftIterationId(postId);
-            break; 
+            break;
           }
         }
       }
     },
-    [setSelectedDraftIterationId]
+    [setSelectedDraftIterationId],
   );
 
   useEffect(() => {
     const observer = new IntersectionObserver(handleIntersection, {
-      root: null, 
+      root: null,
       rootMargin: "0px",
       threshold: 0.9,
     });
@@ -65,19 +73,23 @@ export default function DraftIterationReviewFeedbackSection({
     };
   }, [draftIterations, handleIntersection]);
 
-
   useEffect(() => {
-    const selectedDraftIterationRef = postRefs.current.get(selectedDraftIterationIdInLeftSideBar ?? "");
+    const selectedDraftIterationRef = postRefs.current.get(
+      selectedDraftIterationIdInLeftSideBar ?? "",
+    );
     if (selectedDraftIterationRef) {
-        selectedDraftIterationRef.scrollIntoView({ behavior: "smooth", block: "start" });
+      selectedDraftIterationRef.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
-    setSelectedDraftIterationId(selectedDraftIterationIdInLeftSideBar)
-  }, [selectedDraftIterationIdInLeftSideBar]);
+    setSelectedDraftIterationId(selectedDraftIterationIdInLeftSideBar);
+  }, [selectedDraftIterationIdInLeftSideBar]); // TODO: lint error
 
   useEffect(() => {
     setSelectedDraftIterationId(draftIterations[0]?.id ?? "");
-    setSelectedDraftIterationIdInLeftSideBar(draftIterations[0]?.id ?? "")
-  }, [draftIterations]);
+    setSelectedDraftIterationIdInLeftSideBar(draftIterations[0]?.id ?? "");
+  }, [draftIterations]); // TODO: lint error
 
   return (
     <Box
@@ -97,18 +109,17 @@ export default function DraftIterationReviewFeedbackSection({
           }}
           data-post-id={draftIteration.id}
         >
-        <Fragment key={draftIteration.id}>
-          <DraftIterationReviewPost
-            draftIterationReviewPost={draftIteration}
-            userFollowing={userFollowing}
-            isLiked={likedDraftIterations.includes(draftIteration.id)}
-            reviewScreen={ReviewScreen.REVIEW_FEEDBACK_SCREEN}
-          />
-          <Divider sx={{ my: 2 }} />
-        </Fragment>
+          <Fragment key={draftIteration.id}>
+            <DraftIterationReviewPost
+              draftIterationReviewPost={draftIteration}
+              userFollowing={userFollowing}
+              isLiked={likedDraftIterations.includes(draftIteration.id)}
+              reviewScreen={ReviewScreen.REVIEW_FEEDBACK_SCREEN}
+            />
+            <Divider sx={{ my: 2 }} />
+          </Fragment>
         </div>
       ))}
-
     </Box>
   );
 }

@@ -1,5 +1,5 @@
 import { type SxProps } from "@mui/material";
-import { DraftPost, Iteration } from "~/app/editor/types/types";
+import { type DraftPost, type Iteration } from "~/app/editor/types/types";
 
 export type MenuItemList = {
   label: string;
@@ -40,7 +40,7 @@ export type Like = {
   iterationId?: string | null | undefined;
   postStatus: string;
   createdAt: string;
-}
+};
 
 type Bid = {
   id: string;
@@ -56,7 +56,7 @@ export type Post = {
   authorName: string;
   authorProfileImageUrl: string;
   content: string;
-  postDetails:  PostDetails;
+  postDetails: PostDetails;
   likeCount: number;
   likes?: Like[];
   comments?: Comment[];
@@ -71,8 +71,7 @@ export type CreatePostProps = {
   authorName: string;
   authorProfileImageUrl: string;
   postDetails: PostDetails;
-  
-}
+};
 
 export type PostDetails = {
   title: string;
@@ -81,13 +80,13 @@ export type PostDetails = {
   actors: string[];
   tags: string[];
   thumbnailDetails: ThumbnailDetails;
-}
+};
 
 export type ThumbnailDetails = {
   url: string;
   content?: string | null;
   title?: string | null;
-}
+};
 export type PostsFeedProps = {
   articlesList: Post[];
   likedPosts: string[];
@@ -150,7 +149,6 @@ export enum MyFeedTabsEnum {
   REVIEWS = "Reviews",
 }
 
-
 export type FeaturedPost = {
   id: string;
   title: string;
@@ -173,11 +171,11 @@ export type IterationWithReviews = Iteration & {
   DraftPost: Omit<DraftPost, "iterations"> & {
     postDetails: PostDetails;
   };
-  likes: Like[]; 
-  comments: Comment[]; 
+  likes: Like[];
+  comments: Comment[];
 };
 
 export enum ReviewScreen {
   REVIEWS_MY_FEED_SUBTAB,
-  REVIEW_FEEDBACK_SCREEN
+  REVIEW_FEEDBACK_SCREEN,
 }
