@@ -102,8 +102,8 @@ export default function FileUploader({
       <DialogContent>
         <Box sx={{ py: 2 }}>
           <Typography
-            variant="body2"
-            color="text.secondary"
+            variant="h3"
+            color="primary.main"
             sx={{ mb: 2, textAlign: "center" }}
           >
             {STATIC_TEXTS.EDITOR_PAGE.UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE}
