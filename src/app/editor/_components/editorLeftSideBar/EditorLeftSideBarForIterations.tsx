@@ -13,9 +13,10 @@ type EditorLeftSideBarPropsForIterations = {
   iterations: Iteration[];
   selectedIterationId: string;
   handleIterationSelected: (iterationId: string) => void;
-  handleAddIteration: (iterationName: string) => void;
+  handleAddIteration: (content?: string) => void;
   handleSaveLastIterationData: () => void
   showIterations?: boolean
+  handleImportText: () => void
 };
 
 const EditorLeftSideBarForIterations: React.FC<EditorLeftSideBarPropsForIterations> = ({
@@ -24,7 +25,8 @@ const EditorLeftSideBarForIterations: React.FC<EditorLeftSideBarPropsForIteratio
   handleAddIteration,
   selectedIterationId,
   handleSaveLastIterationData,
-  showIterations
+  showIterations,
+  handleImportText
 }) => {
   const router = useRouter();
 
@@ -107,7 +109,7 @@ const EditorLeftSideBarForIterations: React.FC<EditorLeftSideBarPropsForIteratio
             color: "white",
             py: "10px",
           }}
-          onClick={( ) => handleAddIteration("Iteration - " + (iterations.length + 1))}
+          onClick={( ) => handleAddIteration()}
           
         >
           <AddIcon />
@@ -130,6 +132,7 @@ const EditorLeftSideBarForIterations: React.FC<EditorLeftSideBarPropsForIteratio
             minHeight: "auto",
             py: "10px",
           }}
+          onClick={handleImportText}
         >
           <InsertPhotoOutlinedIcon />
           <Typography

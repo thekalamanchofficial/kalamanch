@@ -20,7 +20,7 @@ type DraftEditorState = {
   selectedIteration: Iteration | null;
   handleIterationChange: (iterationId: string) => Promise<void>;
   handleEditorContentChange: (content: string, iterationId: string, showToast?: boolean) => Promise<void>;
-  addIteration: (iterationName: string) => Promise<void>;
+  addIteration: (content?: string) => Promise<void>;
 };
 
 export const useDraftEditorState = ({draftPostId}: DraftEditorStateProps) : DraftEditorState => {
@@ -32,13 +32,15 @@ export const useDraftEditorState = ({draftPostId}: DraftEditorStateProps) : Draf
   const draftPostData = getDraftPost(draftPostId);
 
 
-  const addIteration = async (iterationName: string) => {
+  const addIteration = async (content?: string) => {
     if (!draftPostId) return console.warn("Missing draftPostId");   
     await saveLastIterationData();
+    const newIterationName = `Iteration - ${draftPost?.iterations?.length ? draftPost.iterations.length + 1 : 1}`;
     try {
       const addedIteration = await addDraftIteration(
         draftPostId,
-        iterationName
+        newIterationName,
+        content ?? ""
       );
       setDraftPost((prev) => {
         if (!prev) return null;
@@ -132,7 +134,7 @@ export const useDraftEditorState = ({draftPostId}: DraftEditorStateProps) : Draf
         console.log(err);
       }
     },
-    [draftPostId, selectedIteration, updateDraftIteration]
+    [draftPostId,draftPost, selectedIteration, updateDraftIteration,]
   );
 
   const handlePublishEditorDraftIteration = async (content: string) => {
