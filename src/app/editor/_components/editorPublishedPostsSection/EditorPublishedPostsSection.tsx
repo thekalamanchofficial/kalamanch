@@ -17,57 +17,63 @@ interface EditorPublishedPostsSectionProps {
 export default function EditorPublishedPostsSection({
   posts,
   handleOnPostUnpublish,
-  handleOnPostEdit
+  handleOnPostEdit,
 }: EditorPublishedPostsSectionProps) {
-  const { selectedPublishedPostId, setSelectedPublishedPostId,selectedPublishedPostIdInLeftSideBar,setSelectedPublishedPostIdInLeftSideBar } = useSelectedPublishedPost();
+  const {
+    selectedPublishedPostId,
+    setSelectedPublishedPostId,
+    selectedPublishedPostIdInLeftSideBar,
+    setSelectedPublishedPostIdInLeftSideBar,
+  } = useSelectedPublishedPost();
   const postRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
 
   const handleIntersection = useCallback(
-      (entries: IntersectionObserverEntry[]) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const postId = entry.target.getAttribute("data-post-id");
-            if (postId) {
-              setSelectedPublishedPostId(postId);
-              break; 
-            }
+    (entries: IntersectionObserverEntry[]) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const postId = entry.target.getAttribute("data-post-id");
+          if (postId) {
+            setSelectedPublishedPostId(postId);
+            break;
           }
         }
-      },
-      [selectedPublishedPostId]
-    );
+      }
+    },
+    [selectedPublishedPostId], // TODO: lint error
+  );
 
   useEffect(() => {
-        const observer = new IntersectionObserver(handleIntersection, {
-          root: null, 
-          rootMargin: "0px",
-          threshold: 0.9,
-        });
-    
-        postRefs.current.forEach((ref) => {
-          if (ref) {
-            observer.observe(ref);
-          }
-        });
-    
-        return () => {
-          observer.disconnect();
-        };
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.9,
+    });
+
+    postRefs.current.forEach((ref) => {
+      if (ref) {
+        observer.observe(ref);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
   }, [posts, handleIntersection]);
-  
+
   useEffect(() => {
     setSelectedPublishedPostId(posts[0]?.id ?? "");
     setSelectedPublishedPostIdInLeftSideBar(posts[0]?.id ?? "");
   }, [posts]);
 
   useEffect(() => {
-      const selectedPostRef = postRefs.current.get(selectedPublishedPostIdInLeftSideBar ?? "");
-      if (selectedPostRef) {
-        selectedPostRef.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-      setSelectedPublishedPostId(selectedPublishedPostIdInLeftSideBar)
-    }, [selectedPublishedPostIdInLeftSideBar]);
-
+    const selectedPostRef = postRefs.current.get(
+      selectedPublishedPostIdInLeftSideBar ?? "",
+    );
+    if (selectedPostRef) {
+      selectedPostRef.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    setSelectedPublishedPostId(selectedPublishedPostIdInLeftSideBar);
+  }, [selectedPublishedPostIdInLeftSideBar]);
 
   return (
     <Box
@@ -82,11 +88,11 @@ export default function EditorPublishedPostsSection({
         <div
           key={post.id}
           ref={(el) => {
-            postRefs.current.set(post.id ?? "",el);
+            postRefs.current.set(post.id ?? "", el);
           }}
           data-post-id={post.id}
         >
-          <Card  sx={{ mb: 2, boxShadow: "none" }}>
+          <Card sx={{ mb: 2, boxShadow: "none" }}>
             <CardContent>
               <Fragment>
                 <PostCardContent
@@ -95,17 +101,23 @@ export default function EditorPublishedPostsSection({
                   articleTags={post.postDetails.tags}
                   articleImage={post.postDetails.thumbnailDetails.url}
                   articleId={post.id}
-                  articleDescription={post.postDetails.thumbnailDetails.content ?? ""}
+                  articleDescription={
+                    post.postDetails.thumbnailDetails.content ?? ""
+                  }
                   savedDate={post.updatedAt}
                 />
-                <EditorPostFooter handleEditButtonClick={() => handleOnPostEdit(post.id ?? "")} handlePublishOrUnpublishButtonClick={() => handleOnPostUnpublish(post.id ?? "")} postStatus={PostStatus.PUBLISHED} />
+                <EditorPostFooter
+                  handleEditButtonClick={() => handleOnPostEdit(post.id ?? "")}
+                  handlePublishOrUnpublishButtonClick={() =>
+                    handleOnPostUnpublish(post.id ?? "")
+                  }
+                  postStatus={PostStatus.PUBLISHED}
+                />
               </Fragment>
             </CardContent>
           </Card>
         </div>
       ))}
     </Box>
-    
   );
 }
-
