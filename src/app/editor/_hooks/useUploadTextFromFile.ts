@@ -1,6 +1,8 @@
 import Mammoth from "mammoth";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import Tesseract from "tesseract.js";
+
 
 type UseUploadTextFromFileInput = {
   addIteration: (content?: string) => Promise<void>;
@@ -53,6 +55,27 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({
     });
   };
 
+  const getTextFromImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        reject(new Error("No file selected"));
+        return;
+      }
+      Tesseract.recognize(
+        URL.createObjectURL(file),
+        "eng", // Language
+        {
+          logger: (m) => console.log(m),
+        }
+      ).then(({ data: { text } }) => {
+        resolve(text);
+      }).catch((error) => {
+        reject(new Error(error instanceof Error ? error.message : String(error)));
+      });
+    });
+  };
+
+
   const uploadFileContentinNewIteration = async (file: File) => {
     if (!file) return;
     let uploadedEditorContent = "";
@@ -60,6 +83,9 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({
       uploadedEditorContent = await getTextFromTxtFile(file);
     } else if (file.name.endsWith(".docx")) {
       uploadedEditorContent = await getTextFromDocxFile(file);
+    }
+    else if (file.name.endsWith(".png") || file.name.endsWith(".jpg") || file.name.endsWith(".jpeg")) {
+      uploadedEditorContent = await getTextFromImage(file);
     }
     await addIteration(uploadedEditorContent);
     toast.success("Text uploaded successfully!");

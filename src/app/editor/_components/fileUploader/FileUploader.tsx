@@ -33,7 +33,7 @@ export default function FileUploader({
   const [error, setError] = useState<string | null>(null);
 
   const validateFile = (file: File) => {
-    const validTypes = [".txt", ".doc", ".docx"];
+    const validTypes = [".txt", ".doc", ".docx",".png",".jpg",".jpeg"];
     const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
     return validTypes.includes(fileExtension);
   };
@@ -160,7 +160,7 @@ export default function FileUploader({
             >
               <input
                 type="file"
-                accept=".txt,.doc,.docx"
+                accept=".txt,.doc,.docx,.png,.jpg,.jpeg"
                 onChange={handleChange}
                 style={{ display: "none" }}
                 id="file-input"
