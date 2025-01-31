@@ -114,7 +114,8 @@ export const STATIC_TEXTS = {
     DRAG_AND_DROP_FILE: "Drag and drop your file here, or click to select",
     SUPPORTS_TXT_AND_DOCX_FILE: "Supports .txt and .doc files",
     IMPORT: "Import",
-    SELECT_FILE_ERROR: "Please select a file to import"
+    SELECT_FILE_ERROR: "Please select a file to import",
+    UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE: "The uploaded text will appear in a new Iteration",
 
 
 

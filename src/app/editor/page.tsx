@@ -17,10 +17,10 @@ import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState"
 import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 import { useNavigateToPostEditor } from "./_hooks/useNavigateToPostEditor";
 import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
-import FileUploader from "./_components/textUploader/TextUploader";
+import FileUploader from "./_components/fileUploader/FileUploader";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
 import { useSendForReview } from "./_hooks/useSendForReview";
-import useUploadTextFromFile from "./_hooks/useFileToText";
+import useUploadTextFromFile from "./_hooks/useUploadTextFromFile";
 
 const Page = () => {
   const { activeTab, changeTab } = useTabs();
@@ -61,10 +61,8 @@ const Page = () => {
   const {
     isTextUploaderOpen,
     setIsTextUploaderOpen,
-    setFileContentinNewIteration,
+    uploadFileContentinNewIteration,
   } = useUploadTextFromFile({
-    handleEditorContentChange,
-    selectedIterationId: selectedIteration?.id ?? "",
     addIteration,
   });
 
@@ -125,7 +123,7 @@ const Page = () => {
           <Grid size={12} sx={{ height: "100%", width: "100%" }}>
             {activeTab === EditorTabsEnum.EDITOR && (
               <WritingPad
-                key={draftPost ? selectedIteration?.id : publishedPost?.content}
+                key={draftPost ? selectedIteration?.id : publishedPost?.id}
                 currentIterationId={selectedIteration?.id}
                 handleOpen={() => openCreatePostForm()}
                 handlePublish={async (content) => {
@@ -174,7 +172,7 @@ const Page = () => {
           <FileUploader
             open={isTextUploaderOpen}
             onClose={() => setIsTextUploaderOpen(false)}
-            onFileUpload={(file) => setFileContentinNewIteration(file)}
+            onFileUpload={(file) => uploadFileContentinNewIteration(file)}
           />
           {sendForReviewDialogOpen && (
             <SendForReviewDialog

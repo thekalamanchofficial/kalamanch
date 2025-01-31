@@ -3,18 +3,12 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 type UseUploadTextFromFileInput = {
-  handleEditorContentChange: (
-    content: string,
-    iterationId: string,
-    showToast?: boolean,
-  ) => Promise<void>;
-  selectedIterationId: string;
   addIteration: (content?: string) => Promise<void>;
 };
 type UseUploadTextFromFileReturn = {
   isTextUploaderOpen: boolean;
   setIsTextUploaderOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setFileContentinNewIteration: (file: File) => Promise<void>;
+  uploadFileContentinNewIteration: (file: File) => Promise<void>;
 };
 
 type UseUploadTextFromFileType = (
@@ -22,8 +16,6 @@ type UseUploadTextFromFileType = (
 ) => UseUploadTextFromFileReturn;
 
 const useUploadTextFromFile: UseUploadTextFromFileType = ({
-  handleEditorContentChange,
-  selectedIterationId,
   addIteration,
 }) => {
   const [isTextUploaderOpen, setIsTextUploaderOpen] = useState(false);
@@ -61,7 +53,7 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({
     });
   };
 
-  const setFileContentinNewIteration = async (file: File) => {
+  const uploadFileContentinNewIteration = async (file: File) => {
     if (!file) return;
     let uploadedEditorContent = "";
     if (file.type === "text/plain") {
@@ -69,7 +61,6 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({
     } else if (file.name.endsWith(".docx")) {
       uploadedEditorContent = await getTextFromDocxFile(file);
     }
-    await handleEditorContentChange(uploadedEditorContent, selectedIterationId);
     await addIteration(uploadedEditorContent);
     toast.success("Text uploaded successfully!");
   };
@@ -77,7 +68,7 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({
   return {
     isTextUploaderOpen,
     setIsTextUploaderOpen,
-    setFileContentinNewIteration,
+    uploadFileContentinNewIteration,
   };
 };
 
