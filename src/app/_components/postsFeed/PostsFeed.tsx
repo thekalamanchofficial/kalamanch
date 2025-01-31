@@ -6,35 +6,37 @@ import { useClerk } from "@clerk/nextjs";
 import { trpc } from "~/server/client";
 import { Divider } from "@mui/material";
 
-const PostsFeed = memo<PostsFeedProps>(({ articlesList, likedPosts, bookmarkedPosts }) => {
-  const { user } = useClerk();
-  const userEmail = user?.primaryEmailAddress?.emailAddress ?? "";
+const PostsFeed = memo<PostsFeedProps>(
+  ({ articlesList, likedPosts, bookmarkedPosts }) => {
+    const { user } = useClerk();
+    const userEmail = user?.primaryEmailAddress?.emailAddress ?? "";
 
-  const { data: userFollowing } = trpc.user.getUserFollowings.useQuery(
-    {
-      userEmail,
-    },
-    {
-      enabled: Boolean(userEmail),
-    },
-  );
+    const { data: userFollowing } = trpc.user.getUserFollowings.useQuery(
+      {
+        userEmail,
+      },
+      {
+        enabled: Boolean(userEmail),
+      },
+    );
 
-  return (
-    <>
-      {articlesList.map((post) => (
-        <Fragment key={post.id}>
-          <Post
-            post={post}
-            userFollowing={userFollowing}
-            isLiked={likedPosts?.includes(post.id) ?? false}
-            isBookmarked={bookmarkedPosts?.includes(post.id) ?? false}
-          />
-          <Divider sx={{ my: 2 }} />
-        </Fragment>
-      ))}
-    </>
-  );
-});
+    return (
+      <>
+        {articlesList.map((post) => (
+          <Fragment key={post.id}>
+            <Post
+              post={post}
+              userFollowing={userFollowing}
+              isLiked={likedPosts?.includes(post.id) ?? false}
+              isBookmarked={bookmarkedPosts?.includes(post.id) ?? false}
+            />
+            <Divider sx={{ my: 2 }} />
+          </Fragment>
+        ))}
+      </>
+    );
+  },
+);
 
 PostsFeed.displayName = "PostsFeed";
 

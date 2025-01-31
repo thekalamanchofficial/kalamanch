@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Box, Grid2 as Grid } from "@mui/material";
 import WritingPad from "../_components/writingPad/WritingPad";
 import CustomTabs from "../_components/CustomTabs/CustomTabs";
@@ -17,10 +18,13 @@ import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState"
 import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 import { useNavigateToPostEditor } from "./_hooks/useNavigateToPostEditor";
 import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
-import FileUploader from "./_components/textUploader/TextUploader";
+import FileUploader from "./_components/fileUploader/FileUploader";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
 import { useSendForReview } from "./_hooks/useSendForReview";
-import useUploadTextFromFile from "./_hooks/useFileToText";
+import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
+import editorMockData from "./mockDataEditor/mockdata";
+import { EditorAppBar } from "./_components/editorAppBar/EditorAppBar";
+import useUploadTextFromFile from "./_hooks/useUploadTextFromFile";
 
 const Page = () => {
   const { activeTab, changeTab } = useTabs();
@@ -61,19 +65,33 @@ const Page = () => {
   const {
     isTextUploaderOpen,
     setIsTextUploaderOpen,
-    setFileContentinNewIteration,
+    uploadFileContentinNewIteration,
   } = useUploadTextFromFile({
-    handleEditorContentChange,
-    selectedIterationId: selectedIteration?.id ?? "",
     addIteration,
   });
 
   return (
     <>
+      <EditorAppBar
+        activeTab={activeTab}
+        publishedPosts={publishedPostsForUser}
+        draftPost={draftPost}
+        handleSaveLastIterationData={saveLastIterationData}
+        handleAddIteration={addIteration}
+        handleIterationSelected={handleIterationChange}
+        selectedIterationId={selectedIteration?.id ?? ""}
+        handleImportText={() => setIsTextUploaderOpen(true)}
+      />
       <Grid
         size={2}
         sx={{
           mr: 4,
+          display: {
+            xs: "none",
+            sm: "none",
+            md: "flex",
+            lg: "flex",
+          },
         }}
       >
         {activeTab === EditorTabsEnum.PUBLISHED && (
@@ -98,7 +116,7 @@ const Page = () => {
       </Grid>
 
       <Grid
-        size={7}
+        size={{ xs: 12, sm: 12, md: 7, lg: 7 }}
         sx={{
           backgroundColor: "white",
           height: "90vh",
@@ -125,7 +143,7 @@ const Page = () => {
           <Grid size={12} sx={{ height: "100%", width: "100%" }}>
             {activeTab === EditorTabsEnum.EDITOR && (
               <WritingPad
-                key={draftPost ? selectedIteration?.id : publishedPost?.content}
+                key={draftPost ? selectedIteration?.id : publishedPost?.id}
                 currentIterationId={selectedIteration?.id}
                 handleOpen={() => openCreatePostForm()}
                 handlePublish={async (content) => {
@@ -174,7 +192,7 @@ const Page = () => {
           <FileUploader
             open={isTextUploaderOpen}
             onClose={() => setIsTextUploaderOpen(false)}
-            onFileUpload={(file) => setFileContentinNewIteration(file)}
+            onFileUpload={(file) => uploadFileContentinNewIteration(file)}
           />
           {sendForReviewDialogOpen && (
             <SendForReviewDialog
@@ -189,6 +207,24 @@ const Page = () => {
             />
           )}
         </Box>
+      </Grid>
+      <Grid
+        size={2}
+        sx={{
+          display: {
+            xs: "none",
+            sm: "none",
+            md: "flex",
+            lg: "flex",
+          },
+          flexDirection: "column",
+          justifyContent: "start",
+          alignItems: "center",
+          ml: 4,
+          gap: "12px",
+        }}
+      >
+        <EditorRightSideBar accuracy={editorMockData.accuracy} />
       </Grid>
     </>
   );

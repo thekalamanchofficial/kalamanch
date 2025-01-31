@@ -1,4 +1,10 @@
-import { Box, Button } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid2 as Grid,
+  type Theme,
+  useMediaQuery,
+} from "@mui/material";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
@@ -32,6 +38,9 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   handleBookmark,
 }) => {
   const [open, setOpen] = React.useState(false);
+  const isSmallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("md"),
+  );
   const handleAction = (actionType: string) => {
     switch (actionType) {
       case "like":
@@ -58,7 +67,8 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   const iconSx = { height: "16px", width: "16px" };
 
   return (
-    <Box
+    <Grid
+      container
       sx={{
         width: "100%",
         display: "flex",
@@ -66,7 +76,8 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         alignItems: "center",
       }}
     >
-      <Box
+      <Grid
+        size={isSmallScreen ? 12 : 11}
         sx={{
           display: "flex",
           justifyContent: "start",
@@ -74,69 +85,84 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           gap: "10px",
         }}
       >
-        { showLikes && <PostActionButton
-          icon={
-            isLiked ? (
-              <FavoriteIcon sx={iconSx} />
-            ) : (
-              <FavoriteBorderIcon sx={iconSx} />
-            )
-          }
-          label={likes && likes > 0 ? likes : "0"}
-          onClick={() => handleAction("like")}
-        />
-        }
+        {showLikes && (
+          <PostActionButton
+            icon={
+              isLiked ? (
+                <FavoriteIcon sx={iconSx} />
+              ) : (
+                <FavoriteBorderIcon sx={iconSx} />
+              )
+            }
+            label={likes && likes > 0 ? likes : "0"}
+            onClick={() => handleAction("like")}
+          />
+        )}
 
-        { showComments && <PostActionButton
-          icon={<MessageIcon sx={iconSx} />}
-          label={comments && comments.length > 0 ? comments.length : "0"}
-          onClick={() => handleAction("comment")}
-        />}
-        { showBids&& <PostActionButton
-          icon={<TollIcon sx={iconSx} />}
-          label={bids && bids.length > 0 ? bids.length : "0"}
-          onClick={() => handleAction("bid")}
-        />}
-        { showShare && <PostActionButton
-          icon={<ShareIcon sx={iconSx} />}
-          label=""
-          onClick={() => handleAction("share")}
-        />}
-        <SharePostDialog open={open} onClose={() => setOpen(false)} postId={postId} />
-      </Box>
-      { showBookmark && <Box>
-        <PostActionButton
-          icon={
-            isBookmarked ? (
-              <BookmarkIcon sx={iconSx} />
-            ) : (
-              <BookmarkBorderIcon sx={iconSx} />
-            )
-          }
-          label=""
-          onClick={() => handleAction("bookmark")}
-          sx={{
-            minWidth: "65px",
-            minHeight: "24px",
-          }}
+        {showComments && (
+          <PostActionButton
+            icon={<MessageIcon sx={iconSx} />}
+            label={comments && comments.length > 0 ? comments.length : "0"}
+            onClick={() => handleAction("comment")}
+          />
+        )}
+        {showBids && (
+          <PostActionButton
+            icon={<TollIcon sx={iconSx} />}
+            label={bids && bids.length > 0 ? bids.length : "0"}
+            onClick={() => handleAction("bid")}
+          />
+        )}
+        {showShare && (
+          <PostActionButton
+            icon={<ShareIcon sx={iconSx} />}
+            label=""
+            onClick={() => handleAction("share")}
+          />
+        )}
+        <SharePostDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          postId={postId}
         />
-      </Box>}
-      { showEditPost && <Button
-        variant="contained"
-        startIcon={<EditOutlinedIcon />}
-        onClick={handleEditPost}
-        sx={{
-          color: "primary.main",
-          backgroundColor: "secondary.main",
-          textTransform: "none",
-          "&:hover": {
-            backgroundColor: "secondary.dark",
-          },
-        }}
-      >
-        {STATIC_TEXTS.EDITOR_PAGE.EDIT_DRAFT_POST_BUTTON_TEXT}
-      </Button>}
-    </Box>
+      </Grid>
+      {showBookmark && (
+        <Box>
+          <PostActionButton
+            icon={
+              isBookmarked ? (
+                <BookmarkIcon sx={iconSx} />
+              ) : (
+                <BookmarkBorderIcon sx={iconSx} />
+              )
+            }
+            label=""
+            onClick={() => handleAction("bookmark")}
+            sx={{
+              minWidth: "65px",
+              minHeight: "24px",
+            }}
+          />
+        </Box>
+      )}
+      {showEditPost && (
+        <Button
+          variant="contained"
+          startIcon={<EditOutlinedIcon />}
+          onClick={handleEditPost}
+          sx={{
+            color: "primary.main",
+            backgroundColor: "secondary.main",
+            textTransform: "none",
+            "&:hover": {
+              backgroundColor: "secondary.dark",
+            },
+          }}
+        >
+          {STATIC_TEXTS.EDITOR_PAGE.EDIT_DRAFT_POST_BUTTON_TEXT}
+        </Button>
+      )}
+    </Grid>
   );
 };
 

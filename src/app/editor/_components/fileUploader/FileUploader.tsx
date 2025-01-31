@@ -18,11 +18,11 @@ import {
 } from "@mui/icons-material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
-interface FileUploaderProps {
+type FileUploaderProps = {
   open: boolean;
   onClose: () => void;
   onFileUpload?: (file: File) => void;
-}
+};
 
 export default function FileUploader({
   open,
@@ -49,7 +49,6 @@ export default function FileUploader({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("e.target.files", e.target.files);
     if (e.target.files?.[0]) {
       handleFile(e.target.files[0]);
     }
@@ -102,6 +101,13 @@ export default function FileUploader({
 
       <DialogContent>
         <Box sx={{ py: 2 }}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mb: 2, textAlign: "center" }}
+          >
+            {STATIC_TEXTS.EDITOR_PAGE.UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE}
+          </Typography>
           {file ? (
             <Box
               sx={{
@@ -165,6 +171,7 @@ export default function FileUploader({
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    cursor: "pointer",
                     gap: 2,
                   }}
                 >
@@ -202,7 +209,9 @@ export default function FileUploader({
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}
         >
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>
+            {STATIC_TEXTS.EDITOR_PAGE.CANCEL}
+          </Button>
           <Button
             variant="contained"
             color="primary"
