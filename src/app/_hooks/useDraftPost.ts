@@ -8,7 +8,7 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 type UseDraftPostRespone = {
   addDraftPost: (draftPost: CreateDraftPostProps) => Promise<DraftPost | null | undefined>;
   getDraftPost: (draftPostId: string | null | undefined) => DraftPost | undefined | null; 
-  addDraftIteration: (draftPostId: string, iterationName: string) => Promise<Iteration>;
+  addDraftIteration: (draftPostId: string, iterationName: string,content: string) => Promise<Iteration>;
   updateDraftDetails: (draftPostId: string, postDetails: PostDetails) => Promise<void>;
   updateDraftIteration: (iterationId: string, iterationName: string, content: string) => Promise<Iteration>;
   deleteDraftPost: (postId: string) => Promise<void>;
@@ -58,8 +58,8 @@ export const useDraftPost = (): UseDraftPostRespone => {
       handleError(error);
     }
   };
-  const addDraftIteration = async (draftPostId: string, iterationName: string) => {
-      const addedIteration = await addDraftIterationMutation.mutateAsync({ draftPostId, iterationName });
+  const addDraftIteration = async (draftPostId: string, iterationName: string,content: string) => {
+      const addedIteration = await addDraftIterationMutation.mutateAsync({ draftPostId, iterationName,content });
       return addedIteration;
   };
 
