@@ -14,7 +14,8 @@ import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 const Page = () => {
   const { post, isLoading, handleClick } = useFeaturedPostPage();
   return (
-    <Box
+    <Grid
+      container
       sx={{
         height: "100%",
         width: "100%",
@@ -87,7 +88,8 @@ const Page = () => {
                     image={"https://picsum.photos/200"}
                     alt="green iguana"
                     sx={{
-                      width: "400px",
+                      width: "100%",
+                      maxWidth: "400px",
                       height: "250px",
                     }}
                   />
@@ -152,7 +154,7 @@ const Page = () => {
           <Loader title="Loading Posts..." height="auto" width="100%" />
         ) : null}
       </Grid>
-    </Box>
+    </Grid>
   );
 };
 

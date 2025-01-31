@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Box, Grid2 as Grid } from "@mui/material";
 import WritingPad from "../_components/writingPad/WritingPad";
 import CustomTabs from "../_components/CustomTabs/CustomTabs";
@@ -20,6 +21,9 @@ import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarF
 import FileUploader from "./_components/fileUploader/FileUploader";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
 import { useSendForReview } from "./_hooks/useSendForReview";
+import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
+import editorMockData from "./mockDataEditor/mockdata";
+import { EditorAppBar } from "./_components/editorAppBar/EditorAppBar";
 import useUploadTextFromFile from "./_hooks/useUploadTextFromFile";
 
 const Page = () => {
@@ -68,10 +72,26 @@ const Page = () => {
 
   return (
     <>
+      <EditorAppBar
+        activeTab={activeTab}
+        publishedPosts={publishedPostsForUser}
+        draftPost={draftPost}
+        handleSaveLastIterationData={saveLastIterationData}
+        handleAddIteration={addIteration}
+        handleIterationSelected={handleIterationChange}
+        selectedIterationId={selectedIteration?.id ?? ""}
+        handleImportText={() => setIsTextUploaderOpen(true)}
+      />
       <Grid
         size={2}
         sx={{
           mr: 4,
+          display: {
+            xs: "none",
+            sm: "none",
+            md: "flex",
+            lg: "flex",
+          },
         }}
       >
         {activeTab === EditorTabsEnum.PUBLISHED && (
@@ -96,7 +116,7 @@ const Page = () => {
       </Grid>
 
       <Grid
-        size={7}
+        size={{ xs: 12, sm: 12, md: 7, lg: 7 }}
         sx={{
           backgroundColor: "white",
           height: "90vh",
@@ -187,6 +207,24 @@ const Page = () => {
             />
           )}
         </Box>
+      </Grid>
+      <Grid
+        size={2}
+        sx={{
+          display: {
+            xs: "none",
+            sm: "none",
+            md: "flex",
+            lg: "flex",
+          },
+          flexDirection: "column",
+          justifyContent: "start",
+          alignItems: "center",
+          ml: 4,
+          gap: "12px",
+        }}
+      >
+        <EditorRightSideBar accuracy={editorMockData.accuracy} />
       </Grid>
     </>
   );

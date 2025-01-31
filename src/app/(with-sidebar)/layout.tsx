@@ -3,9 +3,16 @@ import { Grid2 as Grid, Box } from "@mui/material";
 import RightSideBar from "~/app/_components/sidebar/RightSideBar";
 import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
 import LeftSideBar from "../_components/sidebar/LeftSideBar";
+import { AppBarMenu } from "../_components/appBarMenu/AppBarMenu";
 import { FeedProvider } from "./myfeed/_context/FeedContext";
 
 const Layout = ({ children }: { children: ReactNode }) => {
+  const displaySidebarStyle = {
+    xs: "none",
+    sm: "none",
+    md: "flex",
+    lg: "flex",
+  };
   return (
     <FeedProvider>
       <Box
@@ -29,20 +36,24 @@ const Layout = ({ children }: { children: ReactNode }) => {
             px: 1,
             py: "40px",
           }}
+          columns={{ xs: 4, sm: 8, md: 12 }}
         >
+          <AppBarMenu />
           <Grid
             size={2}
             sx={{
               mr: 4,
+              display: displaySidebarStyle,
             }}
           >
             <LeftSideBar menuItems={MENU_ITEMS} />
           </Grid>
           <Grid
-            size={7}
+            size={{ xs: 12, sm: 12, md: 7, lg: 7 }}
             sx={{
               pb: "50px",
               backgroundColor: "white",
+              marginTop: { xs: "16px", sm: "16px", md: "0px", lg: "0px" },
             }}
           >
             {children}
@@ -50,7 +61,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           <Grid
             size={2}
             sx={{
-              display: "flex",
+              display: displaySidebarStyle,
               flexDirection: "column",
               justifyContent: "start",
               alignItems: "center",
