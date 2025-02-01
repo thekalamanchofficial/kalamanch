@@ -3,10 +3,24 @@ import { ImageAnnotatorClient } from "@google-cloud/vision";
 
 // Initialize Google Cloud Vision Client
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const serviceKey = JSON.parse(process.env.GOOGLE_VISION_API_KEY ?? "");
+// const serviceKey = JSON.parse(process.env.GOOGLE_VISION_API_KEY ?? "");
+
+const response = await fetch(
+  "https://rsqvms2696ek9hhl.public.blob.vercel-storage.com/kalamanch-google-vision-ocr-key-OFkFVY5b2f799On7e9kvp6SI1S2EOd.json",
+  {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  },
+);
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const credentials = await response.json();
+
 const client = new ImageAnnotatorClient({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  keyFilename: serviceKey,
+  credentials,
 });
 
 // Define the expected request body type
