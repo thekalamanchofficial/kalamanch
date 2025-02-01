@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { ImageAnnotatorClient } from "@google-cloud/vision";
 
 // Initialize Google Cloud Vision Client
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const serviceKey = JSON.parse(process.env.GOOGLE_VISION_API_KEY ?? "");
 const client = new ImageAnnotatorClient({
-  keyFilename: process.env.GOOGLE_VISION_CREDENTIALS, // Replace with actual path
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  keyFilename: serviceKey,
 });
 
 // Define the expected request body type
