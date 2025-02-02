@@ -101,13 +101,13 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({ addIteration }) => {
   const uploadFileContentinNewIteration = async (file: File) => {
     if (!file) return;
     let uploadedEditorContent = "";
+
     if (file.type === "text/plain") {
       uploadedEditorContent = await getTextFromTxtFile(file);
     } else if (file.name.endsWith(".docx")) {
       uploadedEditorContent = await getTextFromDocxFile(file);
     } else if (file.name.endsWith(".jpeg") || file.name.endsWith(".png") || file.name.endsWith(".jpg")) {
       uploadedEditorContent = await getTextFromImageFile(file);
-      console.log("uploadedEditorContent", uploadedEditorContent);
     }
     await addIteration(uploadedEditorContent);
     toast.success("Text uploaded successfully!");

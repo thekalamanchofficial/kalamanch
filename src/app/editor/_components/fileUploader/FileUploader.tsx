@@ -17,11 +17,12 @@ import {
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import Loader from "~/app/_components/loader/Loader";
 
 type FileUploaderProps = {
   open: boolean;
   onClose: () => void;
-  onFileUpload?: (file: File) => void;
+  onFileUpload?: (file: File) => Promise<void>;
 };
 
 export default function FileUploader({
@@ -31,9 +32,10 @@ export default function FileUploader({
 }: FileUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateFile = (file: File) => {
-    const validTypes = [".txt", ".doc", ".docx", ".jpeg", ".png",".jpg"];
+    const validTypes = [".txt", ".doc", ".docx", ".jpeg", ".png", ".jpg"];
     const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
     return validTypes.includes(fileExtension);
   };
@@ -58,9 +60,12 @@ export default function FileUploader({
     setFile(null);
     setError(null);
   };
-  const handleImportText = () => {
+
+  const handleImportText = async () => {
     if (file) {
-      onFileUpload?.(file);
+      setIsLoading(true);
+      await onFileUpload?.(file);
+      setIsLoading(false);
       setFile(null);
       onClose();
     } else {
@@ -108,7 +113,9 @@ export default function FileUploader({
           >
             {STATIC_TEXTS.EDITOR_PAGE.UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE}
           </Typography>
-          {file ? (
+          {isLoading ? (
+            <Loader title="Uploading text..." height="auto" width="100%" />
+          ) : file ? (
             <Box
               sx={{
                 display: "flex",
