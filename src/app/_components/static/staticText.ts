@@ -112,7 +112,7 @@ export const STATIC_TEXTS = {
     SAVE_REVIEWERS_SUCCESS_MESSAGE: "Reviewers Saved Successfully",
     IMPORT_TEXT_FROM_DOCX_OR_TXT_FILE: "Import text from Doc/Txt File",
     DRAG_AND_DROP_FILE: "Drag and drop your file here, or click to select",
-    SUPPORTS_TXT_AND_DOCX_FILE: "Supports .txt and .doc files",
+    SUPPORTS_TXT_DOCX_PNG_JPEG_FILE: "Supports .txt, .docx, .jpeg, .png and .jpg files",
     IMPORT: "Import",
     SELECT_FILE_ERROR: "Please select a file to import",
     UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE: "The uploaded text will appear in a new Iteration",

@@ -33,7 +33,7 @@ export default function FileUploader({
   const [error, setError] = useState<string | null>(null);
 
   const validateFile = (file: File) => {
-    const validTypes = [".txt", ".doc", ".docx", ".jpeg", ".png"];
+    const validTypes = [".txt", ".doc", ".docx", ".jpeg", ".png",".jpg"];
     const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
     return validTypes.includes(fileExtension);
   };
@@ -160,7 +160,7 @@ export default function FileUploader({
             >
               <input
                 type="file"
-                accept=".txt,.doc,.docx,.jpeg,.png"
+                accept=".txt,.doc,.docx,.jpeg,.png,.jpg"
                 onChange={handleChange}
                 style={{ display: "none" }}
                 id="file-input"
@@ -182,7 +182,7 @@ export default function FileUploader({
                     {STATIC_TEXTS.EDITOR_PAGE.DRAG_AND_DROP_FILE}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {STATIC_TEXTS.EDITOR_PAGE.SUPPORTS_TXT_AND_DOCX_FILE}
+                    {STATIC_TEXTS.EDITOR_PAGE.SUPPORTS_TXT_DOCX_PNG_JPEG_FILE}
                   </Typography>
                 </Box>
               </label>
