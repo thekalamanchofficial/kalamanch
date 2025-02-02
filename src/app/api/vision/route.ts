@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { ImageAnnotatorClient } from "@google-cloud/vision";
 
 type VisionServiceAccountCredentials = {
-  type: "service_account";
+  type: string;
   project_id: string;
   private_key_id: string;
   private_key: string;
@@ -14,10 +14,7 @@ type VisionServiceAccountCredentials = {
   client_x509_cert_url: string;
   universe_domain?: string;
 }
-
-
-const GOOGLE_VISION_CREDENTIALS_URL =
-  "https://rsqvms2696ek9hhl.public.blob.vercel-storage.com/kalamanch-google-vision-ocr-key-OFkFVY5b2f799On7e9kvp6SI1S2EOd.json";
+const GOOGLE_VISION_CREDENTIALS_URL = process.env.GOOGLE_VISION_CREDENTIALS_URL ?? "";
 
 interface VisionRequestBody {
   imageBase64: string;

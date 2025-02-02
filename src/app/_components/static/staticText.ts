@@ -110,7 +110,7 @@ export const STATIC_TEXTS = {
     UPDATE: "Update",
     DRAFT_DETAILS_UPDATED_MESSAGE: "Draft Details Updated Successfully",
     SAVE_REVIEWERS_SUCCESS_MESSAGE: "Reviewers Saved Successfully",
-    IMPORT_TEXT_FROM_DOCX_OR_TXT_FILE: "Import text from Doc/Txt File",
+    IMPORT_TEXT_FROM_DOCX_OR_TXT_FILE: "Import text from Doc/Txt/Image File",
     DRAG_AND_DROP_FILE: "Drag and drop your file here, or click to select",
     SUPPORTS_TXT_DOCX_PNG_JPEG_FILE: "Supports .txt, .docx, .jpeg, .png and .jpg files",
     IMPORT: "Import",
