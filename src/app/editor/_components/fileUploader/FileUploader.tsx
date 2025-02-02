@@ -64,7 +64,11 @@ export default function FileUploader({
   const handleImportText = async () => {
     if (file) {
       setIsLoading(true);
-      await onFileUpload?.(file);
+      try {
+        await onFileUpload?.(file)
+      } catch (error) {
+        console.error("Error importing text:", error);
+      }
       setIsLoading(false);
       setFile(null);
       onClose();
