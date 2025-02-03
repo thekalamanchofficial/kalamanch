@@ -17,11 +17,12 @@ import {
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import Loader from "~/app/_components/loader/Loader";
 
 type FileUploaderProps = {
   open: boolean;
   onClose: () => void;
-  onFileUpload?: (file: File) => void;
+  onFileUpload?: (file: File) => Promise<void>;
 };
 
 export default function FileUploader({
@@ -31,9 +32,10 @@ export default function FileUploader({
 }: FileUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateFile = (file: File) => {
-    const validTypes = [".txt", ".doc", ".docx", ".jpeg", ".png"];
+    const validTypes = [".txt", ".doc", ".docx", ".jpeg", ".png", ".jpg"];
     const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
     return validTypes.includes(fileExtension);
   };
@@ -58,9 +60,16 @@ export default function FileUploader({
     setFile(null);
     setError(null);
   };
-  const handleImportText = () => {
+
+  const handleImportText = async () => {
     if (file) {
-      onFileUpload?.(file);
+      setIsLoading(true);
+      try {
+        await onFileUpload?.(file)
+      } catch (error) {
+        console.error("Error importing text:", error);
+      }
+      setIsLoading(false);
       setFile(null);
       onClose();
     } else {
@@ -108,7 +117,9 @@ export default function FileUploader({
           >
             {STATIC_TEXTS.EDITOR_PAGE.UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE}
           </Typography>
-          {file ? (
+          {isLoading ? (
+            <Loader title="Uploading text..." height="auto" width="100%" />
+          ) : file ? (
             <Box
               sx={{
                 display: "flex",
@@ -160,7 +171,7 @@ export default function FileUploader({
             >
               <input
                 type="file"
-                accept=".txt,.doc,.docx,.jpeg,.png"
+                accept=".txt,.doc,.docx,.jpeg,.png,.jpg"
                 onChange={handleChange}
                 style={{ display: "none" }}
                 id="file-input"
@@ -182,7 +193,7 @@ export default function FileUploader({
                     {STATIC_TEXTS.EDITOR_PAGE.DRAG_AND_DROP_FILE}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {STATIC_TEXTS.EDITOR_PAGE.SUPPORTS_TXT_AND_DOCX_FILE}
+                    {STATIC_TEXTS.EDITOR_PAGE.SUPPORTS_TXT_DOCX_PNG_JPEG_FILE}
                   </Typography>
                 </Box>
               </label>
