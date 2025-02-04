@@ -20,6 +20,7 @@ export default function EditorPublishedPostsSection({
   handleOnPostEdit,
 }: EditorPublishedPostsSectionProps) {
   const {
+    selectedPublishedPostId: _,
     setSelectedPublishedPostId,
     selectedPublishedPostIdInLeftSideBar,
     setSelectedPublishedPostIdInLeftSideBar,

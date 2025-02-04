@@ -175,6 +175,7 @@ const MyFeed = () => {
           display: "flex",
           justifyContent: "start",
           alignItems: "start",
+          width: "100%",
           px: "4px",
           pt: "8px",
           borderBottom: "1px solid #E0E0E0",
@@ -190,6 +191,7 @@ const MyFeed = () => {
         size={12}
         sx={{
           overflowY: "scroll",
+          width: "100%",
           height: "100%",
           scrollbarWidth: "none",
           mt: 1,

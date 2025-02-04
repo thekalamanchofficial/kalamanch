@@ -8,6 +8,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import theme from "../theme";
 import { UserProvider } from "~/context/userContext";
+import Analytics from "./_components/analytics/Analytics";
 
 export const metadata: Metadata = {
   title: "Kalamanach",
@@ -36,7 +37,10 @@ export default function RootLayout({
                 theme="light"
               />
               <TRPCProvider>
-                <UserProvider>{children}</UserProvider>
+                <UserProvider>
+                  <Analytics />
+                  {children}
+                </UserProvider>
               </TRPCProvider>
             </ThemeProvider>
           </AppRouterCacheProvider>

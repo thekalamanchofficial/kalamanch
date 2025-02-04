@@ -31,7 +31,7 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({
   const [selectedImage, setSelectedImage] = useState<string | null>(
     initialImage ?? null,
   );
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null); // TODO: lint error
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleButtonClick = () => {
