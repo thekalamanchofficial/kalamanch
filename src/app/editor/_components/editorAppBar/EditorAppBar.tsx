@@ -1,29 +1,21 @@
 "use client";
+import FeaturedPlayListOutlinedIcon from "@mui/icons-material/FeaturedPlayListOutlined";
+import MenuIcon from "@mui/icons-material/Menu";
 import {
   AppBar,
-  Toolbar,
-  IconButton,
   Box,
-  Typography,
   Drawer,
+  IconButton,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import MenuIcon from "@mui/icons-material/Menu";
-import FeaturedPlayListOutlinedIcon from "@mui/icons-material/FeaturedPlayListOutlined";
-import EditorRightSideBar from "../editorRightSideBar/EditorRightSideBar";
 import editorMockData from "../../mockDataEditor/mockdata";
-import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
-import LeftSideBarForPosts from "~/app/_components/leftSideBarForPosts/LeftSideBarForPosts";
-import {
-  type DraftPost,
-  EditorTabsEnum,
-  PostEntityType,
-} from "../../types/types";
+import { type DraftPost } from "../../types/types";
 import EditorLeftSideBarForIterations from "../editorLeftSideBar/EditorLeftSideBarForIterations";
+import EditorRightSideBar from "../editorRightSideBar/EditorRightSideBar";
 
 type EditorAppBarProps = {
-  activeTab: EditorTabsEnum;
-  publishedPosts: Post[];
   draftPost: DraftPost | null;
   handleSaveLastIterationData: () => void;
   handleAddIteration: (content?: string) => void;
@@ -32,8 +24,6 @@ type EditorAppBarProps = {
   handleImportText: () => void;
 };
 export const EditorAppBar: React.FC<EditorAppBarProps> = ({
-  activeTab,
-  publishedPosts,
   draftPost,
   handleSaveLastIterationData,
   handleAddIteration,
@@ -104,25 +94,15 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
             display: { xs: "flex", sm: "flex", md: "none", lg: "none" },
           }}
         >
-          {activeTab === EditorTabsEnum.PUBLISHED && (
-            <LeftSideBarForPosts
-              draftPosts={[]}
-              draftIterationsSentForReview={[]}
-              publishedPosts={publishedPosts}
-              entityType={PostEntityType.PUBLISHED_POST}
-            />
-          )}
-          {activeTab === EditorTabsEnum.EDITOR && (
-            <EditorLeftSideBarForIterations
-              showIterations={Boolean(draftPost)}
-              iterations={draftPost?.iterations ?? []}
-              handleSaveLastIterationData={handleSaveLastIterationData}
-              handleAddIteration={handleAddIteration}
-              handleIterationSelected={handleIterationSelected}
-              selectedIterationId={selectedIterationId}
-              handleImportText={handleImportText}
-            />
-          )}
+          <EditorLeftSideBarForIterations
+            showIterations={Boolean(draftPost)}
+            iterations={draftPost?.iterations ?? []}
+            handleSaveLastIterationData={handleSaveLastIterationData}
+            handleAddIteration={handleAddIteration}
+            handleIterationSelected={handleIterationSelected}
+            selectedIterationId={selectedIterationId}
+            handleImportText={handleImportText}
+          />
         </Drawer>
         <Drawer
           anchor="right"

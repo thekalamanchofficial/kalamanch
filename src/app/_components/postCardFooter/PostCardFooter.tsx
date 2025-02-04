@@ -1,3 +1,12 @@
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import MessageIcon from "@mui/icons-material/Message";
+import ShareIcon from "@mui/icons-material/Share";
+import TollIcon from "@mui/icons-material/Toll";
 import {
   Box,
   Button,
@@ -6,14 +15,6 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import React from "react";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import MessageIcon from "@mui/icons-material/Message";
-import TollIcon from "@mui/icons-material/Toll";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import PostActionButton from "../postActionButton/PostActionButton";
 import SharePostDialog from "../sharePostDialog/SharePostDialog";
@@ -87,7 +88,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
       }}
     >
       <Grid
-        size={isSmallScreen ? 12 : 11}
+        size={isSmallScreen ? 12 : 4}
         sx={{
           display: "flex",
           justifyContent: "start",
@@ -136,76 +137,85 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           postId={postId}
         />
       </Grid>
-      {showBookmark && (
-        <Box>
-          <PostActionButton
-            icon={
-              isBookmarked ? (
-                <BookmarkIcon sx={iconSx} />
-              ) : (
-                <BookmarkBorderIcon sx={iconSx} />
-              )
-            }
-            label=""
-            onClick={() => handleAction("bookmark")}
+      <Grid
+        sx={{
+          display: "flex",
+          justifyContent: "end",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        {showEditPost && (
+          <Button
+            variant="contained"
+            startIcon={<EditOutlinedIcon />}
+            onClick={handleEditPost}
             sx={{
-              minWidth: "65px",
-              minHeight: "24px",
+              color: "primary.main",
+              backgroundColor: "secondary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "secondary.dark",
+              },
             }}
-          />
-        </Box>
-      )}
-      {showEditPost && (
-        <Button
-          variant="contained"
-          startIcon={<EditOutlinedIcon />}
-          onClick={handleEditPost}
-          sx={{
-            color: "primary.main",
-            backgroundColor: "secondary.main",
-            textTransform: "none",
-            "&:hover": {
-              backgroundColor: "secondary.dark",
-            },
-          }}
-        >
-          {STATIC_TEXTS.EDITOR_PAGE.EDIT_DRAFT_POST_BUTTON_TEXT}
-        </Button>
-      )}
-      {showEditPublishedPost && (
-        <Button
-          variant="contained"
-          startIcon={<EditOutlinedIcon />}
-          onClick={() => handleAction("edit:post")}
-          sx={{
-            color: "primary.main",
-            backgroundColor: "secondary.main",
-            textTransform: "none",
-            "&:hover": {
-              backgroundColor: "secondary.dark",
-            },
-          }}
-        >
-          {STATIC_TEXTS.EDITOR_PAGE.EDIT_PUBLISHED_POST_BUTTON_TEXT}
-        </Button>
-      )}
-      {showUnpublishPost && (
-        <Button
-          variant="contained"
-          startIcon={<EditOutlinedIcon />}
-          onClick={() => handleAction("unpublish:post")}
-          sx={{
-            color: "primary.main",
-            backgroundColor: "secondary.main",
-            textTransform: "none",
-            "&:hover": {
-              backgroundColor: "secondary.dark",
-            },
-          }}
-        >
-          {STATIC_TEXTS.EDITOR_PAGE.UNPUBLISH_POST_DIALOG_TITLE}
-        </Button>
-      )}
+          >
+            {STATIC_TEXTS.EDITOR_PAGE.EDIT_DRAFT_POST_BUTTON_TEXT}
+          </Button>
+        )}
+        {showEditPublishedPost && (
+          <Button
+            variant="contained"
+            startIcon={<EditOutlinedIcon />}
+            onClick={() => handleAction("edit:post")}
+            sx={{
+              color: "primary.main",
+              backgroundColor: "secondary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "secondary.dark",
+              },
+            }}
+          >
+            {STATIC_TEXTS.EDITOR_PAGE.EDIT_PUBLISHED_POST_BUTTON_TEXT}
+          </Button>
+        )}
+        {showUnpublishPost && (
+          <Button
+            variant="contained"
+            startIcon={<DescriptionOutlinedIcon />}
+            onClick={() => handleAction("unpublish:post")}
+            sx={{
+              color: "secondary.main",
+              backgroundColor: "primary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "primary.dark",
+              },
+            }}
+          >
+            {STATIC_TEXTS.EDITOR_PAGE.UNPUBLISH_POST_DIALOG_TITLE}
+          </Button>
+        )}
+        {showBookmark && (
+          <Box>
+            <PostActionButton
+              icon={
+                isBookmarked ? (
+                  <BookmarkIcon sx={iconSx} />
+                ) : (
+                  <BookmarkBorderIcon sx={iconSx} />
+                )
+              }
+              label=""
+              onClick={() => handleAction("bookmark")}
+              sx={{
+                minWidth: "65px",
+                minHeight: "24px",
+              }}
+            />
+          </Box>
+        )}
+      </Grid>
     </Grid>
   );
 };

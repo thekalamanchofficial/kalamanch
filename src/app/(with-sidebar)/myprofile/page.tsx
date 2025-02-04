@@ -52,6 +52,7 @@ const MyProfile = () => {
               likedPosts={likedPosts}
               bookmarkedPosts={bookmarkedPosts}
               setPosts={setPosts}
+              isUserPublishedPostFeed={true}
             />
           ) : (
             <ShowMessage

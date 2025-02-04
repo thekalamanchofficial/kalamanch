@@ -92,6 +92,7 @@ export type PostsFeedProps = {
   likedPosts: string[];
   bookmarkedPosts: string[];
   setPosts?: React.Dispatch<React.SetStateAction<Post[]>>;
+  isUserPublishedPostFeed?: boolean;
 };
 
 export type PostCardFooterProps = {

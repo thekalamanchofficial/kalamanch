@@ -21,10 +21,11 @@ interface PostProps {
   isLiked: boolean;
   isBookmarked: boolean;
   setPosts?: React.Dispatch<React.SetStateAction<PostType[]>>;
+  isUserPublishedPostFeed?: boolean;
 }
 
 const Post = memo<PostProps>(
-  ({ post, userFollowing, isLiked, isBookmarked, setPosts }) => {
+  ({ post, userFollowing, isLiked, isBookmarked, setPosts, isUserPublishedPostFeed }) => {
     const { user } = useClerk();
     const userEmail = user?.primaryEmailAddress?.emailAddress;
     const [isCommentOpen, setIsCommentOpen] = useState(false);
@@ -105,8 +106,8 @@ const Post = memo<PostProps>(
             showBids={true}
             showBookmark={true}
             showShare={true}
-            showEditPublishedPost={pathname === "/myprofile"}
-            showUnpublishPost={pathname === "/myprofile"}
+            showEditPublishedPost={pathname === "/myprofile" && isUserPublishedPostFeed}
+            showUnpublishPost={pathname === "/myprofile" && isUserPublishedPostFeed}
             handleUnpublishPost={handlePostUnPublishing}
             handleBookmark={handleBookmark}
             handleEditPublishedPost={handleEditPost}
