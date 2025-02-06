@@ -268,4 +268,36 @@ export const userRouter = router({
       searchResults.push(...remainingResults);
       return searchResults;
     }),
+  updateProfileImageUrl: publicProcedure
+    .input(
+      yup.object({
+        profileImageUrl: yup.string().required(),
+        userId: yup.string().required(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.update({
+        where: { id: input.userId },
+        data: {
+          profileImageUrl: input.profileImageUrl,
+        },
+      });
+      return user;
+    }),
+  updateCoverImageUrl: publicProcedure
+    .input(
+      yup.object({
+        coverImageUrl: yup.string().optional().nullable(),
+        userId: yup.string().required(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.update({
+        where: { id: input.userId },
+        data: {
+          coverImageUrl: input.coverImageUrl,
+        },
+      });
+      return user;
+    }),
 });

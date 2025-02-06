@@ -82,6 +82,7 @@ export const STATIC_TEXTS = {
       { label: "My Posts", value: "My Posts" },
       { label: "Liked Posts", value: "Liked Posts" },
     ],
+    CHANGE_COVER: "Change Cover",
   },
   FEATURED_PAGE: {
     MESSAGES: {

@@ -7,6 +7,7 @@ export const syncUser = inngest.createFunction(
   async ({ event }) => {
     const email = event.data.email_addresses[0]?.email_address;
     const name = event.data.first_name ?? event.data.unsafe_metadata.name;
+    const profileImageUrl = event.data.unsafe_metadata.profile as string;
 
     if (!email) {
       throw new Error("Email not found when syncing user");
@@ -25,7 +26,7 @@ export const syncUser = inngest.createFunction(
         following: [],
         followers: [],
         bookmarks: [],
-        profileImageUrl: "",
+        profileImageUrl: profileImageUrl ?? "",
       },
     });
   },

@@ -1,5 +1,7 @@
 "use client";
-import React from "react";
+
+import type React from "react";
+import { useRef } from "react";
 import {
   Box,
   Typography,
@@ -11,7 +13,11 @@ import {
 } from "@mui/material";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { useRouter } from "next/navigation";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import useUserImageUpload from "../../_hooks/useUserImageUpload";
+import { FileUploadSource } from "types/enums";
 
 interface ProfileCardProps {
   name: string;
@@ -21,6 +27,7 @@ interface ProfileCardProps {
   profileImage?: string;
   coverImage?: string;
   handleEditProfileOpen: () => void;
+  onImageUpdate: (uploadSource: FileUploadSource, url: string) => void;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -31,8 +38,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   profileImage,
   coverImage,
   handleEditProfileOpen,
+  onImageUpdate,
 }) => {
   const router = useRouter();
+  const profileInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const { uploadImage } = useUserImageUpload();
+
   return (
     <Card sx={{ boxShadow: "none" }}>
       <Box sx={{ padding: "8px 20px", display: "flex" }}>
@@ -53,22 +65,106 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
+          position: "relative",
         }}
-      ></Box>
+      >
+        <Button
+          variant="contained"
+          startIcon={<CameraAltIcon />}
+          sx={{
+            position: "absolute",
+            bottom: 16,
+            right: 16,
+            backgroundColor: (theme) => theme.palette.secondary.main,
+            color: "text.primary",
+            "&:hover": {
+              backgroundColor: (theme) => theme.palette.secondary.dark,
+            },
+            textTransform: "none",
+            borderRadius: "20px",
+            padding: "6px 16px",
+          }}
+          onClick={() => coverInputRef.current?.click()}
+        >
+          {STATIC_TEXTS.MY_PROFILE_PAGE.CHANGE_COVER}
+        </Button>
+        <input
+          ref={coverInputRef}
+          type="file"
+          hidden
+          accept="image/jpeg,image/png,image/jpg"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const uploadedThumbnailUrl = await uploadImage(
+              file,
+              FileUploadSource.PROFILE_COVER_IMAGE,
+            );
+            onImageUpdate(
+              FileUploadSource.PROFILE_COVER_IMAGE,
+              uploadedThumbnailUrl,
+            );
+          }}
+        />
+      </Box>
       <CardContent sx={{ position: "relative", padding: "20px 40px", gap: 24 }}>
         <Box>
-          <Avatar
-            src={profileImage}
-            alt={name}
+          <Box
             sx={{
-              width: 118,
-              height: 118,
-              border: "3px solid white",
               position: "absolute",
+              width: "fit-content",
               top: -50,
               left: 40,
             }}
-          />
+          >
+            <Avatar
+              src={profileImage}
+              alt={name}
+              sx={{
+                width: 118,
+                height: 118,
+                border: "3px solid white",
+              }}
+            />
+            <IconButton
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                backgroundColor: (theme) => theme.palette.grey[800],
+                "&:hover": {
+                  backgroundColor: (theme) => theme.palette.grey[900],
+                },
+                padding: "8px",
+              }}
+              onClick={() => profileInputRef.current?.click()}
+            >
+              <CameraAltIcon
+                sx={{
+                  color: (theme) => theme.palette.grey[100],
+                  fontSize: (theme) => theme.typography.h3.fontSize,
+                }}
+              />
+            </IconButton>
+            <input
+              ref={profileInputRef}
+              type="file"
+              hidden
+              accept="image/jpeg,image/png,image/jpg"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const uploadedThumbnailUrl = await uploadImage(
+                  file,
+                  FileUploadSource.PROFILE_IMAGE,
+                );
+                onImageUpdate(
+                  FileUploadSource.PROFILE_IMAGE,
+                  uploadedThumbnailUrl,
+                );
+              }}
+            />
+          </Box>
           <Button
             variant="text"
             size="small"

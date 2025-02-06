@@ -23,7 +23,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   articleTitle,
   articleContent,
   articleTags,
-  articleImage = "",
+  articleThumbnailUrl = "",
   articleDescription,
   savedDate,
 }) => {
@@ -44,6 +44,11 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   const handleSeeLess = useCallback(() => {
     setSeeMore(false);
   }, []);
+
+  const isVideoUrl = (thumbnailUrl: string | null) => {
+    if (!thumbnailUrl) return false;
+    return thumbnailUrl.endsWith(".mp4") || thumbnailUrl.endsWith(".mov");
+  };
 
   return (
     <>
@@ -144,18 +149,33 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
         }}
       >
         <Grid size={isSmallScreen ? 12 : 4}>
-          <CardMedia
-            component="img"
-            height="140"
-            image={
-              articleImage !== "" ? articleImage : "https://picsum.photos/200"
-            }
-            alt="green iguana"
-            sx={{
-              maxWidth: "300px",
-              height: "100%",
-            }}
-          />
+          {isVideoUrl(articleThumbnailUrl) ? (
+            <CardMedia
+              component="video"
+              controls
+              height="140"
+              src={articleThumbnailUrl}
+              sx={{
+                maxWidth: "300px",
+                height: "100%",
+              }}
+            />
+          ) : (
+            <CardMedia
+              component="img"
+              height="140"
+              image={
+                articleThumbnailUrl !== ""
+                  ? articleThumbnailUrl
+                  : "https://picsum.photos/200"
+              }
+              alt="image content"
+              sx={{
+                maxWidth: "300px",
+                height: "100%",
+              }}
+            />
+          )}
         </Grid>
         <Grid
           sx={{

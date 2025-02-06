@@ -19,24 +19,24 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useUploadFileToR2 } from "~/app/_hooks/useUploadFileToR2";
+import { FileUploadSource } from "types/enums";
+import Loader from "../loader/Loader";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
   onPrev: () => void;
   data?: FormDataDetails;
-  profileFile?: File;
-  setProfileFile: (file?: File) => void;
-  imagePreview: string | null;
-  setImagePreview: (preview: string | null) => void;
+  profileImageUrl: string | null;
+  setProfileImageUrl: (preview: string | null) => void;
 };
 
 const DetailsForm: React.FC<DetailsFormProps> = ({
   onNext,
   onPrev,
   data,
-  setProfileFile,
-  imagePreview,
-  setImagePreview,
+  profileImageUrl,
+  setProfileImageUrl,
 }) => {
   const {
     handleSubmit,
@@ -47,6 +47,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const datepicekrAnchor = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { uploadFile, isUploading } = useUploadFileToR2();
 
   const handleNext = async (data: FormDataDetails) => {
     const isValid = await trigger();
@@ -66,8 +67,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   };
 
   const handleDeleteImage = () => {
-    setProfileFile(undefined);
-    setImagePreview(null);
+    setProfileImageUrl(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -214,30 +214,38 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
                 justifyContent: "space-between",
               }}
             >
-              <Avatar
-                src={imagePreview ?? ""}
-                alt="Profile Preview"
-                sx={{ width: 90, height: 90, mb: 2 }}
-              />
+              {isUploading ? (
+                <Loader
+                  title="Uploading Profile Image..."
+                  height="100%"
+                  width="100%"
+                />
+              ) : (
+                <Avatar
+                  src={profileImageUrl ?? ""}
+                  alt="Profile Preview"
+                  sx={{ width: 90, height: 90, mb: 2 }}
+                />
+              )}
+
               <input
                 accept="image/*"
                 type="file"
                 ref={fileInputRef} // Attach the ref to the input
                 style={{ display: "none" }}
-                onChange={(event) => {
+                onChange={async (event) => {
                   const file = event?.target?.files?.[0];
                   if (file) {
-                    onChange(file);
-                    const reader = new FileReader();
-                    setProfileFile(file);
-                    reader.onloadend = () => {
-                      setImagePreview(reader?.result as string);
-                    };
-                    reader.readAsDataURL(file);
+                    const uploadedThumbnailUrl = await uploadFile(
+                      file,
+                      FileUploadSource.PROFILE_IMAGE,
+                    );
+                    onChange(uploadedThumbnailUrl);
+                    setProfileImageUrl(uploadedThumbnailUrl);
                   }
                 }}
               />
-              {!imagePreview ? (
+              {!profileImageUrl ? (
                 <Button
                   variant="contained"
                   color="primary"

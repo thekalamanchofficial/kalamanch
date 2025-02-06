@@ -14,10 +14,8 @@ type UseSignUpPageReturn = {
   setOtp: React.Dispatch<React.SetStateAction<string>>;
   verifying: boolean;
   formData: FormDataDetails;
-  profileFile: File | undefined;
-  setProfileFile: React.Dispatch<React.SetStateAction<File | undefined>>;
-  imagePreview: string | null;
-  setImagePreview: React.Dispatch<React.SetStateAction<string | null>>;
+  profileImageUrl: string | null;
+  setProfileImageUrl: React.Dispatch<React.SetStateAction<string | null>>;
   formStep: SignUpFormStages;
   formStepNumber: number;
   handleNext: (data?: FormDataDetails) => Promise<void>;
@@ -33,8 +31,7 @@ export const useSignUpPage: UseSignUpPage = () => {
   const [formData, setFormData] = useState<FormDataDetails>(
     {} as FormDataDetails,
   );
-  const [profileFile, setProfileFile] = useState<File | undefined>(undefined);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const [formStep, setFormStep] = useState<SignUpFormStages>(
     SignUpFormStages.DETAILS,
   );
@@ -144,10 +141,8 @@ export const useSignUpPage: UseSignUpPage = () => {
     setOtp,
     verifying,
     formData,
-    profileFile,
-    setProfileFile,
-    imagePreview,
-    setImagePreview,
+    profileImageUrl,
+    setProfileImageUrl,
     formStep,
     formStepNumber,
     handleNext,
