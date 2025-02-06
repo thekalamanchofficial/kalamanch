@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
@@ -29,7 +29,13 @@ type ActionsBarProps = {
   handleSendForReview: () => void;
 };
 
-const EditorActionsBar: React.FC<ActionsBarProps> = ({ handleOpen,postStatus, handleSubmit, handleSaveDraft,handleSendForReview }) => (
+const EditorActionsBar: React.FC<ActionsBarProps> = ({
+  handleOpen,
+  postStatus,
+  handleSubmit,
+  handleSaveDraft,
+  handleSendForReview,
+}) => (
   <Box
     sx={{
       display: "flex",
@@ -49,17 +55,22 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({ handleOpen,postStatus, ha
       <ChecklistIcon />
       <Typography sx={textStyle}>Send for review</Typography>
     </Button>
-    {postStatus == PostStatus.DRAFT && 
-    <Button sx={buttonStyle} onClick={() => handleSaveDraft(true)}>
-      <FolderIcon />
-      <Typography sx={textStyle}>Save as draft</Typography>
-    </Button>}
-    <Button sx={{ ...buttonStyle, backgroundColor: "primary.main", color: "white" }} onClick={handleSubmit}>
+    {postStatus == PostStatus.DRAFT && (
+      <Button sx={buttonStyle} onClick={() => handleSaveDraft(true)}>
+        <FolderIcon />
+        <Typography sx={textStyle}>Save as draft</Typography>
+      </Button>
+    )}
+    <Button
+      sx={{ ...buttonStyle, backgroundColor: "primary.main", color: "white" }}
+      onClick={handleSubmit}
+    >
       <FeedOutlinedIcon />
-      <Typography sx={textStyle}>{postStatus == PostStatus.DRAFT ? "Publish" : "Update"}</Typography>
+      <Typography sx={textStyle}>
+        {postStatus == PostStatus.DRAFT ? "Publish" : "Update"}
+      </Typography>
     </Button>
   </Box>
 );
-
 
 export default EditorActionsBar;

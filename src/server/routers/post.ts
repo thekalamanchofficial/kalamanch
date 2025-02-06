@@ -77,7 +77,7 @@ export const postRouter = router({
     .query(async ({ input }) => {
       try {
         const { limit, skip, interests, authorId } = input;
-
+        
         const query: { tags?: { hasSome: string[] }; authorId?: string } = {};
 
         if (interests && interests.length > 0) {
@@ -109,11 +109,13 @@ export const postRouter = router({
           },
         });
 
-        const totalPosts = await prisma.post.count({});
+        const totalPosts = await prisma.post.count({
+          where: query,
+        });
 
         let hasMorePosts;
 
-        if (skip < totalPosts) {
+        if (skip < totalPosts && totalPosts > limit) {
           hasMorePosts = true;
         } else {
           hasMorePosts = false;

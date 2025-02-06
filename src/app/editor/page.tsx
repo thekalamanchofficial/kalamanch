@@ -76,7 +76,6 @@ const Page = () => {
             xs: "none",
             sm: "none",
             md: "flex",
-            lg: "flex",
           },
         }}
       >
@@ -98,11 +97,17 @@ const Page = () => {
           height: "90vh",
           display: "flex",
           flexDirection: "column",
+          width: {
+            xs: "100%",
+          }
         }}
       >
         <Box sx={{ padding: "8px 20px" }}>
           <Typography
-            sx={{ fontWeight: "bold", fontSize: "16px", color: "primary.main" }}
+            sx={{ fontWeight: "bold", fontSize: "16px", color: "primary.main", display: {
+              xs: "none",
+              sm: "block",
+            } }}
           >
             Editor
           </Typography>

@@ -7,7 +7,7 @@ import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import { handleError } from "~/app/_utils/handleError";
 import config from "~/app/_config/config";
 import { useClerk } from "@clerk/nextjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { trpc } from "~/server/client";
 import { toast } from "react-toastify";
 import {
@@ -17,12 +17,13 @@ import {
 import { PostStatus } from "~/app/editor/types/types";
 import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
 import useLikePosts from "~/app/_hooks/useLikePosts";
+import useLazyLoading from "~/app/_hooks/useLazyLoading";
 
 const useMyProfilePage = (): UseMyProfilePage => {
   const { user } = useClerk();
   const [tab, setTab] = useState(MyProfileTabsEnum.MY_POSTS);
   const [skip, setSkip] = useState(0);
-  const [hasMorePosts, setHasMorePosts] = useState<boolean | undefined>(true);
+  const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
   const [post, setPosts] = useState<Post[]>([]);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
@@ -78,7 +79,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
         skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
     },
     {
-      enabled: Boolean(userDetails?.id) && skip >= 0 && hasMorePosts === true,
+      enabled: Boolean(userDetails?.id) && hasMorePosts,
     },
   );
 
@@ -184,30 +185,16 @@ const useMyProfilePage = (): UseMyProfilePage => {
     }
   };
 
-  const handleScroll = useCallback(() => {
-    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    const bottomReached = scrollHeight - scrollTop - clientHeight < 10;
-
-    if (bottomReached && !queryLoading && !error) {
-      setHasMorePosts(postData?.hasMorePosts);
-      setSkip((prev) =>
-        prev == 0
-          ? config.lazyLoading.initialLimit + prev
-          : prev + config.lazyLoading.limit,
-      );
-    }
-  }, [error, postData?.hasMorePosts, queryLoading]);
-
-  useEffect(() => {
-    setPosts((prevPosts) => [...(prevPosts ?? []), ...(postData?.posts ?? [])]);
-  }, [postData]);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [handleScroll, hasMorePosts, queryLoading]);
+  const { handleScroll } = useLazyLoading({
+    queryLoading,
+    error: error?.message ?? "",
+    initialLimit: config.lazyLoading.initialLimit,
+    limit: config.lazyLoading.limit,
+    skip,
+    setSkip,
+    hasMoreData: postData?.hasMorePosts ?? hasMorePosts,
+    setHasMoreData: setHasMorePosts,
+  });
 
   const { likedPosts } = useLikePosts({
     userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
@@ -218,8 +205,20 @@ const useMyProfilePage = (): UseMyProfilePage => {
     userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
   });
 
+  useEffect(() => {
+    if (postData?.posts) {
+      setPosts((prev) => {
+        const existingPostIds = new Set(prev.map((post) => post.id));
+        // TODO: find a better way to remove duplicate posts, try out using trpc infinite query.
+        const newPosts = postData.posts.filter(
+          (post) => !existingPostIds.has(post.id),
+        );
+        return [...prev, ...newPosts];
+      });
+    }
+  }, [postData]);
+
   return {
-    posts: postDataWithComments,
     setPosts,
     likedPosts,
     queryLoading,
