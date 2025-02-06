@@ -83,12 +83,16 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
       sx={{
         width: "100%",
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent: {
+          xs: "center",
+          sm: "space-between",
+        },
         alignItems: "center",
+        gap: "10px",
       }}
     >
       <Grid
-        size={isSmallScreen ? 12 : 4}
+        size={isSmallScreen ? 10 : 4}
         sx={{
           display: "flex",
           justifyContent: "start",
@@ -143,6 +147,14 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           justifyContent: "end",
           alignItems: "center",
           gap: "10px",
+          flexDirection: {
+            xs: "column-reverse",
+            sm: "row",
+          },
+          width: {
+            xs: "100%",
+            sm: "auto",
+          },
         }}
       >
         {showEditPost && (
@@ -174,6 +186,10 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
               "&:hover": {
                 backgroundColor: "secondary.dark",
               },
+              width: {
+                xs: "100%",
+                sm: "auto",
+              },
             }}
           >
             {STATIC_TEXTS.EDITOR_PAGE.EDIT_PUBLISHED_POST_BUTTON_TEXT}
@@ -190,6 +206,10 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
               textTransform: "none",
               "&:hover": {
                 backgroundColor: "primary.dark",
+              },
+              width: {
+                xs: "100%",
+                sm: "auto",
               },
             }}
           >

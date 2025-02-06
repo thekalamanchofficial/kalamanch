@@ -11,7 +11,11 @@ type WritingPadProps = {
   handleOpen: () => void;
   handlePublish: (data: string) => void;
   defaultContentToDisplay: string;
-  handleEditorContentChange: (data: string,iterationId: string,  showToast?: boolean) => void;
+  handleEditorContentChange: (
+    data: string,
+    iterationId: string,
+    showToast?: boolean,
+  ) => void;
   currentIterationId?: string;
   postStatus: PostStatus;
   handleSendForReview: () => void;
@@ -24,27 +28,53 @@ const WritingPad: React.FC<WritingPadProps> = ({
   defaultContentToDisplay,
   handleEditorContentChange,
   postStatus,
-  handleSendForReview
+  handleSendForReview,
 }) => {
   const { handleSubmit, control } = useContentForm();
 
   const { onContentChange, saveDraftInstantly } = useDraftContentAutosave({
     currentIterationId,
-    initialContent:defaultContentToDisplay,
-    saveContentToDb:handleEditorContentChange
-});
+    initialContent: defaultContentToDisplay,
+    saveContentToDb: handleEditorContentChange,
+  });
 
   const onPublishPost = (data: { content: string }) => {
     handlePublish(data.content);
   };
 
   return (
-      <Box sx={{ width: "98%", height: "100%", display: "flex", flexDirection: "column" ,overflowY: "scroll", scrollbarWidth: "none" }}>
-        <Box sx={{ flex: 1, height: "calc(100vh - 300px)", padding: "10px" }}>
-          <WritingPadEditor control={control} name="content" defaultValue={defaultContentToDisplay} onChange={onContentChange} />
-        </Box>
-        <EditorActionsBar postStatus = {postStatus} handleOpen={handleOpen} handleSubmit={handleSubmit(onPublishPost)}  handleSaveDraft={saveDraftInstantly} handleSendForReview={handleSendForReview}/>
+    <Box
+      sx={{
+        width: "98%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        overflowY: "scroll",
+        scrollbarWidth: "none",
+      }}
+    >
+      <Box
+        sx={{
+          flex: 1,
+          height: "calc(100vh - 300px)",
+          padding: "10px",
+        }}
+      >
+        <WritingPadEditor
+          control={control}
+          name="content"
+          defaultValue={defaultContentToDisplay}
+          onChange={onContentChange}
+        />
       </Box>
+      <EditorActionsBar
+        postStatus={postStatus}
+        handleOpen={handleOpen}
+        handleSubmit={handleSubmit(onPublishPost)}
+        handleSaveDraft={saveDraftInstantly}
+        handleSendForReview={handleSendForReview}
+      />
+    </Box>
   );
 };
 

@@ -16,11 +16,18 @@ const buttonStyle = {
   display: "flex",
   alignItems: "center",
   gap: "10px",
+  "&:hover": {
+    backgroundColor: "secondary.dark",
+  },
 };
 
 const textStyle = {
-  fontSize: "14px",
+  fontSize: {
+    xs: "12px",
+    sm: "14px",
+  },
 };
+
 type ActionsBarProps = {
   handleOpen: () => void;
   handleSubmit: () => void;
@@ -39,10 +46,27 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
   <Box
     sx={{
       display: "flex",
-      flexDirection: "row",
-      justifyContent: "flex-end",
+      flexDirection: {
+        xs: "column",
+        sm: "row",
+      },
+      justifyContent: {
+        xs: "center",
+        md: "flex-end",
+      },
+      flexWrap: {
+        xs: "wrap",
+        sm: "nowrap",
+      },
       gap: "10px",
-      alignItems: "center",
+      alignItems: {
+        xs: "stretch",
+        sm: "center",
+      },
+      marginTop: {
+        xs: "75px",
+        sm: "0",
+      },
       height: "200px",
       padding: "10px",
     }}

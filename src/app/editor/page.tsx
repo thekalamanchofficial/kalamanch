@@ -99,7 +99,8 @@ const Page = () => {
           flexDirection: "column",
           width: {
             xs: "100%",
-          }
+            sm: "60%",
+          },
         }}
       >
         <Box sx={{ padding: "8px 20px" }}>
