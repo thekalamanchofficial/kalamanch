@@ -168,7 +168,7 @@ export type UserToFollow = {
 };
 
 export type IterationWithReviews = Iteration & {
-  DraftPost: Omit<DraftPost, "iterations"> & {
+  draftPost: Omit<DraftPost, "iterations"> & {
     postDetails: PostDetails;
   };
   likes: Like[];

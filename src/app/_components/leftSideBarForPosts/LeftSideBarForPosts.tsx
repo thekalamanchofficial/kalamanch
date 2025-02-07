@@ -211,7 +211,7 @@ const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
                     
                   }}
                 >
-                  {item.DraftPost.postDetails.title + " - " + item.iterationName}
+                  {item.draftPost.postDetails.title + " - " + item.iterationName}
                 </Typography>
                 <ArrowForwardIosOutlinedIcon
                   sx={{
