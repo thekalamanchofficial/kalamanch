@@ -66,7 +66,7 @@ const DraftIterationReviewPost = memo<DraftIterationReviewPostProps>(({ draftIte
           articleTitle={draftIterationReviewPost.DraftPost.postDetails.title}
           articleContent={draftIterationReviewPost.content}
           articleTags={draftIterationReviewPost.DraftPost.postDetails.tags}
-          articleImage={draftIterationReviewPost.DraftPost.postDetails.thumbnailDetails.url}
+          articleThumbnailUrl={draftIterationReviewPost.DraftPost.postDetails.thumbnailDetails.url}
           articleId={draftIterationReviewPost.id}
           articleDescription={draftIterationReviewPost.DraftPost.postDetails.thumbnailDetails.content ?? ""}
           savedDate= {reviewScreen === ReviewScreen.REVIEWS_MY_FEED_SUBTAB ? undefined : draftIterationReviewPost.updatedAt}

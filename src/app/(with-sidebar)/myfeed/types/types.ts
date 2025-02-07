@@ -124,7 +124,7 @@ export type PostCardContentProps = {
   articleTitle: string;
   articleContent: string;
   articleTags: string[];
-  articleImage?: string;
+  articleThumbnailUrl?: string;
   articleId: string;
   articleDescription: string;
   savedDate?: string;
