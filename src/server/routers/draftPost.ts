@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { router, publicProcedure } from "~/server/trpc";
+import { router, protectedProcedure } from "~/server/trpc";
 import prisma from "../db";
 import { type PostType } from "@prisma/client";
 
@@ -50,7 +50,7 @@ const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
 
 export const draftPostRouter = router({
-  getDraftPostsForUser: publicProcedure
+  getDraftPostsForUser: protectedProcedure
     .input(userIdSchema)
     .query(async ({ input }: { input: string }) => {
       const draftPosts = await prisma.draftPost.findMany({
@@ -67,7 +67,7 @@ export const draftPostRouter = router({
       return draftPosts;
     }),
 
-  getDraftPost: publicProcedure
+  getDraftPost: protectedProcedure
     .input(yup.string().required())
     .query(async ({ input }: { input: string }) => {
       const draftPost = await prisma.draftPost.findUnique({
@@ -81,7 +81,7 @@ export const draftPostRouter = router({
       return draftPost;
     }),
 
-  addDraftPost: publicProcedure
+  addDraftPost: protectedProcedure
     .input(addDraftPostSchema)
     .mutation(async ({ input }) => {
 
@@ -117,7 +117,7 @@ export const draftPostRouter = router({
       return draftPost;
     }),
 
-    addIteration: publicProcedure
+    addIteration: protectedProcedure
     .input(yup.object({
       draftPostId: yup.string().required(),
       iterationName: yup.string().required(),
@@ -134,7 +134,7 @@ export const draftPostRouter = router({
       return iteration;
     }),
 
-    updateIteration: publicProcedure
+    updateIteration: protectedProcedure
     .input(yup.object({
       iterationId: yup.string().required(),
       iterationName: yup.string().required(),
@@ -152,7 +152,7 @@ export const draftPostRouter = router({
       });
       return iteration;
     }),
-    deleteDraftPost: publicProcedure
+    deleteDraftPost: protectedProcedure
     .input(yup.string().required())
     .mutation(async ({ input: draftPostId }) => {
       await prisma.draftPost.delete({
@@ -162,7 +162,7 @@ export const draftPostRouter = router({
       })
     }),
 
-    updateDraftPostDetails: publicProcedure
+    updateDraftPostDetails: protectedProcedure
     .input(updateDraftPostDetailsSchema).
     mutation(async ({ input }) => {
       const { draftPostId, postDetails } = input;

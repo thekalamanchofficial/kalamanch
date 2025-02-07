@@ -1,4 +1,4 @@
-import { protectedProcedure, publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 import prisma from "~/server/db";
 
 import * as yup from "yup";
@@ -24,7 +24,7 @@ const bookmarkPaginationSchema = yup.object({
 });
 
 export const bookmarkRouter = router({
-  bulkBookmarkPost: publicProcedure
+  bulkBookmarkPost: protectedProcedure
     .input(bulkBookmarkSchema)
     .mutation(async ({ input }) => {
       try {

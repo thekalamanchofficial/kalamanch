@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../trpc";
+import { publicProcedure, protectedProcedure, router } from "../trpc";
 import prisma from "~/server/db";
 
 import * as yup from "yup";
@@ -21,7 +21,7 @@ const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
 
 export const userRouter = router({
-  getUsers: publicProcedure.query(async () => {
+  getUsers: protectedProcedure.query(async () => {
     try {
       const users = await prisma.user.findMany();
       return users;
@@ -56,7 +56,7 @@ export const userRouter = router({
     });
     return user;
   }),
-  updateUser: publicProcedure
+  updateUser: protectedProcedure
     .input(
       yup.object({
         name: yup.string(),
@@ -86,7 +86,7 @@ export const userRouter = router({
       });
       return user;
     }),
-  getUserFollowings: publicProcedure
+  getUserFollowings: protectedProcedure
     .input(
       yup.object({
         userEmail: yup.string().email().required(),
@@ -98,7 +98,7 @@ export const userRouter = router({
       });
       return user?.following;
     }),
-  followUser: publicProcedure
+  followUser: protectedProcedure
     .input(
       yup.object({
         currentUserEmail: yup.string().email().required(),
@@ -186,7 +186,7 @@ export const userRouter = router({
         console.log(error);
       }
     }),
-  searchUsersSortedByFollowing: publicProcedure
+  searchUsersSortedByFollowing: protectedProcedure
     .input(
       yup.object({
         searchTerm: yup.string().default(""),

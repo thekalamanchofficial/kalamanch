@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 import prisma from "~/server/db";
 
 import * as yup from "yup";
@@ -65,7 +65,7 @@ const cleanArray = (array?: (string | undefined)[]): string[] =>
 
 // Todo: Add a better way to get Post with isBookmarked and isLiked flags by user
 export const postRouter = router({
-  getPosts: publicProcedure
+  getPosts: protectedProcedure
     .input(
       yup.object({
         limit: yup.number().min(1).default(5),
@@ -127,7 +127,7 @@ export const postRouter = router({
       }
     }),
 
-  addPost: publicProcedure.input(postSchema).mutation(async ({ input }) => {
+  addPost: protectedProcedure.input(postSchema).mutation(async ({ input }) => {
     try {
       const sanitizedInput = {
         ...input,
@@ -171,7 +171,7 @@ export const postRouter = router({
       throw new Error("Failed to create the post.");
     }
   }),
-  deletePost: publicProcedure
+  deletePost: protectedProcedure
     .input(yup.string())
     .mutation(async ({ input: postId }) => {
       try {
@@ -186,7 +186,7 @@ export const postRouter = router({
         throw new Error("Failed to delete the post.");
       }
     }),
-  getPost: publicProcedure
+  getPost: protectedProcedure
     .input(yup.string())
     .query(async ({ input: postId }) => {
       try {
@@ -201,7 +201,7 @@ export const postRouter = router({
         throw new Error("Failed to fetch the post.");
       }
     }),
-  updatePostContent: publicProcedure
+  updatePostContent: protectedProcedure
     .input(updatePostContentSchema)
     .mutation(async ({ input }) => {
       try {
@@ -219,7 +219,7 @@ export const postRouter = router({
         throw new Error("Failed to update the post.");
       }
     }),
-  updatePostDetails: publicProcedure
+  updatePostDetails: protectedProcedure
     .input(updatePostDetailsSchema)
     .mutation(async ({ input }) => {
       try {
@@ -258,7 +258,7 @@ export const postRouter = router({
         throw new Error("Failed to update the post.");
       }
     }),
-  sharePost: publicProcedure
+  sharePost: protectedProcedure
     .input(sharePostSchema)
     .mutation(async ({ input }) => {
       try {

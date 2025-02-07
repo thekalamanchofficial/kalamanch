@@ -1,10 +1,10 @@
 import { handleError } from "~/app/_utils/handleError";
 import prisma from "../db";
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 import * as yup from "yup";
 
 export const draftPostIterationReviewsRouter = router({
-    saveDraftPostIterationReviewers: publicProcedure.input(
+    saveDraftPostIterationReviewers: protectedProcedure.input(
         yup.object({
             requesterId: yup.string().required(),
             iterationId: yup.string().required(),
@@ -43,7 +43,7 @@ export const draftPostIterationReviewsRouter = router({
             throw error;
         }
     }),
-    getDraftPostIterationsToReview: publicProcedure.input(
+    getDraftPostIterationsToReview: protectedProcedure.input(
         yup.object({
             limit: yup.number().min(1).default(5),
             skip: yup.number().min(0).default(0),
@@ -73,7 +73,7 @@ export const draftPostIterationReviewsRouter = router({
             throw error;
         }
     }),
-    getDraftPostIterationsSentForReview: publicProcedure.input(
+    getDraftPostIterationsSentForReview: protectedProcedure.input(
         yup.object({
             limit: yup.number().min(1).default(5),
             skip: yup.number().min(0).default(0),
