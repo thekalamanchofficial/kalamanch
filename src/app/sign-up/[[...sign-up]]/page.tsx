@@ -24,10 +24,8 @@ const StepperEndIcon = () => <CheckComplete />;
 export default function Page() {
   const {
     formData,
-    profileFile,
-    setProfileFile,
-    imagePreview,
-    setImagePreview,
+    profileImageUrl,
+    setProfileImageUrl,
     formStep,
     formStepNumber,
     handleNext,
@@ -94,10 +92,8 @@ export default function Page() {
             onNext={handleNext}
             onPrev={handlePrev}
             data={formData}
-            profileFile={profileFile}
-            setProfileFile={setProfileFile}
-            imagePreview={imagePreview}
-            setImagePreview={setImagePreview}
+            profileImageUrl={profileImageUrl}
+            setProfileImageUrl={setProfileImageUrl}
           />
         ) : null}
         {formStep === SignUpFormStages.OTP_VERIFICATION ? (

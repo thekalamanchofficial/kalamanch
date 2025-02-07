@@ -12,6 +12,8 @@
     "inngest:dev": "inngest-cli dev -u http://localhost:3000/api/inngest"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.741.0",
+    "@aws-sdk/s3-request-presigner": "^3.741.0",
     "@clerk/elements": "^0.15.7",
     "@clerk/nextjs": "^5.6.3",
     "@emotion/cache": "^11.13.1",

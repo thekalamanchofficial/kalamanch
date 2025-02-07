@@ -100,7 +100,7 @@ export default function DraftPostsSection({
                   articleTitle={post.postDetails.title}
                   articleContent={post.iterations[0]?.content ?? ""}
                   articleTags={post.postDetails.tags}
-                  articleImage={post.postDetails.thumbnailDetails.url}
+                  articleThumbnailUrl={post.postDetails.thumbnailDetails.url}
                   articleId={post.id ?? ""}
                   articleDescription={post.postDetails.thumbnailDetails.content ?? ""}
                   savedDate={post.updatedAt}

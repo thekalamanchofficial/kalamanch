@@ -130,7 +130,7 @@ export type PostCardContentProps = {
   articleTitle: string;
   articleContent: string;
   articleTags: string[];
-  articleImage?: string;
+  articleThumbnailUrl?: string;
   articleId: string;
   articleDescription: string;
   savedDate?: string;
@@ -174,7 +174,7 @@ export type UserToFollow = {
 };
 
 export type IterationWithReviews = Iteration & {
-  DraftPost: Omit<DraftPost, "iterations"> & {
+  draftPost: Omit<DraftPost, "iterations"> & {
     postDetails: PostDetails;
   };
   likes: Like[];
