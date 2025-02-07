@@ -58,7 +58,7 @@ export const draftPostIterationReviewsRouter = router({
                 },
                 select: {
                     iteration: {
-                        include: { DraftPost: true, likes: true, comments: { include: { replies: true } } },
+                        include: { draftPost: true, likes: true, comments: { include: { replies: true } } },
                     },
                 },
                 take: limit,
@@ -88,7 +88,7 @@ export const draftPostIterationReviewsRouter = router({
                 },
                 select: {
                     iteration: {
-                        include: { DraftPost: true, likes: true, comments: { include: { replies: true } } },
+                        include: { draftPost: true, likes: true, comments: { include: { replies: true } } },
                     },
                 },
                 take: limit,

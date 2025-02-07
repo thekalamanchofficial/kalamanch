@@ -52,23 +52,23 @@ const DraftIterationReviewPost = memo<DraftIterationReviewPostProps>(({ draftIte
       <CardContent>
         {reviewScreen === ReviewScreen.REVIEWS_MY_FEED_SUBTAB && <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <UserNameProfile
-            AuthorName={draftIterationReviewPost.DraftPost.authorName}
-            AuthorImage={draftIterationReviewPost.DraftPost.authorProfileImageUrl}
+            AuthorName={draftIterationReviewPost.draftPost.authorName}
+            AuthorImage={draftIterationReviewPost.draftPost.authorProfileImageUrl}
           />
-          {user?.id !== draftIterationReviewPost.DraftPost.authorId && (
+          {user?.id !== draftIterationReviewPost.draftPost.authorId && (
             <FollowButton
-              authorProfileLink={draftIterationReviewPost.DraftPost.authorId}
-              isFollowing={userFollowing?.includes(draftIterationReviewPost.DraftPost.authorId)}
+              authorProfileLink={draftIterationReviewPost.draftPost.authorId}
+              isFollowing={userFollowing?.includes(draftIterationReviewPost.draftPost.authorId)}
             />
           )}
         </Box>}
         <PostCardContent
-          articleTitle={draftIterationReviewPost.DraftPost.postDetails.title}
+          articleTitle={draftIterationReviewPost.draftPost.postDetails.title}
           articleContent={draftIterationReviewPost.content}
-          articleTags={draftIterationReviewPost.DraftPost.postDetails.tags}
-          articleImage={draftIterationReviewPost.DraftPost.postDetails.thumbnailDetails.url}
+          articleTags={draftIterationReviewPost.draftPost.postDetails.tags}
+          articleThumbnailUrl={draftIterationReviewPost.draftPost.postDetails.thumbnailDetails.url}
           articleId={draftIterationReviewPost.id}
-          articleDescription={draftIterationReviewPost.DraftPost.postDetails.thumbnailDetails.content ?? ""}
+          articleDescription={draftIterationReviewPost.draftPost.postDetails.thumbnailDetails.content ?? ""}
           savedDate= {reviewScreen === ReviewScreen.REVIEWS_MY_FEED_SUBTAB ? undefined : draftIterationReviewPost.updatedAt}
         />
         <PostCardFooter
@@ -82,7 +82,7 @@ const DraftIterationReviewPost = memo<DraftIterationReviewPostProps>(({ draftIte
           showLikes={true}
           showComments={true}
           showEditPost={ReviewScreen.REVIEW_FEEDBACK_SCREEN === reviewScreen}
-          handleEditPost={()=> {navigateToPostEditor(draftIterationReviewPost.DraftPost.id ?? "",PostStatus.DRAFT)}}
+          handleEditPost={()=> {navigateToPostEditor(draftIterationReviewPost.draftPost.id ?? "",PostStatus.DRAFT)}}
         />
         {isCommentOpen && (
           <CommentSection

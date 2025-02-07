@@ -56,7 +56,7 @@ const useDraftsToReviewData: useDraftsToReviewDataType = ({activeTab}) => {
     const transformedData = iterationsToReviewData.map(item => ({
       ...item.iteration,
       likes: item.iteration.likes,
-      DraftPost: item.iteration.DraftPost,
+      draftPost: item.iteration.draftPost,
     }));
     setIterationsToReview((prev) => {
       const newIterations = transformedData.filter(
