@@ -63,6 +63,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           height: 156,
           backgroundImage: `url(${coverImage})`,
           backgroundSize: "cover",
+          backgroundColor: `${coverImage ? "" : "secondary.main"}`,
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           position: "relative",
@@ -81,6 +82,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               backgroundColor: (theme) => theme.palette.secondary.dark,
             },
             textTransform: "none",
+            border: "1px solid",
+            borderColor: "common.gray",
             borderRadius: "20px",
             padding: "6px 16px",
           }}
@@ -135,14 +138,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 "&:hover": {
                   backgroundColor: (theme) => theme.palette.grey[900],
                 },
-                padding: "8px",
               }}
               onClick={() => profileInputRef.current?.click()}
             >
               <CameraAltIcon
+                fontSize="small"
                 sx={{
                   color: (theme) => theme.palette.grey[100],
-                  fontSize: (theme) => theme.typography.h3.fontSize,
                 }}
               />
             </IconButton>

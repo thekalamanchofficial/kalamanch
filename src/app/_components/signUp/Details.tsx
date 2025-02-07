@@ -3,9 +3,6 @@ import { useSignUpDetailsForm } from "~/app/sign-up/_hooks/useSignUpForm";
 import { Controller } from "react-hook-form";
 import { type FormDataDetails } from "~/app/sign-up/_types/types";
 
-import UploadIcon from "~/assets/svg/UploadIcon.svg";
-import DeleteIcon from "@mui/icons-material/Delete";
-
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import {
   FormControl,
@@ -13,15 +10,10 @@ import {
   TextField,
   Button,
   Typography,
-  Avatar,
-  Box,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useUploadFileToR2 } from "~/app/_hooks/useUploadFileToR2";
-import { FileUploadSource } from "types/enums";
-import Loader from "../loader/Loader";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
@@ -35,8 +27,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   onNext,
   onPrev,
   data,
-  profileImageUrl,
-  setProfileImageUrl,
 }) => {
   const {
     handleSubmit,
@@ -46,8 +36,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   } = useSignUpDetailsForm();
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const datepicekrAnchor = useRef<HTMLInputElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { uploadFile, isUploading } = useUploadFileToR2();
 
   const handleNext = async (data: FormDataDetails) => {
     const isValid = await trigger();
@@ -60,15 +48,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
     e.preventDefault();
     datepicekrAnchor.current = e.currentTarget;
     setOpenDatePicker((open) => !open);
-  };
-
-  const handleButtonClick = () => {
-    fileInputRef?.current?.click();
-  };
-
-  const handleDeleteImage = () => {
-    setProfileImageUrl(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
@@ -197,83 +176,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
               </LocalizationProvider>
             );
           }}
-        />
-
-        <Typography variant="caption">
-          {STATIC_TEXTS.DETAILS_FORM.LABELS.PROFILE}
-        </Typography>
-        <Controller
-          name="profile"
-          control={control}
-          render={({ field: { onChange } }) => (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                maxWidth: 200,
-                justifyContent: "space-between",
-              }}
-            >
-              {isUploading ? (
-                <Loader
-                  title="Uploading Profile Image..."
-                  height="100%"
-                  width="100%"
-                />
-              ) : (
-                <Avatar
-                  src={profileImageUrl ?? ""}
-                  alt="Profile Preview"
-                  sx={{ width: 90, height: 90, mb: 2 }}
-                />
-              )}
-
-              <input
-                accept="image/*"
-                type="file"
-                ref={fileInputRef} // Attach the ref to the input
-                style={{ display: "none" }}
-                onChange={async (event) => {
-                  const file = event?.target?.files?.[0];
-                  if (file) {
-                    const uploadedThumbnailUrl = await uploadFile(
-                      file,
-                      FileUploadSource.PROFILE_IMAGE,
-                    );
-                    onChange(uploadedThumbnailUrl);
-                    setProfileImageUrl(uploadedThumbnailUrl);
-                  }
-                }}
-              />
-              {!profileImageUrl ? (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<UploadIcon />}
-                  onClick={handleButtonClick}
-                  size="small"
-                  sx={{ minHeight: "32px" }}
-                >
-                  {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.UPLOAD_BUTTON}
-                </Button>
-              ) : (
-                <Button
-                  variant="outlined"
-                  startIcon={<DeleteIcon color="disabled" />}
-                  onClick={handleDeleteImage}
-                  size="small"
-                  sx={{
-                    minHeight: "32px",
-                    backgroundColor: (theme) => theme.palette.grey[100],
-                    borderColor: (theme) => theme.palette.grey[300],
-                    color: (theme) => theme.palette.grey[700],
-                  }}
-                >
-                  {STATIC_TEXTS.DETAILS_FORM.UPLOAD_FILE.DELETE_BUTTON}
-                </Button>
-              )}
-            </Box>
-          )}
         />
         <Grid justifyContent="space-between" display="flex" width="100%" mt={2}>
           <Button

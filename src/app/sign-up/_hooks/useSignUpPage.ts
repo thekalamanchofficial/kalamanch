@@ -45,7 +45,6 @@ export const useSignUpPage: UseSignUpPage = () => {
 
       const emailAddress = data?.email;
       const password = data?.password;
-      console.log("formdata", data);
 
       try {
         await signUp.create({
@@ -54,7 +53,7 @@ export const useSignUpPage: UseSignUpPage = () => {
           unsafeMetadata: {
             name: data?.name,
             birthdate: data?.birthdate,
-            profile: data?.profile,
+            profile: "",
           },
         });
         await signUp.prepareEmailAddressVerification({
