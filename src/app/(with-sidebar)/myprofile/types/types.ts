@@ -1,3 +1,4 @@
+import type { FileUploadSource } from "types/enums";
 import type { Like, UserToFollow, Post } from "../../myfeed/types/types";
 
 export enum MyProfileTabsEnum {
@@ -19,6 +20,7 @@ export type UserSchema = {
   name: string;
   email: string;
   profileImageUrl: string;
+  coverImageUrl?: string | null | undefined;
   birthdate?: string | null;
   interests: string[];
   bio: string | null;
@@ -40,6 +42,8 @@ export type UserInfo = {
   interests: string[];
   birthdate: Date;
   education: string[];
+  profileImageUrl?: string;
+  coverImageUrl?: string | null | undefined;
   professionalAchievements: string;
 };
 
@@ -58,7 +62,6 @@ export type UseMyProfilePage = {
   handleChange: (newTab: MyProfileTabsEnum) => void;
   handleScroll: () => void;
   errorMessage: string;
-  userProfile: string;
   postCount: number;
   followerCount: number;
   isEditProfileOpen: boolean;
@@ -67,6 +70,7 @@ export type UseMyProfilePage = {
   userInfo: UserInfo;
   userLikedPosts: Post[];
   handleSave: (details: UserInfo) => Promise<void>;
+  handleImageUpdate: (uploadSource: FileUploadSource, url: string) => void;
 };
 
 export type SaveUserInfo = {

@@ -12,6 +12,7 @@ model User {
   email                   String                      @unique
   name                    String
   profileImageUrl         String
+  coverImageUrl           String?
   birthdate               DateTime?
   interests               String[]
   bio                     String?
