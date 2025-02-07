@@ -3,7 +3,17 @@ import type { FileUploadSource } from "types/enums";
 import { trpc } from "~/server/client";
 import { handleError } from "../_utils/handleError";
 
-export const useUploadFileToR2 = () => {
+type UploadFileToR2Return = {
+  isUploading: boolean;
+  uploadFile: (
+    file: File,
+    fileUploadSource: FileUploadSource,
+  ) => Promise<string>;
+};
+
+type UploadFileToR2Type = () => UploadFileToR2Return;
+
+export const useUploadFileToR2: UploadFileToR2Type = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   const { mutateAsync: getPresignedUrl } =
