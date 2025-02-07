@@ -74,7 +74,6 @@ const Page = () => {
           mr: 4,
           display: {
             xs: "none",
-            sm: "none",
             md: "flex",
           },
         }}
@@ -99,7 +98,9 @@ const Page = () => {
           flexDirection: "column",
           width: {
             xs: "100%",
-            sm: "60%",
+            sm: "85%",
+            md: "55%",
+            lg: "60%",
           },
         }}
       >
@@ -107,7 +108,7 @@ const Page = () => {
           <Typography
             sx={{ fontWeight: "bold", fontSize: "16px", color: "primary.main", display: {
               xs: "none",
-              sm: "block",
+              md: "block",
             } }}
           >
             Editor

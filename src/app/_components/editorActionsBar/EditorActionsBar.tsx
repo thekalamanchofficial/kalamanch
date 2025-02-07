@@ -67,7 +67,10 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         xs: "75px",
         sm: "0",
       },
-      height: "200px",
+      height: {
+        xs: "250px",
+        sm: "200px",
+      },
       padding: "10px",
     }}
   >
