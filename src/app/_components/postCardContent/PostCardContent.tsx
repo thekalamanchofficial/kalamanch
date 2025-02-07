@@ -17,6 +17,7 @@ import "./quillEditor.css";
 import SeeLessButton from "../seeLessButton/SeeLessButton";
 import dynamic from "next/dynamic";
 import useSavedDateFormatter from "~/app/(with-sidebar)/myfeed/_hooks/useSavedDateFormatter";
+import ImageNotSupportedOutlinedIcon from "@mui/icons-material/ImageNotSupportedOutlined";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const PostCardContent: React.FC<PostCardContentProps> = ({
@@ -153,26 +154,27 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
             <CardMedia
               component="video"
               controls
-              height="140"
+              height="220"
               src={articleThumbnailUrl}
               sx={{
                 maxWidth: "300px",
-                height: "100%",
               }}
             />
-          ) : (
+          ) : articleThumbnailUrl !== "" ? (
             <CardMedia
               component="img"
-              height="140"
-              image={
-                articleThumbnailUrl !== ""
-                  ? articleThumbnailUrl
-                  : "https://picsum.photos/200"
-              }
+              height="220"
+              image={articleThumbnailUrl}
               alt="image content"
               sx={{
                 maxWidth: "300px",
-                height: "100%",
+              }}
+            />
+          ) : (
+            <ImageNotSupportedOutlinedIcon
+              sx={{
+                fontSize: "220px",
+                color: "text.secondary",
               }}
             />
           )}

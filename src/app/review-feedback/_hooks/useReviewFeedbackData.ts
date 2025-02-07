@@ -51,7 +51,7 @@ const useReviewFeedbackData = (): useReviewFeedbackDataReturn => {
     const transformedData = iterationsSentForReviewData.map(item => ({
       ...item.iteration,
       likes: item.iteration.likes,
-      DraftPost: item.iteration.DraftPost,
+      DraftPost: item.iteration.draftPost,
     }));
 
     const newIterations = transformedData.filter(
