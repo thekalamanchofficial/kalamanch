@@ -18,7 +18,6 @@ const Page = () => {
     <>
       <DraftAppBar
         draftPosts={draftPostsForUser}
-        publishedPosts={[]} // TODO: Remove this
         draftIterationsSentForReview={[]}
         entityType={PostEntityType.DRAFT_POST}
       />
@@ -36,7 +35,6 @@ const Page = () => {
       >
         <LeftSideBarForPosts
           draftPosts={draftPostsForUser}
-          publishedPosts={[]} // TODO: Remove this
           draftIterationsSentForReview={[]}
           entityType={PostEntityType.DRAFT_POST}
         />

@@ -73,7 +73,6 @@ export const ReviewFeedbackAppBar: React.FC<ReviewFeedbackAppBarProps> = ({
         >
           <LeftSideBarForPosts
             draftPosts={[]}
-            publishedPosts={[]}
             entityType={entityType}
             draftIterationsSentForReview={draftIterationsSentForReview}
           />
