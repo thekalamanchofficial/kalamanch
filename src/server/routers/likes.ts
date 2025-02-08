@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 import prisma from "~/server/db";
 
 import * as yup from "yup";
@@ -27,7 +27,7 @@ const likeSchema = yup.object({
 
 export const likeRouter = router({
 
-    likePost: publicProcedure.input(likeSchema).mutation(async ({ input }) => {
+    likePost: protectedProcedure.input(likeSchema).mutation(async ({ input }) => {
       try {
         const { postId, userEmail, postStatus, iterationId } = input;
   
@@ -113,7 +113,7 @@ export const likeRouter = router({
       }
     }), 
 
-  bulkLikePost: publicProcedure
+  bulkLikePost: protectedProcedure
   .input(bulkLikeSchema)
   .mutation(async ({ input }) => {
     try {
@@ -194,7 +194,7 @@ export const likeRouter = router({
     }
   }),
 
-  getUserLikes: publicProcedure
+  getUserLikes: protectedProcedure
     .input(
       yup.object({
         userEmail: yup.string().email().required(),
@@ -230,7 +230,7 @@ export const likeRouter = router({
         throw error;
       }
     }),
-  getUserLikedPost: publicProcedure
+  getUserLikedPost: protectedProcedure
     .input(
       yup.object({
         userEmail: yup.string().email().required(),

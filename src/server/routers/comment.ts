@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 import prisma from "~/server/db";
 
 import * as yup from "yup";
@@ -29,7 +29,7 @@ const bulkCommentsInputSchema = yup.object({
 type BulkCommentInput = yup.InferType<typeof bulkCommentSchema>;
 
 export const commentRouter = router({
-  addComment: publicProcedure
+  addComment: protectedProcedure
     .input(commentSchema)
     .mutation(async ({ input }) => {
       try {
@@ -66,7 +66,7 @@ export const commentRouter = router({
       }
     }),
 
-  bulkAddComments: publicProcedure
+  bulkAddComments: protectedProcedure
     .input(bulkCommentsInputSchema)
     .mutation(async ({ input }) => {
       try {
@@ -145,7 +145,7 @@ export const commentRouter = router({
       }
     }),
 
-  getComments: publicProcedure
+  getComments: protectedProcedure
     .input(
       yup.object({
         postId: yup.string().required(),
@@ -178,7 +178,7 @@ export const commentRouter = router({
       }
     }),
 
-  getPostReplies: publicProcedure
+  getPostReplies: protectedProcedure
     .input(
       yup.object({
         postId: yup.string().required(),

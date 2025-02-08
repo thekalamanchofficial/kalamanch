@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
@@ -10,7 +10,7 @@ const featuredAuthorSchema = yup.object({
 });
 
 export const UsersToFollowRouter = router({
-  addUserToFollow: publicProcedure
+  addUserToFollow: protectedProcedure
     .input(yup.array(featuredAuthorSchema))
     .mutation(async ({ input }) => {
       try {
@@ -34,7 +34,7 @@ export const UsersToFollowRouter = router({
       }
     }),
 
-  getUsersToFollow: publicProcedure
+  getUsersToFollow: protectedProcedure
     .input(
       yup.object({
         limit: yup.number().min(1).default(5),
