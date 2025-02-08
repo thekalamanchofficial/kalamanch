@@ -7,7 +7,13 @@ import { trpc } from "~/server/client";
 import { Divider } from "@mui/material";
 
 const PostsFeed = memo<PostsFeedProps>(
-  ({ articlesList, likedPosts, bookmarkedPosts }) => {
+  ({
+    articlesList,
+    likedPosts,
+    bookmarkedPosts,
+    setPosts,
+    isUserPublishedPostFeed,
+  }) => {
     const { user } = useClerk();
     const userEmail = user?.primaryEmailAddress?.emailAddress ?? "";
 
@@ -29,6 +35,8 @@ const PostsFeed = memo<PostsFeedProps>(
               userFollowing={userFollowing}
               isLiked={likedPosts?.includes(post.id) ?? false}
               isBookmarked={bookmarkedPosts?.includes(post.id) ?? false}
+              setPosts={setPosts}
+              isUserPublishedPostFeed={isUserPublishedPostFeed}
             />
             <Divider sx={{ my: 2 }} />
           </Fragment>

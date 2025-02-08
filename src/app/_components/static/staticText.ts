@@ -96,14 +96,17 @@ export const STATIC_TEXTS = {
     IMPORT_TEXT: "Import text from a file",
     RIGHTSIDEBAR_HEADING: "Technical Accuracy",
     UNPUBLISH_POST_DIALOG_TITLE: "Unpublish Post",
-    PUBLISH_POST_DIALOG_DESCRIPTION: "Are you sure you want to unpublish this post? This action cannot be undone.",
+    PUBLISH_POST_DIALOG_DESCRIPTION:
+      "Are you sure you want to unpublish this post? This action cannot be undone.",
     EDIT_DRAFT_POST_BUTTON_TEXT: "Open Editor",
     EDIT_PUBLISHED_POST_BUTTON_TEXT: "Edit Post",
-    PUBLISH : "Publish",
+    PUBLISH: "Publish",
     CANCEL: "Cancel",
-    UNPUBLISH : "Unpublish",
-    PUBLISH_DRAFT : "Publish Draft",
-    SELECT_ITERATION_DESCRIPTION: "Select an iteration to publish from the list below",
+    UNPUBLISH: "Unpublish",
+    EDIT: "Edit",
+    PUBLISH_DRAFT: "Publish Draft",
+    SELECT_ITERATION_DESCRIPTION:
+      "Select an iteration to publish from the list below",
     POST_PUBLISHED_SUCCESS_MESSAGE: "Post published successfully",
     POST_UNPUBLISHED_SUCCESS_MESSAGE: "Post unpublished successfully",
     POST_UPDATED_SUCCESS_MESSAGE: "Post updated successfully",
@@ -113,13 +116,11 @@ export const STATIC_TEXTS = {
     SAVE_REVIEWERS_SUCCESS_MESSAGE: "Reviewers Saved Successfully",
     IMPORT_TEXT_FROM_DOCX_OR_TXT_FILE: "Import text from Doc/Txt/Image File",
     DRAG_AND_DROP_FILE: "Drag and drop your file here, or click to select",
-    SUPPORTS_TXT_DOCX_PNG_JPEG_FILE: "Supports .txt, .docx, .jpeg, .png and .jpg files",
+    SUPPORTS_TXT_DOCX_PNG_JPEG_FILE:
+      "Supports .txt, .docx, .jpeg, .png and .jpg files",
     IMPORT: "Import",
     SELECT_FILE_ERROR: "Please select a file to import",
-    UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE: "The uploaded text will appear in a new Iteration",
-
-
-
+    UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE:
+      "The uploaded text will appear in a new Iteration",
   },
-
 };

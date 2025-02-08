@@ -1,37 +1,25 @@
 "use client";
 
-import React from "react";
-import { Box, Grid2 as Grid } from "@mui/material";
+import { Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import WritingPad from "../_components/writingPad/WritingPad";
-import CustomTabs from "../_components/CustomTabs/CustomTabs";
-import EditorLeftSideBarForIterations from "./_components/editorLeftSideBar/EditorLeftSideBarForIterations";
 import CreatePostForm from "./_components/createPostForm/CreatePostForm";
-import { useQueryParams } from "./_hooks/useQueryParams";
-import { useDraftEditorState } from "./_hooks/useDraftEditorState";
-import { usePostUnpublishing } from "./_hooks/usePostUnpublishing";
-import { tabs } from "./_config/config";
-import { useTabs } from "./_hooks/useTabs";
-import { EditorTabsEnum, PostEntityType, PostStatus } from "./types/types";
-import EditorPublishedPostsSection from "./_components/editorPublishedPostsSection/EditorPublishedPostsSection";
-import { useUserPostsState } from "./_hooks/useUserPosts";
-import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
-import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
-import { useNavigateToPostEditor } from "./_hooks/useNavigateToPostEditor";
-import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
+import { EditorAppBar } from "./_components/editorAppBar/EditorAppBar";
+import EditorLeftSideBarForIterations from "./_components/editorLeftSideBar/EditorLeftSideBarForIterations";
+import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
 import FileUploader from "./_components/fileUploader/FileUploader";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
+import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
+import { useDraftEditorState } from "./_hooks/useDraftEditorState";
+import { useQueryParams } from "./_hooks/useQueryParams";
 import { useSendForReview } from "./_hooks/useSendForReview";
-import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
-import editorMockData from "./mockDataEditor/mockdata";
-import { EditorAppBar } from "./_components/editorAppBar/EditorAppBar";
 import useUploadTextFromFile from "./_hooks/useUploadTextFromFile";
+import editorMockData from "./mockDataEditor/mockdata";
+import { PostStatus } from "./types/types";
+import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 
 const Page = () => {
-  const { activeTab, changeTab } = useTabs();
-  const { postId, draftPostId } = useQueryParams();
-  const { publishedPostsForUser, setPublishedPostsForUser } = useUserPostsState(
-    { activeTab },
-  ); // Needed for Published Posts Tab
+  const { draftPostId, postId } = useQueryParams();
+
   const {
     draftPost,
     saveLastIterationData,
@@ -45,6 +33,7 @@ const Page = () => {
 
   const { publishedPost, updatePostContent, updatePostDetails } =
     usePublishedPostEditorState({ postId });
+
   const {
     isCreatePostFormOpen,
     openCreatePostForm,
@@ -53,15 +42,13 @@ const Page = () => {
   } = useCreatePostFormDataState({
     postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails,
   });
-  const { handlePostUnPublishing } = usePostUnpublishing({
-    setPublishedPostsForUser,
-  });
-  const { navigateToPostEditor } = useNavigateToPostEditor({ changeTab });
+
   const {
     sendForReviewDialogOpen,
     setSendForReviewDialogOpen,
     handleSendForReview,
   } = useSendForReview();
+
   const {
     isTextUploaderOpen,
     setIsTextUploaderOpen,
@@ -73,8 +60,6 @@ const Page = () => {
   return (
     <>
       <EditorAppBar
-        activeTab={activeTab}
-        publishedPosts={publishedPostsForUser}
         draftPost={draftPost}
         handleSaveLastIterationData={saveLastIterationData}
         handleAddIteration={addIteration}
@@ -82,96 +67,76 @@ const Page = () => {
         selectedIterationId={selectedIteration?.id ?? ""}
         handleImportText={() => setIsTextUploaderOpen(true)}
       />
+
       <Grid
         size={2}
         sx={{
           mr: 4,
           display: {
             xs: "none",
-            sm: "none",
             md: "flex",
-            lg: "flex",
           },
         }}
       >
-        {activeTab === EditorTabsEnum.PUBLISHED && (
-          <LeftSideBarForPosts
-            draftPosts={[]}
-            draftIterationsSentForReview={[]}
-            publishedPosts={publishedPostsForUser}
-            entityType={PostEntityType.PUBLISHED_POST}
-          />
-        )}
-        {activeTab === EditorTabsEnum.EDITOR && (
-          <EditorLeftSideBarForIterations
-            showIterations={Boolean(draftPost)}
-            iterations={draftPost?.iterations ?? []}
-            handleSaveLastIterationData={saveLastIterationData}
-            handleAddIteration={addIteration}
-            handleIterationSelected={handleIterationChange}
-            selectedIterationId={selectedIteration?.id ?? ""}
-            handleImportText={() => setIsTextUploaderOpen(true)}
-          />
-        )}
+        <EditorLeftSideBarForIterations
+          showIterations={Boolean(draftPost)}
+          iterations={draftPost?.iterations ?? []}
+          handleSaveLastIterationData={saveLastIterationData}
+          handleAddIteration={addIteration}
+          handleIterationSelected={handleIterationChange}
+          selectedIterationId={selectedIteration?.id ?? ""}
+          handleImportText={() => setIsTextUploaderOpen(true)}
+        />
       </Grid>
 
       <Grid
-        size={{ xs: 12, sm: 12, md: 7, lg: 7 }}
+        size={7}
         sx={{
           backgroundColor: "white",
           height: "90vh",
           display: "flex",
+          flexDirection: "column",
+          width: {
+            xs: "100%",
+            sm: "85%",
+            md: "55%",
+            lg: "60%",
+          },
         }}
       >
-        <Box sx={{ height: "100%", width: "100%" }}>
-          <Grid
-            size={12}
-            sx={{
-              display: "flex",
-              justifyContent: "start",
-              alignItems: "start",
-              px: "4px",
-              pt: "8px",
-            }}
+        <Box sx={{ padding: "8px 20px" }}>
+          <Typography
+            sx={{ fontWeight: "bold", fontSize: "16px", color: "primary.main", display: {
+              xs: "none",
+              md: "block",
+            } }}
           >
-            <CustomTabs
-              tabs={tabs}
-              activeTab={activeTab}
-              onTabChange={changeTab}
+            Editor
+          </Typography>
+        </Box>
+        <Divider />
+        <Box>
+          <Grid size={12} sx={{ height: "90vh", width: "100%" }}>
+            <WritingPad
+              key={draftPost ? selectedIteration?.id : publishedPost?.id}
+              currentIterationId={selectedIteration?.id}
+              handleOpen={() => openCreatePostForm()}
+              handlePublish={async (content) => {
+                if (publishedPost) {
+                  await updatePostContent(content);
+                } else {
+                  await handlePublishEditorDraftIteration(content);
+                }
+              }}
+              defaultContentToDisplay={
+                (draftPost
+                  ? selectedIteration?.content
+                  : publishedPost?.content) ?? ""
+              }
+              handleEditorContentChange={handleEditorContentChange}
+              postStatus={draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
+              handleSendForReview={() => setSendForReviewDialogOpen(true)}
             />
-          </Grid>
-          <Grid size={12} sx={{ height: "100%", width: "100%" }}>
-            {activeTab === EditorTabsEnum.EDITOR && (
-              <WritingPad
-                key={draftPost ? selectedIteration?.id : publishedPost?.id}
-                currentIterationId={selectedIteration?.id}
-                handleOpen={() => openCreatePostForm()}
-                handlePublish={async (content) => {
-                  if (publishedPost) {
-                    await updatePostContent(content);
-                  } else {
-                    await handlePublishEditorDraftIteration(content);
-                  }
-                }}
-                defaultContentToDisplay={
-                  (draftPost
-                    ? selectedIteration?.content
-                    : publishedPost?.content) ?? ""
-                }
-                handleEditorContentChange={handleEditorContentChange}
-                postStatus={draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
-                handleSendForReview={() => setSendForReviewDialogOpen(true)}
-              />
-            )}
-            {activeTab === EditorTabsEnum.PUBLISHED && (
-              <EditorPublishedPostsSection
-                posts={publishedPostsForUser}
-                handleOnPostUnpublish={handlePostUnPublishing}
-                handleOnPostEdit={(postId: string) =>
-                  navigateToPostEditor(postId, PostStatus.PUBLISHED)
-                }
-              />
-            )}
           </Grid>
           {isCreatePostFormOpen && (
             <CreatePostForm
@@ -186,7 +151,7 @@ const Page = () => {
                 }
                 closeCreatePostForm();
               }}
-              update={Boolean(publishedPost ?? draftPost)}
+              update={Boolean(draftPost)}
             />
           )}
           <FileUploader
@@ -208,6 +173,7 @@ const Page = () => {
           )}
         </Box>
       </Grid>
+
       <Grid
         size={2}
         sx={{

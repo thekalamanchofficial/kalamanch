@@ -100,7 +100,6 @@ const Page = () => {
       >
         <LeftSideBarForPosts
           draftPosts={[]}
-          publishedPosts={[]}
           draftIterationsSentForReview={iterationsSentForReview}
           entityType={PostEntityType.DRAFT_ITERATION_SENT_FOR_REVIEW}
         />

@@ -49,7 +49,6 @@ export type UserInfo = {
 
 export type UseMyProfilePage = {
   callSave: (details: SaveUserInfo) => Promise<void>;
-  posts: Post[];
   setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
   likedPosts: string[];
   bookmarkedPosts: string[];

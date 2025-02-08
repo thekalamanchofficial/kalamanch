@@ -1,23 +1,22 @@
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import MessageIcon from "@mui/icons-material/Message";
+import ShareIcon from "@mui/icons-material/Share";
+import TollIcon from "@mui/icons-material/Toll";
 import {
-  Box,
   Button,
   Grid2 as Grid,
   type Theme,
   useMediaQuery,
 } from "@mui/material";
 import React from "react";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import MessageIcon from "@mui/icons-material/Message";
-import TollIcon from "@mui/icons-material/Toll";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import PostActionButton from "../postActionButton/PostActionButton";
 import SharePostDialog from "../sharePostDialog/SharePostDialog";
 import { STATIC_TEXTS } from "../static/staticText";
+import BookmarkPostActionButton from "../postActionButton/BookmarkPostActionButton";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,
@@ -34,8 +33,12 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   showBookmark,
   showShare,
   showEditPost,
+  showEditPublishedPost,
+  showUnpublishPost,
   handleEditPost,
   handleBookmark,
+  handleEditPublishedPost,
+  handleUnpublishPost,
 }) => {
   const [open, setOpen] = React.useState(false);
   const isSmallScreen = useMediaQuery((theme: Theme) =>
@@ -59,6 +62,12 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
       case "bookmark":
         handleBookmark?.();
         break;
+      case "edit:post":
+        handleEditPublishedPost?.(postId);
+        break;
+      case "unpublish:post":
+        void handleUnpublishPost?.(postId);
+        break;
       default:
         console.log("default");
     }
@@ -72,16 +81,24 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
       sx={{
         width: "100%",
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent: {
+          xs: "center",
+          sm: "space-between",
+        },
         alignItems: "center",
+        gap: "10px",
       }}
     >
       <Grid
-        size={isSmallScreen ? 12 : 11}
+        size={isSmallScreen ? 10 : 6}
         sx={{
           display: "flex",
-          justifyContent: "start",
+          justifyContent: {
+            xs: "center",
+            sm: "start",
+          },
           alignItems: "center",
+          flexWrap: "wrap",
           gap: "10px",
         }}
       >
@@ -125,43 +142,99 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           onClose={() => setOpen(false)}
           postId={postId}
         />
-      </Grid>
-      {showBookmark && (
-        <Box>
-          <PostActionButton
-            icon={
-              isBookmarked ? (
-                <BookmarkIcon sx={iconSx} />
-              ) : (
-                <BookmarkBorderIcon sx={iconSx} />
-              )
-            }
-            label=""
-            onClick={() => handleAction("bookmark")}
-            sx={{
-              minWidth: "65px",
-              minHeight: "24px",
-            }}
+        {showEditPublishedPost && showUnpublishPost && (
+          <BookmarkPostActionButton
+            isBookmarked={isBookmarked}
+            showBookmark={showBookmark}
+            handleAction={handleAction}
+            iconSx={iconSx}
           />
-        </Box>
-      )}
-      {showEditPost && (
-        <Button
-          variant="contained"
-          startIcon={<EditOutlinedIcon />}
-          onClick={handleEditPost}
-          sx={{
-            color: "primary.main",
-            backgroundColor: "secondary.main",
-            textTransform: "none",
-            "&:hover": {
-              backgroundColor: "secondary.dark",
-            },
-          }}
-        >
-          {STATIC_TEXTS.EDITOR_PAGE.EDIT_DRAFT_POST_BUTTON_TEXT}
-        </Button>
-      )}
+        )}
+      </Grid>
+      <Grid
+        sx={{
+          display: "flex",
+          justifyContent: "end",
+          alignItems: "center",
+          gap: "10px",
+          flexDirection: {
+            xs: "column-reverse",
+            sm: "row",
+          },
+          width: {
+            xs: "100%",
+            sm: "auto",
+          },
+        }}
+      >
+        {!showEditPublishedPost && !showUnpublishPost && (
+          <BookmarkPostActionButton
+            isBookmarked={isBookmarked}
+            showBookmark={showBookmark}
+            handleAction={handleAction}
+            iconSx={iconSx}
+          />
+        )}
+        {showEditPost && (
+          <Button
+            variant="contained"
+            startIcon={<EditOutlinedIcon />}
+            onClick={handleEditPost}
+            sx={{
+              color: "primary.main",
+              backgroundColor: "secondary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "secondary.dark",
+              },
+            }}
+          >
+            {STATIC_TEXTS.EDITOR_PAGE.EDIT_DRAFT_POST_BUTTON_TEXT}
+          </Button>
+        )}
+        {showEditPublishedPost && (
+          <Button
+            variant="contained"
+            startIcon={<EditOutlinedIcon />}
+            onClick={() => handleAction("edit:post")}
+            sx={{
+              color: "primary.main",
+              backgroundColor: "secondary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "secondary.dark",
+              },
+              width: {
+                xs: "100%",
+                sm: "auto",
+              },
+            }}
+          >
+            {STATIC_TEXTS.EDITOR_PAGE.EDIT}
+          </Button>
+        )}
+        {showUnpublishPost && (
+          <Button
+            variant="contained"
+            startIcon={<DescriptionOutlinedIcon />}
+            onClick={() => handleAction("unpublish:post")}
+            sx={{
+              color: "secondary.main",
+              backgroundColor: "primary.main",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "primary.dark",
+              },
+              width: {
+                xs: "100%",
+                sm: "auto",
+              },
+            }}
+          >
+            {STATIC_TEXTS.EDITOR_PAGE.UNPUBLISH}
+          </Button>
+        )}
+      </Grid>
     </Grid>
   );
 };
