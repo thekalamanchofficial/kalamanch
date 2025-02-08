@@ -12,6 +12,7 @@ model User {
   email                   String                      @unique
   name                    String
   profileImageUrl         String
+  coverImageUrl           String?
   birthdate               DateTime?
   interests               String[]
   bio                     String?
@@ -148,7 +149,7 @@ model Iterations {
   iterationName String
   content       String
   draftPostId   String    @db.ObjectId
-  DraftPost     DraftPost @relation(fields: [draftPostId], references: [id], onDelete: Cascade)
+  draftPost     DraftPost @relation(fields: [draftPostId], references: [id], onDelete: Cascade)
   likeCount     Int       @default(0)
 
   likes     Like[]

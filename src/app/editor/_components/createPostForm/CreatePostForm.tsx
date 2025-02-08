@@ -149,10 +149,10 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           control={control}
           name="thumbnailUrl"
           defaultValue={createPostFormData?.thumbnailUrl}
-          render={({ field: { onChange } }) => (
+          render={({ field: { onChange} }) => (
             <FormControl fullWidth>
               <Typography variant="h4">Upload Thumbnail</Typography>
-              <ThumbnailUploader onImageUpload={onChange} />
+              <ThumbnailUploader onMediaUpload={onChange} initialMedia={createPostFormData?.thumbnailUrl} />
             </FormControl>
           )}
         />

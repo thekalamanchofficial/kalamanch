@@ -11,21 +11,17 @@ import { useState } from "react";
 import { type PostEntityType, type DraftPost } from "~/app/editor/types/types";
 import {
   type IterationWithReviews,
-  type Post,
 } from "~/app/(with-sidebar)/myfeed/types/types";
 import LeftSideBarForPosts from "~/app/_components/leftSideBarForPosts/LeftSideBarForPosts";
 
 type DraftAppBarProps = {
   draftPosts: DraftPost[];
-  publishedPosts: Post[];
-
   draftIterationsSentForReview: IterationWithReviews[];
   entityType: PostEntityType;
 };
 
 export const DraftAppBar: React.FC<DraftAppBarProps> = ({
   draftPosts,
-  publishedPosts,
   draftIterationsSentForReview,
   entityType,
 }) => {
@@ -81,7 +77,6 @@ export const DraftAppBar: React.FC<DraftAppBarProps> = ({
         >
           <LeftSideBarForPosts
             draftPosts={draftPosts}
-            publishedPosts={publishedPosts}
             entityType={entityType}
             draftIterationsSentForReview={draftIterationsSentForReview}
           />

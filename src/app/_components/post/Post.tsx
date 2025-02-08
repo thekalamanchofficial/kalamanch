@@ -88,7 +88,7 @@ const Post = memo<PostProps>(
             articleTitle={post.postDetails.title}
             articleContent={post.content}
             articleTags={post.postDetails.tags}
-            articleImage={post.postDetails.thumbnailDetails.url}
+            articleThumbnailUrl={post.postDetails.thumbnailDetails.url}
             articleId={post.id}
             articleDescription={post.postDetails.thumbnailDetails.content ?? ""}
           />

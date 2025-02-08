@@ -82,6 +82,7 @@ export const STATIC_TEXTS = {
       { label: "My Posts", value: "My Posts" },
       { label: "Liked Posts", value: "Liked Posts" },
     ],
+    CHANGE_COVER: "Change Cover",
   },
   FEATURED_PAGE: {
     MESSAGES: {
@@ -102,6 +103,7 @@ export const STATIC_TEXTS = {
     PUBLISH: "Publish",
     CANCEL: "Cancel",
     UNPUBLISH: "Unpublish",
+    EDIT: "Edit",
     PUBLISH_DRAFT: "Publish Draft",
     SELECT_ITERATION_DESCRIPTION:
       "Select an iteration to publish from the list below",
@@ -114,12 +116,11 @@ export const STATIC_TEXTS = {
     SAVE_REVIEWERS_SUCCESS_MESSAGE: "Reviewers Saved Successfully",
     IMPORT_TEXT_FROM_DOCX_OR_TXT_FILE: "Import text from Doc/Txt/Image File",
     DRAG_AND_DROP_FILE: "Drag and drop your file here, or click to select",
-    SUPPORTS_TXT_DOCX_PNG_JPEG_FILE: "Supports .txt, .docx, .jpeg, .png and .jpg files",
+    SUPPORTS_TXT_DOCX_PNG_JPEG_FILE:
+      "Supports .txt, .docx, .jpeg, .png and .jpg files",
     IMPORT: "Import",
     SELECT_FILE_ERROR: "Please select a file to import",
-    UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE: "The uploaded text will appear in a new Iteration",
-
-
-
+    UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE:
+      "The uploaded text will appear in a new Iteration",
   },
 };

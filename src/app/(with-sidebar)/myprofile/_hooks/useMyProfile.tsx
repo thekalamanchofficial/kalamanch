@@ -18,6 +18,7 @@ import { PostStatus } from "~/app/editor/types/types";
 import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
 import useLikePosts from "~/app/_hooks/useLikePosts";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
+import { FileUploadSource } from "types/enums";
 
 const useMyProfilePage = (): UseMyProfilePage => {
   const { user } = useClerk();
@@ -34,6 +35,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
     birthdate: new Date(),
     education: [],
     professionalAchievements: "",
+    profileImageUrl: "",
+    coverImageUrl: "",
   });
 
   const postMutation = trpc.post;
@@ -64,8 +67,10 @@ const useMyProfilePage = (): UseMyProfilePage => {
         : new Date(),
       education: userDetails?.education ?? [],
       professionalAchievements: userDetails?.professionalCredentials ?? "",
+      profileImageUrl: userDetails?.profileImageUrl ?? user?.imageUrl ?? "",
+      coverImageUrl: userDetails?.coverImageUrl ?? "",
     });
-  }, [userDetails]);
+  }, [userDetails, user?.imageUrl]);
 
   const {
     data: postData,
@@ -105,6 +110,21 @@ const useMyProfilePage = (): UseMyProfilePage => {
 
   const handleChange = (newTab: MyProfileTabsEnum) => {
     setTab(newTab);
+  };
+
+  const handleImageUpdate = (uploadSource: FileUploadSource, url: string) => {
+    if(uploadSource === FileUploadSource.PROFILE_IMAGE){
+      setUserInfo({
+        ...userInfo,
+        profileImageUrl: url,
+      });
+    }
+    else if(uploadSource === FileUploadSource.PROFILE_COVER_IMAGE){
+      setUserInfo({
+        ...userInfo,
+        coverImageUrl: url,
+      });
+    }
   };
 
   const updateUser = userMutation.updateUser.useMutation();
@@ -231,7 +251,6 @@ const useMyProfilePage = (): UseMyProfilePage => {
     handleChange,
     errorMessage: error?.message ?? "",
     handleScroll,
-    userProfile: user?.imageUrl ?? "",
     postCount: userDetails?.posts.length ?? 0,
     followerCount: userDetails?.followers.length ?? 0,
     isEditProfileOpen,
@@ -241,6 +260,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
     userLikedPosts: userLikedPosts ?? [],
     userInfo,
     callSave,
+    handleImageUpdate
   };
 };
 

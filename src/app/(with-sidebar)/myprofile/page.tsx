@@ -14,7 +14,6 @@ import { EditProfile } from "./_components/editProfile/EditProfile";
 
 const MyProfile = () => {
   const {
-    userProfile,
     tab,
     skip,
     likedPosts,
@@ -33,6 +32,7 @@ const MyProfile = () => {
     userInfo,
     userLikedPosts,
     setPosts,
+    handleImageUpdate,
   } = UseMyProfilePage();
 
   const renderUI = useMemo(() => {
@@ -128,13 +128,14 @@ const MyProfile = () => {
   return (
     <Grid columns={1}>
       <ProfileCard
-        coverImage="https://picsum.photos/200"
+        coverImage={userInfo.coverImageUrl ?? ""}
         bio={userInfo.bio ?? ""}
         followers={followerCount}
         posts={postCount}
-        profileImage={userProfile}
+        profileImage={userInfo.profileImageUrl}
         name={userInfo.name}
         handleEditProfileOpen={handleEditProfileOpen}
+        onImageUpdate={handleImageUpdate}
       />
       <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
       {renderUI}

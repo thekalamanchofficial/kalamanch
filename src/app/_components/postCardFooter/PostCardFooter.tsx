@@ -1,5 +1,3 @@
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -8,7 +6,6 @@ import MessageIcon from "@mui/icons-material/Message";
 import ShareIcon from "@mui/icons-material/Share";
 import TollIcon from "@mui/icons-material/Toll";
 import {
-  Box,
   Button,
   Grid2 as Grid,
   type Theme,
@@ -19,6 +16,7 @@ import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/type
 import PostActionButton from "../postActionButton/PostActionButton";
 import SharePostDialog from "../sharePostDialog/SharePostDialog";
 import { STATIC_TEXTS } from "../static/staticText";
+import BookmarkPostActionButton from "../postActionButton/BookmarkPostActionButton";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,
@@ -92,11 +90,15 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
       }}
     >
       <Grid
-        size={isSmallScreen ? 10 : 4}
+        size={isSmallScreen ? 10 : 6}
         sx={{
           display: "flex",
-          justifyContent: "start",
+          justifyContent: {
+            xs: "center",
+            sm: "start",
+          },
           alignItems: "center",
+          flexWrap: "wrap",
           gap: "10px",
         }}
       >
@@ -140,6 +142,14 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           onClose={() => setOpen(false)}
           postId={postId}
         />
+        {showEditPublishedPost && showUnpublishPost && (
+          <BookmarkPostActionButton
+            isBookmarked={isBookmarked}
+            showBookmark={showBookmark}
+            handleAction={handleAction}
+            iconSx={iconSx}
+          />
+        )}
       </Grid>
       <Grid
         sx={{
@@ -157,6 +167,14 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           },
         }}
       >
+        {!showEditPublishedPost && !showUnpublishPost && (
+          <BookmarkPostActionButton
+            isBookmarked={isBookmarked}
+            showBookmark={showBookmark}
+            handleAction={handleAction}
+            iconSx={iconSx}
+          />
+        )}
         {showEditPost && (
           <Button
             variant="contained"
@@ -192,7 +210,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
               },
             }}
           >
-            {STATIC_TEXTS.EDITOR_PAGE.EDIT_PUBLISHED_POST_BUTTON_TEXT}
+            {STATIC_TEXTS.EDITOR_PAGE.EDIT}
           </Button>
         )}
         {showUnpublishPost && (
@@ -213,27 +231,8 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
               },
             }}
           >
-            {STATIC_TEXTS.EDITOR_PAGE.UNPUBLISH_POST_DIALOG_TITLE}
+            {STATIC_TEXTS.EDITOR_PAGE.UNPUBLISH}
           </Button>
-        )}
-        {showBookmark && (
-          <Box>
-            <PostActionButton
-              icon={
-                isBookmarked ? (
-                  <BookmarkIcon sx={iconSx} />
-                ) : (
-                  <BookmarkBorderIcon sx={iconSx} />
-                )
-              }
-              label=""
-              onClick={() => handleAction("bookmark")}
-              sx={{
-                minWidth: "65px",
-                minHeight: "24px",
-              }}
-            />
-          </Box>
         )}
       </Grid>
     </Grid>
