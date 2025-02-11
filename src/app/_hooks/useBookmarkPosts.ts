@@ -14,11 +14,10 @@ type UseBookmarkHook = (input: UseBookmarkInput) => UseBookmarkReturn;
 const useBookmarkPosts: UseBookmarkHook = ({ userEmail }) => {
   const bookmarkProcedure = trpc.bookmarks;
 
-  const { data: bookmarkedPostData } =
-    bookmarkProcedure.getUserBookmarkPosts.useQuery({
-      limit: null,
-      userEmail: userEmail ?? "",
-    });
+  const { data: bookmarkedPostData } = bookmarkProcedure.getUserBookmarkPosts.useQuery({
+    limit: null,
+    userEmail: userEmail ?? "",
+  });
 
   const bookmarkedPostIds = useMemo(
     () => bookmarkedPostData?.items?.map((post) => post.id) ?? [],

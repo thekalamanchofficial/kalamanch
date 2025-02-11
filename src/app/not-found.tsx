@@ -1,5 +1,9 @@
 "use client";
+
 import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import HomeIcon from "@mui/icons-material/Home";
 import {
@@ -7,13 +11,10 @@ import {
   Button,
   Container,
   CssBaseline,
-  Typography,
   keyframes,
+  Typography,
   useTheme,
 } from "@mui/material";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 const floatAnimation = keyframes`
   0% { transform: translateY(0px); }
@@ -138,9 +139,7 @@ export default function NotFound() {
             variant="outlined"
             size="medium"
             onClick={() => router.back()}
-            startIcon={
-              <ArrowBackIcon sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }} />
-            }
+            startIcon={<ArrowBackIcon sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }} />}
             sx={{
               px: { xs: 3, sm: 6 },
               py: { xs: 1, sm: 1.5 },
@@ -162,9 +161,7 @@ export default function NotFound() {
             href="/"
             variant="contained"
             size="medium"
-            startIcon={
-              <HomeIcon sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }} />
-            }
+            startIcon={<HomeIcon sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }} />}
             sx={{
               px: { xs: 3, sm: 6 },
               py: { xs: 1, sm: 1.5 },

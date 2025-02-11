@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
-import { useClerk } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { STATIC_TEXTS } from "../static/staticText";
-import { handleError } from "~/app/_utils/handleError";
+import { useClerk } from "@clerk/nextjs";
+import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { Avatar, Box, Button, Menu, MenuItem, Typography } from "@mui/material";
+import { handleError } from "~/app/_utils/handleError";
+import { STATIC_TEXTS } from "../static/staticText";
 
 const UserMenu = () => {
   const { user, signOut } = useClerk();
@@ -57,9 +57,7 @@ const UserMenu = () => {
         />
 
         <Typography color="text.secondary" variant="subtitle2">
-          {user?.firstName === null
-            ? (user?.unsafeMetadata?.name as string)
-            : user?.firstName}
+          {user?.firstName === null ? (user?.unsafeMetadata?.name as string) : user?.firstName}
         </Typography>
       </Box>
       <Box>

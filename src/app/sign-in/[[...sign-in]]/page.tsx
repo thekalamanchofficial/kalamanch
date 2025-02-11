@@ -1,28 +1,17 @@
 "use client";
-import { useSignInPage } from "../_hooks/useSignInPage";
-import { SignInFormStages } from "../_config/config";
-import OwlSVG from "~/assets/svg/owl.svg";
-import GoogleLogo from "~/assets/svg/GoogleLogo.svg";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+
 import Link from "next/link";
+import { Alert, Box, Button, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import SignInForm from "~/app/_components/signIn/SignInForm";
-import {
-  Alert,
-  Box,
-  Button,
-  Divider,
-  Grid2 as Grid,
-  Typography,
-} from "@mui/material";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import GoogleLogo from "~/assets/svg/GoogleLogo.svg";
+import OwlSVG from "~/assets/svg/owl.svg";
+import { SignInFormStages } from "../_config/config";
+import { useSignInPage } from "../_hooks/useSignInPage";
 
 const SignInPage = () => {
-  const {
-    signInState,
-    setSignInState,
-    handleLogin,
-    handleSSOLogin,
-    ssoLoginErrors,
-  } = useSignInPage();
+  const { signInState, setSignInState, handleLogin, handleSSOLogin, ssoLoginErrors } =
+    useSignInPage();
   return (
     <Grid
       sx={{
@@ -69,12 +58,7 @@ const SignInPage = () => {
                 {STATIC_TEXTS.APP_TITLE}
               </Typography>
             </Box>
-            <Box
-              display="flex"
-              alignItems="center"
-              flexDirection="column"
-              width="100%"
-            >
+            <Box display="flex" alignItems="center" flexDirection="column" width="100%">
               <Typography variant="h5" mb={4}>
                 {STATIC_TEXTS.APP_DESCRIPTION}
               </Typography>

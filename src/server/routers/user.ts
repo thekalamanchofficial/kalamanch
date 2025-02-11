@@ -1,8 +1,7 @@
-import { publicProcedure, protectedProcedure, router } from "../trpc";
-import prisma from "~/server/db";
-
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import prisma from "~/server/db";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 const userSchema = yup.object({
   email: yup.string().email().required(),
@@ -29,18 +28,16 @@ export const userRouter = router({
       handleError(error);
     }
   }),
-  getUserDetails: publicProcedure
-    .input(yup.string().email())
-    .query(async ({ input }) => {
-      const userDetails = await prisma.user.findUnique({
-        where: { email: input },
-        include: {
-          posts: true,
-        },
-      });
+  getUserDetails: publicProcedure.input(yup.string().email()).query(async ({ input }) => {
+    const userDetails = await prisma.user.findUnique({
+      where: { email: input },
+      include: {
+        posts: true,
+      },
+    });
 
-      return userDetails;
-    }),
+    return userDetails;
+  }),
 
   addUser: publicProcedure.input(userSchema).mutation(async ({ input }) => {
     const user = await prisma.user.create({
@@ -75,9 +72,7 @@ export const userRouter = router({
           name: input.name,
           bio: input.bio,
           birthdate: input.birthdate,
-          education: input.education?.filter(
-            (edu): edu is string => edu !== undefined,
-          ),
+          education: input.education?.filter((edu): edu is string => edu !== undefined),
           interests: input.interests?.filter(
             (interest): interest is string => interest !== undefined,
           ),
@@ -152,9 +147,7 @@ export const userRouter = router({
             where: { id: followerId },
             data: {
               followers: {
-                set: followerUser.followers.filter(
-                  (id) => id !== currentUserId,
-                ),
+                set: followerUser.followers.filter((id) => id !== currentUserId),
               },
             },
           });

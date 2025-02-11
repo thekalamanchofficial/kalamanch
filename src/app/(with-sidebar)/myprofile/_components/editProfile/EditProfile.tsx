@@ -1,29 +1,29 @@
+import { useState } from "react";
+import { Controller } from "react-hook-form";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
+  Box,
   Button,
   Chip,
   Dialog,
   DialogActions,
-  Grid2 as Grid,
   DialogContent,
   DialogTitle,
   FormControl,
+  Grid2 as Grid,
+  IconButton,
+  Paper,
   TextField,
   Typography,
-  Box,
-  Paper,
-  IconButton,
 } from "@mui/material";
-import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hooks/useEditProfileForm";
-import { type EditProfileDetails } from "../../types/types";
-import { Controller } from "react-hook-form";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import { useState } from "react";
-import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hooks/useEditProfileForm";
+import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
+import { type EditProfileDetails } from "../../types/types";
 
 export type EditProfileProps = {
   open: boolean;
@@ -171,9 +171,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
                         label={interest}
                         onClick={() => {
                           if (isSelected) {
-                            onChange(
-                              value?.filter((item) => item !== interest),
-                            );
+                            onChange(value?.filter((item) => item !== interest));
                           } else {
                             onChange([...(value ?? []), interest]);
                           }
@@ -199,9 +197,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           name="education"
           defaultValue={profileData.education ?? []}
           render={({ field: { value = [], onChange } }) => {
-            const handleAddEducation = (
-              e: React.KeyboardEvent<HTMLInputElement>,
-            ) => {
+            const handleAddEducation = (e: React.KeyboardEvent<HTMLInputElement>) => {
               if (e.key === "Enter" && education.trim()) {
                 const updatedEducation = [...value, education.trim()];
                 onChange(updatedEducation);
@@ -294,11 +290,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         />
       </DialogContent>
       <DialogActions sx={{ justifyContent: "space-between", padding: 3 }}>
-        <Button
-          variant="outlined"
-          onClick={handleClose}
-          sx={{ width: "100px" }}
-        >
+        <Button variant="outlined" onClick={handleClose} sx={{ width: "100px" }}>
           Cancel
         </Button>
         <Button

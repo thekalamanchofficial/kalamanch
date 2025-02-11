@@ -1,4 +1,5 @@
 "use client";
+
 import { createTheme } from "@mui/material/styles";
 
 declare module "@mui/material/styles" {
@@ -125,8 +126,8 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiTextField-input:-webkit-autofill": {
-            "WebkitTextFillColor": "black",
-            "WebkitBoxShadow": "0 0 0px 1000px white inset",
+            WebkitTextFillColor: "black",
+            WebkitBoxShadow: "0 0 0px 1000px white inset",
           },
           marginBottom: "8px",
           marginTop: "8px",
@@ -145,8 +146,8 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiInputBase-input:-webkit-autofill": {
-            "WebkitTextFillColor": "black",
-            "WebkitBoxShadow": "0 0 0px 1000px white inset",
+            WebkitTextFillColor: "black",
+            WebkitBoxShadow: "0 0 0px 1000px white inset",
           },
           padding: "6px 9px",
         },

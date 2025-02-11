@@ -1,6 +1,6 @@
-import { PostStatus } from "@prisma/client";
-import { currentUser } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
+import { currentUser } from "@clerk/nextjs/server";
+import { PostStatus } from "@prisma/client";
 import Post from "~/app/_components/post/Post";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import { trpcServer } from "~/app/_trpc/server";
@@ -76,12 +76,10 @@ export const generateMetadata = async ({
     };
   }
 
-  const description =
-    post.content.slice(0, 150) || "Explore the latest post on Kalamanch.";
-    // TODO: get it from env
+  const description = post.content.slice(0, 150) || "Explore the latest post on Kalamanch.";
+  // TODO: get it from env
   const thumbnailUrl =
-    post.postDetails.thumbnailDetails.url ||
-    "https://kalamanch.com/default-thumbnail.jpg";
+    post.postDetails.thumbnailDetails.url || "https://kalamanch.com/default-thumbnail.jpg";
   const title = `${post.postDetails.title} - Kalamanch`;
 
   return {

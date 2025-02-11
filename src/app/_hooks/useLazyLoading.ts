@@ -34,15 +34,7 @@ const useLazyLoading: UseLazyLoading = ({
       setHasMoreData(hasMoreData);
       setSkip((prev) => (prev == 0 ? initialLimit + prev : prev + limit));
     }
-  }, [
-    error,
-    hasMoreData,
-    initialLimit,
-    limit,
-    queryLoading,
-    setHasMoreData,
-    setSkip,
-  ]);
+  }, [error, hasMoreData, initialLimit, limit, queryLoading, setHasMoreData, setSkip]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);

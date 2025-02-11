@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { completeOnboarding } from "./_actions";
 import { Onboarding, type OnboardingDataType } from "./_components/Onboarding";
 

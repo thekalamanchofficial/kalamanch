@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
-import Post from "~/app/_components/post/Post";
-import { trpc } from "~/server/client";
-import ShowMessage from "~/app/_components/showMessage/ShowMessage";
-import Loader from "~/app/_components/loader/Loader";
+import { useCallback, useEffect, useRef } from "react";
 import { Box } from "@mui/material";
+import Loader from "~/app/_components/loader/Loader";
+import Post from "~/app/_components/post/Post";
+import ShowMessage from "~/app/_components/showMessage/ShowMessage";
+import { trpc } from "~/server/client";
 
 type BookmarkPostFeedProps = {
   userFollowing: string[];
@@ -65,19 +65,17 @@ export default function BookmarkPostFeed({
 
   return (
     <Box>
-        {bookmarkedPosts.map((post) => (
-          <Post
-            key={post.id}
-            post={post}
-            userFollowing={userFollowing}
-            isLiked={userLikes?.includes(post.id) ?? false}
-            isBookmarked={true}
-          />
-        ))}
+      {bookmarkedPosts.map((post) => (
+        <Post
+          key={post.id}
+          post={post}
+          userFollowing={userFollowing}
+          isLiked={userLikes?.includes(post.id) ?? false}
+          isBookmarked={true}
+        />
+      ))}
 
-      {isFetchingNextPage && (
-        <Loader title="Loading Posts..." height="100%" width="100%" />
-      )}
+      {isFetchingNextPage && <Loader title="Loading Posts..." height="100%" width="100%" />}
 
       {!isPending && !hasNextPage && (
         <ShowMessage

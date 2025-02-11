@@ -15,19 +15,26 @@ export const SelectedPublishedPostContext = createContext<SelectedPublishedPostC
     // Do something with the selected published post ID
   },
   selectedPublishedPostIdInLeftSideBar: null,
-  setSelectedPublishedPostIdInLeftSideBar: () =>{
-     // Called when Any post title in left iteration is clicked
-  }
-
+  setSelectedPublishedPostIdInLeftSideBar: () => {
+    // Called when Any post title in left iteration is clicked
+  },
 });
 
 export const SelectedPublishedPostProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedPublishedPostId, setSelectedPublishedPostId] = useState<string | null>(null);
-  const [selectedPublishedPostIdInLeftSideBar,setSelectedPublishedPostIdInLeftSideBar] = useState<string | null>(null);
+  const [selectedPublishedPostIdInLeftSideBar, setSelectedPublishedPostIdInLeftSideBar] = useState<
+    string | null
+  >(null);
 
-  
   return (
-    <SelectedPublishedPostContext.Provider value={{ selectedPublishedPostId, setSelectedPublishedPostId,selectedPublishedPostIdInLeftSideBar,setSelectedPublishedPostIdInLeftSideBar }}>
+    <SelectedPublishedPostContext.Provider
+      value={{
+        selectedPublishedPostId,
+        setSelectedPublishedPostId,
+        selectedPublishedPostIdInLeftSideBar,
+        setSelectedPublishedPostIdInLeftSideBar,
+      }}
+    >
       {children}
     </SelectedPublishedPostContext.Provider>
   );

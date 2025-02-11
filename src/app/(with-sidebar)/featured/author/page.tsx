@@ -1,11 +1,12 @@
 "use client";
-import { Box, Grid2 as Grid, Typography } from "@mui/material";
-import Loader from "~/app/_components/loader/Loader";
-import UserNameProfile from "~/app/_components/userNameProfile/UserNameProfile";
+
 import Link from "next/link";
+import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import FollowButton from "~/app/_components/followButton/FollowButton";
-import useFeaturedAuthorPage from "./_hooks/useFeaturedAuthorPage";
+import Loader from "~/app/_components/loader/Loader";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import UserNameProfile from "~/app/_components/userNameProfile/UserNameProfile";
+import useFeaturedAuthorPage from "./_hooks/useFeaturedAuthorPage";
 
 const Page = () => {
   const { usersToFollow: author, isLoading, userFollowing } = useFeaturedAuthorPage();
@@ -102,12 +103,8 @@ const Page = () => {
                           AuthorName={item.name}
                         />
                       </Link>
-                      <Typography variant="caption">
-                        Followers: {item.followersCount}
-                      </Typography>
-                      <Typography variant="caption">
-                        Articles: {item.postCount}
-                      </Typography>
+                      <Typography variant="caption">Followers: {item.followersCount}</Typography>
+                      <Typography variant="caption">Articles: {item.postCount}</Typography>
                     </Box>
                   </Box>
                   <Box>
@@ -136,9 +133,7 @@ const Page = () => {
             {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_AUTHOR}
           </Typography>
         )}
-        {isLoading ? (
-          <Loader title="Loading authors..." height="auto" width="100%" />
-        ) : null}
+        {isLoading ? <Loader title="Loading authors..." height="auto" width="100%" /> : null}
       </Grid>
     </Box>
   );

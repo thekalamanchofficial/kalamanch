@@ -1,22 +1,14 @@
 "use client";
+
 import React from "react";
-
+import { Grid2 as Grid, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import Details from "~/app/_components/signUp/Details";
-
-import { SignUpFormStages, STEPS } from "~/app/sign-up/_config/config";
 import OTPVerification from "~/app/_components/signUp/OtpForm";
-
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import CheckPending from "~/assets/svg/CheckPending.svg";
+import { SignUpFormStages, STEPS } from "~/app/sign-up/_config/config";
 import CheckComplete from "~/assets/svg/CheckComplete.svg";
+import CheckPending from "~/assets/svg/CheckPending.svg";
 import { useSignUpPage } from "../_hooks/useSignUpPage";
-import {
-  Grid2 as Grid,
-  Step,
-  StepLabel,
-  Stepper,
-  Typography,
-} from "@mui/material";
 
 const StepperStartIcon = () => <CheckPending />;
 const StepperEndIcon = () => <CheckComplete />;
@@ -66,19 +58,13 @@ export default function Page() {
         }}
         size={{ xs: 12 }}
       >
-        <Stepper
-          sx={{ width: "100%", mb: 4 }}
-          alternativeLabel
-          activeStep={formStepNumber}
-        >
+        <Stepper sx={{ width: "100%", mb: 4 }} alternativeLabel activeStep={formStepNumber}>
           {STEPS.map((step, index) => {
             const isCompleted = step.stepNumber <= formStepNumber;
             return (
               <Step key={index} completed={isCompleted}>
                 <StepLabel
-                  StepIconComponent={
-                    isCompleted ? StepperEndIcon : StepperStartIcon
-                  }
+                  StepIconComponent={isCompleted ? StepperEndIcon : StepperStartIcon}
                   sx={{ borderColor: "blue" }}
                 >
                   {step.label}

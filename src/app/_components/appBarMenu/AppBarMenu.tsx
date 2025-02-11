@@ -1,19 +1,13 @@
 "use client";
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Box,
-  Typography,
-  Drawer,
-} from "@mui/material";
+
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+import FeaturedPlayListOutlinedIcon from "@mui/icons-material/FeaturedPlayListOutlined";
+import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
 import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
 import LeftSideBar from "../sidebar/LeftSideBar";
 import RightSideBar from "../sidebar/RightSideBar";
-import MenuIcon from "@mui/icons-material/Menu";
-import FeaturedPlayListOutlinedIcon from "@mui/icons-material/FeaturedPlayListOutlined";
-import { usePathname } from "next/navigation";
 
 export const AppBarMenu = () => {
   const pathname = usePathname();

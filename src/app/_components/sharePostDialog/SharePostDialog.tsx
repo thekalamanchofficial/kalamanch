@@ -1,24 +1,24 @@
 "use client";
 
 import * as React from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useClerk } from "@clerk/nextjs";
+import { yupResolver } from "@hookform/resolvers/yup";
+import AddIcon from "@mui/icons-material/Add";
+import { CircularProgress, IconButton, InputAdornment } from "@mui/material";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import Chip from "@mui/material/Chip";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import Chip from "@mui/material/Chip";
-import Box from "@mui/material/Box";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { CircularProgress, IconButton, InputAdornment } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import { useClerk } from "@clerk/nextjs";
-import { trpc } from "~/server/client";
-import { toast } from "react-toastify";
+import TextField from "@mui/material/TextField";
 import { TRPCClientError } from "@trpc/client";
+import * as yup from "yup";
+import { trpc } from "~/server/client";
 
 const schema = yup.object().shape({
   email: yup
@@ -79,10 +79,7 @@ export default function SharePostDialog({
     try {
       await sharePostProcedure.mutateAsync({ userEmail, postId, emails });
     } catch (error) {
-      if (
-        error instanceof TRPCClientError &&
-        error.message.includes("Invalid Emails:")
-      ) {
+      if (error instanceof TRPCClientError && error.message.includes("Invalid Emails:")) {
         toast.error(error.message);
       } else {
         toast.error("Failed to share post. the emails and try again.");
@@ -107,9 +104,8 @@ export default function SharePostDialog({
       <DialogTitle>Share Post</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Enter the email addresses of the people you want to share this post
-          with. Press &quot;Enter&quot; or &quot;,&quot; after typing an email
-          address.
+          Enter the email addresses of the people you want to share this post with. Press
+          &quot;Enter&quot; or &quot;,&quot; after typing an email address.
         </DialogContentText>
         <Box
           sx={{
@@ -167,10 +163,7 @@ export default function SharePostDialog({
                   void handleSubmit(handleAddEmail)();
                 }
               }}
-              helperText={
-                fieldState.error?.message ??
-                "Press 'Enter' or ',' to add an email"
-              }
+              helperText={fieldState.error?.message ?? "Press 'Enter' or ',' to add an email"}
               error={!!fieldState.error}
               slotProps={{
                 input: {
