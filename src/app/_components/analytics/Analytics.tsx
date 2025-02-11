@@ -1,5 +1,6 @@
-"use client"; // Ensures it runs only on the client side
+"use client";
 
+// Ensures it runs only on the client side
 import Script from "next/script";
 
 const GA_TRACKING_ID = "G-SV5YZ3CXBW"; // Replace with your GA ID

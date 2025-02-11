@@ -1,6 +1,6 @@
-import { Box } from "@mui/material";
 import React from "react";
 import GppBadIcon from "@mui/icons-material/GppBad";
+import { Box } from "@mui/material";
 
 type ErrorMessageProps = {
   message: string;
@@ -8,11 +8,7 @@ type ErrorMessageProps = {
   iconSize?: number;
 };
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({
-  message,
-  fontSize = 20,
-  iconSize = 20,
-}) => {
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, fontSize = 20, iconSize = 20 }) => {
   return (
     <Box
       sx={{

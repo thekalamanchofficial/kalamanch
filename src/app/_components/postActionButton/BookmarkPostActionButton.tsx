@@ -21,13 +21,7 @@ const BookmarkPostActionButton: React.FC<BookmarkPostButtonProps> = ({
     showBookmark && (
       <Box>
         <PostActionButton
-          icon={
-            isBookmarked ? (
-              <BookmarkIcon sx={iconSx} />
-            ) : (
-              <BookmarkBorderIcon sx={iconSx} />
-            )
-          }
+          icon={isBookmarked ? <BookmarkIcon sx={iconSx} /> : <BookmarkBorderIcon sx={iconSx} />}
           label=""
           onClick={() => handleAction("bookmark")}
           sx={{

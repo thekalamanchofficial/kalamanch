@@ -1,13 +1,13 @@
 import "~/styles/globals.css";
-import { TRPCProvider } from "./_trpc/client";
-import { ClerkProvider } from "@clerk/nextjs";
 import { ToastContainer } from "react-toastify";
+import { ClerkProvider } from "@clerk/nextjs";
+import { TRPCProvider } from "./_trpc/client";
 import "react-toastify/dist/ReactToastify.css";
 import { type Metadata } from "next";
-import { ThemeProvider } from "@mui/material/styles";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
-import theme from "../theme";
+import { ThemeProvider } from "@mui/material/styles";
 import { UserProvider } from "~/context/userContext";
+import theme from "../theme";
 import Analytics from "./_components/analytics/Analytics";
 
 export const metadata: Metadata = {
@@ -15,9 +15,7 @@ export const metadata: Metadata = {
   description: "A platform for artists",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider signInForceRedirectUrl="/" signUpForceRedirectUrl="/">
       <html lang="en">

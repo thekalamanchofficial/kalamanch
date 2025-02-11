@@ -1,11 +1,11 @@
-import { useSignUp } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { useSignUp } from "@clerk/nextjs";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { handleError } from "~/app/_utils/handleError";
 import { SignUpFormStages, SignUpFormStatus } from "../_config/config";
 import { type FormDataDetails } from "../_types/types";
-import { handleError } from "~/app/_utils/handleError";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import { toast } from "react-toastify";
 
 type UseSignUpPage = () => UseSignUpPageReturn;
 
@@ -28,13 +28,9 @@ export const useSignUpPage: UseSignUpPage = () => {
   const [otp, setOtp] = useState("");
   const { isLoaded, signUp, setActive } = useSignUp();
   const [verifying, setVerifying] = useState(false);
-  const [formData, setFormData] = useState<FormDataDetails>(
-    {} as FormDataDetails,
-  );
+  const [formData, setFormData] = useState<FormDataDetails>({} as FormDataDetails);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
-  const [formStep, setFormStep] = useState<SignUpFormStages>(
-    SignUpFormStages.DETAILS,
-  );
+  const [formStep, setFormStep] = useState<SignUpFormStages>(SignUpFormStages.DETAILS);
   const [formStepNumber, setFormStepNumber] = useState<number>(0);
 
   // const mutation = trpc.user.addUser.useMutation();
@@ -115,9 +111,7 @@ export const useSignUpPage: UseSignUpPage = () => {
       });
 
       if (signUpAttempt.status === SignUpFormStatus.complete) {
-        const toastId = toast.loading(
-          `${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`,
-        );
+        const toastId = toast.loading(`${STATIC_TEXTS.DETAILS_FORM.MESSAGES.PENDING}`);
 
         setActive({ session: signUpAttempt.createdSessionId })
           .then()

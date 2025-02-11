@@ -1,7 +1,7 @@
-import { protectedProcedure, router } from "../trpc";
-import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import prisma from "~/server/db";
+import { protectedProcedure, router } from "../trpc";
 
 const featuredAuthorSchema = yup.object({
   userId: yup.string().required(),
@@ -53,21 +53,23 @@ export const UsersToFollowRouter = router({
           hasMore = true;
         }
 
-        const usersToFollow = await prisma.userToFollow.findMany({
-          take: limit,
-          skip: skip,
-          include: {
-            user: {
-              select: {
-                followers: true,
-                posts: true,
+        const usersToFollow = await prisma.userToFollow
+          .findMany({
+            take: limit,
+            skip: skip,
+            include: {
+              user: {
+                select: {
+                  followers: true,
+                  posts: true,
+                },
               },
             },
-          },
-        }).catch((error) => {
-          console.error("Error fetching featured authors:", error);
-          throw error;
-        });
+          })
+          .catch((error) => {
+            console.error("Error fetching featured authors:", error);
+            throw error;
+          });
 
         const authorsWithCounts = usersToFollow.map((author) => {
           return {

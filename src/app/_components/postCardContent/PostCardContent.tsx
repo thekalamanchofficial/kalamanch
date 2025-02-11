@@ -1,23 +1,24 @@
+import React, { useCallback, useState } from "react";
 import {
   Box,
   Button,
   CardMedia,
   Chip,
-  Typography,
   Grid2 as Grid,
+  Typography,
   useMediaQuery,
   type Theme,
 } from "@mui/material";
-import React, { useCallback, useState } from "react";
-import { type PostCardContentProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { myfeedConfig } from "~/app/(with-sidebar)/myfeed/_config/config";
+import { type PostCardContentProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
 import "react-quill/dist/quill.snow.css";
 import "./quillEditor.css";
-import SeeLessButton from "../seeLessButton/SeeLessButton";
 import dynamic from "next/dynamic";
-import useSavedDateFormatter from "~/app/(with-sidebar)/myfeed/_hooks/useSavedDateFormatter";
 import ImageNotSupportedOutlinedIcon from "@mui/icons-material/ImageNotSupportedOutlined";
+import useSavedDateFormatter from "~/app/(with-sidebar)/myfeed/_hooks/useSavedDateFormatter";
+import SeeLessButton from "../seeLessButton/SeeLessButton";
+
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const PostCardContent: React.FC<PostCardContentProps> = ({
@@ -30,9 +31,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
 }) => {
   const [seeMore, setSeeMore] = useState(false);
   const { formatSavedDate } = useSavedDateFormatter();
-  const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("md"),
-  );
+  const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
 
   const quillCOnfig = {
     toolbar: false,
@@ -104,10 +103,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
             {articleContent.length > myfeedConfig.ARTICLE_READ_MORE_LENGTH ? (
               <div className="quill-container">
                 <ReactQuill
-                  value={articleContent.slice(
-                    0,
-                    myfeedConfig.ARTICLE_READ_MORE_LENGTH,
-                  )}
+                  value={articleContent.slice(0, myfeedConfig.ARTICLE_READ_MORE_LENGTH)}
                   readOnly
                   theme="snow"
                   modules={quillCOnfig}
@@ -116,23 +112,13 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
               </div>
             ) : (
               <div className="quill-container">
-                <ReactQuill
-                  value={articleContent}
-                  readOnly
-                  theme="snow"
-                  modules={quillCOnfig}
-                />
+                <ReactQuill value={articleContent} readOnly theme="snow" modules={quillCOnfig} />
               </div>
             )}
           </>
         ) : (
           <div className="quill-container">
-            <ReactQuill
-              value={articleContent}
-              readOnly
-              theme="snow"
-              modules={quillCOnfig}
-            />
+            <ReactQuill value={articleContent} readOnly theme="snow" modules={quillCOnfig} />
             <SeeLessButton onClick={handleSeeLess} />
           </div>
         )}
@@ -206,13 +192,9 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
               marginBottom: "10px",
             }}
           >
-            {articleDescription.length >
-            myfeedConfig.SUMMARY_READ_MORE_LENGTH ? (
+            {articleDescription.length > myfeedConfig.SUMMARY_READ_MORE_LENGTH ? (
               <>
-                {`${articleDescription.slice(
-                  0,
-                  myfeedConfig.SUMMARY_READ_MORE_LENGTH,
-                )} ...`}
+                {`${articleDescription.slice(0, myfeedConfig.SUMMARY_READ_MORE_LENGTH)} ...`}
                 <SeeMoreButton />
               </>
             ) : (

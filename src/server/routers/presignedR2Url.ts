@@ -1,8 +1,8 @@
-import { publicProcedure, router } from "../trpc";
-import * as yup from "yup";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { FileUploadSource } from "types/enums";
+import * as yup from "yup";
+import { publicProcedure, router } from "../trpc";
 
 // Cloudflare R2 Configuration
 const r2Client = new S3Client({
@@ -31,37 +31,35 @@ const preSignedUrlSchema = yup.object({
 
 // Generate Pre-signed URL for Uploading to Cloudflare R2
 export const presignedR2UrlRouter = router({
-  getPresignedUrl: publicProcedure
-    .input(preSignedUrlSchema)
-    .mutation(async ({ input }) => {
+  getPresignedUrl: publicProcedure.input(preSignedUrlSchema).mutation(async ({ input }) => {
+    try {
+      const { fileName, fileType, fileUploadSource } = input;
+      const bucketName = process.env.CLOUDFLARE_R2_BUCKET!;
+      const objectKey = `${fileUploadSource.toString()}/${Date.now()}-${fileName}`;
+
+      const command = new PutObjectCommand({
+        Bucket: bucketName,
+        Key: objectKey,
+        ContentType: fileType,
+      });
+
+      // Generate a pre-signed URL that expires in 5 minutes
+      let signedUrl = "";
       try {
-        const { fileName, fileType, fileUploadSource } = input;
-        const bucketName = process.env.CLOUDFLARE_R2_BUCKET!;
-        const objectKey = `${fileUploadSource.toString()}/${Date.now()}-${fileName}`;
-
-        const command = new PutObjectCommand({
-          Bucket: bucketName,
-          Key: objectKey,
-          ContentType: fileType,
+        signedUrl = await getSignedUrl(r2Client, command, {
+          expiresIn: 300, // 300 seconds = 5 minutes
         });
-
-        // Generate a pre-signed URL that expires in 5 minutes
-        let signedUrl = "";
-        try {
-          signedUrl = await getSignedUrl(r2Client, command, {
-            expiresIn: 300, // 300 seconds = 5 minutes
-          });
-        } catch (error) {
-          console.error("Error generating pre-signed URL:", error);
-          throw new Error("Failed to generate pre-signed URL.");
-        }
-        return {
-          url: signedUrl,
-          key: objectKey,
-        };
       } catch (error) {
         console.error("Error generating pre-signed URL:", error);
         throw new Error("Failed to generate pre-signed URL.");
       }
-    }),
+      return {
+        url: signedUrl,
+        key: objectKey,
+      };
+    } catch (error) {
+      console.error("Error generating pre-signed URL:", error);
+      throw new Error("Failed to generate pre-signed URL.");
+    }
+  }),
 });

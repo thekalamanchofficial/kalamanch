@@ -1,22 +1,21 @@
-import { usePost } from "../../_hooks/usePost";
-import { useUser } from "~/context/userContext";
-import type { DraftPost} from "../../editor/types/types";
 import { toast } from "react-toastify";
+import { useUser } from "~/context/userContext";
 import { useDraftPost } from "../../_hooks/useDraftPost";
-
+import { usePost } from "../../_hooks/usePost";
+import type { DraftPost } from "../../editor/types/types";
 
 type UseDraftPostIterationPublishingResponse = {
   handlePublishDraftPostIteration: (draftpost: DraftPost, iterationId: string) => Promise<void>;
 };
 
-export const useDraftPostIterationPublishing = ():UseDraftPostIterationPublishingResponse => {
-  const { publishPost} = usePost();
+export const useDraftPostIterationPublishing = (): UseDraftPostIterationPublishingResponse => {
+  const { publishPost } = usePost();
   const { user } = useUser();
-  const {deleteDraftPost} = useDraftPost();
+  const { deleteDraftPost } = useDraftPost();
 
-  const handlePublishDraftPostIteration = async (draftpost: DraftPost , iterationId: string) => {
+  const handlePublishDraftPostIteration = async (draftpost: DraftPost, iterationId: string) => {
     const iteration = draftpost.iterations.find((i) => i.id == iterationId);
-    if(!iteration){
+    if (!iteration) {
       toast.error("Iteration not found");
       return;
     }
@@ -40,9 +39,7 @@ export const useDraftPostIterationPublishing = ():UseDraftPostIterationPublishin
       },
     });
     await deleteDraftPost(draftpost.id ?? "");
-  }
+  };
 
-
-
-  return {handlePublishDraftPostIteration};
+  return { handlePublishDraftPostIteration };
 };

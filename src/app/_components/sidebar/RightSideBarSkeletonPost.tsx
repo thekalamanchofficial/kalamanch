@@ -1,5 +1,5 @@
-import { Box, Skeleton, Grid2 as Grid } from "@mui/material";
 import React from "react";
+import { Box, Grid2 as Grid, Skeleton } from "@mui/material";
 
 const RightSideBarSkeletonPost = () => {
   return Array.from({ length: 5 }).map((_, index) => (

@@ -1,11 +1,8 @@
-import { useState, useCallback, useEffect } from "react";
-import { useFeedContext } from "~/app/(with-sidebar)/myfeed/_context/FeedContext";
-import {
-  type CommentPayload,
-  type Comment,
-} from "~/app/(with-sidebar)/myfeed/types/types";
-import { PostStatus } from "~/app/editor/types/types";
+import { useCallback, useEffect, useState } from "react";
 import ObjectId from "bson-objectid";
+import { useFeedContext } from "~/app/(with-sidebar)/myfeed/_context/FeedContext";
+import { type Comment, type CommentPayload } from "~/app/(with-sidebar)/myfeed/types/types";
+import { PostStatus } from "~/app/editor/types/types";
 
 type UseCommentsProps = {
   initialComments: Comment[];
@@ -27,19 +24,17 @@ export function useComments({
   userProfileImageUrl,
 }: UseCommentsProps) {
   const [comments, setComments] = useState<Comment[]>(initialComments);
-  const {
-    addCommentToBatch,
-    bulkCommentsState,
-    failedComments,
-    setFailedComments,
-  } = useFeedContext();
-  const isPending = postStatus == PostStatus.PUBLISHED.toString().toUpperCase()
-    ? bulkCommentsState.some((comment) => comment.postId === postId)
-    : bulkCommentsState.some((comment) => comment.iterationId === iterationId);
+  const { addCommentToBatch, bulkCommentsState, failedComments, setFailedComments } =
+    useFeedContext();
+  const isPending =
+    postStatus == PostStatus.PUBLISHED.toString().toUpperCase()
+      ? bulkCommentsState.some((comment) => comment.postId === postId)
+      : bulkCommentsState.some((comment) => comment.iterationId === iterationId);
 
-  const pendingCount = postStatus == PostStatus.PUBLISHED.toString().toUpperCase()
-    ? bulkCommentsState.filter((comment) => comment.postId === postId).length
-    : bulkCommentsState.filter((comment) => comment.iterationId === iterationId).length;
+  const pendingCount =
+    postStatus == PostStatus.PUBLISHED.toString().toUpperCase()
+      ? bulkCommentsState.filter((comment) => comment.postId === postId).length
+      : bulkCommentsState.filter((comment) => comment.iterationId === iterationId).length;
 
   const createTempComment = useCallback(
     (content: string, parentId: string | undefined): Comment => {
@@ -77,9 +72,7 @@ export function useComments({
       return currentComments.map((comment) => {
         if (comment.id === parentId) {
           const updatedReplies = isRollback
-            ? (comment.replies ?? []).filter(
-                (reply) => reply.id !== newComment.id,
-              )
+            ? (comment.replies ?? []).filter((reply) => reply.id !== newComment.id)
             : ([...(comment.replies ?? []), newComment] as Comment[]);
 
           return {
@@ -132,11 +125,16 @@ export function useComments({
 
   useEffect(() => {
     failedComments.forEach((failedComment) => {
-    
-      if (postStatus == PostStatus.PUBLISHED.toString().toUpperCase() && failedComment.postId !== postId) {
+      if (
+        postStatus == PostStatus.PUBLISHED.toString().toUpperCase() &&
+        failedComment.postId !== postId
+      ) {
         return;
       }
-      if (postStatus == PostStatus.DRAFT.toString().toUpperCase() && failedComment.iterationId !== iterationId) {
+      if (
+        postStatus == PostStatus.DRAFT.toString().toUpperCase() &&
+        failedComment.iterationId !== iterationId
+      ) {
         return;
       }
       const parentId = failedComment.parentId ?? null;
@@ -146,19 +144,22 @@ export function useComments({
     });
 
     if (failedComments.length > 0) {
-      if(postStatus == PostStatus.PUBLISHED.toString().toUpperCase()){
-        setFailedComments((prev) =>
-          prev.filter((comment) => comment.postId !== postId),
-        );
+      if (postStatus == PostStatus.PUBLISHED.toString().toUpperCase()) {
+        setFailedComments((prev) => prev.filter((comment) => comment.postId !== postId));
       }
-      if(postStatus == PostStatus.DRAFT.toString().toUpperCase()){
-        setFailedComments((prev) =>
-          prev.filter((comment) => comment.iterationId !== iterationId),
-        );
+      if (postStatus == PostStatus.DRAFT.toString().toUpperCase()) {
+        setFailedComments((prev) => prev.filter((comment) => comment.iterationId !== iterationId));
       }
     }
-    
-  }, [failedComments, comments, updateCommentsTree, setFailedComments, postId, iterationId, postStatus]);
+  }, [
+    failedComments,
+    comments,
+    updateCommentsTree,
+    setFailedComments,
+    postId,
+    iterationId,
+    postStatus,
+  ]);
 
   return {
     comments,

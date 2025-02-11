@@ -5,10 +5,7 @@ import { handleError } from "../_utils/handleError";
 
 type UploadFileToR2Return = {
   isUploading: boolean;
-  uploadFile: (
-    file: File,
-    fileUploadSource: FileUploadSource,
-  ) => Promise<string>;
+  uploadFile: (file: File, fileUploadSource: FileUploadSource) => Promise<string>;
 };
 
 type UploadFileToR2Type = () => UploadFileToR2Return;
@@ -16,13 +13,9 @@ type UploadFileToR2Type = () => UploadFileToR2Return;
 export const useUploadFileToR2: UploadFileToR2Type = () => {
   const [isUploading, setIsUploading] = useState(false);
 
-  const { mutateAsync: getPresignedUrl } =
-    trpc.presignedR2Url.getPresignedUrl.useMutation();
+  const { mutateAsync: getPresignedUrl } = trpc.presignedR2Url.getPresignedUrl.useMutation();
 
-  const uploadFile = async (
-    file: File,
-    fileUploadSource: FileUploadSource,
-  ): Promise<string> => {
+  const uploadFile = async (file: File, fileUploadSource: FileUploadSource): Promise<string> => {
     setIsUploading(true);
     try {
       const data = await getPresignedUrl({

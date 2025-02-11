@@ -1,8 +1,8 @@
 import { serve } from "inngest/next";
-import { inngest } from "../../../inngest/client";
+import { sharePostViaEmail } from "~/inngest/sharePost";
 import { syncUser } from "~/inngest/syncUser";
 import { updateUser } from "~/inngest/updateUser";
-import { sharePostViaEmail } from "~/inngest/sharePost";
+import { inngest } from "../../../inngest/client";
 
 // Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({

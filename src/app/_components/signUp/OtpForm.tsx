@@ -1,6 +1,6 @@
-import { Button, Grid2 as Grid, Typography } from "@mui/material";
 import React from "react";
 import OtpInput from "react-otp-input";
+import { Button, Grid2 as Grid, Typography } from "@mui/material";
 
 type OTPVerificationProps = {
   otp: string;
@@ -18,21 +18,9 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
   onPrev,
 }) => {
   return (
-    <Grid
-      container
-      width="100%"
-      justifyContent="center"
-      alignItems="center"
-      gap={12}
-    >
+    <Grid container width="100%" justifyContent="center" alignItems="center" gap={12}>
       <Typography variant="h1">Verify your email</Typography>
-      <Grid
-        gap={4}
-        display="flex"
-        flexDirection="column"
-        textAlign="center"
-        width="100%"
-      >
+      <Grid gap={4} display="flex" flexDirection="column" textAlign="center" width="100%">
         <Grid>
           <Typography variant="h6" fontWeight="bold">
             Enter your verification code

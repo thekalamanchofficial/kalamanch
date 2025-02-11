@@ -1,5 +1,5 @@
-import { Avatar, Box, Typography } from "@mui/material";
 import React from "react";
+import { Avatar, Box, Typography } from "@mui/material";
 import { type UserNameProfileProps } from "~/app/(with-sidebar)/myfeed/types/types";
 
 const UserNameProfile: React.FC<UserNameProfileProps> = ({

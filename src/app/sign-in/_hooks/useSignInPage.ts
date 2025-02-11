@@ -1,13 +1,13 @@
-import { useRouter } from "next/navigation";
-import { type FormDataSignIn } from "../_types/types";
-import { handleError } from "~/app/_utils/handleError";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
-import { SignInFormStages } from "../_config/config";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import { type ClerkAPIError, type OAuthStrategy } from "@clerk/types";
+import { useRouter } from "next/navigation";
+import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
+import { type ClerkAPIError, type OAuthStrategy } from "@clerk/types";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { handleError } from "~/app/_utils/handleError";
+import { SignInFormStages } from "../_config/config";
+import { type FormDataSignIn } from "../_types/types";
 
 type UseSignInPage = () => UseSignInPageReturn;
 
@@ -42,8 +42,7 @@ export const useSignInPage: UseSignInPage = () => {
 
       const userExistsButNeedsToSignIn =
         signUp.verifications.externalAccount.status === "transferable" &&
-        signUp.verifications.externalAccount.error?.code ===
-          "external_account_exists";
+        signUp.verifications.externalAccount.error?.code === "external_account_exists";
 
       if (userExistsButNeedsToSignIn) {
         const res = await signIn.create({ transfer: true });
@@ -55,8 +54,7 @@ export const useSignInPage: UseSignInPage = () => {
         }
       }
 
-      const userNeedsToBeCreated =
-        signIn.firstFactorVerification.status === "transferable";
+      const userNeedsToBeCreated = signIn.firstFactorVerification.status === "transferable";
 
       if (userNeedsToBeCreated) {
         const res = await signUp.create({
@@ -89,9 +87,7 @@ export const useSignInPage: UseSignInPage = () => {
       .promise(
         (async () => {
           if (!signIn) {
-            throw new Error(
-              STATIC_TEXTS.SIGNIN_FORM.MESSAGES.SIGNIN_NOT_LOADED,
-            );
+            throw new Error(STATIC_TEXTS.SIGNIN_FORM.MESSAGES.SIGNIN_NOT_LOADED);
           }
 
           const signInAttempt = await signIn.create({

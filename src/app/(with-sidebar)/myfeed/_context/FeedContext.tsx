@@ -1,18 +1,19 @@
 "use client";
-import React, { createContext, useContext, useState, useCallback } from "react";
-import { trpc } from "~/server/client";
-import { useDebounce } from "~/hooks/useDebounce";
-import { useClerk } from "@clerk/nextjs";
+
+import React, { createContext, useCallback, useContext, useState } from "react";
 import { toast } from "react-toastify";
+import { useClerk } from "@clerk/nextjs";
+import { PostStatus } from "~/app/editor/types/types";
+import { useDebounce } from "~/hooks/useDebounce";
+import { trpc } from "~/server/client";
 import {
+  BULK_BOOKMARK_DEBOUNCE_DELAY,
   BULK_COMMENT_DEBOUNCE_DELAY,
   BULK_LIKE_DEBOUNCE_DELAY,
-  BULK_BOOKMARK_DEBOUNCE_DELAY,
 } from "../_config/config";
 import type { CommentPayload } from "../types/types";
-import { PostStatus } from "~/app/editor/types/types";
 
-type LikePayload = Record<string, { liked: boolean , postStatus: PostStatus }>;
+type LikePayload = Record<string, { liked: boolean; postStatus: PostStatus }>;
 type BookmarkPayload = Record<string, { bookmarked: boolean }>;
 
 type FeedContextValue = {
@@ -23,12 +24,8 @@ type FeedContextValue = {
   rolledBackLikes: LikePayload;
   bulkBookmarkState: BookmarkPayload | null;
   rolledBackBookmarks: Record<string, boolean>;
-  setRolledBackLikes: React.Dispatch<
-    React.SetStateAction<LikePayload>
-  >;
-  setRolledBackBookmarks: React.Dispatch<
-    React.SetStateAction<Record<string, boolean>>
-  >;
+  setRolledBackLikes: React.Dispatch<React.SetStateAction<LikePayload>>;
+  setRolledBackBookmarks: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   bulkCommentsState: CommentPayload[];
   failedComments: CommentPayload[];
   setFailedComments: React.Dispatch<React.SetStateAction<CommentPayload[]>>;
@@ -36,20 +33,12 @@ type FeedContextValue = {
 
 const FeedContext = createContext<FeedContextValue | null>(null);
 
-export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [bulkLikeState, setBulkLikeState] = useState<LikePayload>({});
   const [rolledBackLikes, setRolledBackLikes] = useState<LikePayload>({});
-  const [bulkBookmarkState, setBulkBookmarkState] = useState<BookmarkPayload>(
-    {},
-  );
-  const [rolledBackBookmarks, setRolledBackBookmarks] = useState<
-    Record<string, boolean>
-  >({});
-  const [bulkCommentsState, setBulkCommentsState] = useState<CommentPayload[]>(
-    [],
-  );
+  const [bulkBookmarkState, setBulkBookmarkState] = useState<BookmarkPayload>({});
+  const [rolledBackBookmarks, setRolledBackBookmarks] = useState<Record<string, boolean>>({});
+  const [bulkCommentsState, setBulkCommentsState] = useState<CommentPayload[]>([]);
   const [failedComments, setFailedComments] = useState<CommentPayload[]>([]);
 
   const { user } = useClerk();
@@ -61,7 +50,7 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
       setRolledBackLikes({});
     },
     onError: () => {
-      const newRolledBackState: Record<string, { liked: boolean, postStatus: PostStatus }> = {};
+      const newRolledBackState: Record<string, { liked: boolean; postStatus: PostStatus }> = {};
       Object.entries(bulkLikeState).forEach(([postOrIterationId, { liked, postStatus }]) => {
         newRolledBackState[postOrIterationId] = { liked: !liked, postStatus };
       });
@@ -113,7 +102,7 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
         postId: postStatus === PostStatus.PUBLISHED ? postOrIterationId : null,
         iterationId: postStatus === PostStatus.DRAFT ? postOrIterationId : null,
         liked,
-        postStatus: postStatus.toString()
+        postStatus: postStatus.toString(),
       }),
     );
 
@@ -121,36 +110,28 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     await bulkLikeMutation.mutateAsync(input);
   }, BULK_LIKE_DEBOUNCE_DELAY);
 
-  const debouncedSendBookmarks = useDebounce(
-    async (bookmarkedState: BookmarkPayload) => {
-      if (!userEmail || Object.keys(bookmarkedState).length === 0) return;
+  const debouncedSendBookmarks = useDebounce(async (bookmarkedState: BookmarkPayload) => {
+    if (!userEmail || Object.keys(bookmarkedState).length === 0) return;
 
-      const bulkBookmarkPayload = Object.entries(bookmarkedState).map(
-        ([postId, { bookmarked }]) => ({
-          postId,
-          bookmarked,
-        }),
-      );
+    const bulkBookmarkPayload = Object.entries(bookmarkedState).map(([postId, { bookmarked }]) => ({
+      postId,
+      bookmarked,
+    }));
 
-      const input = { userEmail, bookmarks: bulkBookmarkPayload };
-      await bulkBookmarkMutation.mutateAsync(input);
-    },
-    BULK_BOOKMARK_DEBOUNCE_DELAY,
-  );
+    const input = { userEmail, bookmarks: bulkBookmarkPayload };
+    await bulkBookmarkMutation.mutateAsync(input);
+  }, BULK_BOOKMARK_DEBOUNCE_DELAY);
 
-  const debouncedSendComments = useDebounce(
-    async (comments: CommentPayload[]) => {
-      if (!userEmail || comments.length === 0) return;
+  const debouncedSendComments = useDebounce(async (comments: CommentPayload[]) => {
+    if (!userEmail || comments.length === 0) return;
 
-      const input = {
-        comments,
-        userEmail,
-      };
+    const input = {
+      comments,
+      userEmail,
+    };
 
-      await bulkCommentMutation.mutateAsync(input);
-    },
-    BULK_COMMENT_DEBOUNCE_DELAY,
-  );
+    await bulkCommentMutation.mutateAsync(input);
+  }, BULK_COMMENT_DEBOUNCE_DELAY);
 
   const addLikeToBatch = useCallback(
     (payload: LikePayload) => {

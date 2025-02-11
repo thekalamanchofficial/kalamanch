@@ -1,16 +1,15 @@
 import type { getAuth } from "@clerk/nextjs/server";
 import { initTRPC, TRPCError } from "@trpc/server";
 
-
 export const createTRPCContext = async (opts: {
-    headers: Headers;
-    auth: ReturnType<typeof getAuth>;
-  }) => {
-    return {
-      userId: opts.auth.userId,
-      ...opts,
-    };
+  headers: Headers;
+  auth: ReturnType<typeof getAuth>;
+}) => {
+  return {
+    userId: opts.auth.userId,
+    ...opts,
   };
+};
 
 const trpc = initTRPC.context<typeof createTRPCContext>().create();
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Tabs, Tab, Box } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 
 type TabItem<T> = {
   label: string;
@@ -12,11 +12,7 @@ type CustomTabsProps<T> = {
   onTabChange: (newValue: T) => void;
 };
 
-const CustomTabs = <T,>({
-  tabs,
-  activeTab,
-  onTabChange,
-}: CustomTabsProps<T>) => {
+const CustomTabs = <T,>({ tabs, activeTab, onTabChange }: CustomTabsProps<T>) => {
   const handleTabChange = (event: React.SyntheticEvent, newIndex: number) => {
     const selectedTab = tabs[newIndex];
     if (selectedTab) {
@@ -46,12 +42,8 @@ const CustomTabs = <T,>({
             label={tab.label}
             sx={{
               textTransform: "none",
-              color:
-                tabs?.[index]?.value === activeTab
-                  ? "primary.main"
-                  : "text.secondary",
-              fontWeight:
-                tabs?.[index]?.value === activeTab ? "bold" : "normal",
+              color: tabs?.[index]?.value === activeTab ? "primary.main" : "text.secondary",
+              fontWeight: tabs?.[index]?.value === activeTab ? "bold" : "normal",
             }}
           />
         ))}

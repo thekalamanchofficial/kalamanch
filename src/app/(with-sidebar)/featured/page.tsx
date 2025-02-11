@@ -1,15 +1,10 @@
 "use client";
-import {
-  Box,
-  CardMedia,
-  Divider,
-  Grid2 as Grid,
-  Typography,
-} from "@mui/material";
-import SeeMoreButton from "~/app/_components/seeMoreButton/SeeMoreButton";
+
+import { Box, CardMedia, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import Loader from "~/app/_components/loader/Loader";
-import useFeaturedPostPage from "./_hooks/useFeaturedPostPage";
+import SeeMoreButton from "~/app/_components/seeMoreButton/SeeMoreButton";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import useFeaturedPostPage from "./_hooks/useFeaturedPostPage";
 
 const Page = () => {
   const { post, isLoading, handleClick } = useFeaturedPostPage();
@@ -150,9 +145,7 @@ const Page = () => {
             {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_POST}
           </Typography>
         )}
-        {isLoading ? (
-          <Loader title="Loading Posts..." height="auto" width="100%" />
-        ) : null}
+        {isLoading ? <Loader title="Loading Posts..." height="auto" width="100%" /> : null}
       </Grid>
     </Grid>
   );

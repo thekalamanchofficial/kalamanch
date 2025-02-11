@@ -1,13 +1,14 @@
 "use client";
+
 import React from "react";
 import { Box, Grid2 as Grid } from "@mui/material";
-import { PostEntityType, PostStatus } from "../editor/types/types";
+import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
 import { useNavigateToPostEditor } from "../editor/_hooks/useNavigateToPostEditor";
-import { useUserDraftPostsState } from "./_hooks/useUserDraftPosts";
+import { PostEntityType, PostStatus } from "../editor/types/types";
+import { DraftAppBar } from "./_components/draftAppBar/DraftAppBar";
 import DraftPostsSection from "./_components/draftPostsSection/DraftPostsSection";
 import { useDraftPostIterationPublishing } from "./_hooks/useDraftPostIterationPublishing";
-import LeftSideBarForPosts from "../_components/leftSideBarForPosts/LeftSideBarForPosts";
-import { DraftAppBar } from "./_components/draftAppBar/DraftAppBar";
+import { useUserDraftPostsState } from "./_hooks/useUserDraftPosts";
 
 const Page = () => {
   const { draftPostsForUser } = useUserDraftPostsState(); // Needed to get all draft posts

@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { useClerk } from "@clerk/nextjs";
 import { Avatar, Button, Grid2 as Grid, Paper, TextField } from "@mui/material";
-import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 
 export interface EditorProps {
@@ -20,9 +20,7 @@ export default function Editor({ handleReply }: EditorProps) {
     setComment("");
   };
 
-  const Picture = (
-    <Avatar sx={{ width: 30, height: 30 }} src={user?.imageUrl} />
-  );
+  const Picture = <Avatar sx={{ width: 30, height: 30 }} src={user?.imageUrl} />;
   const Field = (
     <TextField
       fullWidth
@@ -69,12 +67,7 @@ export default function Editor({ handleReply }: EditorProps) {
           boxShadow: "none",
         }}
       >
-        <Grid
-          container
-          spacing={2}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
+        <Grid container spacing={2} justifyContent={"space-between"} alignItems={"center"}>
           <Grid size={1}>{Picture}</Grid>
           <Grid size={9}>{Field}</Grid>
           <Grid size={2}>{ActionButton}</Grid>

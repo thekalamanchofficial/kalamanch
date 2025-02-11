@@ -1,6 +1,6 @@
-import Mammoth from "mammoth";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import Mammoth from "mammoth";
 import { handleError } from "~/app/_utils/handleError";
 
 type UseUploadTextFromFileInput = {
@@ -12,9 +12,7 @@ type UseUploadTextFromFileReturn = {
   uploadFileContentinNewIteration: (file: File) => Promise<void>;
 };
 
-type UseUploadTextFromFileType = (
-  input: UseUploadTextFromFileInput,
-) => UseUploadTextFromFileReturn;
+type UseUploadTextFromFileType = (input: UseUploadTextFromFileInput) => UseUploadTextFromFileReturn;
 
 const useUploadTextFromFile: UseUploadTextFromFileType = ({ addIteration }) => {
   const [isTextUploaderOpen, setIsTextUploaderOpen] = useState(false);
@@ -23,8 +21,7 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({ addIteration }) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event) => {
-        const text =
-          typeof event.target?.result === "string" ? event.target.result : "";
+        const text = typeof event.target?.result === "string" ? event.target.result : "";
         resolve(`<pre>${text}</pre>`);
       };
       reader.onerror = () => reject(new Error("Error reading file"));
@@ -42,9 +39,7 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({ addIteration }) => {
           resolve(result.value);
         } catch (error) {
           console.error("Error converting file to HTML:", error);
-          reject(
-            new Error(error instanceof Error ? error.message : String(error)),
-          );
+          reject(new Error(error instanceof Error ? error.message : String(error)));
         }
       };
       reader.onerror = () => reject(new Error("Error reading file"));
@@ -67,7 +62,7 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({ addIteration }) => {
         throw new Error(`API Error: ${response.statusText}`);
       }
 
-      const data: { text?: string } = await response.json() as { text?: string };
+      const data: { text?: string } = (await response.json()) as { text?: string };
 
       if (!data.text) throw new Error("No text extracted from image");
 
@@ -106,7 +101,11 @@ const useUploadTextFromFile: UseUploadTextFromFileType = ({ addIteration }) => {
       uploadedEditorContent = await getTextFromTxtFile(file);
     } else if (file.name.endsWith(".docx")) {
       uploadedEditorContent = await getTextFromDocxFile(file);
-    } else if (file.name.endsWith(".jpeg") || file.name.endsWith(".png") || file.name.endsWith(".jpg")) {
+    } else if (
+      file.name.endsWith(".jpeg") ||
+      file.name.endsWith(".png") ||
+      file.name.endsWith(".jpg")
+    ) {
       uploadedEditorContent = await getTextFromImageFile(file);
     }
     await addIteration(uploadedEditorContent);

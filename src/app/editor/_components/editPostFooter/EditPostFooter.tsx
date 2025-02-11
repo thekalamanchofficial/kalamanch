@@ -1,10 +1,10 @@
-import { Box, Button } from "@mui/material";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import { PostStatus } from "../../types/types";
-import GenericDialog from "~/app/_components/genericDialog/GenericDialog";
 import React from "react";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { Box, Button } from "@mui/material";
+import GenericDialog from "~/app/_components/genericDialog/GenericDialog";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { PostStatus } from "../../types/types";
 
 type EditPostFooterProps = {
   postStatus: PostStatus;
@@ -17,8 +17,7 @@ export default function EditPostFooter({
   handleEditButtonClick,
   handlePublishOrUnpublishButtonClick,
 }: EditPostFooterProps) {
-  const [openPublishOrUnPublishDialog, setOpenPublishOrUnPublishDialog] =
-    React.useState(false);
+  const [openPublishOrUnPublishDialog, setOpenPublishOrUnPublishDialog] = React.useState(false);
 
   return (
     <Box display="flex" justifyContent="flex-end" alignItems="center" gap={1}>

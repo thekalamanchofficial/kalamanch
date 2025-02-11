@@ -1,15 +1,16 @@
 "use client";
-import { Grid2 as Grid } from "@mui/material";
+
 import React, { useMemo } from "react";
+import { Grid2 as Grid } from "@mui/material";
 import CustomTabs from "~/app/_components/CustomTabs/CustomTabs";
+import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
+import Loader from "~/app/_components/loader/Loader";
+import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
+import ShowMessage from "~/app/_components/showMessage/ShowMessage";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import ProfileCard from "~/app/(with-sidebar)/myprofile/_components/profileCard/ProfileCard";
 import { tabs } from "~/app/(with-sidebar)/myprofile/_config/config";
-import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
 import UseMyProfilePage from "~/app/(with-sidebar)/myprofile/_hooks/useMyProfile";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import Loader from "~/app/_components/loader/Loader";
-import ErrorMessage from "~/app/_components/errorMessage/ErrorMessage";
-import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import { EditProfile } from "./_components/editProfile/EditProfile";
 
 const MyProfile = () => {
@@ -66,9 +67,7 @@ const MyProfile = () => {
               }}
             />
           )}
-          {queryLoading && skip > 0 ? (
-            <Loader height="auto" width="auto" title="" />
-          ) : null}
+          {queryLoading && skip > 0 ? <Loader height="auto" width="auto" title="" /> : null}
           {!queryLoading && !hasMorePosts ? (
             <ShowMessage
               title="No More Posts Found."
@@ -93,9 +92,7 @@ const MyProfile = () => {
             likedPosts={likedPosts}
             bookmarkedPosts={bookmarkedPosts}
           />
-          {queryLoading && skip > 0 ? (
-            <Loader height="auto" width="auto" title="" />
-          ) : null}
+          {queryLoading && skip > 0 ? <Loader height="auto" width="auto" title="" /> : null}
           {!queryLoading && !hasMorePosts ? (
             <ShowMessage
               title="No More Posts Found."

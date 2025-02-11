@@ -23,7 +23,6 @@ export type Iteration = {
   updatedAt: string;
 };
 
-
 export type DraftPost = {
   id?: string;
   authorName: string;
@@ -40,13 +39,13 @@ export type CreateDraftPostProps = {
   authorProfileImageUrl: string;
   authorId: string;
   postDetails: PostDetails;
-  iterations: [{
-    iterationName: string;
-    content: string;
-  }];
-}
-
-
+  iterations: [
+    {
+      iterationName: string;
+      content: string;
+    },
+  ];
+};
 
 export type QueryParams = {
   postId: string;
@@ -64,7 +63,7 @@ export enum PostStatus {
   PUBLISHED = "PUBLISHED",
 }
 
-export enum PostEntityType{
+export enum PostEntityType {
   DRAFT_POST = "Draft Posts",
   PUBLISHED_POST = "Published Posts",
   DRAFT_ITERATION_SENT_FOR_REVIEW = "Draft Iterations Sent for Review",

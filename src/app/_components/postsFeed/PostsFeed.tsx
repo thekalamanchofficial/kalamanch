@@ -1,19 +1,14 @@
 "use client";
-import { type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
+
 import { Fragment, memo } from "react";
-import Post from "../post/Post";
 import { useClerk } from "@clerk/nextjs";
-import { trpc } from "~/server/client";
 import { Divider } from "@mui/material";
+import { type PostsFeedProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import { trpc } from "~/server/client";
+import Post from "../post/Post";
 
 const PostsFeed = memo<PostsFeedProps>(
-  ({
-    articlesList,
-    likedPosts,
-    bookmarkedPosts,
-    setPosts,
-    isUserPublishedPostFeed,
-  }) => {
+  ({ articlesList, likedPosts, bookmarkedPosts, setPosts, isUserPublishedPostFeed }) => {
     const { user } = useClerk();
     const userEmail = user?.primaryEmailAddress?.emailAddress ?? "";
 

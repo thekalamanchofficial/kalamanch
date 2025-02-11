@@ -1,16 +1,10 @@
 import React, { type FormEvent } from "react";
-import { useSignInForm } from "~/app/sign-in/_hooks/useSignInForm";
 import { Controller } from "react-hook-form";
+import Link from "next/link";
+import { Button, FormControl, Grid2 as Grid, TextField, Typography } from "@mui/material";
+import { useSignInForm } from "~/app/sign-in/_hooks/useSignInForm";
 import { type FormDataSignIn } from "~/app/sign-in/_types/types";
 import { STATIC_TEXTS } from "../static/staticText";
-import {
-  Button,
-  FormControl,
-  Grid2 as Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
-import Link from "next/link";
 
 type SignInFormProps = {
   onSubmit: (data: FormDataSignIn) => void;
@@ -81,21 +75,11 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
         />
       </Grid>
       <Grid width="100%" justifyContent="center" display="flex">
-        <Button
-          type="submit"
-          onClick={handleLogin}
-          variant="contained"
-          size="large"
-        >
+        <Button type="submit" onClick={handleLogin} variant="contained" size="large">
           <Typography variant="h6">{STATIC_TEXTS.SIGNIN}</Typography>
         </Button>
       </Grid>
-      <Grid
-        width="100%"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
+      <Grid width="100%" display="flex" alignItems="center" justifyContent="center">
         <Typography variant="h6">
           {STATIC_TEXTS.SIGNIN_FORM.LINKS_TEXT.NEED_ACCOUNT}&nbsp;
         </Typography>

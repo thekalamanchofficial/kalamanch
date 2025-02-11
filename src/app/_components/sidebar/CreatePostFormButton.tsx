@@ -1,30 +1,27 @@
 "use client";
 
-import { Box, Button, Typography } from "@mui/material";
 import { useState } from "react";
-import { STATIC_TEXTS } from "../static/staticText";
-import WriteLogo from "~/assets/svg/WriteLogo.svg";
-import CreatePostForm from "~/app/editor/_components/createPostForm/CreatePostForm";
 import { useRouter } from "next/navigation";
-import { type CreatePostFormType } from "~/app/editor/types/types";
-import { useUser } from "~/context/userContext";
+import { Box, Button, Typography } from "@mui/material";
 import type { PostType } from "@prisma/client";
 import { useDraftPost } from "~/app/_hooks/useDraftPost";
+import CreatePostForm from "~/app/editor/_components/createPostForm/CreatePostForm";
+import { type CreatePostFormType } from "~/app/editor/types/types";
+import WriteLogo from "~/assets/svg/WriteLogo.svg";
+import { useUser } from "~/context/userContext";
+import { STATIC_TEXTS } from "../static/staticText";
 
 const CreatePostFormButton = () => {
   const [createPostFormOpen, setCreatePostFormOpen] = useState(false);
   const router = useRouter();
-  const {user} = useUser();
-  const {addDraftPost} = useDraftPost();
-
-
+  const { user } = useUser();
+  const { addDraftPost } = useDraftPost();
 
   const handleCreatePostFormClose = () => {
     setCreatePostFormOpen(false);
   };
 
   const handleFormSubmit = async (data: CreatePostFormType) => {
-
     if (!user?.id || !user?.name) {
       console.error("User not found");
       return;
@@ -45,15 +42,16 @@ const CreatePostFormButton = () => {
           url: data.thumbnailUrl ?? "",
         },
       },
-      iterations: [{
-        iterationName: "Iteration - 1",
-        content: "",
-      }]
+      iterations: [
+        {
+          iterationName: "Iteration - 1",
+          content: "",
+        },
+      ],
     });
 
-
     const queryData = {
-      draftPostId: draftPost?.id ?? ""
+      draftPostId: draftPost?.id ?? "",
     };
     const query = new URLSearchParams(queryData).toString();
     router.push(`/editor?${query}`);

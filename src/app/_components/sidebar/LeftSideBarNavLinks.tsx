@@ -1,24 +1,24 @@
 "use client";
 
-import { Button, Typography, Box } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import SearchIcon from "@mui/icons-material/Search";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
-import StarOutlineIcon from "@mui/icons-material/StarOutline";
-import MessageIcon from "@mui/icons-material/Message";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
+import FeedbackOutlinedIcon from "@mui/icons-material/FeedbackOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import MessageIcon from "@mui/icons-material/Message";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
-import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
+import SearchIcon from "@mui/icons-material/Search";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import StarOutlineIcon from "@mui/icons-material/StarOutline";
+import { Box, Button, Typography } from "@mui/material";
 import { type MenuItemList } from "~/app/(with-sidebar)/myfeed/types/types";
 
- type LeftSideBarNavLinksProps = {
+type LeftSideBarNavLinksProps = {
   menuItems: MenuItemList[];
-}
+};
 
 const LeftSideBarNavLinks: React.FC<LeftSideBarNavLinksProps> = ({ menuItems }) => {
   const pathname = usePathname();
@@ -44,11 +44,7 @@ const LeftSideBarNavLinks: React.FC<LeftSideBarNavLinksProps> = ({ menuItems }) 
         const isActive = pathname === item.route;
 
         return (
-          <Link
-            key={index}
-            href={item.route}
-            style={{ textDecoration: "none" }}
-          >
+          <Link key={index} href={item.route} style={{ textDecoration: "none" }}>
             <Box
               sx={{
                 display: "flex",

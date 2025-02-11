@@ -1,3 +1,4 @@
+import React from "react";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -5,18 +6,12 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
 import ShareIcon from "@mui/icons-material/Share";
 import TollIcon from "@mui/icons-material/Toll";
-import {
-  Button,
-  Grid2 as Grid,
-  type Theme,
-  useMediaQuery,
-} from "@mui/material";
-import React from "react";
+import { Button, Grid2 as Grid, useMediaQuery, type Theme } from "@mui/material";
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import BookmarkPostActionButton from "../postActionButton/BookmarkPostActionButton";
 import PostActionButton from "../postActionButton/PostActionButton";
 import SharePostDialog from "../sharePostDialog/SharePostDialog";
 import { STATIC_TEXTS } from "../static/staticText";
-import BookmarkPostActionButton from "../postActionButton/BookmarkPostActionButton";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
   likes,
@@ -41,9 +36,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   handleUnpublishPost,
 }) => {
   const [open, setOpen] = React.useState(false);
-  const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("md"),
-  );
+  const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
   const handleAction = (actionType: string) => {
     switch (actionType) {
       case "like":
@@ -104,13 +97,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
       >
         {showLikes && (
           <PostActionButton
-            icon={
-              isLiked ? (
-                <FavoriteIcon sx={iconSx} />
-              ) : (
-                <FavoriteBorderIcon sx={iconSx} />
-              )
-            }
+            icon={isLiked ? <FavoriteIcon sx={iconSx} /> : <FavoriteBorderIcon sx={iconSx} />}
             label={likes && likes > 0 ? likes : "0"}
             onClick={() => handleAction("like")}
           />
@@ -137,11 +124,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
             onClick={() => handleAction("share")}
           />
         )}
-        <SharePostDialog
-          open={open}
-          onClose={() => setOpen(false)}
-          postId={postId}
-        />
+        <SharePostDialog open={open} onClose={() => setOpen(false)} postId={postId} />
         {showEditPublishedPost && showUnpublishPost && (
           <BookmarkPostActionButton
             isBookmarked={isBookmarked}

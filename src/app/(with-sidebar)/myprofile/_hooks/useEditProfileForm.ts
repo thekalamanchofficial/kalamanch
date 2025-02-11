@@ -1,5 +1,5 @@
+import { useForm, type UseFormReturn } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { type UseFormReturn, useForm } from "react-hook-form";
 import { editProfileSchema } from "../_schema/editProfileSchema";
 import { type EditProfileDetails } from "../types/types";
 

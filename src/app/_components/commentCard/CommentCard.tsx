@@ -1,11 +1,11 @@
 import React from "react";
-import { Grid2 as Grid, Box, Typography, Avatar } from "@mui/material";
-import { type Comment } from "~/app/(with-sidebar)/myfeed/types/types";
-import ReplyButton from "../commentCard/ReplyButton";
-import Editor from "../commentCard/Editor";
+import { Avatar, Box, Grid2 as Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import isToday from "dayjs/plugin/isToday";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { type Comment } from "~/app/(with-sidebar)/myfeed/types/types";
+import Editor from "../commentCard/Editor";
+import ReplyButton from "../commentCard/ReplyButton";
 
 dayjs().format();
 dayjs.extend(relativeTime);
@@ -33,9 +33,7 @@ const CommentCard: React.FC<commentCardProps> = ({
   replyingState = {},
   handleReply,
 }) => {
-  const timeAgo = dayjs(comment.createdAt).isToday()
-    ? "Today"
-    : dayjs(comment.createdAt).fromNow();
+  const timeAgo = dayjs(comment.createdAt).isToday() ? "Today" : dayjs(comment.createdAt).fromNow();
 
   return (
     <Grid
@@ -93,8 +91,7 @@ const CommentCard: React.FC<commentCardProps> = ({
                     if (setIsReplying) setIsReplying(!isReplying);
                     if (setReplyingTo) setReplyingTo(comment.userName);
                     if (setParentState) setParentState();
-                    if (setReplyingState)
-                      setReplyingState({ [comment.id]: true });
+                    if (setReplyingState) setReplyingState({ [comment.id]: true });
                   },
                 }}
               />
@@ -113,11 +110,7 @@ const CommentCard: React.FC<commentCardProps> = ({
         </Box>
 
         {!isChildren && replyingState[comment.id] ? (
-          <Editor
-            handleReply={(comment: string) =>
-              handleReply ? handleReply(comment) : null
-            }
-          />
+          <Editor handleReply={(comment: string) => (handleReply ? handleReply(comment) : null)} />
         ) : null}
       </Grid>
     </Grid>

@@ -1,15 +1,9 @@
 "use client";
+
+import React, { useState } from "react";
 import FeaturedPlayListOutlinedIcon from "@mui/icons-material/FeaturedPlayListOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
-import {
-  AppBar,
-  Box,
-  Drawer,
-  IconButton,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import React, { useState } from "react";
+import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
 import editorMockData from "../../mockDataEditor/mockdata";
 import { type DraftPost } from "../../types/types";
 import EditorLeftSideBarForIterations from "../editorLeftSideBar/EditorLeftSideBarForIterations";

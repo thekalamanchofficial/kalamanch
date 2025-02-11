@@ -1,13 +1,9 @@
 import * as React from "react";
-import CircularProgress, {
-  type CircularProgressProps,
-} from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import CircularProgress, { type CircularProgressProps } from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
 
-const PercentageCircle = (
-  props: CircularProgressProps & { value: number; fillColor: string },
-) => {
+const PercentageCircle = (props: CircularProgressProps & { value: number; fillColor: string }) => {
   return (
     <Box sx={{ position: "relative", display: "inline-flex" }}>
       <CircularProgress

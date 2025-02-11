@@ -2,22 +2,14 @@
 
 import type React from "react";
 import { useRef } from "react";
-import {
-  Box,
-  Typography,
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  IconButton,
-} from "@mui/material";
+import { useRouter } from "next/navigation";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
-import { useRouter } from "next/navigation";
+import { Avatar, Box, Button, Card, CardContent, IconButton, Typography } from "@mui/material";
+import { FileUploadSource } from "types/enums";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import useUserImageUpload from "../../_hooks/useUserImageUpload";
-import { FileUploadSource } from "types/enums";
 
 interface ProfileCardProps {
   name: string;
@@ -103,10 +95,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               file,
               FileUploadSource.PROFILE_COVER_IMAGE,
             );
-            onImageUpdate(
-              FileUploadSource.PROFILE_COVER_IMAGE,
-              uploadedThumbnailUrl,
-            );
+            onImageUpdate(FileUploadSource.PROFILE_COVER_IMAGE, uploadedThumbnailUrl);
           }}
         />
       </Box>
@@ -160,10 +149,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   file,
                   FileUploadSource.PROFILE_IMAGE,
                 );
-                onImageUpdate(
-                  FileUploadSource.PROFILE_IMAGE,
-                  uploadedThumbnailUrl,
-                );
+                onImageUpdate(FileUploadSource.PROFILE_IMAGE, uploadedThumbnailUrl);
               }}
             />
           </Box>

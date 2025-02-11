@@ -10,12 +10,12 @@ import FileUploader from "./_components/fileUploader/FileUploader";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
 import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
 import { useDraftEditorState } from "./_hooks/useDraftEditorState";
+import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 import { useQueryParams } from "./_hooks/useQueryParams";
 import { useSendForReview } from "./_hooks/useSendForReview";
 import useUploadTextFromFile from "./_hooks/useUploadTextFromFile";
 import editorMockData from "./mockDataEditor/mockdata";
 import { PostStatus } from "./types/types";
-import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 
 const Page = () => {
   const { draftPostId, postId } = useQueryParams();
@@ -31,31 +31,22 @@ const Page = () => {
     updateDraftPostDetails,
   } = useDraftEditorState({ draftPostId });
 
-  const { publishedPost, updatePostContent, updatePostDetails } =
-    usePublishedPostEditorState({ postId });
-
-  const {
-    isCreatePostFormOpen,
-    openCreatePostForm,
-    closeCreatePostForm,
-    formData,
-  } = useCreatePostFormDataState({
-    postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails,
+  const { publishedPost, updatePostContent, updatePostDetails } = usePublishedPostEditorState({
+    postId,
   });
 
-  const {
-    sendForReviewDialogOpen,
-    setSendForReviewDialogOpen,
-    handleSendForReview,
-  } = useSendForReview();
+  const { isCreatePostFormOpen, openCreatePostForm, closeCreatePostForm, formData } =
+    useCreatePostFormDataState({
+      postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails,
+    });
 
-  const {
-    isTextUploaderOpen,
-    setIsTextUploaderOpen,
-    uploadFileContentinNewIteration,
-  } = useUploadTextFromFile({
-    addIteration,
-  });
+  const { sendForReviewDialogOpen, setSendForReviewDialogOpen, handleSendForReview } =
+    useSendForReview();
+
+  const { isTextUploaderOpen, setIsTextUploaderOpen, uploadFileContentinNewIteration } =
+    useUploadTextFromFile({
+      addIteration,
+    });
 
   return (
     <>
@@ -106,10 +97,15 @@ const Page = () => {
       >
         <Box sx={{ padding: "8px 20px" }}>
           <Typography
-            sx={{ fontWeight: "bold", fontSize: "16px", color: "primary.main", display: {
-              xs: "none",
-              md: "block",
-            } }}
+            sx={{
+              fontWeight: "bold",
+              fontSize: "16px",
+              color: "primary.main",
+              display: {
+                xs: "none",
+                md: "block",
+              },
+            }}
           >
             Editor
           </Typography>
@@ -129,9 +125,7 @@ const Page = () => {
                 }
               }}
               defaultContentToDisplay={
-                (draftPost
-                  ? selectedIteration?.content
-                  : publishedPost?.content) ?? ""
+                (draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""
               }
               handleEditorContentChange={handleEditorContentChange}
               postStatus={draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
@@ -164,10 +158,7 @@ const Page = () => {
               open={sendForReviewDialogOpen}
               onClose={() => setSendForReviewDialogOpen(false)}
               onSubmit={(selectedUsersForReview: string[]) =>
-                handleSendForReview(
-                  selectedUsersForReview,
-                  selectedIteration?.id,
-                )
+                handleSendForReview(selectedUsersForReview, selectedIteration?.id)
               }
             />
           )}

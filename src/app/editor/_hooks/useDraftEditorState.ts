@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import type { CreatePostFormType, DraftPost, Iteration } from "../types/types";
-import { handleError } from "~/app/_utils/handleError";
 import { toast } from "react-toastify";
-import { useDraftPost } from "../../_hooks/useDraftPost";
-import { useUser } from "~/context/userContext";
-import { usePost } from "../../_hooks/usePost";
 import type { PostType } from "@prisma/client";
+import { handleError } from "~/app/_utils/handleError";
 import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import { useUser } from "~/context/userContext";
+import { useDraftPost } from "../../_hooks/useDraftPost";
+import { usePost } from "../../_hooks/usePost";
+import type { CreatePostFormType, DraftPost, Iteration } from "../types/types";
 
 type DraftEditorStateProps = {
   draftPostId: string | null;
@@ -14,9 +14,7 @@ type DraftEditorStateProps = {
 type DraftEditorState = {
   saveLastIterationData: () => Promise<void>;
   setDraftPost: React.Dispatch<React.SetStateAction<DraftPost | null>>;
-  updateDraftPostDetails: (
-    createPostFormDetails: CreatePostFormType,
-  ) => Promise<void>;
+  updateDraftPostDetails: (createPostFormDetails: CreatePostFormType) => Promise<void>;
   handlePublishEditorDraftIteration: (content: string) => Promise<void>;
   draftPost: DraftPost | null;
   selectedIteration: Iteration | null;
@@ -29,13 +27,9 @@ type DraftEditorState = {
   addIteration: (content?: string) => Promise<void>;
 };
 
-export const useDraftEditorState = ({
-  draftPostId,
-}: DraftEditorStateProps): DraftEditorState => {
+export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): DraftEditorState => {
   const [draftPost, setDraftPost] = useState<DraftPost | null>(null);
-  const [selectedIteration, setSelectedIteration] = useState<Iteration | null>(
-    null,
-  );
+  const [selectedIteration, setSelectedIteration] = useState<Iteration | null>(null);
   const {
     getDraftPost,
     updateDraftDetails,
@@ -52,11 +46,7 @@ export const useDraftEditorState = ({
     await saveLastIterationData();
     const newIterationName = `Iteration - ${draftPost?.iterations?.length ? draftPost.iterations.length + 1 : 1}`;
     try {
-      const addedIteration = await addDraftIteration(
-        draftPostId,
-        newIterationName,
-        content ?? "",
-      );
+      const addedIteration = await addDraftIteration(draftPostId, newIterationName, content ?? "");
       setDraftPost((prev) => {
         if (!prev) return null;
         return {
@@ -94,9 +84,7 @@ export const useDraftEditorState = ({
       return {
         ...prev,
         iterations: prev.iterations?.map((it) =>
-          it.id === lastIterationId
-            ? { ...it, content: lastIterationContent }
-            : it,
+          it.id === lastIterationId ? { ...it, content: lastIterationContent } : it,
         ),
       };
     });
@@ -112,9 +100,7 @@ export const useDraftEditorState = ({
   const handleIterationChange = useCallback(
     async (iterationId: string) => {
       await saveLastIterationData();
-      const iteration = draftPost?.iterations?.find(
-        (it) => it.id === iterationId,
-      );
+      const iteration = draftPost?.iterations?.find((it) => it.id === iterationId);
       if (iteration) setSelectedIteration(iteration);
     },
     [draftPost], // TODO: lint error
@@ -185,9 +171,7 @@ export const useDraftEditorState = ({
     }
   };
 
-  const updateDraftPostDetails = async (
-    createPostFormDetails: CreatePostFormType,
-  ) => {
+  const updateDraftPostDetails = async (createPostFormDetails: CreatePostFormType) => {
     if (!draftPost) return;
     console.log("createPostFormDetails", createPostFormDetails);
     const postDetails: PostDetails = {

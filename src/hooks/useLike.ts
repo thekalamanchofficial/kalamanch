@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useFeedContext } from "~/app/(with-sidebar)/myfeed/_context/FeedContext";
 import type { PostStatus } from "~/app/editor/types/types";
 
@@ -28,24 +28,22 @@ export function useLike({
     const newLikedState = !hasLiked;
     setHasLiked(newLikedState);
     setLikeCount((prev) => (newLikedState ? prev + 1 : prev - 1));
-    if(postId){
+    if (postId) {
       addLikeToBatch({
         [postId]: {
           liked: newLikedState,
           postStatus: postStatus,
         },
       });
-    }
-    else if(iterationId){
+    } else if (iterationId) {
       addLikeToBatch({
         [iterationId]: {
           liked: newLikedState,
           postStatus: postStatus,
         },
       });
-
     }
-  }, [hasLiked, postId, userEmail, addLikeToBatch,iterationId,postStatus]);
+  }, [hasLiked, postId, userEmail, addLikeToBatch, iterationId, postStatus]);
 
   useEffect(() => {
     setHasLiked(initialIsLiked);
@@ -63,7 +61,7 @@ export function useLike({
         return newRolledBackState;
       });
     }
-  }, [rolledBackLikes, setRolledBackLikes,postId,iterationId,postStatus]);
+  }, [rolledBackLikes, setRolledBackLikes, postId, iterationId, postStatus]);
 
   return {
     hasLiked,

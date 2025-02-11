@@ -1,11 +1,9 @@
-import { protectedProcedure, router } from "../trpc";
-import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import prisma from "~/server/db";
+import { protectedProcedure, router } from "../trpc";
 
 export const featuredPostRouter = router({
- 
-
   getFeaturedPosts: protectedProcedure
     .input(
       yup.object({
@@ -65,7 +63,7 @@ export const featuredPostRouter = router({
             authorId: featuredPost.authorId,
             authorProfileImageUrl: featuredPost.authorProfileImageUrl ?? "",
             likeCount: featuredPost.likeCount,
-          })
+          }),
         );
         return {
           featuredPosts: featuredPostWithLikeCount,

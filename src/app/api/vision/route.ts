@@ -13,7 +13,7 @@ type VisionServiceAccountCredentials = {
   auth_provider_x509_cert_url: string;
   client_x509_cert_url: string;
   universe_domain?: string;
-}
+};
 const GOOGLE_VISION_CREDENTIALS_URL = process.env.GOOGLE_VISION_CREDENTIALS_URL ?? "";
 
 interface VisionRequestBody {
@@ -37,14 +37,13 @@ async function getGoogleVisionCredentials(): Promise<VisionServiceAccountCredent
       throw new Error(`Failed to fetch credentials: ${response.statusText}`);
     }
 
-    const credentials = await response.json() as VisionServiceAccountCredentials;
+    const credentials = (await response.json()) as VisionServiceAccountCredentials;
     return credentials;
   } catch (error) {
     console.error("Error fetching credentials:", error);
     throw new Error("Failed to load Google Vision API credentials");
   }
 }
-
 
 // Initialize Google Cloud Vision Client lazily
 let client: ImageAnnotatorClient | null = null;
@@ -58,11 +57,9 @@ async function getVisionClient(): Promise<ImageAnnotatorClient> {
 }
 
 // API Route Handler
-export async function POST(
-  req: Request,
-): Promise<NextResponse<VisionResponse>> {
+export async function POST(req: Request): Promise<NextResponse<VisionResponse>> {
   try {
-    const { imageBase64 }: VisionRequestBody = await req.json() as VisionRequestBody;
+    const { imageBase64 }: VisionRequestBody = (await req.json()) as VisionRequestBody;
 
     if (!imageBase64) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 });
@@ -78,9 +75,6 @@ export async function POST(
     return NextResponse.json({ text });
   } catch (error) {
     console.error("Error processing OCR:", error);
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }

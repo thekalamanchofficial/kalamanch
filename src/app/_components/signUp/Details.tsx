@@ -1,19 +1,12 @@
 import React, { useRef, useState } from "react";
-import { useSignUpDetailsForm } from "~/app/sign-up/_hooks/useSignUpForm";
 import { Controller } from "react-hook-form";
-import { type FormDataDetails } from "~/app/sign-up/_types/types";
-
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import {
-  FormControl,
-  Grid2 as Grid,
-  TextField,
-  Button,
-  Typography,
-} from "@mui/material";
+import { Button, FormControl, Grid2 as Grid, TextField, Typography } from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { useSignUpDetailsForm } from "~/app/sign-up/_hooks/useSignUpForm";
+import { type FormDataDetails } from "~/app/sign-up/_types/types";
 
 type DetailsFormProps = {
   onNext: (data: FormDataDetails) => Promise<void>;
@@ -23,11 +16,7 @@ type DetailsFormProps = {
   setProfileImageUrl: (preview: string | null) => void;
 };
 
-const DetailsForm: React.FC<DetailsFormProps> = ({
-  onNext,
-  onPrev,
-  data,
-}) => {
+const DetailsForm: React.FC<DetailsFormProps> = ({ onNext, onPrev, data }) => {
   const {
     handleSubmit,
     trigger,
@@ -122,9 +111,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         <Controller
           control={control}
           name="confirmPassword"
-          defaultValue={
-            data && "confirmPassword" in data ? data.confirmPassword : ""
-          }
+          defaultValue={data && "confirmPassword" in data ? data.confirmPassword : ""}
           render={({ field: { value, onChange } }) => (
             <FormControl fullWidth>
               <TextField

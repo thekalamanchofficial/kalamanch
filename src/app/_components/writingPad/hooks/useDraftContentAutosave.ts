@@ -9,11 +9,7 @@ type UseDraftContentAutosaveReturn = {
 type UseDraftContentAutosaveProps = {
   currentIterationId: string | null | undefined;
   initialContent: string;
-  saveContentToDb: (
-    content: string,
-    currentIterationId: string,
-    showToast?: boolean,
-  ) => void;
+  saveContentToDb: (content: string, currentIterationId: string, showToast?: boolean) => void;
 };
 
 export const useDraftContentAutosave = ({
@@ -22,14 +18,9 @@ export const useDraftContentAutosave = ({
   saveContentToDb,
 }: UseDraftContentAutosaveProps): UseDraftContentAutosaveReturn => {
   const [content, setContent] = useState<string>(initialContent);
-  const [lastSavedContent, setLastSavedContent] =
-    useState<string>(initialContent);
+  const [lastSavedContent, setLastSavedContent] = useState<string>(initialContent);
 
-  const saveContent = (
-    data: string,
-    iterationId: string,
-    showToast?: boolean,
-  ) => {
+  const saveContent = (data: string, iterationId: string, showToast?: boolean) => {
     if (data === lastSavedContent) return;
     setLastSavedContent(data);
     saveContentToDb(data, iterationId, showToast);

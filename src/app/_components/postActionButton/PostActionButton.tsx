@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Box, type SxProps } from "@mui/material";
+import { Box, Button, type SxProps } from "@mui/material";
 
 type PostActionButtonProps = {
   icon: React.ReactNode;
@@ -8,12 +8,7 @@ type PostActionButtonProps = {
   sx?: SxProps;
 };
 
-const PostActionButton: React.FC<PostActionButtonProps> = ({
-  icon,
-  label,
-  onClick,
-  sx,
-}) => {
+const PostActionButton: React.FC<PostActionButtonProps> = ({ icon, label, onClick, sx }) => {
   return (
     <Button
       onClick={onClick}
@@ -33,8 +28,8 @@ const PostActionButton: React.FC<PostActionButtonProps> = ({
           color: "primary.main",
         },
         "&.MuiButton-root": {
-            "minHeight": "26px",
-          },
+          minHeight: "26px",
+        },
         ...sx,
       }}
     >

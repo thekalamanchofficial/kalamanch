@@ -61,8 +61,7 @@ const editorMockData = {
       {
         id: "64dfde16f24b1c0090a7e9d5",
         iterationName: "final draft",
-        content:
-          "Revised content focusing on real-world applications of AI in education.",
+        content: "Revised content focusing on real-world applications of AI in education.",
         draftPostId: "64dfde16f24b1c0090a7e9d2",
         createdAt: "2024-12-27T12:00:00.000Z",
         updatedAt: "2024-12-27T12:30:00.000Z",

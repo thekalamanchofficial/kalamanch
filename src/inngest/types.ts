@@ -4,7 +4,6 @@ export type ClerkUserEventPayload = {
   data: UserJSON;
 };
 
-
 export type SharePostPayload = {
   data: {
     postId: string;

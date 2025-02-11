@@ -1,31 +1,22 @@
 "use client";
-import {
-  Typography,
-  Grid2 as Grid,
-  Box,
-  Chip,
-  useMediaQuery,
-  type Theme,
-} from "@mui/material";
-import Image from "next/image";
-import React from "react";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import Link from "next/link";
-import UserNameProfile from "../userNameProfile/UserNameProfile";
 
-import FollowButton from "~/app/_components/followButton/FollowButton";
-import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
-import { trpc } from "~/server/client";
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { Box, Chip, Grid2 as Grid, Typography, useMediaQuery, type Theme } from "@mui/material";
+import FollowButton from "~/app/_components/followButton/FollowButton";
+import { trpc } from "~/server/client";
+import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
+import { STATIC_TEXTS } from "../static/staticText";
+import UserNameProfile from "../userNameProfile/UserNameProfile";
 import RightSideBarSkeletonAuthor from "./RightSideBarSkeletonAuthor";
 import RightSideBarSkeletonPost from "./RightSideBarSkeletonPost";
-import { STATIC_TEXTS } from "../static/staticText";
 
 const RightSideBar = () => {
-  const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("md"),
-  );
+  const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
 
   const { user } = useClerk();
   const router = useRouter();
@@ -33,10 +24,9 @@ const RightSideBar = () => {
   const userMutation = trpc.user;
   const featuredAuthorMutation = trpc.usersToFollow;
 
-  const { data: usersAlreadyFollowing } =
-    userMutation.getUserFollowings.useQuery({
-      userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-    });
+  const { data: usersAlreadyFollowing } = userMutation.getUserFollowings.useQuery({
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
   const { data: usersToFollowData, isLoading: usersToFollowLoading } =
     featuredAuthorMutation.getUsersToFollow.useQuery({
       limit: 5,
@@ -120,10 +110,7 @@ const RightSideBar = () => {
                         py: "8px",
                       }}
                     >
-                      <Link
-                        href={`/profile/${item.authorId}`}
-                        style={{ textDecoration: "none" }}
-                      >
+                      <Link href={`/profile/${item.authorId}`} style={{ textDecoration: "none" }}>
                         <UserNameProfile
                           ImageHeight={25}
                           ImageWidth={25}

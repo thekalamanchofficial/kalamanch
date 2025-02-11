@@ -6,10 +6,7 @@ import { useUser } from "~/context/userContext";
 import { trpc } from "~/server/client";
 
 type UserImageUploadReturn = {
-  uploadImage: (
-    file: File,
-    fileUploadSource: FileUploadSource,
-  ) => Promise<string>;
+  uploadImage: (file: File, fileUploadSource: FileUploadSource) => Promise<string>;
   loading: boolean;
 };
 
@@ -20,14 +17,10 @@ const useUserImageUpload: UserImageUploadType = () => {
   const { uploadFile } = useUploadFileToR2();
   const { user } = useUser();
 
-  const updateProfileImageMutation =
-    trpc.user.updateProfileImageUrl.useMutation();
+  const updateProfileImageMutation = trpc.user.updateProfileImageUrl.useMutation();
   const updateCoverImageMutation = trpc.user.updateCoverImageUrl.useMutation();
 
-  const uploadImage = async (
-    file: File,
-    fileUploadSource: FileUploadSource,
-  ): Promise<string> => {
+  const uploadImage = async (file: File, fileUploadSource: FileUploadSource): Promise<string> => {
     setLoading(true);
     try {
       const uploadedThumbnailUrl = await uploadFile(file, fileUploadSource);

@@ -1,24 +1,21 @@
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+import { useClerk } from "@clerk/nextjs";
+import { FileUploadSource } from "types/enums";
+import config from "~/app/_config/config";
+import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
+import useLazyLoading from "~/app/_hooks/useLazyLoading";
+import useLikePosts from "~/app/_hooks/useLikePosts";
+import { handleError } from "~/app/_utils/handleError";
+import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
 import {
   MyProfileTabsEnum,
   type SaveUserInfo,
-} from "~/app/(with-sidebar)/myprofile/types/types";
-import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
-
-import { handleError } from "~/app/_utils/handleError";
-import config from "~/app/_config/config";
-import { useClerk } from "@clerk/nextjs";
-import { useEffect, useMemo, useState } from "react";
-import { trpc } from "~/server/client";
-import { toast } from "react-toastify";
-import {
-  type UserInfo,
   type UseMyProfilePage,
+  type UserInfo,
 } from "~/app/(with-sidebar)/myprofile/types/types";
 import { PostStatus } from "~/app/editor/types/types";
-import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
-import useLikePosts from "~/app/_hooks/useLikePosts";
-import useLazyLoading from "~/app/_hooks/useLazyLoading";
-import { FileUploadSource } from "types/enums";
+import { trpc } from "~/server/client";
 
 const useMyProfilePage = (): UseMyProfilePage => {
   const { user } = useClerk();
@@ -62,9 +59,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
       name: userDetails?.name ?? "",
       bio: userDetails?.bio ?? "",
       interests: userDetails?.interests ?? [],
-      birthdate: userDetails?.birthdate
-        ? new Date(userDetails.birthdate)
-        : new Date(),
+      birthdate: userDetails?.birthdate ? new Date(userDetails.birthdate) : new Date(),
       education: userDetails?.education ?? [],
       professionalAchievements: userDetails?.professionalCredentials ?? "",
       profileImageUrl: userDetails?.profileImageUrl ?? user?.imageUrl ?? "",
@@ -80,8 +75,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
     {
       authorId: userDetails?.id,
       skip,
-      limit:
-        skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
+      limit: skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
     },
     {
       enabled: Boolean(userDetails?.id) && hasMorePosts,
@@ -113,13 +107,12 @@ const useMyProfilePage = (): UseMyProfilePage => {
   };
 
   const handleImageUpdate = (uploadSource: FileUploadSource, url: string) => {
-    if(uploadSource === FileUploadSource.PROFILE_IMAGE){
+    if (uploadSource === FileUploadSource.PROFILE_IMAGE) {
       setUserInfo({
         ...userInfo,
         profileImageUrl: url,
       });
-    }
-    else if(uploadSource === FileUploadSource.PROFILE_COVER_IMAGE){
+    } else if (uploadSource === FileUploadSource.PROFILE_COVER_IMAGE) {
       setUserInfo({
         ...userInfo,
         coverImageUrl: url,
@@ -230,9 +223,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
       setPosts((prev) => {
         const existingPostIds = new Set(prev.map((post) => post.id));
         // TODO: find a better way to remove duplicate posts, try out using trpc infinite query.
-        const newPosts = postData.posts.filter(
-          (post) => !existingPostIds.has(post.id),
-        );
+        const newPosts = postData.posts.filter((post) => !existingPostIds.has(post.id));
         return [...prev, ...newPosts];
       });
     }
@@ -260,7 +251,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
     userLikedPosts: userLikedPosts ?? [],
     userInfo,
     callSave,
-    handleImageUpdate
+    handleImageUpdate,
   };
 };
 
