@@ -75,7 +75,7 @@ export type CreatePostProps = {
 
 export type PostDetails = {
   title: string;
-  targetAudience: string[];
+  targetAudience?: string[];
   postType: string;
   actors: string[];
   tags: string[];

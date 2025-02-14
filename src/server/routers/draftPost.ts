@@ -11,9 +11,9 @@ const addDraftPostSchema = yup.object({
   authorName: yup.string().required(),
   authorProfileImageUrl: yup.string().optional(),
   postDetails: yup.object({
-    title: yup.string().required(),
+    title: yup.string(),
     targetAudience: yup.array(yup.string()).optional(),
-    postType: yup.string().required(),
+    postType: yup.string(),
     actors: yup.array(yup.string()).optional(),
     tags: yup.array(yup.string()).optional(),
     thumbnailDetails: yup.object({
@@ -84,17 +84,15 @@ export const draftPostRouter = router({
   addDraftPost: protectedProcedure
     .input(addDraftPostSchema)
     .mutation(async ({ input }) => {
-
-  
       const draftPost = await prisma.draftPost.create({
         data: {
           authorId: input.authorId,
           authorName: input.authorName,
           authorProfileImageUrl: input.authorProfileImageUrl ?? "",
           postDetails: {
-            title: input.postDetails.title,
+            title: input.postDetails.title ?? "",
             targetAudience: cleanArray(input.postDetails.targetAudience) ?? [],
-            postType: input.postDetails.postType.toUpperCase() as PostType,
+            postType: input.postDetails.postType?.toUpperCase() as PostType,
             actors: cleanArray(input.postDetails.actors) ?? [],
             tags: cleanArray(input.postDetails.tags) ?? [],
             thumbnailDetails: {

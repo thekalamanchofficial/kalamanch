@@ -28,6 +28,20 @@ export const INTEREST_ARRAY = [
   "Education",
 ];
 
+export const GENRE_ARRAY = [
+  "Action",
+  "Adventure",
+  "Comedy",
+  "Drama",
+  "Fantasy",
+  "Horror",
+  "Mystery",
+  "Romance",
+  "Sci-Fi",
+  "Thriller",
+  "Western",
+];
+
 export const STEPS = [
   {
     label: "Create Profile",

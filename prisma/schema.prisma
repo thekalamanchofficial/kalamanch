@@ -128,6 +128,7 @@ enum PostType {
   ANNOUNCEMENT
   NEWS
   SCRIPT
+  NA
 }
 
 enum PostStatus {
@@ -138,7 +139,7 @@ enum PostStatus {
 type PostDetails {
   title            String
   targetAudience   String[]
-  postType         PostType
+  postType         PostType 
   actors           String[]         @default([])
   tags             String[]
   thumbnailDetails ThumbnailDetails
@@ -187,4 +188,19 @@ model DraftPostIterationReviews {
   @@index([iterationId])
   @@index([reviewerId])
   @@index([requesterId])
+}
+
+model Genre {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  tags Tag[]  @relation("GenreTags")
+}
+
+model Tag {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  name    String @unique
+  genreId String @db.ObjectId
+  genre   Genre  @relation("GenreTags", fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@index([genreId])
 }

@@ -6,6 +6,7 @@ import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FolderIcon from "@mui/icons-material/Folder";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { PostStatus } from "~/app/editor/types/types";
+import PublishPostFormButton from "../sidebar/PublishPostFormButton";
 
 const buttonStyle = {
   backgroundColor: "secondary.main",
@@ -29,6 +30,7 @@ const textStyle = {
 };
 
 type ActionsBarProps = {
+  title: string;
   handleOpen: () => void;
   handleSubmit: () => void;
   handleSaveDraft: (showToast?: boolean) => void;
@@ -37,6 +39,7 @@ type ActionsBarProps = {
 };
 
 const EditorActionsBar: React.FC<ActionsBarProps> = ({
+  title,
   handleOpen,
   postStatus,
   handleSubmit,
@@ -88,7 +91,8 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         <Typography sx={textStyle}>Save as draft</Typography>
       </Button>
     )}
-    <Button
+    {postStatus == PostStatus.DRAFT && (
+      <Button
       sx={{ ...buttonStyle, backgroundColor: "primary.main", color: "white" }}
       onClick={handleSubmit}
     >
@@ -97,6 +101,8 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         {postStatus == PostStatus.DRAFT ? "Publish" : "Update"}
       </Typography>
     </Button>
+    )}
+    <PublishPostFormButton title={title} />
   </Box>
 );
 

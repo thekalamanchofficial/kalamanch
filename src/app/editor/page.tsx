@@ -1,8 +1,15 @@
 "use client";
 
-import { Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Grid2 as Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
 import WritingPad from "../_components/writingPad/WritingPad";
-import CreatePostForm from "./_components/createPostForm/CreatePostForm";
+import CreatePostForm from "./_components/createPostForm/PublishPostForm";
 import { EditorAppBar } from "./_components/editorAppBar/EditorAppBar";
 import EditorLeftSideBarForIterations from "./_components/editorLeftSideBar/EditorLeftSideBarForIterations";
 import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
@@ -10,15 +17,17 @@ import FileUploader from "./_components/fileUploader/FileUploader";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
 import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
 import { useDraftEditorState } from "./_hooks/useDraftEditorState";
+import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 import { useQueryParams } from "./_hooks/useQueryParams";
 import { useSendForReview } from "./_hooks/useSendForReview";
 import useUploadTextFromFile from "./_hooks/useUploadTextFromFile";
 import editorMockData from "./mockDataEditor/mockdata";
 import { PostStatus } from "./types/types";
-import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 
 const Page = () => {
-  const { draftPostId, postId } = useQueryParams();
+  const [postTitle, setPostTitle] = useState<string>("");
+
+  const { draftPostId, postId, shouldDraftPost } = useQueryParams();
 
   const {
     draftPost,
@@ -104,21 +113,54 @@ const Page = () => {
           },
         }}
       >
-        <Box sx={{ padding: "8px 20px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "start",
+            flexDirection: "column",
+            padding: "8px 10px 0 10px",
+          }}
+        >
           <Typography
-            sx={{ fontWeight: "bold", fontSize: "16px", color: "primary.main", display: {
-              xs: "none",
-              md: "block",
-            } }}
+            sx={{
+              fontWeight: "bold",
+              fontSize: "16px",
+              color: "primary.main",
+              marginInline: "8px",
+            }}
           >
             Editor
           </Typography>
+
+          <TextField
+            variant="standard"
+            fullWidth
+            placeholder="Enter title of your writing"
+            sx={{
+              flex: 1,
+              backgroundColor: "white",
+              borderRadius: "6px",
+              "& .MuiInputBase-input": {
+                fontWeight: "700",
+                color: "text.primary",
+                padding: "5px 0",
+              },
+              "& .MuiInput-underline:before, & .MuiInput-underline:after, & .MuiInput-underline:hover:before":
+                {
+                  borderBottom: "none",
+                },
+            }}
+            value={postTitle}
+            onChange={(e) => setPostTitle(e.target.value)}
+          />
         </Box>
+
         <Divider />
         <Box>
           <Grid size={12} sx={{ height: "90vh", width: "100%" }}>
             <WritingPad
               key={draftPost ? selectedIteration?.id : publishedPost?.id}
+              title={postTitle}
               currentIterationId={selectedIteration?.id}
               handleOpen={() => openCreatePostForm()}
               handlePublish={async (content) => {
@@ -134,7 +176,11 @@ const Page = () => {
                   : publishedPost?.content) ?? ""
               }
               handleEditorContentChange={handleEditorContentChange}
-              postStatus={draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
+              postStatus={
+                draftPost || shouldDraftPost
+                  ? PostStatus.DRAFT
+                  : PostStatus.PUBLISHED
+              }
               handleSendForReview={() => setSendForReviewDialogOpen(true)}
             />
           </Grid>

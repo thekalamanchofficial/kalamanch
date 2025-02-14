@@ -60,6 +60,9 @@ const sharePostSchema = yup.object({
   userEmail: yup.string().email().required(),
   emails: yup.array(yup.string().email().required()).required(),
 });
+const getTagsSchema = yup.object({
+  genres: yup.array(yup.string()).optional(),
+});
 const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
 
@@ -77,7 +80,7 @@ export const postRouter = router({
     .query(async ({ input }) => {
       try {
         const { limit, skip, interests, authorId } = input;
-        
+
         const query: { tags?: { hasSome: string[] }; authorId?: string } = {};
 
         if (interests && interests.length > 0) {
@@ -278,4 +281,41 @@ export const postRouter = router({
         throw error;
       }
     }),
+
+  getGenres: protectedProcedure.query(async () => {
+    try {
+      const genres = await prisma.genre.findMany();
+      return genres;
+    } catch (error) {
+      console.error("Error fetching genres:", error);
+      throw error;
+    }
+  }),
+
+  getTags: protectedProcedure.input(getTagsSchema).query(async ({ input }) => {
+    try {
+      const { genres } = input;
+
+      const whereCondition =
+        genres && genres?.length > 0
+          ? {
+              genre: {
+                name: {
+                  in: genres?.filter((genre): genre is string =>
+                    Boolean(genre),
+                  ),
+                },
+              },
+            }
+          : undefined;
+
+      return await prisma.tag.findMany({
+        where: whereCondition,
+        include: { genre: true },
+      });
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+      throw error;
+    }
+  }),
 });

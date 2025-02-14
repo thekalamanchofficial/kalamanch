@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import throttle from "lodash/throttle";
+import { PostStatus } from "~/app/editor/types/types";
+import { useDraftPost } from "~/app/_hooks/useDraftPost";
+import { useUser } from "~/context/userContext";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type UseDraftContentAutosaveReturn = {
   onContentChange: (data: string) => void;
@@ -14,16 +18,22 @@ type UseDraftContentAutosaveProps = {
     currentIterationId: string,
     showToast?: boolean,
   ) => void;
+  postStatus: PostStatus;
 };
 
 export const useDraftContentAutosave = ({
   currentIterationId,
   initialContent,
   saveContentToDb,
+  postStatus,
 }: UseDraftContentAutosaveProps): UseDraftContentAutosaveReturn => {
   const [content, setContent] = useState<string>(initialContent);
   const [lastSavedContent, setLastSavedContent] =
     useState<string>(initialContent);
+  const { addDraftPost } = useDraftPost();
+  const { user } = useUser();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const saveContent = (
     data: string,
@@ -35,6 +45,46 @@ export const useDraftContentAutosave = ({
     saveContentToDb(data, iterationId, showToast);
   };
 
+  const createDraftPostInDb = async (content: string) => {
+    if (!user?.id || !user?.name) {
+      console.error("User not found");
+      return;
+    }
+    const draftPost = await addDraftPost({
+      authorId: user.id,
+      authorName: user.name,
+      authorProfileImageUrl: user.profileImageUrl ?? "",
+      postDetails: {
+        title: "",
+        targetAudience: [],
+        postType: "NA",
+        actors: [],
+        tags: [],
+        thumbnailDetails: {
+          url: "",
+        },
+      },
+      iterations: [
+        {
+          iterationName: "Iteration - 1",
+          content,
+        },
+      ],
+    });
+
+    console.log("Draft post created", draftPost);
+
+    if (!draftPost?.id) {
+      console.error("Draft post not created");
+      return;
+    }
+
+    const params = new URLSearchParams(searchParams);
+    params.set("draftPostId", draftPost.id);
+
+    router.replace(window.location.pathname + "?" + params.toString());
+  };
+
   const throttledSave = useCallback(
     // TODO: lint error
     throttle(saveContent, 60000), // Save every 1 minute
@@ -42,10 +92,15 @@ export const useDraftContentAutosave = ({
   );
 
   const onContentChange = (data: string) => {
-    if (!currentIterationId) return;
+    if (postStatus !== PostStatus.DRAFT) return;
     setContent(data);
-    localStorage.setItem(currentIterationId, data);
-    throttledSave(data, currentIterationId);
+
+    if (!currentIterationId) {
+      void createDraftPostInDb(data);
+    } else {
+      localStorage.setItem(currentIterationId, data);
+      throttledSave(data, currentIterationId);
+    }
   };
 
   const saveDraftInstantly = (showToast?: boolean) => {

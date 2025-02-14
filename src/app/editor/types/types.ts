@@ -6,8 +6,10 @@ export enum EditorTabsEnum {
 }
 export type CreatePostFormType = {
   title: string;
-  targetAudience?: string[];
   thumbnailUrl?: string;
+  thumbnailTitle?: string;
+  thumbnailDescription?: string;
+  genres?: string[];
   postType?: string;
   tags?: string[];
   actors?: string[];

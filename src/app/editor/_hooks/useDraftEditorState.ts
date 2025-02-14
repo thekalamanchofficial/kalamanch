@@ -192,7 +192,6 @@ export const useDraftEditorState = ({
     console.log("createPostFormDetails", createPostFormDetails);
     const postDetails: PostDetails = {
       title: createPostFormDetails.title,
-      targetAudience: createPostFormDetails.targetAudience ?? [],
       postType: createPostFormDetails.postType?.toUpperCase() as PostType,
       actors: createPostFormDetails.actors ?? [],
       tags: createPostFormDetails.tags ?? [],

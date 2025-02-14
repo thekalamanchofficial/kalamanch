@@ -9,6 +9,7 @@ import { type PostStatus } from "~/app/editor/types/types";
 
 type WritingPadProps = {
   handleOpen: () => void;
+  title: string;
   handlePublish: (data: string) => void;
   defaultContentToDisplay: string;
   handleEditorContentChange: (
@@ -23,6 +24,7 @@ type WritingPadProps = {
 
 const WritingPad: React.FC<WritingPadProps> = ({
   currentIterationId,
+  title,
   handleOpen,
   handlePublish,
   defaultContentToDisplay,
@@ -36,6 +38,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
     currentIterationId,
     initialContent: defaultContentToDisplay,
     saveContentToDb: handleEditorContentChange,
+    postStatus,
   });
 
   const onPublishPost = (data: { content: string }) => {
@@ -68,6 +71,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
         />
       </Box>
       <EditorActionsBar
+        title={title}
         postStatus={postStatus}
         handleOpen={handleOpen}
         handleSubmit={handleSubmit(onPublishPost)}
