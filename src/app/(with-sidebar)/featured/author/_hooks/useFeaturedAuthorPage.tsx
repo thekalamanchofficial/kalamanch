@@ -1,9 +1,9 @@
-import config from "~/app/_config/config";
-import { useClerk } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { trpc } from "~/server/client";
-import type { UserToFollow } from "~/app/(with-sidebar)/myfeed/types/types";
+import { useClerk } from "@clerk/nextjs";
+import config from "~/app/_config/config";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
+import type { UserToFollow } from "~/app/(with-sidebar)/myfeed/types/types";
+import { trpc } from "~/server/client";
 
 type useFeaturedAuthorPageProps = {
   usersToFollow: UserToFollow[];
@@ -21,10 +21,9 @@ const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
 
   const { user } = useClerk();
 
-  const { data: userAlreadyFollowing } =
-    userMutation.getUserFollowings.useQuery({
-      userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
-    });
+  const { data: userAlreadyFollowing } = userMutation.getUserFollowings.useQuery({
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
 
   const {
     data: usersToFollowData,
@@ -33,8 +32,7 @@ const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
   } = featuredAuthorMutation.getUsersToFollow.useQuery(
     {
       skip,
-      limit:
-        skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
+      limit: skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
     },
     {
       enabled: skip >= 0 && hasMoreAuthor === true,
@@ -54,10 +52,7 @@ const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
   });
 
   useEffect(() => {
-    setAuthor((prevAuthor) => [
-      ...prevAuthor,
-      ...(usersToFollowData?.featuredAuthor ?? []),
-    ]);
+    setAuthor((prevAuthor) => [...prevAuthor, ...(usersToFollowData?.featuredAuthor ?? [])]);
   }, [usersToFollowData]);
 
   return {

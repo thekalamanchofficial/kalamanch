@@ -1,18 +1,9 @@
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Box,
-  Typography,
-  Drawer,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
-import { type PostEntityType, type DraftPost } from "~/app/editor/types/types";
-import {
-  type IterationWithReviews,
-} from "~/app/(with-sidebar)/myfeed/types/types";
+import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
 import LeftSideBarForPosts from "~/app/_components/leftSideBarForPosts/LeftSideBarForPosts";
+import { type IterationWithReviews } from "~/app/(with-sidebar)/myfeed/types/types";
+import { type DraftPost, type PostEntityType } from "~/app/editor/types/types";
 
 type DraftAppBarProps = {
   draftPosts: DraftPost[];

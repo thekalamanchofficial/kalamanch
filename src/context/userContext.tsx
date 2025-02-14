@@ -1,8 +1,9 @@
 "use client";
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { useClerk } from "@clerk/nextjs";
-import { trpc } from "../server/client";
 import { type UserSchema } from "~/app/(with-sidebar)/myprofile/types/types";
+import { trpc } from "../server/client";
 
 export const UserContext = createContext<{
   user: UserSchema | null;
@@ -16,9 +17,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { user: clerkUser } = useClerk();
   const [user, setUser] = useState<UserSchema | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const userMutation = trpc.user
+  const userMutation = trpc.user;
 
-  const { data, isLoading: isUserLoading } = userMutation.getUserDetails.useQuery(clerkUser?.primaryEmailAddress?.emailAddress);
+  const { data, isLoading: isUserLoading } = userMutation.getUserDetails.useQuery(
+    clerkUser?.primaryEmailAddress?.emailAddress,
+  );
 
   useEffect(() => {
     if (data) {
@@ -33,11 +36,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isUserLoading]);
 
-  return (
-    <UserContext.Provider value={{ user, isLoading }}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ user, isLoading }}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => useContext(UserContext);

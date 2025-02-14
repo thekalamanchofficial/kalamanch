@@ -1,36 +1,37 @@
 "use client";
+
+import { useState } from "react";
+import { Controller } from "react-hook-form";
+import CloseIcon from "@mui/icons-material/Close";
 import {
+  Box,
   Button,
   Chip,
   Dialog,
   DialogActions,
-  Grid2 as Grid,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormHelperText,
+  Grid2 as Grid,
+  MenuItem,
+  Select,
   TextField,
   Typography,
-  Box,
-  Select,
-  MenuItem,
-  FormHelperText,
 } from "@mui/material";
-import { type CreatePostFormType } from "../../types/types";
-import { Controller } from "react-hook-form";
-import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
-import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
-import { useState } from "react";
-import { TARGET_AUDIENCE_OPTIONS } from "~/app/editor/_config/config";
-import CloseIcon from "@mui/icons-material/Close";
-import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUploader";
 import { PostType } from "@prisma/client";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUploader";
+import { TARGET_AUDIENCE_OPTIONS } from "~/app/editor/_config/config";
+import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
+import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
+import { type CreatePostFormType } from "../../types/types";
 
 export type CreatePostFormProps = {
   open: boolean;
   handleClose: () => void;
   createPostFormData: CreatePostFormType;
-  handleFormSubmit: (data: CreatePostFormType)=> void;
+  handleFormSubmit: (data: CreatePostFormType) => void;
   update?: boolean;
 };
 
@@ -39,7 +40,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
   handleClose,
   createPostFormData,
   handleFormSubmit,
-  update
+  update,
 }) => {
   const {
     handleSubmit,
@@ -123,14 +124,10 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                         deleteIcon: <CloseIcon />,
                       })}
                       sx={{
-                        backgroundColor: isSelected
-                          ? "secondary.main"
-                          : "grey.300",
+                        backgroundColor: isSelected ? "secondary.main" : "grey.300",
                         color: isSelected ? "text.primary" : "primary.main",
                         border: isSelected ? "1px solid" : "none",
-                        borderColor: isSelected
-                          ? "primary.main"
-                          : "solid grey.300",
+                        borderColor: isSelected ? "primary.main" : "solid grey.300",
                       }}
                     />
                   );
@@ -149,10 +146,13 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           control={control}
           name="thumbnailUrl"
           defaultValue={createPostFormData?.thumbnailUrl}
-          render={({ field: { onChange} }) => (
+          render={({ field: { onChange } }) => (
             <FormControl fullWidth>
               <Typography variant="h4">Upload Thumbnail</Typography>
-              <ThumbnailUploader onMediaUpload={onChange} initialMedia={createPostFormData?.thumbnailUrl} />
+              <ThumbnailUploader
+                onMediaUpload={onChange}
+                initialMedia={createPostFormData?.thumbnailUrl}
+              />
             </FormControl>
           )}
         />
@@ -189,9 +189,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
             name="actors"
             defaultValue={createPostFormData.actors}
             render={({ field: { value = [], onChange } }) => {
-              const handleAddActors = (
-                e: React.KeyboardEvent<HTMLInputElement>,
-              ) => {
+              const handleAddActors = (e: React.KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === "Enter" && actors.trim()) {
                   const updatedActors = [...value, actors.trim()];
                   onChange(updatedActors);
@@ -267,18 +265,14 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                         label={interest}
                         onClick={() => {
                           if (isSelected) {
-                            onChange(
-                              value?.filter((item) => item !== interest),
-                            );
+                            onChange(value?.filter((item) => item !== interest));
                           } else {
                             onChange([...(value ?? []), interest]);
                           }
                         }}
                         {...(value?.includes(interest) && {
                           onDelete: () => {
-                            const newValue = value.filter(
-                              (item) => item !== interest,
-                            );
+                            const newValue = value.filter((item) => item !== interest);
                             onChange(newValue);
                           },
                           deleteIcon: <CloseIcon />,
@@ -287,12 +281,8 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                           backgroundColor: value?.includes(interest)
                             ? "secondary.main"
                             : "grey.300",
-                          color: value?.includes(interest)
-                            ? "text.primary"
-                            : "primary.main",
-                          border: value?.includes(interest)
-                            ? "1px solid"
-                            : "none",
+                          color: value?.includes(interest) ? "text.primary" : "primary.main",
+                          border: value?.includes(interest) ? "1px solid" : "none",
                           borderColor: value?.includes(interest)
                             ? "primary.main"
                             : "solid grey.300",
@@ -312,11 +302,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         />
       </DialogContent>
       <DialogActions sx={{ justifyContent: "space-between", padding: 3 }}>
-        <Button
-          variant="outlined"
-          onClick={handleClose}
-          sx={{ width: "100px" }}
-        >
+        <Button variant="outlined" onClick={handleClose} sx={{ width: "100px" }}>
           Cancel
         </Button>
         <Button
@@ -324,7 +310,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           onClick={handleSubmit(handleFormSubmit)}
           sx={{ width: "100px" }}
         >
-          {update ? STATIC_TEXTS.EDITOR_PAGE.UPDATE :STATIC_TEXTS.EDITOR_PAGE.CREATE }
+          {update ? STATIC_TEXTS.EDITOR_PAGE.UPDATE : STATIC_TEXTS.EDITOR_PAGE.CREATE}
         </Button>
       </DialogActions>
     </Dialog>

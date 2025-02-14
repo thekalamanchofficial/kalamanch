@@ -1,9 +1,9 @@
-import React, { useState, type ChangeEvent, useCallback, useRef } from "react";
-import { Box, Typography, Button, styled } from "@mui/material";
+import React, { useCallback, useRef, useState, type ChangeEvent } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ImageIcon from "@mui/icons-material/Image";
-import { useUploadFileToR2 } from "~/app/_hooks/useUploadFileToR2";
+import { Box, Button, styled, Typography } from "@mui/material";
 import { FileUploadSource } from "types/enums";
+import { useUploadFileToR2 } from "~/app/_hooks/useUploadFileToR2";
 import Loader from "../loader/Loader";
 
 const StyledDropZone = styled(Box)(({ theme }) => ({
@@ -42,13 +42,8 @@ const isImage = (selectedMedia: string | null) => {
   );
 };
 
-const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({
-  onMediaUpload,
-  initialMedia,
-}) => {
-  const [selectedMedia, setSelectedMedia] = useState<string | null>(
-    initialMedia ?? null,
-  );
+const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({ onMediaUpload, initialMedia }) => {
+  const [selectedMedia, setSelectedMedia] = useState<string | null>(initialMedia ?? null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { uploadFile, isUploading } = useUploadFileToR2();
 
@@ -63,9 +58,7 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({
       if (file) {
         const uploadedThumbnailUrl = await uploadFile(
           file,
-          isVideoFile(file)
-            ? FileUploadSource.THUMBNAIL_VIDEO
-            : FileUploadSource.THUMBNAIL_IMAGE,
+          isVideoFile(file) ? FileUploadSource.THUMBNAIL_VIDEO : FileUploadSource.THUMBNAIL_IMAGE,
         );
         setSelectedMedia(uploadedThumbnailUrl);
         onMediaUpload(uploadedThumbnailUrl);
@@ -83,9 +76,7 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({
       if (file) {
         const uploadedThumbnailUrl = await uploadFile(
           file,
-          isVideoFile(file)
-            ? FileUploadSource.THUMBNAIL_VIDEO
-            : FileUploadSource.THUMBNAIL_IMAGE,
+          isVideoFile(file) ? FileUploadSource.THUMBNAIL_VIDEO : FileUploadSource.THUMBNAIL_IMAGE,
         );
         setSelectedMedia(uploadedThumbnailUrl);
         onMediaUpload(uploadedThumbnailUrl);
@@ -94,32 +85,20 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({
     [onMediaUpload, uploadFile],
   );
 
-  const handleDragOver = useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      event.stopPropagation();
-    },
-    [],
-  );
+  const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
 
-  const handleDragLeave = useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      event.stopPropagation();
-    },
-    [],
-  );
+  const handleDragLeave = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
 
   return (
     <Box mb={2}>
-      <StyledDropZone
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
-        {isUploading && (
-          <Loader title="Uploading File..." height="100%" width="100%" />
-        )}
+      <StyledDropZone onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}>
+        {isUploading && <Loader title="Uploading File..." height="100%" width="100%" />}
 
         {!isUploading && selectedMedia && (
           <>

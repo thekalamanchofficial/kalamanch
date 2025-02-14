@@ -1,11 +1,12 @@
 "use client";
-import React, { Fragment, useEffect, useRef, useState, useCallback } from "react";
-import { Card, CardContent, Box } from "@mui/material";
+
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Box, Card, CardContent } from "@mui/material";
 import PostCardContent from "~/app/_components/postCardContent/PostCardContent";
-import PublishDraftDialog from "../publishDraftDialog/PublishDraftDialog";
-import { type DraftPost, PostStatus } from "~/app/editor/types/types";
 import EditPostFooter from "~/app/editor/_components/editPostFooter/EditPostFooter";
+import { PostStatus, type DraftPost } from "~/app/editor/types/types";
 import { useSelectedDraftPost } from "../../_contexts/SelectedDraftPostContext";
+import PublishDraftDialog from "../publishDraftDialog/PublishDraftDialog";
 
 type DraftPostProps = {
   draftPosts: DraftPost[];
@@ -18,13 +19,20 @@ export default function DraftPostsSection({
   handlePublishDraftPostIteration,
   handleEditDraftPost,
 }: DraftPostProps) {
-  const {setSelectedDraftPostId,selectedDraftPostIdInLeftSideBar,setSelectedDraftPostIdInLeftSideBar} = useSelectedDraftPost();
+  const {
+    setSelectedDraftPostId,
+    selectedDraftPostIdInLeftSideBar,
+    setSelectedDraftPostIdInLeftSideBar,
+  } = useSelectedDraftPost();
   const postRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
   const [selectedDraftPostIdForPublishing, setSelectedDraftPostIdForPublishing] = useState("");
 
   const handleDraftIterationPublishing = async (iterationId: string) => {
     if (selectedDraftPostIdForPublishing) {
-      await handlePublishDraftPostIteration(draftPosts.find((post) => post.id === selectedDraftPostIdForPublishing)!, iterationId);
+      await handlePublishDraftPostIteration(
+        draftPosts.find((post) => post.id === selectedDraftPostIdForPublishing)!,
+        iterationId,
+      );
     }
     setSelectedDraftPostIdForPublishing("");
   };
@@ -36,17 +44,17 @@ export default function DraftPostsSection({
           const postId = entry.target.getAttribute("data-post-id");
           if (postId) {
             setSelectedDraftPostId(postId);
-            break; 
+            break;
           }
         }
       }
     },
-    [setSelectedDraftPostId]
+    [setSelectedDraftPostId],
   );
 
   useEffect(() => {
     const observer = new IntersectionObserver(handleIntersection, {
-      root: null, 
+      root: null,
       rootMargin: "0px",
       threshold: 0.9,
     });
@@ -62,19 +70,18 @@ export default function DraftPostsSection({
     };
   }, [draftPosts, handleIntersection]);
 
-
   useEffect(() => {
     const selectedPostRef = postRefs.current.get(selectedDraftPostIdInLeftSideBar ?? "");
     if (selectedPostRef) {
       selectedPostRef.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-    setSelectedDraftPostId(selectedDraftPostIdInLeftSideBar)
-  }, [selectedDraftPostIdInLeftSideBar,setSelectedDraftPostId]);
+    setSelectedDraftPostId(selectedDraftPostIdInLeftSideBar);
+  }, [selectedDraftPostIdInLeftSideBar, setSelectedDraftPostId]);
 
   useEffect(() => {
     setSelectedDraftPostId(draftPosts[0]?.id ?? "");
-    setSelectedDraftPostIdInLeftSideBar(draftPosts[0]?.id ?? "")
-  }, [draftPosts,setSelectedDraftPostId,setSelectedDraftPostIdInLeftSideBar]);
+    setSelectedDraftPostIdInLeftSideBar(draftPosts[0]?.id ?? "");
+  }, [draftPosts, setSelectedDraftPostId, setSelectedDraftPostIdInLeftSideBar]);
 
   return (
     <Box
@@ -107,7 +114,9 @@ export default function DraftPostsSection({
                 />
                 <EditPostFooter
                   postStatus={PostStatus.DRAFT}
-                  handlePublishOrUnpublishButtonClick={() => setSelectedDraftPostIdForPublishing(post.id ?? "")}
+                  handlePublishOrUnpublishButtonClick={() =>
+                    setSelectedDraftPostIdForPublishing(post.id ?? "")
+                  }
                   handleEditButtonClick={() => {
                     handleEditDraftPost(post.id ?? "");
                   }}
@@ -120,7 +129,10 @@ export default function DraftPostsSection({
 
       {selectedDraftPostIdForPublishing != "" && (
         <PublishDraftDialog
-          iterations={draftPosts.find((post) => post.id === selectedDraftPostIdForPublishing)?.iterations ?? []}
+          iterations={
+            draftPosts.find((post) => post.id === selectedDraftPostIdForPublishing)?.iterations ??
+            []
+          }
           onPublish={handleDraftIterationPublishing}
           onCancel={() => setSelectedDraftPostIdForPublishing("")}
           title="Select Iteration to Publish"

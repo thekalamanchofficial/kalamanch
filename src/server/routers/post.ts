@@ -1,19 +1,16 @@
-import { protectedProcedure, router } from "../trpc";
-import prisma from "~/server/db";
-
+import type { PostType } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
-import type { PostType } from "@prisma/client";
 import { inngest } from "~/inngest/client";
+import prisma from "~/server/db";
+import { protectedProcedure, router } from "../trpc";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
   postDetails: yup
     .object({
       title: yup.string().required("Title is required."),
-      targetAudience: yup
-        .array(yup.string())
-        .required("Target audience is required."),
+      targetAudience: yup.array(yup.string()).required("Target audience is required."),
       postType: yup.string().required("Post type is required."),
       actors: yup.array(yup.string()).optional(),
       tags: yup.array(yup.string()).optional(),
@@ -40,9 +37,7 @@ const updatePostDetailsSchema = yup.object({
   id: yup.string().required("ID is required."),
   postDetails: yup.object({
     title: yup.string().required("Title is required."),
-    targetAudience: yup
-      .array(yup.string())
-      .required("Target audience is required."),
+    targetAudience: yup.array(yup.string()).required("Target audience is required."),
     postType: yup.string().required("Post type is required."),
     actors: yup.array(yup.string()).optional(),
     tags: yup.array(yup.string()).optional(),
@@ -77,14 +72,12 @@ export const postRouter = router({
     .query(async ({ input }) => {
       try {
         const { limit, skip, interests, authorId } = input;
-        
+
         const query: { tags?: { hasSome: string[] }; authorId?: string } = {};
 
         if (interests && interests.length > 0) {
           query.tags = {
-            hasSome: interests.filter(
-              (interest): interest is string => interest !== undefined,
-            ),
+            hasSome: interests.filter((interest): interest is string => interest !== undefined),
           };
         }
 
@@ -148,14 +141,12 @@ export const postRouter = router({
           postDetails: {
             title: sanitizedInput.postDetails.title,
             targetAudience: sanitizedInput.postDetails.targetAudience,
-            postType:
-              sanitizedInput.postDetails.postType.toUpperCase() as PostType,
+            postType: sanitizedInput.postDetails.postType.toUpperCase() as PostType,
             actors: sanitizedInput.postDetails.actors,
             tags: sanitizedInput.postDetails.tags,
             thumbnailDetails: {
               url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
-              content:
-                sanitizedInput.postDetails.thumbnailDetails.content ?? null,
+              content: sanitizedInput.postDetails.thumbnailDetails.content ?? null,
               title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
             },
           },
@@ -171,36 +162,32 @@ export const postRouter = router({
       throw new Error("Failed to create the post.");
     }
   }),
-  deletePost: protectedProcedure
-    .input(yup.string())
-    .mutation(async ({ input: postId }) => {
-      try {
-        const post = await prisma.post.delete({
-          where: {
-            id: postId,
-          },
-        });
-        return post;
-      } catch (error) {
-        handleError(error);
-        throw new Error("Failed to delete the post.");
-      }
-    }),
-  getPost: protectedProcedure
-    .input(yup.string())
-    .query(async ({ input: postId }) => {
-      try {
-        const post = await prisma.post.findUnique({
-          where: {
-            id: postId,
-          },
-        });
-        return post;
-      } catch (error) {
-        handleError(error);
-        throw new Error("Failed to fetch the post.");
-      }
-    }),
+  deletePost: protectedProcedure.input(yup.string()).mutation(async ({ input: postId }) => {
+    try {
+      const post = await prisma.post.delete({
+        where: {
+          id: postId,
+        },
+      });
+      return post;
+    } catch (error) {
+      handleError(error);
+      throw new Error("Failed to delete the post.");
+    }
+  }),
+  getPost: protectedProcedure.input(yup.string()).query(async ({ input: postId }) => {
+    try {
+      const post = await prisma.post.findUnique({
+        where: {
+          id: postId,
+        },
+      });
+      return post;
+    } catch (error) {
+      handleError(error);
+      throw new Error("Failed to fetch the post.");
+    }
+  }),
   updatePostContent: protectedProcedure
     .input(updatePostContentSchema)
     .mutation(async ({ input }) => {
@@ -258,24 +245,22 @@ export const postRouter = router({
         throw new Error("Failed to update the post.");
       }
     }),
-  sharePost: protectedProcedure
-    .input(sharePostSchema)
-    .mutation(async ({ input }) => {
-      try {
-        const { postId, userEmail, emails } = input;
+  sharePost: protectedProcedure.input(sharePostSchema).mutation(async ({ input }) => {
+    try {
+      const { postId, userEmail, emails } = input;
 
-        await inngest.send({
-          name: "post/post.share",
-          data: {
-            postId,
-            userEmail,
-            emails,
-          },
-        });
-      } catch (error) {
-        // handleError(error);
-        console.log(error);
-        throw error;
-      }
-    }),
+      await inngest.send({
+        name: "post/post.share",
+        data: {
+          postId,
+          userEmail,
+          emails,
+        },
+      });
+    } catch (error) {
+      // handleError(error);
+      console.log(error);
+      throw error;
+    }
+  }),
 });

@@ -1,10 +1,10 @@
-import { Grid2 as Grid, Typography, Chip, Button } from "@mui/material";
 import { Controller, useForm, type UseFormReturn } from "react-hook-form";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CloseIcon from "@mui/icons-material/Close";
+import { Button, Chip, Grid2 as Grid, Typography } from "@mui/material";
+import * as yup from "yup";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
 
 export type OnboardingDataType = {
   interests: string[];
@@ -59,12 +59,7 @@ export const Onboarding: React.FC<{
           justifyContent: "center",
         }}
       >
-        <Typography
-          variant="h1"
-          fontSize="28px"
-          lineHeight="21px"
-          fontWeight="bold"
-        >
+        <Typography variant="h1" fontSize="28px" lineHeight="21px" fontWeight="bold">
           {STATIC_TEXTS.INTEREST_FORM.FORM_HEADING}
         </Typography>
         <Typography
@@ -97,24 +92,16 @@ export const Onboarding: React.FC<{
                     }}
                     {...(value.includes(interest) && {
                       onDelete: () => {
-                        const newValue = value.filter(
-                          (item) => item !== interest,
-                        );
+                        const newValue = value.filter((item) => item !== interest);
                         onChange(newValue);
                       },
                       deleteIcon: <CloseIcon />,
                     })}
                     sx={{
-                      backgroundColor: value.includes(interest)
-                        ? "secondary.main"
-                        : "grey.300",
-                      color: value.includes(interest)
-                        ? "text.primary"
-                        : "primary.main",
+                      backgroundColor: value.includes(interest) ? "secondary.main" : "grey.300",
+                      color: value.includes(interest) ? "text.primary" : "primary.main",
                       border: value.includes(interest) ? "1px solid" : "none",
-                      borderColor: value.includes(interest)
-                        ? "primary.main"
-                        : "solid grey.300",
+                      borderColor: value.includes(interest) ? "primary.main" : "solid grey.300",
                     }}
                   />
                 ))}

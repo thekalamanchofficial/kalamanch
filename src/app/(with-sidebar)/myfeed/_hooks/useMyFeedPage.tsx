@@ -1,12 +1,12 @@
-import {type Post } from "../types/types";
-import config from "~/app/_config/config";
-import { useClerk } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
-import { trpc } from "~/server/client";
-import useLazyLoading from "~/app/_hooks/useLazyLoading";
+import { useClerk } from "@clerk/nextjs";
 import { PostStatus } from "@prisma/client";
+import config from "~/app/_config/config";
 import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
+import useLazyLoading from "~/app/_hooks/useLazyLoading";
 import useLikePosts from "~/app/_hooks/useLikePosts";
+import { trpc } from "~/server/client";
+import { type Post } from "../types/types";
 
 type useMyFeedPageReturn = {
   postDataWithComments: Post[];
@@ -37,8 +37,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
   } = postMutation.getPosts.useQuery(
     {
       skip,
-      limit:
-        skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
+      limit: skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
     },
     {
       enabled: hasMorePosts,
@@ -82,9 +81,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
       setPosts((prev) => {
         const existingPostIds = new Set(prev.map((post) => post.id));
         // TODO: find a better way to remove duplicate posts, try out using trpc infinite query.
-        const newPosts = postData.posts.filter(
-          (post) => !existingPostIds.has(post.id),
-        );
+        const newPosts = postData.posts.filter((post) => !existingPostIds.has(post.id));
         return [...prev, ...newPosts];
       });
     }
@@ -95,7 +92,7 @@ const useMyFeedPage = (): useMyFeedPageReturn => {
     likedPosts,
     bookmarkedPosts,
     queryLoading,
-    hasMorePosts:postData?.hasMorePosts ?? false,
+    hasMorePosts: postData?.hasMorePosts ?? false,
     skip,
     setSkip,
     handleScroll,

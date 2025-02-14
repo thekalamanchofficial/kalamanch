@@ -1,8 +1,9 @@
 "use client";
+
 import React, { type ReactElement } from "react";
-import { Grid2 as Grid, Box } from "@mui/material";
-import { SelectedDraftIterationProvider } from "./_contexts/SelectedDraftIterationContext";
+import { Box, Grid2 as Grid } from "@mui/material";
 import { FeedProvider } from "../(with-sidebar)/myfeed/_context/FeedContext";
+import { SelectedDraftIterationProvider } from "./_contexts/SelectedDraftIterationContext";
 
 const Layout = ({ children }: { children: ReactElement }) => {
   return (

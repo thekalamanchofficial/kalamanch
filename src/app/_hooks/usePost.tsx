@@ -1,9 +1,9 @@
-import { trpc } from "~/server/client";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { handleError } from "~/app/_utils/handleError";
 import type { CreatePostProps, PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { trpc } from "~/server/client";
 
 type UsePostResponse = {
   publishPost: (postData: CreatePostProps) => Promise<void>;
@@ -20,16 +20,16 @@ const createMutationOptions = (successMessage: string) => ({
 export const usePost = (): UsePostResponse => {
   const router = useRouter();
   const addPostMutation = trpc.post.addPost.useMutation(
-    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_PUBLISHED_SUCCESS_MESSAGE)
+    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_PUBLISHED_SUCCESS_MESSAGE),
   );
   const deletePostMutation = trpc.post.deletePost.useMutation(
-    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UNPUBLISHED_SUCCESS_MESSAGE)
+    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UNPUBLISHED_SUCCESS_MESSAGE),
   );
   const updatePostContentMutation = trpc.post.updatePostContent.useMutation(
-    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UPDATED_SUCCESS_MESSAGE)
+    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UPDATED_SUCCESS_MESSAGE),
   );
   const updatePostDetailsMutation = trpc.post.updatePostDetails.useMutation(
-    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UPDATED_SUCCESS_MESSAGE)
+    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UPDATED_SUCCESS_MESSAGE),
   );
 
   const publishPost = async (postData: CreatePostProps) => {
@@ -58,17 +58,16 @@ export const usePost = (): UsePostResponse => {
     }
   };
 
-  const updatePostDetails = async (postId: string,postDetails: PostDetails) => {
-      try {
-        await updatePostDetailsMutation.mutateAsync({
-          id: postId,
-          postDetails,
-        });
-      } catch (error) {
-        console.error("Failed to update post details:", error);
-      }
-  }
+  const updatePostDetails = async (postId: string, postDetails: PostDetails) => {
+    try {
+      await updatePostDetailsMutation.mutateAsync({
+        id: postId,
+        postDetails,
+      });
+    } catch (error) {
+      console.error("Failed to update post details:", error);
+    }
+  };
 
-  return { publishPost, deletePost, updatePostContent,updatePostDetails };
+  return { publishPost, deletePost, updatePostContent, updatePostDetails };
 };
-

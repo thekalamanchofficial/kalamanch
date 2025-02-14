@@ -1,10 +1,10 @@
 import { Box, Divider, Stack, Typography } from "@mui/material";
-import OwlSVG from "~/assets/svg/owl.svg";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import CreatePostFormButton from "./CreatePostFormButton";
-import UserMenu from "../userMenu/UserMenu";
-import LeftSideBarNavLinks from "./LeftSideBarNavLinks";
 import { type MenuItemList } from "~/app/(with-sidebar)/myfeed/types/types";
+import OwlSVG from "~/assets/svg/owl.svg";
+import UserMenu from "../userMenu/UserMenu";
+import CreatePostFormButton from "./CreatePostFormButton";
+import LeftSideBarNavLinks from "./LeftSideBarNavLinks";
 
 type LeftSideBarProps = {
   menuItems: MenuItemList[];
@@ -20,12 +20,7 @@ const LeftSideBarServer: React.FC<LeftSideBarProps> = ({ menuItems }) => {
         position: "relative",
       }}
     >
-      <Stack
-        direction="row"
-        justifyContent="start"
-        alignItems="center"
-        sx={{ px: "12px" }}
-      >
+      <Stack direction="row" justifyContent="start" alignItems="center" sx={{ px: "12px" }}>
         <OwlSVG />
         <Typography variant="h5" fontWeight="bold" color="primary">
           {STATIC_TEXTS.APP_TITLE}

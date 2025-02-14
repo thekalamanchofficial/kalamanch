@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useFeedContext } from "~/app/(with-sidebar)/myfeed/_context/FeedContext";
 
 type UseBookmarkProps = {
@@ -14,14 +14,9 @@ type UseBookmarkReturn = {
 
 type UseBookmark = (props: UseBookmarkProps) => UseBookmarkReturn;
 
-export const useBookmark: UseBookmark = ({
-  initialIsBookmarked,
-  postId,
-  userEmail,
-}) => {
+export const useBookmark: UseBookmark = ({ initialIsBookmarked, postId, userEmail }) => {
   const [hasBookmarked, setHasBookmarked] = useState(initialIsBookmarked);
-  const { addBookmarkToBatch, rolledBackBookmarks, setRolledBackBookmarks } =
-    useFeedContext();
+  const { addBookmarkToBatch, rolledBackBookmarks, setRolledBackBookmarks } = useFeedContext();
 
   const handleBookmark = useCallback(async () => {
     if (!userEmail) return;

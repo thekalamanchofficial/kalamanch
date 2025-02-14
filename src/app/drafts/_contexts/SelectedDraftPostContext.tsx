@@ -17,17 +17,24 @@ export const SelectedDraftPostContext = createContext<SelectedDraftPostContextTy
   selectedDraftPostIdInLeftSideBar: null,
   setSelectedDraftPostIdInLeftSideBar: () => {
     // Called when Any post title in left iteration is clicked
-  }
-
-
+  },
 });
 
 export const SelectedDraftPostProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedDraftPostId, setSelectedDraftPostId] = useState<string | null>(null);
-  const [selectedDraftPostIdInLeftSideBar,setSelectedDraftPostIdInLeftSideBar] = useState<string | null>(null);
-  
+  const [selectedDraftPostIdInLeftSideBar, setSelectedDraftPostIdInLeftSideBar] = useState<
+    string | null
+  >(null);
+
   return (
-    <SelectedDraftPostContext.Provider value={{ selectedDraftPostId, setSelectedDraftPostId,selectedDraftPostIdInLeftSideBar,setSelectedDraftPostIdInLeftSideBar }}>
+    <SelectedDraftPostContext.Provider
+      value={{
+        selectedDraftPostId,
+        setSelectedDraftPostId,
+        selectedDraftPostIdInLeftSideBar,
+        setSelectedDraftPostIdInLeftSideBar,
+      }}
+    >
       {children}
     </SelectedDraftPostContext.Provider>
   );

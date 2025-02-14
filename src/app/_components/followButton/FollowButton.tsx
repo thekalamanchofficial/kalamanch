@@ -1,8 +1,8 @@
+import React, { useState } from "react";
 import { useClerk } from "@clerk/nextjs";
 import { Button } from "@mui/material";
-import React, { useState } from "react";
-import { type FollowButtonProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { handleError } from "~/app/_utils/handleError";
+import { type FollowButtonProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
 
 const FollowButton: React.FC<FollowButtonProps> = ({

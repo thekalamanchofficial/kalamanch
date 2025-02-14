@@ -10,9 +10,7 @@ const onFailure = async ({
 }: FailureEventArgs<EventPayload<SharePostPayload["data"]>>) => {
   const originalEventData = event?.data?.event?.data;
   if (!originalEventData) {
-    throw new Error(
-      "Failed to send failure notification email: original event data not found",
-    );
+    throw new Error("Failed to send failure notification email: original event data not found");
   }
   const { postId, userEmail, emails } = originalEventData;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://kalamanch.org";
@@ -43,10 +41,7 @@ const onFailure = async ({
       },
     });
   } catch (notificationError) {
-    console.error(
-      `Error sending failure notification email to ${userEmail}:`,
-      notificationError,
-    );
+    console.error(`Error sending failure notification email to ${userEmail}:`, notificationError);
   }
 };
 
@@ -85,8 +80,7 @@ export const sharePostViaEmail = inngest.createFunction(
         postUrl: `${baseUrl}/posts/${postId}`,
         tags: post.postDetails.tags,
         thumbnailContent:
-          post?.postDetails?.thumbnailDetails?.content ??
-          "Placeholder thumbnail content",
+          post?.postDetails?.thumbnailDetails?.content ?? "Placeholder thumbnail content",
       },
     };
 

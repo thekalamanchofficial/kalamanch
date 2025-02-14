@@ -1,20 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import DescriptionOutlinedIcon from "@mui/icons-material/Publish";
+import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import Typography from "@mui/material/Typography";
-import Alert from "@mui/material/Alert";
 import { styled } from "@mui/material/styles";
-import DescriptionOutlinedIcon from "@mui/icons-material/Publish";
+import Typography from "@mui/material/Typography";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { type Iteration } from "~/app/editor/types/types";
 
@@ -72,12 +72,9 @@ export default function PublishDraftDialog({
                   control={<StyledRadio />}
                   label={
                     <Typography component="div">
-                      <Typography variant="subtitle1">
-                        {iteration.iterationName}
-                      </Typography>
+                      <Typography variant="subtitle1">{iteration.iterationName}</Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Last modified:{" "}
-                        {new Date(iteration.updatedAt).toLocaleDateString()}
+                        Last modified: {new Date(iteration.updatedAt).toLocaleDateString()}
                       </Typography>
                     </Typography>
                   }

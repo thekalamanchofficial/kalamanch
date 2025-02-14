@@ -1,6 +1,6 @@
+import path from "path";
 import nodemailer, { type SentMessageInfo } from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
-import path from "path";
 
 interface EmailOptions {
   to: string | string[];
@@ -35,9 +35,7 @@ transporter.use(
   }),
 );
 
-export async function sendEmail(
-  options: EmailOptions,
-): Promise<SentMessageInfo> {
+export async function sendEmail(options: EmailOptions): Promise<SentMessageInfo> {
   try {
     const mailOptions = {
       from: process.env.EMAIL_FROM!,

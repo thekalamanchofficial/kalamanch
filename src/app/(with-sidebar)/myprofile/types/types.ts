@@ -1,5 +1,5 @@
 import type { FileUploadSource } from "types/enums";
-import type { Like, UserToFollow, Post } from "../../myfeed/types/types";
+import type { Like, Post, UserToFollow } from "../../myfeed/types/types";
 
 export enum MyProfileTabsEnum {
   MY_POSTS = "My Posts",
@@ -34,7 +34,6 @@ export type UserSchema = {
   comments?: Comment[];
   posts?: Post[];
 };
-
 
 export type UserInfo = {
   name: string;
