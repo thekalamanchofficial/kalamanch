@@ -91,10 +91,7 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         <Typography sx={textStyle}>Save as draft</Typography>
       </Button>
     )}
-    {postStatus == PostStatus.DRAFT && (
-      <PublishPostFormButton title={title} />
-    )}
-    
+    {postStatus == PostStatus.DRAFT && <PublishPostFormButton title={title} />}
   </Box>
 );
 

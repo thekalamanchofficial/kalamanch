@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Box,
-  Divider,
-  Grid2 as Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, Grid2 as Grid, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import WritingPad from "../_components/writingPad/WritingPad";
 import CreatePostForm from "./_components/createPostForm/PublishPostForm";
@@ -166,11 +160,7 @@ const Page = () => {
                 (draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""
               }
               handleEditorContentChange={handleEditorContentChange}
-              postStatus={
-                draftPost || shouldDraftPost
-                  ? PostStatus.DRAFT
-                  : PostStatus.PUBLISHED
-              }
+              postStatus={draftPost || shouldDraftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
               handleSendForReview={() => setSendForReviewDialogOpen(true)}
             />
           </Grid>

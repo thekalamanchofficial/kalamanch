@@ -4,7 +4,7 @@ type QueryParams = {
   postId: string;
   draftPostId: string;
   shouldDraftPost: boolean;
-}
+};
 export const useQueryParams = (): QueryParams => {
   const searchParams = useSearchParams();
   const queryParams = Object.fromEntries(searchParams.entries());
@@ -12,7 +12,7 @@ export const useQueryParams = (): QueryParams => {
 
   return {
     postId: queryParams.postId ?? "",
-    draftPostId: shouldDraftPost ? queryParams.draftPostId ?? "" : "",
+    draftPostId: shouldDraftPost ? (queryParams.draftPostId ?? "") : "",
     shouldDraftPost,
   };
 };

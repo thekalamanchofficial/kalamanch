@@ -18,7 +18,6 @@ const PublishPostFormButton = ({ title }: PublishPostFormButtonProps) => {
   const [createPostFormOpen, setCreatePostFormOpen] = useState(false);
   const router = useRouter();
   const { user } = useUser();
-  const { addDraftPost } = useDraftPost();
 
   const handleCreatePostFormClose = () => {
     setCreatePostFormOpen(false);

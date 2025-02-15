@@ -104,11 +104,11 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({ onMediaUpload, in
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         // Todo: Add onClick
-        onClick={() => {console.log("click");}}
+        onClick={() => {
+          console.log("click");
+        }}
       >
-        {isUploading && (
-          <Loader title="Uploading File..." height="100%" width="100%" />
-        )}
+        {isUploading && <Loader title="Uploading File..." height="100%" width="100%" />}
 
         {!isUploading && selectedMedia && (
           <>

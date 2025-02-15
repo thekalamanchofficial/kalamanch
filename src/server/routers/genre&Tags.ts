@@ -1,7 +1,7 @@
-import { protectedProcedure, router } from "../trpc";
-import prisma from "~/server/db";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import prisma from "~/server/db";
+import { protectedProcedure, router } from "../trpc";
 
 const createGenreSchema = yup.object({
   name: yup.string().required("Genre name is required"),
@@ -29,9 +29,7 @@ export const genreTagRouter = router({
   }),
 
   getGenre: protectedProcedure
-    .input(
-      yup.object({ name: yup.string().required("Genre name is required") }),
-    )
+    .input(yup.object({ name: yup.string().required("Genre name is required") }))
     .query(async ({ input }) => {
       try {
         const genre = await prisma.genre.findUnique({
@@ -45,19 +43,17 @@ export const genreTagRouter = router({
       }
     }),
 
-  createGenre: protectedProcedure
-    .input(createGenreSchema)
-    .mutation(async ({ input }) => {
-      try {
-        const genre = await prisma.genre.create({
-          data: { name: input.name },
-        });
-        return genre;
-      } catch (error) {
-        handleError(error);
-        throw new Error("Failed to create genre.");
-      }
-    }),
+  createGenre: protectedProcedure.input(createGenreSchema).mutation(async ({ input }) => {
+    try {
+      const genre = await prisma.genre.create({
+        data: { name: input.name },
+      });
+      return genre;
+    } catch (error) {
+      handleError(error);
+      throw new Error("Failed to create genre.");
+    }
+  }),
 
   getTags: protectedProcedure.query(async () => {
     try {
@@ -86,26 +82,24 @@ export const genreTagRouter = router({
       }
     }),
 
-  createTag: protectedProcedure
-    .input(createTagSchema)
-    .mutation(async ({ input }) => {
-      try {
-        const tag = await prisma.tag.create({
-          data: {
-            name: input.name,
-            genreIDs: input?.genreIds,
-          },
-        });
+  createTag: protectedProcedure.input(createTagSchema).mutation(async ({ input }) => {
+    try {
+      const tag = await prisma.tag.create({
+        data: {
+          name: input.name,
+          genreIDs: input?.genreIds,
+        },
+      });
 
-        await prisma.genre.updateMany({
-          where: { id: { in: input.genreIds } },
-          data: { tagIDs: { push: tag.id } },
-        });
+      await prisma.genre.updateMany({
+        where: { id: { in: input.genreIds } },
+        data: { tagIDs: { push: tag.id } },
+      });
 
-        return tag;
-      } catch (error) {
-        handleError(error);
-        throw new Error("Failed to create tag.");
-      }
-    }),
+      return tag;
+    } catch (error) {
+      handleError(error);
+      throw new Error("Failed to create tag.");
+    }
+  }),
 });

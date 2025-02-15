@@ -136,8 +136,7 @@ export const postRouter = router({
           actors: sanitizedInput.actors,
           thumbnailDetails: {
             url: sanitizedInput.thumbnailDetails.url ?? "",
-            content:
-              sanitizedInput.thumbnailDetails.content ?? null,
+            content: sanitizedInput.thumbnailDetails.content ?? null,
             title: sanitizedInput.thumbnailDetails.title ?? null,
           },
           likes: { create: [] },
@@ -230,20 +229,20 @@ export const postRouter = router({
     try {
       const { postId, userEmail, emails } = input;
 
-        await inngest.send({
-          name: "post/post.share",
-          data: {
-            postId,
-            userEmail,
-            emails,
-          },
-        });
-      } catch (error) {
-        // handleError(error);
-        console.log(error);
-        throw error;
-      }
-    }),
+      await inngest.send({
+        name: "post/post.share",
+        data: {
+          postId,
+          userEmail,
+          emails,
+        },
+      });
+    } catch (error) {
+      // handleError(error);
+      console.log(error);
+      throw error;
+    }
+  }),
 
   getGenres: protectedProcedure.query(async () => {
     try {
@@ -265,9 +264,7 @@ export const postRouter = router({
               genres: {
                 some: {
                   id: {
-                    in: genres.filter((genre): genre is string =>
-                      Boolean(genre),
-                    ),
+                    in: genres.filter((genre): genre is string => Boolean(genre)),
                   },
                 },
               },

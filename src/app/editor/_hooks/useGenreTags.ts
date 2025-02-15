@@ -1,7 +1,7 @@
-import type { Genre, Tag } from "@prisma/client";
 import { useState } from "react";
-import { trpc } from "~/app/_trpc/client";
 import type { UseFormSetValue } from "react-hook-form";
+import type { Genre, Tag } from "@prisma/client";
+import { trpc } from "~/app/_trpc/client";
 import type { CreatePostFormType } from "../types/types";
 
 type UseGenresTagsProps = {
@@ -46,8 +46,8 @@ export const useGenresTags: UseGenreTags = ({ setValue }) => {
         ? prevGenres.filter((id) => id !== genreId)
         : [...prevGenres, genreId];
 
-      const relatedTags = updatedGenres.flatMap((gId) =>
-        genres.find((g) => g.id === gId)?.tags.map((t) => t.id) ?? []
+      const relatedTags = updatedGenres.flatMap(
+        (gId) => genres.find((g) => g.id === gId)?.tags.map((t) => t.id) ?? [],
       );
 
       setSelectedTags(relatedTags);
@@ -59,9 +59,7 @@ export const useGenresTags: UseGenreTags = ({ setValue }) => {
 
   const toggleTag = (tagId: string) => {
     setSelectedTags((prev) =>
-      prev.includes(tagId)
-        ? prev.filter((id) => id !== tagId)
-        : [...prev, tagId],
+      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId],
     );
   };
 

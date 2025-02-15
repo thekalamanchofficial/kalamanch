@@ -1,11 +1,11 @@
 import * as React from "react";
-import { type Theme, useTheme } from "@mui/material/styles";
+import CancelIcon from "@mui/icons-material/Cancel";
 import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
-import CancelIcon from "@mui/icons-material/Cancel";
-import IconButton from "@mui/material/IconButton";
+import { useTheme, type Theme } from "@mui/material/styles";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -44,10 +44,7 @@ type GenreMultiSelectProps = {
   onChange: (value: string[]) => void;
 };
 
-export default function GenreMultiSelect({
-  value = [],
-  onChange,
-}: GenreMultiSelectProps) {
+export default function GenreMultiSelect({ value = [], onChange }: GenreMultiSelectProps) {
   const theme = useTheme();
 
   const handleChange = (event: SelectChangeEvent<string[]>) => {

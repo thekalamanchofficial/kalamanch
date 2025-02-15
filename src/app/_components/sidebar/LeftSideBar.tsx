@@ -1,9 +1,9 @@
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import UserMenu from "../userMenu/UserMenu";
-import LeftSideBarNavLinks from "./LeftSideBarNavLinks";
 import { type MenuItemList } from "~/app/(with-sidebar)/myfeed/types/types";
+import UserMenu from "../userMenu/UserMenu";
 import CreatePostFormButton from "./CreatePostFormButton";
+import LeftSideBarNavLinks from "./LeftSideBarNavLinks";
 
 type LeftSideBarProps = {
   menuItems: MenuItemList[];

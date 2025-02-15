@@ -18,18 +18,20 @@ type CreatePostFormState = {
   closeCreatePostForm: () => void;
 };
 
- export const useCreatePostFormDataState = ({postDetails}:CreatePostFormDataStateProps): CreatePostFormState=> {
-    const [isCreatePostFormOpen, setIsCreatePostFormOpen] = useState(false);
-    const formData = {
-        title: postDetails?.title ?? "",
-        actors: postDetails?.actors,
-        thumbnailUrl: postDetails?.thumbnailDetails.url,
-        tags: postDetails?.tags,
-        postType: postDetails?.postType?.toLowerCase(),
-        targetAudience: postDetails?.targetAudience,
-    };
-    const openCreatePostForm = () => setIsCreatePostFormOpen(true);
-    const closeCreatePostForm = () => setIsCreatePostFormOpen(false);
+export const useCreatePostFormDataState = ({
+  postDetails,
+}: CreatePostFormDataStateProps): CreatePostFormState => {
+  const [isCreatePostFormOpen, setIsCreatePostFormOpen] = useState(false);
+  const formData = {
+    title: postDetails?.title ?? "",
+    actors: postDetails?.actors,
+    thumbnailUrl: postDetails?.thumbnailDetails.url,
+    tags: postDetails?.tags,
+    postType: postDetails?.postType?.toLowerCase(),
+    targetAudience: postDetails?.targetAudience,
+  };
+  const openCreatePostForm = () => setIsCreatePostFormOpen(true);
+  const closeCreatePostForm = () => setIsCreatePostFormOpen(false);
 
   return { formData, isCreatePostFormOpen, openCreatePostForm, closeCreatePostForm };
 };

@@ -1,29 +1,30 @@
 "use client";
+
+import { useState } from "react";
+import { Controller } from "react-hook-form";
+import CloseIcon from "@mui/icons-material/Close";
 import {
+  Box,
   Button,
   Chip,
   Dialog,
   DialogActions,
-  Grid2 as Grid,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormHelperText,
+  Grid2 as Grid,
+  MenuItem,
+  Select,
   TextField,
   Typography,
-  Box,
-  Select,
-  MenuItem,
-  FormHelperText,
 } from "@mui/material";
-import { type CreatePostFormType } from "../../types/types";
-import { Controller } from "react-hook-form";
-import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
-import { useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUploader";
 import { PostType } from "@prisma/client";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUploader";
+import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
 import { useGenresTags } from "../../_hooks/useGenreTags";
+import { type CreatePostFormType } from "../../types/types";
 
 export type CreatePostFormProps = {
   open: boolean;
@@ -108,10 +109,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
             render={({ field: { onChange, value } }) => (
               <FormControl fullWidth>
                 <Typography variant="h4">Upload Thumbnail</Typography>
-                <ThumbnailUploader
-                  onMediaUpload={onChange}
-                  initialMedia={value}
-                />
+                <ThumbnailUploader onMediaUpload={onChange} initialMedia={value} />
               </FormControl>
             )}
           />
@@ -168,8 +166,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
                 >
                   {Object.values(PostType).map((type) => (
                     <MenuItem key={type} value={type.toLowerCase()}>
-                      {type.charAt(0).toUpperCase() +
-                        type.slice(1).toLowerCase()}
+                      {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
                     </MenuItem>
                   ))}
                 </Select>
@@ -183,9 +180,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               name="actors"
               defaultValue={createPostFormData.actors}
               render={({ field: { value = [], onChange } }) => {
-                const handleAddActors = (
-                  e: React.KeyboardEvent<HTMLInputElement>,
-                ) => {
+                const handleAddActors = (e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key === "Enter" && actors.trim()) {
                     onChange([...value, actors.trim()]);
                     setActors("");
@@ -273,14 +268,10 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
                             deleteIcon: <CloseIcon />,
                           })}
                           sx={{
-                            backgroundColor: isSelected
-                              ? "secondary.main"
-                              : "grey.300",
+                            backgroundColor: isSelected ? "secondary.main" : "grey.300",
                             color: isSelected ? "text.primary" : "primary.main",
                             border: isSelected ? "1px solid" : "none",
-                            borderColor: isSelected
-                              ? "primary.main"
-                              : "grey.300",
+                            borderColor: isSelected ? "primary.main" : "grey.300",
                           }}
                         />
                       );
@@ -324,14 +315,10 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
                             deleteIcon: <CloseIcon />,
                           })}
                           sx={{
-                            backgroundColor: isSelected
-                              ? "secondary.main"
-                              : "grey.300",
+                            backgroundColor: isSelected ? "secondary.main" : "grey.300",
                             color: isSelected ? "text.primary" : "primary.main",
                             border: isSelected ? "1px solid" : "none",
-                            borderColor: isSelected
-                              ? "primary.main"
-                              : "grey.300",
+                            borderColor: isSelected ? "primary.main" : "grey.300",
                           }}
                         />
                       );
@@ -344,11 +331,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
         </Box>
       </DialogContent>
       <DialogActions sx={{ justifyContent: "space-between", padding: 3 }}>
-        <Button
-          variant="outlined"
-          onClick={handleClose}
-          sx={{ width: "100px" }}
-        >
+        <Button variant="outlined" onClick={handleClose} sx={{ width: "100px" }}>
           Cancel
         </Button>
         <Button
@@ -356,9 +339,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
           onClick={handleSubmit(handleFormSubmit)}
           sx={{ width: "100px" }}
         >
-          {update
-            ? STATIC_TEXTS.EDITOR_PAGE.UPDATE
-            : STATIC_TEXTS.EDITOR_PAGE.CREATE}
+          {update ? STATIC_TEXTS.EDITOR_PAGE.UPDATE : STATIC_TEXTS.EDITOR_PAGE.CREATE}
         </Button>
       </DialogActions>
     </Dialog>

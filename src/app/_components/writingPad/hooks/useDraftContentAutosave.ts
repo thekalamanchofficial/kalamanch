@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import throttle from "lodash/throttle";
-import { PostStatus } from "~/app/editor/types/types";
-import { useDraftPost } from "~/app/_hooks/useDraftPost";
-import { useUser } from "~/context/userContext";
 import { useRouter, useSearchParams } from "next/navigation";
+import throttle from "lodash/throttle";
+import { useDraftPost } from "~/app/_hooks/useDraftPost";
+import { PostStatus } from "~/app/editor/types/types";
+import { useUser } from "~/context/userContext";
 
 type UseDraftContentAutosaveReturn = {
   onContentChange: (data: string) => void;
@@ -13,11 +13,7 @@ type UseDraftContentAutosaveReturn = {
 type UseDraftContentAutosaveProps = {
   currentIterationId: string | null | undefined;
   initialContent: string;
-  saveContentToDb: (
-    content: string,
-    currentIterationId: string,
-    showToast?: boolean,
-  ) => void;
+  saveContentToDb: (content: string, currentIterationId: string, showToast?: boolean) => void;
   postStatus: PostStatus;
 };
 
@@ -28,8 +24,7 @@ export const useDraftContentAutosave = ({
   postStatus,
 }: UseDraftContentAutosaveProps): UseDraftContentAutosaveReturn => {
   const [content, setContent] = useState<string>(initialContent);
-  const [lastSavedContent, setLastSavedContent] =
-    useState<string>(initialContent);
+  const [lastSavedContent, setLastSavedContent] = useState<string>(initialContent);
   const { addDraftPost } = useDraftPost();
   const { user } = useUser();
   const router = useRouter();

@@ -10,41 +10,52 @@ const addDraftPostSchema = yup.object({
   authorId: yup.string().required(),
   authorName: yup.string().required(),
   authorProfileImageUrl: yup.string().optional(),
-  postDetails: yup.object({
-    title: yup.string(),
-    targetAudience: yup.array(yup.string()).optional(),
-    postType: yup.string().nullable(),
-    actors: yup.array(yup.string()).optional(),
-    tags: yup.array(yup.string()).optional(),
-    thumbnailDetails: yup.object({
-      url: yup.string().optional(),
-      content: yup.string().optional().nullable(),
-      title: yup.string().optional().nullable(),
-    }).required(),
-  }).required(),
-  iterations: yup.array().of(
-    yup.object({
-      iterationName: yup.string().required(),
-      content: yup.string().optional()
+  postDetails: yup
+    .object({
+      title: yup.string(),
+      targetAudience: yup.array(yup.string()).optional(),
+      postType: yup.string().nullable(),
+      actors: yup.array(yup.string()).optional(),
+      tags: yup.array(yup.string()).optional(),
+      thumbnailDetails: yup
+        .object({
+          url: yup.string().optional(),
+          content: yup.string().optional().nullable(),
+          title: yup.string().optional().nullable(),
+        })
+        .required(),
     })
-  ).optional()
+    .required(),
+  iterations: yup
+    .array()
+    .of(
+      yup.object({
+        iterationName: yup.string().required(),
+        content: yup.string().optional(),
+      }),
+    )
+    .optional(),
 });
 
 const updateDraftPostDetailsSchema = yup.object({
   draftPostId: yup.string().required(),
-  postDetails: yup.object({
-    title: yup.string().required(),
-    targetAudience: yup.array(yup.string()).optional(),
-    postType: yup.string().nullable(),
-    actors: yup.array(yup.string()).optional(),
-    tags: yup.array(yup.string()).optional(),
-    thumbnailDetails: yup.object({
-      url: yup.string().optional(),
-      content: yup.string().optional().nullable(),
-      title: yup.string().optional().nullable(),
-    }).required(),
-  }).required(),
-})
+  postDetails: yup
+    .object({
+      title: yup.string().required(),
+      targetAudience: yup.array(yup.string()).optional(),
+      postType: yup.string().nullable(),
+      actors: yup.array(yup.string()).optional(),
+      tags: yup.array(yup.string()).optional(),
+      thumbnailDetails: yup
+        .object({
+          url: yup.string().optional(),
+          content: yup.string().optional().nullable(),
+          title: yup.string().optional().nullable(),
+        })
+        .required(),
+    })
+    .required(),
+});
 
 const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
@@ -81,39 +92,37 @@ export const draftPostRouter = router({
       return draftPost;
     }),
 
-  addDraftPost: protectedProcedure
-    .input(addDraftPostSchema)
-    .mutation(async ({ input }) => {
-      const draftPost = await prisma.draftPost.create({
-        data: {
-          authorId: input.authorId,
-          authorName: input.authorName,
-          authorProfileImageUrl: input.authorProfileImageUrl ?? "",
-          postDetails: {
-            title: input.postDetails.title ?? "",
-            targetAudience: cleanArray(input.postDetails.targetAudience) ?? [],
-            postType: input.postDetails.postType?.toUpperCase() as PostType,
-            actors: cleanArray(input.postDetails.actors) ?? [],
-            tags: cleanArray(input.postDetails.tags) ?? [],
-            thumbnailDetails: {
-              url: input.postDetails.thumbnailDetails.url ?? "",
-              content: input.postDetails.thumbnailDetails.content,
-              title: input.postDetails.thumbnailDetails.title,
-            },
-          },
-          iterations: {
-            create: input.iterations?.map((iteration) => ({
-              iterationName: iteration.iterationName ?? "",
-              content: iteration.content ?? "",
-            })),
+  addDraftPost: protectedProcedure.input(addDraftPostSchema).mutation(async ({ input }) => {
+    const draftPost = await prisma.draftPost.create({
+      data: {
+        authorId: input.authorId,
+        authorName: input.authorName,
+        authorProfileImageUrl: input.authorProfileImageUrl ?? "",
+        postDetails: {
+          title: input.postDetails.title ?? "",
+          targetAudience: cleanArray(input.postDetails.targetAudience) ?? [],
+          postType: input.postDetails.postType?.toUpperCase() as PostType,
+          actors: cleanArray(input.postDetails.actors) ?? [],
+          tags: cleanArray(input.postDetails.tags) ?? [],
+          thumbnailDetails: {
+            url: input.postDetails.thumbnailDetails.url ?? "",
+            content: input.postDetails.thumbnailDetails.content,
+            title: input.postDetails.thumbnailDetails.title,
           },
         },
-        include: {
-          iterations: true
-        }
-      });
-      return draftPost;
-    }),
+        iterations: {
+          create: input.iterations?.map((iteration) => ({
+            iterationName: iteration.iterationName ?? "",
+            content: iteration.content ?? "",
+          })),
+        },
+      },
+      include: {
+        iterations: true,
+      },
+    });
+    return draftPost;
+  }),
 
   addIteration: protectedProcedure
     .input(
