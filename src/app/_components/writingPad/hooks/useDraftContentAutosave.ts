@@ -35,11 +35,7 @@ export const useDraftContentAutosave = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const saveContent = (
-    data: string,
-    iterationId: string,
-    showToast?: boolean,
-  ) => {
+  const saveContent = (data: string, iterationId: string, showToast?: boolean) => {
     if (data === lastSavedContent) return;
     setLastSavedContent(data);
     saveContentToDb(data, iterationId, showToast);

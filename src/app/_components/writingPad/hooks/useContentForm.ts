@@ -1,5 +1,5 @@
+import { useForm, type UseFormReturn } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { type UseFormReturn, useForm } from "react-hook-form";
 import { contentFormSchema } from "../formSchema/schema";
 
 type ContentForm = () => UseFormReturn<{ content: string }>;

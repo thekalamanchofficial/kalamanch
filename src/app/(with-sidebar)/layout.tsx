@@ -1,9 +1,9 @@
 import React, { type ReactNode } from "react";
-import { Grid2 as Grid, Box } from "@mui/material";
+import { Box, Grid2 as Grid } from "@mui/material";
 import RightSideBar from "~/app/_components/sidebar/RightSideBar";
 import { MENU_ITEMS } from "~/app/(with-sidebar)/myfeed/static/menu";
-import LeftSideBar from "../_components/sidebar/LeftSideBar";
 import { AppBarMenu } from "../_components/appBarMenu/AppBarMenu";
+import LeftSideBar from "../_components/sidebar/LeftSideBar";
 import { FeedProvider } from "./myfeed/_context/FeedContext";
 
 const Layout = ({ children }: { children: ReactNode }) => {

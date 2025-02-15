@@ -1,10 +1,9 @@
-import { protectedProcedure, router } from "../trpc";
-import prisma from "~/server/db";
-
+import type { PostStatus } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import prisma from "~/server/db";
+import { protectedProcedure, router } from "../trpc";
 import getUserDetails from "../utils/getUserDetails";
-import type { PostStatus } from "@prisma/client";
 
 const commentSchema = yup.object({
   userEmail: yup.string().email().required(),
@@ -29,121 +28,117 @@ const bulkCommentsInputSchema = yup.object({
 type BulkCommentInput = yup.InferType<typeof bulkCommentSchema>;
 
 export const commentRouter = router({
-  addComment: protectedProcedure
-    .input(commentSchema)
-    .mutation(async ({ input }) => {
-      try {
-        const {
-          iterationId,
-          postStatus,
+  addComment: protectedProcedure.input(commentSchema).mutation(async ({ input }) => {
+    try {
+      const {
+        iterationId,
+        postStatus,
+        postId,
+        userEmail,
+        userName,
+        content,
+        userProfileImageUrl,
+        parentId,
+      } = input;
+
+      const userDetails = await getUserDetails(userEmail);
+      const { id: userId } = userDetails;
+
+      const comment = await prisma.comment.create({
+        data: {
+          userId,
           postId,
-          userEmail,
+          iterationId,
+          postStatus: postStatus.toUpperCase() as PostStatus,
           userName,
+          userProfileImageUrl: userProfileImageUrl ?? "",
           content,
-          userProfileImageUrl,
-          parentId,
-        } = input;
+          parentId: parentId === "" ? null : parentId,
+        },
+      });
+      return comment;
+    } catch (error) {
+      // handleError(error);
+      throw error;
+    }
+  }),
 
-        const userDetails = await getUserDetails(userEmail);
-        const { id: userId } = userDetails;
+  bulkAddComments: protectedProcedure.input(bulkCommentsInputSchema).mutation(async ({ input }) => {
+    try {
+      const userDetails = await getUserDetails(input.userEmail);
+      const { id: userId } = userDetails;
 
-        const comment = await prisma.comment.create({
-          data: {
-            userId,
-            postId,
-            iterationId,
-            postStatus: postStatus.toUpperCase() as PostStatus,
-            userName,
-            userProfileImageUrl: userProfileImageUrl ?? "",
-            content,
-            parentId: parentId === "" ? null : parentId,
-          },
+      const parentComments: BulkCommentInput[] = [];
+      const childComments: BulkCommentInput[] = [];
+
+      input.comments.forEach((comment) => {
+        if (!comment.parentId) {
+          parentComments.push(comment);
+        } else {
+          childComments.push(comment);
+        }
+      });
+
+      const parentCommentData = parentComments.map((comment) => ({
+        postId: comment.postId,
+        iterationId: comment.iterationId,
+        postStatus: comment.postStatus as PostStatus,
+        content: comment.content,
+        userId,
+        userName: comment.userName,
+        userProfileImageUrl: comment.userProfileImageUrl ?? "",
+        parentId: null,
+        id: comment.id,
+      }));
+
+      if (parentCommentData.length > 0) {
+        const createdParents = await prisma.comment.createMany({
+          data: parentCommentData,
         });
-        return comment;
-      } catch (error) {
-        // handleError(error);
-        throw error;
+
+        if (createdParents.count !== parentCommentData.length) {
+          throw new Error("Failed to create all parent comments");
+        }
       }
-    }),
 
-  bulkAddComments: protectedProcedure
-    .input(bulkCommentsInputSchema)
-    .mutation(async ({ input }) => {
-      try {
-        const userDetails = await getUserDetails(input.userEmail);
-        const { id: userId } = userDetails;
-
-        const parentComments: BulkCommentInput[] = [];
-        const childComments: BulkCommentInput[] = [];
-
-        input.comments.forEach((comment) => {
-          if (!comment.parentId) {
-            parentComments.push(comment);
-          } else {
-            childComments.push(comment);
-          }
-        });
-
-        const parentCommentData = parentComments.map((comment) => ({
-          postId: comment.postId,
-          iterationId: comment.iterationId,
-          postStatus: comment.postStatus as PostStatus,
-          content: comment.content,
-          userId,
-          userName: comment.userName,
-          userProfileImageUrl: comment.userProfileImageUrl ?? "",
-          parentId: null,
-          id: comment.id,
-        }));
-
-        if (parentCommentData.length > 0) {
-          const createdParents = await prisma.comment.createMany({
-            data: parentCommentData,
-          });
-
-          if (createdParents.count !== parentCommentData.length) {
-            throw new Error("Failed to create all parent comments");
-          }
-        }
-
-        if (childComments.length === 0) {
-          return {
-            comments: parentCommentData,
-          };
-        }
-
-        const childCommentData = childComments.map((comment) => ({
-          postId: comment.postId,
-          iterationId: comment.iterationId,
-          postStatus: comment.postStatus as PostStatus,
-          content: comment.content,
-          userId,
-          userName: comment.userName,
-          userProfileImageUrl: comment.userProfileImageUrl ?? "",
-          parentId: comment.parentId,
-          id: comment.id,
-        }));
-
-        if (childCommentData.length > 0) {
-          const createdChildren = await prisma.comment.createMany({
-            data: childCommentData,
-          });
-
-          if (createdChildren.count !== childCommentData.length) {
-            throw new Error("Failed to create all child comments");
-          }
-        }
-
-        const allCreatedComments = [...parentCommentData, ...childCommentData];
-
+      if (childComments.length === 0) {
         return {
-          comments: allCreatedComments,
+          comments: parentCommentData,
         };
-      } catch (error) {
-        handleError(error);
-        throw error;
       }
-    }),
+
+      const childCommentData = childComments.map((comment) => ({
+        postId: comment.postId,
+        iterationId: comment.iterationId,
+        postStatus: comment.postStatus as PostStatus,
+        content: comment.content,
+        userId,
+        userName: comment.userName,
+        userProfileImageUrl: comment.userProfileImageUrl ?? "",
+        parentId: comment.parentId,
+        id: comment.id,
+      }));
+
+      if (childCommentData.length > 0) {
+        const createdChildren = await prisma.comment.createMany({
+          data: childCommentData,
+        });
+
+        if (createdChildren.count !== childCommentData.length) {
+          throw new Error("Failed to create all child comments");
+        }
+      }
+
+      const allCreatedComments = [...parentCommentData, ...childCommentData];
+
+      return {
+        comments: allCreatedComments,
+      };
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  }),
 
   getComments: protectedProcedure
     .input(

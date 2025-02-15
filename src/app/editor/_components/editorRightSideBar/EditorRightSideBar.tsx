@@ -1,5 +1,5 @@
-import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import React from "react";
+import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import PercentageCircle from "~/app/_components/percentageCircle/PercentageCircle";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
@@ -9,9 +9,7 @@ type editorRightSideBarProps = {
     value: number;
   }>;
 };
-const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({
-  accuracy,
-}) => {
+const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({ accuracy }) => {
   const getColor = (value: number) => {
     if (value < 40) {
       return "#B71717";
@@ -63,37 +61,31 @@ const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({
           width: "100%",
         }}
       >
-        {accuracy?.map(
-          (item: { parameterName: string; value: number }, index: number) => {
-            const color = getColor(item.value);
-            return (
-              <Box
-                key={index}
+        {accuracy?.map((item: { parameterName: string; value: number }, index: number) => {
+          const color = getColor(item.value);
+          return (
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Typography
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                  width: "100%",
+                  fontWeight: "550",
+                  fontSize: "14px",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontWeight: "550",
-                    fontSize: "14px",
-                  }}
-                >
-                  {`${item.parameterName} `}
-                </Typography>
+                {`${item.parameterName} `}
+              </Typography>
 
-                <PercentageCircle
-                  variant="determinate"
-                  value={item.value}
-                  fillColor={color}
-                />
-              </Box>
-            );
-          },
-        )}
+              <PercentageCircle variant="determinate" value={item.value} fillColor={color} />
+            </Box>
+          );
+        })}
       </Grid>
     </Grid>
   );

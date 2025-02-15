@@ -1,10 +1,9 @@
-import { protectedProcedure, router } from "../trpc";
-import prisma from "~/server/db";
-
+import type { PostType } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
-import type { PostType } from "@prisma/client";
 import { inngest } from "~/inngest/client";
+import prisma from "~/server/db";
+import { protectedProcedure, router } from "../trpc";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
@@ -153,36 +152,32 @@ export const postRouter = router({
       throw new Error("Failed to create the post.");
     }
   }),
-  deletePost: protectedProcedure
-    .input(yup.string())
-    .mutation(async ({ input: postId }) => {
-      try {
-        const post = await prisma.post.delete({
-          where: {
-            id: postId,
-          },
-        });
-        return post;
-      } catch (error) {
-        handleError(error);
-        throw new Error("Failed to delete the post.");
-      }
-    }),
-  getPost: protectedProcedure
-    .input(yup.string())
-    .query(async ({ input: postId }) => {
-      try {
-        const post = await prisma.post.findUnique({
-          where: {
-            id: postId,
-          },
-        });
-        return post;
-      } catch (error) {
-        handleError(error);
-        throw new Error("Failed to fetch the post.");
-      }
-    }),
+  deletePost: protectedProcedure.input(yup.string()).mutation(async ({ input: postId }) => {
+    try {
+      const post = await prisma.post.delete({
+        where: {
+          id: postId,
+        },
+      });
+      return post;
+    } catch (error) {
+      handleError(error);
+      throw new Error("Failed to delete the post.");
+    }
+  }),
+  getPost: protectedProcedure.input(yup.string()).query(async ({ input: postId }) => {
+    try {
+      const post = await prisma.post.findUnique({
+        where: {
+          id: postId,
+        },
+      });
+      return post;
+    } catch (error) {
+      handleError(error);
+      throw new Error("Failed to fetch the post.");
+    }
+  }),
   updatePostContent: protectedProcedure
     .input(updatePostContentSchema)
     .mutation(async ({ input }) => {
@@ -231,11 +226,9 @@ export const postRouter = router({
         throw new Error("Failed to update the post.");
       }
     }),
-  sharePost: protectedProcedure
-    .input(sharePostSchema)
-    .mutation(async ({ input }) => {
-      try {
-        const { postId, userEmail, emails } = input;
+  sharePost: protectedProcedure.input(sharePostSchema).mutation(async ({ input }) => {
+    try {
+      const { postId, userEmail, emails } = input;
 
         await inngest.send({
           name: "post/post.share",

@@ -1,17 +1,10 @@
 "use client";
+
 import React from "react";
-import {
-  Box,
-  Typography,
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  IconButton,
-} from "@mui/material";
+import { useRouter } from "next/navigation";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import { useRouter } from "next/navigation";
+import { Avatar, Box, Button, Card, CardContent, IconButton, Typography } from "@mui/material";
 
 interface ProfileCardProps {
   name: string | null | undefined;

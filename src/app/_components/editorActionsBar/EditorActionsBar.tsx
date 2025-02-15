@@ -1,9 +1,10 @@
 "use client";
+
 import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import FolderIcon from "@mui/icons-material/Folder";
-import ChecklistIcon from "@mui/icons-material/Checklist";
+import { Box, Button, Typography } from "@mui/material";
 import { PostStatus } from "~/app/editor/types/types";
 import PublishPostFormButton from "../sidebar/PublishPostFormButton";
 

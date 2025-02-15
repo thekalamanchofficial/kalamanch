@@ -1,7 +1,7 @@
 import { useSearchParams } from "next/navigation";
 
 type QueryParams = {
-  postId : string;
+  postId: string;
   draftPostId: string;
   shouldDraftPost: boolean;
 }

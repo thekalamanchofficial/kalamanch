@@ -1,7 +1,7 @@
-import * as yup from "yup";
-import { router, protectedProcedure } from "~/server/trpc";
-import prisma from "../db";
 import { type PostType } from "@prisma/client";
+import * as yup from "yup";
+import { protectedProcedure, router } from "~/server/trpc";
+import prisma from "../db";
 
 const userIdSchema = yup.string().required("User ID is required");
 
@@ -46,7 +46,7 @@ const updateDraftPostDetailsSchema = yup.object({
   }).required(),
 })
 
-const cleanArray = (array?: (string | undefined)[]): string[] => 
+const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
 
 export const draftPostRouter = router({
@@ -61,8 +61,8 @@ export const draftPostRouter = router({
           createdAt: "desc",
         },
         include: {
-          iterations: true
-        }
+          iterations: true,
+        },
       });
       return draftPosts;
     }),
@@ -75,8 +75,8 @@ export const draftPostRouter = router({
           id: input,
         },
         include: {
-            iterations: true
-        }
+          iterations: true,
+        },
       });
       return draftPost;
     }),
@@ -115,12 +115,14 @@ export const draftPostRouter = router({
       return draftPost;
     }),
 
-    addIteration: protectedProcedure
-    .input(yup.object({
-      draftPostId: yup.string().required(),
-      iterationName: yup.string().required(),
-      content: yup.string().optional(),
-    }))
+  addIteration: protectedProcedure
+    .input(
+      yup.object({
+        draftPostId: yup.string().required(),
+        iterationName: yup.string().required(),
+        content: yup.string().optional(),
+      }),
+    )
     .mutation(async ({ input }) => {
       const iteration = await prisma.iterations.create({
         data: {
@@ -132,12 +134,14 @@ export const draftPostRouter = router({
       return iteration;
     }),
 
-    updateIteration: protectedProcedure
-    .input(yup.object({
-      iterationId: yup.string().required(),
-      iterationName: yup.string().required(),
-      content: yup.string().optional(),
-    }))
+  updateIteration: protectedProcedure
+    .input(
+      yup.object({
+        iterationId: yup.string().required(),
+        iterationName: yup.string().required(),
+        content: yup.string().optional(),
+      }),
+    )
     .mutation(async ({ input }) => {
       const iteration = await prisma.iterations.update({
         where: {
@@ -150,25 +154,25 @@ export const draftPostRouter = router({
       });
       return iteration;
     }),
-    deleteDraftPost: protectedProcedure
+  deleteDraftPost: protectedProcedure
     .input(yup.string().required())
     .mutation(async ({ input: draftPostId }) => {
       await prisma.draftPost.delete({
         where: {
           id: draftPostId,
         },
-      })
+      });
     }),
 
-    updateDraftPostDetails: protectedProcedure
-    .input(updateDraftPostDetailsSchema).
-    mutation(async ({ input }) => {
+  updateDraftPostDetails: protectedProcedure
+    .input(updateDraftPostDetailsSchema)
+    .mutation(async ({ input }) => {
       const { draftPostId, postDetails } = input;
       await prisma.draftPost.update({
         where: {
           id: draftPostId,
         },
-        data: { 
+        data: {
           postDetails: {
             update: {
               title: postDetails.title,
@@ -181,11 +185,11 @@ export const draftPostRouter = router({
                   url: postDetails.thumbnailDetails.url,
                   content: postDetails.thumbnailDetails.content,
                   title: postDetails.thumbnailDetails.title,
-                }
-              }
-            }
-          }
-        }
-    })
+                },
+              },
+            },
+          },
+        },
+      });
     }),
 });

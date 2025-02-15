@@ -1,5 +1,5 @@
-import { Box, type SxProps, Typography } from "@mui/material";
 import React from "react";
+import { Box, Typography, type SxProps } from "@mui/material";
 
 type ShowMessageProps = {
   title: string;

@@ -23,13 +23,9 @@ const handleGeneralError = (error: unknown) => {
 const handleTRPCError = (error: unknown) => {
   if (
     error instanceof TRPCClientError &&
-    error.message.includes(
-      "Unique constraint failed on the constraint: `User_email_key`",
-    )
+    error.message.includes("Unique constraint failed on the constraint: `User_email_key`")
   ) {
-    toast.error(
-      "This email is already registered. Please use a different email or login.",
-    );
+    toast.error("This email is already registered. Please use a different email or login.");
   } else {
     toast.error("An error occurred. Please try again.");
   }

@@ -1,30 +1,30 @@
-import Box from "@mui/material/Box"
-import Dialog from "@mui/material/Dialog"
-import DialogTitle from "@mui/material/DialogTitle"
-import DialogContent from "@mui/material/DialogContent"
-import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-import ListItemAvatar from "@mui/material/ListItemAvatar"
-import ListItemText from "@mui/material/ListItemText"
-import Avatar from "@mui/material/Avatar"
-import TextField from "@mui/material/TextField"
-import Button from "@mui/material/Button"
-import { Search } from "@mui/icons-material"
-import ListItemButton from "@mui/material/ListItemButton"
-import { DialogActions } from "@mui/material"
-import { STATIC_TEXTS } from "~/app/_components/static/staticText"
-import { useSearchUsers } from "../../_hooks/useSearchUsers"
-import { useSelectedUsers } from "../../_hooks/useSelectedUsers"
+import { Search } from "@mui/icons-material";
+import { DialogActions } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import TextField from "@mui/material/TextField";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { useSearchUsers } from "../../_hooks/useSearchUsers";
+import { useSelectedUsers } from "../../_hooks/useSelectedUsers";
 
 interface ReviewDialogProps {
-  open: boolean
-  onClose: () => void
-  onSubmit: (selectedUsers: string[]) => void
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (selectedUsers: string[]) => void;
 }
 
 export default function SendForReviewDialog({ open, onClose, onSubmit }: ReviewDialogProps) {
-  const { searchTerm,users ,handleSearch, handleScroll } = useSearchUsers();
-  const { selectedUsers, toggleUserSelection } = useSelectedUsers()
+  const { searchTerm, users, handleSearch, handleScroll } = useSearchUsers();
+  const { selectedUsers, toggleUserSelection } = useSelectedUsers();
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Select Users for Review</DialogTitle>
@@ -47,7 +47,10 @@ export default function SendForReviewDialog({ open, onClose, onSubmit }: ReviewD
           }}
         />
       </Box>
-      <DialogContent sx={{ pt: 0, maxHeight: "500px", overflowY: "scroll" }} onScroll={handleScroll}>
+      <DialogContent
+        sx={{ pt: 0, maxHeight: "500px", overflowY: "scroll" }}
+        onScroll={handleScroll}
+      >
         <List>
           {users.map((user) => (
             <ListItem key={user.id} disablePadding>
@@ -104,5 +107,5 @@ export default function SendForReviewDialog({ open, onClose, onSubmit }: ReviewD
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }

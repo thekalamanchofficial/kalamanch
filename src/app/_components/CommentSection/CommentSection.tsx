@@ -1,16 +1,11 @@
-import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { type CommentSectionProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import CommentCard from "~/app/_components/commentCard/CommentCard";
+import { type CommentSectionProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import Editor from "../commentCard/Editor";
 
-const CommentSection: React.FC<CommentSectionProps> = ({
-  comments,
-  addComment,
-}) => {
-  const [replyingState, setReplyingState] = useState<Record<string, boolean>>(
-    {},
-  );
+const CommentSection: React.FC<CommentSectionProps> = ({ comments, addComment }) => {
+  const [replyingState, setReplyingState] = useState<Record<string, boolean>>({});
 
   const commentButtonClick = async (comment: string, parent: string) => {
     if (comment.trim()) {
@@ -71,17 +66,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             height: "150px",
           }}
         >
-          <Typography variant="body2">
-            No Comments. Be the first one to comment.
-          </Typography>
+          <Typography variant="body2">No Comments. Be the first one to comment.</Typography>
         </Box>
       )}
-      <Box
-        sx={{ bottom: "0", left: "0", position: "sticky", marginTop: "6px" }}
-      >
-        <Editor
-          handleReply={(comment: string) => commentButtonClick(comment, "")}
-        />
+      <Box sx={{ bottom: "0", left: "0", position: "sticky", marginTop: "6px" }}>
+        <Editor handleReply={(comment: string) => commentButtonClick(comment, "")} />
       </Box>
     </Grid>
   );

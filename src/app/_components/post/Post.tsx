@@ -1,8 +1,11 @@
 "use client";
+
+import { memo, useCallback, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 import { Box, Card, CardContent } from "@mui/material";
-import { memo, useCallback, useState } from "react";
 import { type Post as PostType } from "~/app/(with-sidebar)/myfeed/types/types";
+import { usePostUnpublishing } from "~/app/editor/_hooks/usePostUnpublishing";
 import { PostStatus } from "~/app/editor/types/types";
 import { useBookmark } from "~/hooks/useBookmark";
 import { useComments } from "~/hooks/useComments";
@@ -12,8 +15,6 @@ import FollowButton from "../followButton/FollowButton";
 import PostCardContent from "../postCardContent/PostCardContent";
 import PostCardFooter from "../postCardFooter/PostCardFooter";
 import UserNameProfile from "../userNameProfile/UserNameProfile";
-import { usePathname, useRouter } from "next/navigation";
-import { usePostUnpublishing } from "~/app/editor/_hooks/usePostUnpublishing";
 
 interface PostProps {
   post: PostType;
@@ -112,9 +113,7 @@ const Post = memo<PostProps>(
             handleBookmark={handleBookmark}
             handleEditPublishedPost={handleEditPost}
           />
-          {isCommentOpen && (
-            <CommentSection comments={comments} addComment={handleAddComment} />
-          )}
+          {isCommentOpen && <CommentSection comments={comments} addComment={handleAddComment} />}
         </CardContent>
       </Card>
     );

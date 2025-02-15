@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import type { PostType } from "@prisma/client";
 import type { Post, PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
-import type { CreatePostFormType } from "../types/types";
-import type { PostType } from "@prisma/client";
 import { usePost } from "../../_hooks/usePost";
+import type { CreatePostFormType } from "../types/types";
 
 type UsePublishedPostEditorStateResponse = {
   publishedPost: Post | null;
@@ -12,12 +12,17 @@ type UsePublishedPostEditorStateResponse = {
   updatePostDetails: (createPostFormDetails: CreatePostFormType) => Promise<void>;
 };
 type UsePublishedPostEditorStateProps = {
-  postId? : string | undefined;
-}
+  postId?: string | undefined;
+};
 
-export const usePublishedPostEditorState = ({postId}: UsePublishedPostEditorStateProps): UsePublishedPostEditorStateResponse => {
+export const usePublishedPostEditorState = ({
+  postId,
+}: UsePublishedPostEditorStateProps): UsePublishedPostEditorStateResponse => {
   const [publishedPost, setPublishedPost] = useState<Post | null>(null);
-  const {updatePostDetails: updatePostDetailsCallBack , updatePostContent: updatePostContentCallBack} = usePost();
+  const {
+    updatePostDetails: updatePostDetailsCallBack,
+    updatePostContent: updatePostContentCallBack,
+  } = usePost();
 
   const { data: post } = trpc.post.getPost.useQuery(postId, {
     enabled: Boolean(postId),
@@ -27,8 +32,7 @@ export const usePublishedPostEditorState = ({postId}: UsePublishedPostEditorStat
     if (!publishedPost) return;
     if (publishedPost.content === content) return;
 
-
-    await updatePostContentCallBack(publishedPost.id,content);
+    await updatePostContentCallBack(publishedPost.id, content);
     setPublishedPost((prev) => {
       if (!prev) return prev;
       return {
@@ -41,16 +45,16 @@ export const usePublishedPostEditorState = ({postId}: UsePublishedPostEditorStat
   const updatePostDetails = async (createPostFormDetails: CreatePostFormType) => {
     if (!publishedPost) return;
     const postDetails: PostDetails = {
-        title: createPostFormDetails.title,
-        targetAudience: createPostFormDetails.targetAudience ?? [], 
-        postType: createPostFormDetails.postType?.toUpperCase() as PostType,
-        actors: createPostFormDetails.actors ?? [],
-        tags: createPostFormDetails.tags ?? [],
-        thumbnailDetails: {
-        url: createPostFormDetails.thumbnailUrl ?? ""
-      }
-    }
-    await updatePostDetailsCallBack(publishedPost.id,postDetails);
+      title: createPostFormDetails.title,
+      targetAudience: createPostFormDetails.targetAudience ?? [],
+      postType: createPostFormDetails.postType?.toUpperCase() as PostType,
+      actors: createPostFormDetails.actors ?? [],
+      tags: createPostFormDetails.tags ?? [],
+      thumbnailDetails: {
+        url: createPostFormDetails.thumbnailUrl ?? "",
+      },
+    };
+    await updatePostDetailsCallBack(publishedPost.id, postDetails);
     setPublishedPost((prev) => {
       if (!prev) return prev;
       return {

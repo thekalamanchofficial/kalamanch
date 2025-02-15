@@ -18,6 +18,7 @@ import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReview
 import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
 import { useDraftEditorState } from "./_hooks/useDraftEditorState";
 import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
+import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 import { useQueryParams } from "./_hooks/useQueryParams";
 import { useSendForReview } from "./_hooks/useSendForReview";
 import useUploadTextFromFile from "./_hooks/useUploadTextFromFile";
@@ -40,31 +41,22 @@ const Page = () => {
     updateDraftPostDetails,
   } = useDraftEditorState({ draftPostId });
 
-  const { publishedPost, updatePostContent, updatePostDetails } =
-    usePublishedPostEditorState({ postId });
-
-  const {
-    isCreatePostFormOpen,
-    openCreatePostForm,
-    closeCreatePostForm,
-    formData,
-  } = useCreatePostFormDataState({
-    postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails,
+  const { publishedPost, updatePostContent, updatePostDetails } = usePublishedPostEditorState({
+    postId,
   });
 
-  const {
-    sendForReviewDialogOpen,
-    setSendForReviewDialogOpen,
-    handleSendForReview,
-  } = useSendForReview();
+  const { isCreatePostFormOpen, openCreatePostForm, closeCreatePostForm, formData } =
+    useCreatePostFormDataState({
+      postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails,
+    });
 
-  const {
-    isTextUploaderOpen,
-    setIsTextUploaderOpen,
-    uploadFileContentinNewIteration,
-  } = useUploadTextFromFile({
-    addIteration,
-  });
+  const { sendForReviewDialogOpen, setSendForReviewDialogOpen, handleSendForReview } =
+    useSendForReview();
+
+  const { isTextUploaderOpen, setIsTextUploaderOpen, uploadFileContentinNewIteration } =
+    useUploadTextFromFile({
+      addIteration,
+    });
 
   return (
     <>
@@ -171,9 +163,7 @@ const Page = () => {
                 }
               }}
               defaultContentToDisplay={
-                (draftPost
-                  ? selectedIteration?.content
-                  : publishedPost?.content) ?? ""
+                (draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""
               }
               handleEditorContentChange={handleEditorContentChange}
               postStatus={
@@ -210,10 +200,7 @@ const Page = () => {
               open={sendForReviewDialogOpen}
               onClose={() => setSendForReviewDialogOpen(false)}
               onSubmit={(selectedUsersForReview: string[]) =>
-                handleSendForReview(
-                  selectedUsersForReview,
-                  selectedIteration?.id,
-                )
+                handleSendForReview(selectedUsersForReview, selectedIteration?.id)
               }
             />
           )}

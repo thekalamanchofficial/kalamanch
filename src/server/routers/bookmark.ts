@@ -1,8 +1,7 @@
-import { protectedProcedure, router } from "../trpc";
-import prisma from "~/server/db";
-
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
+import prisma from "~/server/db";
+import { protectedProcedure, router } from "../trpc";
 import getUserDetails from "../utils/getUserDetails";
 
 const bulkBookmarkSchema = yup.object({
@@ -24,52 +23,49 @@ const bookmarkPaginationSchema = yup.object({
 });
 
 export const bookmarkRouter = router({
-  bulkBookmarkPost: protectedProcedure
-    .input(bulkBookmarkSchema)
-    .mutation(async ({ input }) => {
-      try {
-        if (!input) {
-          return { message: "No input provided for bulk bookmark operations." };
-        }
-
-        const { id: userId, bookmarks: existingBookmarks } =
-          await getUserDetails(input.userEmail);
-
-        const bookmarksToAdd: string[] = [];
-        const bookmarksToRemove: string[] = [];
-
-        for (const { postId, bookmarked } of input.bookmarks) {
-          if (bookmarked) {
-            bookmarksToAdd.push(postId);
-          } else {
-            bookmarksToRemove.push(postId);
-          }
-        }
-
-        const existingBookmarksSet = new Set(existingBookmarks);
-        const bookmarksToRemoveSet = new Set(bookmarksToRemove);
-
-        for (const bookmark of bookmarksToRemoveSet) {
-          existingBookmarksSet.delete(bookmark);
-        }
-
-        for (const bookmark of bookmarksToAdd) {
-          existingBookmarksSet.add(bookmark);
-        }
-
-        const updatedBookmarks = Array.from(existingBookmarksSet);
-
-        await prisma.user.update({
-          where: { id: userId },
-          data: { bookmarks: updatedBookmarks },
-        });
-
-        return { message: "Bulk bookmark operations completed successfully." };
-      } catch (error) {
-        handleError(error);
-        throw error;
+  bulkBookmarkPost: protectedProcedure.input(bulkBookmarkSchema).mutation(async ({ input }) => {
+    try {
+      if (!input) {
+        return { message: "No input provided for bulk bookmark operations." };
       }
-    }),
+
+      const { id: userId, bookmarks: existingBookmarks } = await getUserDetails(input.userEmail);
+
+      const bookmarksToAdd: string[] = [];
+      const bookmarksToRemove: string[] = [];
+
+      for (const { postId, bookmarked } of input.bookmarks) {
+        if (bookmarked) {
+          bookmarksToAdd.push(postId);
+        } else {
+          bookmarksToRemove.push(postId);
+        }
+      }
+
+      const existingBookmarksSet = new Set(existingBookmarks);
+      const bookmarksToRemoveSet = new Set(bookmarksToRemove);
+
+      for (const bookmark of bookmarksToRemoveSet) {
+        existingBookmarksSet.delete(bookmark);
+      }
+
+      for (const bookmark of bookmarksToAdd) {
+        existingBookmarksSet.add(bookmark);
+      }
+
+      const updatedBookmarks = Array.from(existingBookmarksSet);
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { bookmarks: updatedBookmarks },
+      });
+
+      return { message: "Bulk bookmark operations completed successfully." };
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  }),
 
   getUserBookmarkPosts: protectedProcedure
     .input(bookmarkPaginationSchema)

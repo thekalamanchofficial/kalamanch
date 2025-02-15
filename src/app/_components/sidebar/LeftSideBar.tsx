@@ -1,5 +1,4 @@
 import { Box, Divider, Stack, Typography } from "@mui/material";
-import OwlSVG from "~/assets/svg/owl.svg";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import UserMenu from "../userMenu/UserMenu";
 import LeftSideBarNavLinks from "./LeftSideBarNavLinks";
@@ -20,12 +19,7 @@ const LeftSideBarServer: React.FC<LeftSideBarProps> = ({ menuItems }) => {
         position: "relative",
       }}
     >
-      <Stack
-        direction="row"
-        justifyContent="start"
-        alignItems="center"
-        sx={{ px: "12px" }}
-      >
+      <Stack direction="row" justifyContent="start" alignItems="center" sx={{ px: "12px" }}>
         <OwlSVG />
         <Typography variant="h5" fontWeight="bold" color="primary">
           {STATIC_TEXTS.APP_TITLE}

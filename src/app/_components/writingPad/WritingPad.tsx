@@ -1,22 +1,19 @@
 "use client";
+
 import React from "react";
 import { Box } from "@mui/material";
+import { type PostStatus } from "~/app/editor/types/types";
+import EditorActionsBar from "../editorActionsBar/EditorActionsBar";
 import WritingPadEditor from "../writingPagEditor/WritingPadEditor";
 import { useContentForm } from "./hooks/useContentForm";
 import { useDraftContentAutosave } from "./hooks/useDraftContentAutosave";
-import EditorActionsBar from "../editorActionsBar/EditorActionsBar";
-import { type PostStatus } from "~/app/editor/types/types";
 
 type WritingPadProps = {
   handleOpen: () => void;
   title: string;
   handlePublish: (data: string) => void;
   defaultContentToDisplay: string;
-  handleEditorContentChange: (
-    data: string,
-    iterationId: string,
-    showToast?: boolean,
-  ) => void;
+  handleEditorContentChange: (data: string, iterationId: string, showToast?: boolean) => void;
   currentIterationId?: string;
   postStatus: PostStatus;
   handleSendForReview: () => void;

@@ -2,22 +2,22 @@
 
 import { useState } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
+  Close as CloseIcon,
+  CloudUpload as CloudUploadIcon,
+  Delete as DeleteIcon,
+  Description as DescriptionIcon,
+} from "@mui/icons-material";
+import {
+  Box,
   Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Typography,
-  Box,
 } from "@mui/material";
-import {
-  CloudUpload as CloudUploadIcon,
-  Close as CloseIcon,
-  Description as DescriptionIcon,
-  Delete as DeleteIcon,
-} from "@mui/icons-material";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import Loader from "~/app/_components/loader/Loader";
+import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 
 type FileUploaderProps = {
   open: boolean;
@@ -25,11 +25,7 @@ type FileUploaderProps = {
   onFileUpload?: (file: File) => Promise<void>;
 };
 
-export default function FileUploader({
-  open,
-  onClose,
-  onFileUpload,
-}: FileUploaderProps) {
+export default function FileUploader({ open, onClose, onFileUpload }: FileUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,7 +61,7 @@ export default function FileUploader({
     if (file) {
       setIsLoading(true);
       try {
-        await onFileUpload?.(file)
+        await onFileUpload?.(file);
       } catch (error) {
         console.error("Error importing text:", error);
       }
@@ -110,11 +106,7 @@ export default function FileUploader({
 
       <DialogContent>
         <Box sx={{ py: 2 }}>
-          <Typography
-            variant="h3"
-            color="primary.main"
-            sx={{ mb: 2, textAlign: "center" }}
-          >
+          <Typography variant="h3" color="primary.main" sx={{ mb: 2, textAlign: "center" }}>
             {STATIC_TEXTS.EDITOR_PAGE.UPLOADED_TEXT_IN_NEW_ITERATION_MESSAGE}
           </Typography>
           {isLoading ? (
@@ -186,12 +178,8 @@ export default function FileUploader({
                     gap: 2,
                   }}
                 >
-                  <CloudUploadIcon
-                    sx={{ fontSize: 40, color: "primary.main" }}
-                  />
-                  <Typography>
-                    {STATIC_TEXTS.EDITOR_PAGE.DRAG_AND_DROP_FILE}
-                  </Typography>
+                  <CloudUploadIcon sx={{ fontSize: 40, color: "primary.main" }} />
+                  <Typography>{STATIC_TEXTS.EDITOR_PAGE.DRAG_AND_DROP_FILE}</Typography>
                   <Typography variant="caption" color="text.secondary">
                     {STATIC_TEXTS.EDITOR_PAGE.SUPPORTS_TXT_DOCX_PNG_JPEG_FILE}
                   </Typography>
@@ -217,18 +205,9 @@ export default function FileUploader({
           )}
         </Box>
 
-        <Box
-          sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}
-        >
-          <Button onClick={handleClose}>
-            {STATIC_TEXTS.EDITOR_PAGE.CANCEL}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={!file}
-            onClick={handleImportText}
-          >
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}>
+          <Button onClick={handleClose}>{STATIC_TEXTS.EDITOR_PAGE.CANCEL}</Button>
+          <Button variant="contained" color="primary" disabled={!file} onClick={handleImportText}>
             {STATIC_TEXTS.EDITOR_PAGE.IMPORT}
           </Button>
         </Box>
