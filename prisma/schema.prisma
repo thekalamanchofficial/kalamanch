@@ -36,16 +36,24 @@ model Post {
   authorName            String
   authorProfileImageUrl String
   content               String
-  postDetails           PostDetails
-  likeCount             Int         @default(0)
-  createdAt             DateTime    @default(now())
-  updatedAt             DateTime    @updatedAt
+  title                 String
+  postType              PostType?
+  actors                String[] @default([])
+  thumbnailDetails      ThumbnailDetails
+  likeCount             Int      @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   author     User      @relation(fields: [authorId], references: [id])
   likes      Like[]
   comments   Comment[]
   bids       Bid[]
   isFeatured Boolean   @default(false)
+
+  genreIDs String[] @db.ObjectId
+  tagIDs   String[] @db.ObjectId
+  genres   Genre[]  @relation(fields: [genreIDs], references: [id])
+  tags     Tag[]    @relation(fields: [tagIDs], references: [id])
 
   @@index([authorId])
   @@index([createdAt])
@@ -128,21 +136,11 @@ enum PostType {
   ANNOUNCEMENT
   NEWS
   SCRIPT
-  NA
 }
 
 enum PostStatus {
   DRAFT
   PUBLISHED
-}
-
-type PostDetails {
-  title            String
-  targetAudience   String[]
-  postType         PostType 
-  actors           String[]         @default([])
-  tags             String[]
-  thumbnailDetails ThumbnailDetails
 }
 
 model Iterations {
@@ -165,10 +163,11 @@ model DraftPost {
   authorId              String       @db.ObjectId
   authorName            String
   authorProfileImageUrl String
-  postDetails           PostDetails
+  title                 String
   iterations            Iterations[]
-  createdAt             DateTime     @default(now())
-  updatedAt             DateTime     @updatedAt
+  likeCount             Int      @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   @@index([authorId])
 }
@@ -191,16 +190,19 @@ model DraftPostIterationReviews {
 }
 
 model Genre {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String @unique
-  tags Tag[]  @relation("GenreTags")
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String   @unique
+  tagIDs  String[] @db.ObjectId
+  tags    Tag[]    @relation(fields: [tagIDs], references: [id])
+  postIds String[] @db.ObjectId
+  posts   Post[]   @relation(fields: [postIds], references: [id])
 }
 
 model Tag {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  name    String @unique
-  genreId String @db.ObjectId
-  genre   Genre  @relation("GenreTags", fields: [genreId], references: [id], onDelete: Cascade)
-
-  @@index([genreId])
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String   @unique
+  genreIDs String[] @db.ObjectId
+  genres   Genre[]  @relation(fields: [genreIDs], references: [id])
+  postIds  String[] @db.ObjectId
+  posts    Post[]   @relation(fields: [postIds], references: [id])
 }

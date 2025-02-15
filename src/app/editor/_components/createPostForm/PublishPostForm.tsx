@@ -17,13 +17,13 @@ import {
 } from "@mui/material";
 import { type CreatePostFormType } from "../../types/types";
 import { Controller } from "react-hook-form";
-import { GENRE_ARRAY, INTEREST_ARRAY } from "~/app/sign-up/_config/config";
 import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
 import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUploader";
 import { PostType } from "@prisma/client";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { useGenresTags } from "../../_hooks/useGenreTags";
 
 export type CreatePostFormProps = {
   open: boolean;
@@ -45,9 +45,21 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
     control,
     formState: { errors },
     watch,
+    setValue,
   } = useCreatePostForm({
     defaultValues: createPostFormData,
   });
+
+  const {
+    genres,
+    tags,
+    isGenresLoading,
+    isTagsLoading,
+    selectedGenres,
+    selectedTags,
+    toggleGenre,
+    toggleTag,
+  } = useGenresTags({ setValue });
 
   const postType = watch("postType");
   const [actors, setActors] = useState("");
@@ -89,7 +101,6 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               </FormControl>
             )}
           />
-
           <Controller
             control={control}
             name="thumbnailUrl"
@@ -104,7 +115,6 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               </FormControl>
             )}
           />
-
           <Controller
             control={control}
             name="thumbnailTitle"
@@ -123,7 +133,6 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               </FormControl>
             )}
           />
-
           <Controller
             control={control}
             name="thumbnailDescription"
@@ -142,7 +151,6 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               </FormControl>
             )}
           />
-
           <Controller
             control={control}
             name="postType"
@@ -169,7 +177,6 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               </FormControl>
             )}
           />
-
           {postType === "script" && (
             <Controller
               control={control}
@@ -222,7 +229,6 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               }}
             />
           )}
-
           {/* <Controller
             control={control}
             name="selectedGenres"
@@ -234,46 +240,53 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               </FormControl>
             )}
           /> */}
-
           <Controller
             control={control}
             name="genres"
-            defaultValue={createPostFormData.genres}
+            defaultValue={selectedGenres}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth>
                 <Typography variant="h4">Select relevant genres</Typography>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                  {GENRE_ARRAY.map((genre) => {
-                    const isSelected = value?.includes(genre);
-                    return (
-                      <Chip
-                        key={genre}
-                        label={genre}
-                        onClick={() => {
-                          onChange(
-                            isSelected
-                              ? value?.filter((item) => item !== genre)
-                              : [...(value ?? []), genre],
-                          );
-                        }}
-                        {...(isSelected && {
-                          onDelete: () => {
-                            onChange(value?.filter((item) => item !== genre));
-                          },
-                          deleteIcon: <CloseIcon />,
-                        })}
-                        sx={{
-                          backgroundColor: isSelected
-                            ? "secondary.main"
-                            : "grey.300",
-                          color: isSelected ? "text.primary" : "primary.main",
-                          border: isSelected ? "1px solid" : "none",
-                          borderColor: isSelected ? "primary.main" : "grey.300",
-                        }}
-                      />
-                    );
-                  })}
-                </Box>
+                {isGenresLoading ? (
+                  <Typography>Loading genres...</Typography>
+                ) : (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    {genres.map((genre) => {
+                      const isSelected = value?.includes(genre.id);
+                      return (
+                        <Chip
+                          key={genre.id}
+                          label={genre.name}
+                          onClick={() => {
+                            toggleGenre(genre.id);
+                            onChange(
+                              isSelected
+                                ? value?.filter((id) => id !== genre.id)
+                                : [...(value ?? []), genre.id],
+                            );
+                          }}
+                          {...(isSelected && {
+                            onDelete: () => {
+                              toggleGenre(genre.id);
+                              onChange(value?.filter((id) => id !== genre.id));
+                            },
+                            deleteIcon: <CloseIcon />,
+                          })}
+                          sx={{
+                            backgroundColor: isSelected
+                              ? "secondary.main"
+                              : "grey.300",
+                            color: isSelected ? "text.primary" : "primary.main",
+                            border: isSelected ? "1px solid" : "none",
+                            borderColor: isSelected
+                              ? "primary.main"
+                              : "grey.300",
+                          }}
+                        />
+                      );
+                    })}
+                  </Box>
+                )}
               </FormControl>
             )}
           />
@@ -281,44 +294,50 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
           <Controller
             control={control}
             name="tags"
-            defaultValue={createPostFormData.tags}
+            defaultValue={selectedTags}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth>
                 <Typography variant="h4">Select relevant tags</Typography>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                  {INTEREST_ARRAY.map((interest) => {
-                    const isSelected = value?.includes(interest);
-                    return (
-                      <Chip
-                        key={interest}
-                        label={interest}
-                        onClick={() => {
-                          onChange(
-                            isSelected
-                              ? value?.filter((item) => item !== interest)
-                              : [...(value ?? []), interest],
-                          );
-                        }}
-                        {...(isSelected && {
-                          onDelete: () => {
+                {isTagsLoading ? (
+                  <Typography>Loading tags...</Typography>
+                ) : (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    {tags.map((tag) => {
+                      const isSelected = value?.includes(tag.id);
+                      return (
+                        <Chip
+                          key={tag.id}
+                          label={tag.name}
+                          onClick={() => {
+                            toggleTag(tag.id);
                             onChange(
-                              value?.filter((item) => item !== interest),
+                              isSelected
+                                ? value?.filter((id) => id !== tag.id)
+                                : [...(value ?? []), tag.id],
                             );
-                          },
-                          deleteIcon: <CloseIcon />,
-                        })}
-                        sx={{
-                          backgroundColor: isSelected
-                            ? "secondary.main"
-                            : "grey.300",
-                          color: isSelected ? "text.primary" : "primary.main",
-                          border: isSelected ? "1px solid" : "none",
-                          borderColor: isSelected ? "primary.main" : "grey.300",
-                        }}
-                      />
-                    );
-                  })}
-                </Box>
+                          }}
+                          {...(isSelected && {
+                            onDelete: () => {
+                              toggleTag(tag.id);
+                              onChange(value?.filter((id) => id !== tag.id));
+                            },
+                            deleteIcon: <CloseIcon />,
+                          })}
+                          sx={{
+                            backgroundColor: isSelected
+                              ? "secondary.main"
+                              : "grey.300",
+                            color: isSelected ? "text.primary" : "primary.main",
+                            border: isSelected ? "1px solid" : "none",
+                            borderColor: isSelected
+                              ? "primary.main"
+                              : "grey.300",
+                          }}
+                        />
+                      );
+                    })}
+                  </Box>
+                )}
               </FormControl>
             )}
           />

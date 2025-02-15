@@ -9,6 +9,7 @@ import { draftPostRouter } from "./routers/draftPost";
 import { draftPostIterationReviewsRouter } from "./routers/draftPostIterationReviews";
 import { bookmarkRouter } from "./routers/bookmark";
 import { presignedR2UrlRouter } from "./routers/presignedR2Url";
+import { genreTagRouter } from "./routers/genre&Tags";
 
 export const appRouter = router({
   user: userRouter,
@@ -21,7 +22,7 @@ export const appRouter = router({
   draftPostIterationReview: draftPostIterationReviewsRouter,
   bookmarks: bookmarkRouter,
   presignedR2Url: presignedR2UrlRouter,
-  
+  genreTagRouter: genreTagRouter,
 });
 
 export type AppRouter = typeof appRouter;

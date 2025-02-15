@@ -57,7 +57,7 @@ export const useDraftContentAutosave = ({
       postDetails: {
         title: "",
         targetAudience: [],
-        postType: "NA",
+        postType: null,
         actors: [],
         tags: [],
         thumbnailDetails: {

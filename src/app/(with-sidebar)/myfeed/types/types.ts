@@ -76,8 +76,9 @@ export type CreatePostProps = {
 export type PostDetails = {
   title: string;
   targetAudience?: string[];
-  postType: string;
+  postType: string | null;
   actors: string[];
+  genres: string[];
   tags: string[];
   thumbnailDetails: ThumbnailDetails;
 };
@@ -86,6 +87,7 @@ export type ThumbnailDetails = {
   url: string;
   content?: string | null;
   title?: string | null;
+  description?: string | null;
 };
 export type PostsFeedProps = {
   articlesList: Post[];

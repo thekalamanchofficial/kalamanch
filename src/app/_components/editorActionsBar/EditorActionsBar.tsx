@@ -2,7 +2,6 @@
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FolderIcon from "@mui/icons-material/Folder";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { PostStatus } from "~/app/editor/types/types";
@@ -92,17 +91,9 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
       </Button>
     )}
     {postStatus == PostStatus.DRAFT && (
-      <Button
-      sx={{ ...buttonStyle, backgroundColor: "primary.main", color: "white" }}
-      onClick={handleSubmit}
-    >
-      <FeedOutlinedIcon />
-      <Typography sx={textStyle}>
-        {postStatus == PostStatus.DRAFT ? "Publish" : "Update"}
-      </Typography>
-    </Button>
+      <PublishPostFormButton title={title} />
     )}
-    <PublishPostFormButton title={title} />
+    
   </Box>
 );
 

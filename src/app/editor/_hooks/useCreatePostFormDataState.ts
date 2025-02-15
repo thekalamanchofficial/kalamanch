@@ -26,7 +26,7 @@ type CreatePostFormState ={
         actors: postDetails?.actors,
         thumbnailUrl: postDetails?.thumbnailDetails.url,
         tags: postDetails?.tags,
-        postType: postDetails?.postType.toLowerCase(),
+        postType: postDetails?.postType?.toLowerCase(),
         targetAudience: postDetails?.targetAudience,
     };
     const openCreatePostForm = () => setIsCreatePostFormOpen(true);

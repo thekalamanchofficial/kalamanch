@@ -13,7 +13,7 @@ const addDraftPostSchema = yup.object({
   postDetails: yup.object({
     title: yup.string(),
     targetAudience: yup.array(yup.string()).optional(),
-    postType: yup.string(),
+    postType: yup.string().nullable(),
     actors: yup.array(yup.string()).optional(),
     tags: yup.array(yup.string()).optional(),
     thumbnailDetails: yup.object({
@@ -35,7 +35,7 @@ const updateDraftPostDetailsSchema = yup.object({
   postDetails: yup.object({
     title: yup.string().required(),
     targetAudience: yup.array(yup.string()).optional(),
-    postType: yup.string().required(),
+    postType: yup.string().nullable(),
     actors: yup.array(yup.string()).optional(),
     tags: yup.array(yup.string()).optional(),
     thumbnailDetails: yup.object({

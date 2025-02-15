@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useDraftPost } from "~/app/_hooks/useDraftPost";
 import PublishPostForm from "~/app/editor/_components/createPostForm/PublishPostForm";
 import { type CreatePostFormType } from "~/app/editor/types/types";
-import WriteLogo from "~/assets/svg/WriteLogo.svg";
+import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import { useUser } from "~/context/userContext";
 import { STATIC_TEXTS } from "../static/staticText";
 
@@ -69,7 +69,7 @@ const PublishPostFormButton = ({ title }: PublishPostFormButtonProps) => {
       }}
     >
       <Button
-        startIcon={<WriteLogo />}
+        startIcon={<FeedOutlinedIcon />}
         variant="contained"
         size="small"
         fullWidth
@@ -101,7 +101,10 @@ const PublishPostFormButton = ({ title }: PublishPostFormButtonProps) => {
           createPostFormData={{
             title,
             thumbnailUrl: "",
+            thumbnailTitle: "",
+            thumbnailDescription: "",
             postType: "",
+            genres: [],
             tags: [],
             actors: [],
           }}
