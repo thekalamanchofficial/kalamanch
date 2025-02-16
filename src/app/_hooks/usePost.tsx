@@ -2,14 +2,14 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { handleError } from "~/app/_utils/handleError";
-import type { CreatePostProps, PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { CreatePostProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
 
 type UsePostResponse = {
   publishPost: (postData: CreatePostProps) => Promise<void>;
   deletePost: (postId: string) => Promise<void>;
   updatePostContent: (postId: string, content: string) => Promise<void>;
-  updatePostDetails: (postId: string, postDetails: PostDetails) => Promise<void>;
+  updatePostDetails: (postId: string, postDetails: CreatePostProps) => Promise<void>;
 };
 
 const createMutationOptions = (successMessage: string) => ({
@@ -58,11 +58,11 @@ export const usePost = (): UsePostResponse => {
     }
   };
 
-  const updatePostDetails = async (postId: string, postDetails: PostDetails) => {
+  const updatePostDetails = async (postId: string, postDetails: CreatePostProps) => {
     try {
       await updatePostDetailsMutation.mutateAsync({
         id: postId,
-        postDetails,
+        ...postDetails,
       });
     } catch (error) {
       console.error("Failed to update post details:", error);

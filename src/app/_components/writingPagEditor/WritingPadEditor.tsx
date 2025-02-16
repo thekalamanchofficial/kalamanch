@@ -2,11 +2,9 @@
 
 import React from "react";
 import { Controller, type Control } from "react-hook-form";
-import dynamic from "next/dynamic";
 import { toolbarConfig } from "../writingPad/config/configs";
 import "react-quill/dist/quill.snow.css";
-
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import ReactQuill from "react-quill";
 
 type EditorProps = {
   control: Control<{ content: string }>;
@@ -32,6 +30,14 @@ const WritingPadEditor: React.FC<EditorProps> = ({ control, name, defaultValue, 
           onChange(value);
         }}
         value={field.value}
+        ref={(instance) => {
+          if (instance?.getEditor) {
+            const editor = instance.getEditor();
+            const length = editor.getLength();
+            editor.setSelection(length, length);
+          }
+          field.ref(instance);
+        }}
       />
     )}
   />

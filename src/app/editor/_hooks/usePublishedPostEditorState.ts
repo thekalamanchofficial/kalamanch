@@ -46,10 +46,10 @@ export const usePublishedPostEditorState = ({
     if (!publishedPost) return;
     const postDetails: PostDetails = {
       title: createPostFormDetails.title,
-      targetAudience: createPostFormDetails.targetAudience ?? [],
       postType: createPostFormDetails.postType?.toUpperCase() as PostType,
       actors: createPostFormDetails.actors ?? [],
       tags: createPostFormDetails.tags ?? [],
+      genres: createPostFormDetails.genres ?? [],
       thumbnailDetails: {
         url: createPostFormDetails.thumbnailUrl ?? "",
       },

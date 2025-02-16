@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import type { PostType } from "@prisma/client";
 import { handleError } from "~/app/_utils/handleError";
-import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { CreatePostProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { useUser } from "~/context/userContext";
 import { useDraftPost } from "../../_hooks/useDraftPost";
 import { usePost } from "../../_hooks/usePost";
@@ -15,7 +14,7 @@ type DraftEditorState = {
   saveLastIterationData: () => Promise<void>;
   setDraftPost: React.Dispatch<React.SetStateAction<DraftPost | null>>;
   updateDraftPostDetails: (createPostFormDetails: CreatePostFormType) => Promise<void>;
-  handlePublishEditorDraftIteration: (content: string) => Promise<void>;
+  handlePublishEditorDraftIteration: (input: CreatePostProps) => Promise<void>;
   draftPost: DraftPost | null;
   selectedIteration: Iteration | null;
   handleIterationChange: (iterationId: string) => Promise<void>;
@@ -146,26 +145,31 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
     [draftPostId, draftPost, selectedIteration, updateDraftIteration],
   );
 
-  const handlePublishEditorDraftIteration = async (content: string) => {
+  const handlePublishEditorDraftIteration = async ({
+    content,
+    title,
+    postType,
+    actors,
+    tags,
+    genres,
+    thumbnailDetails,
+  }: CreatePostProps) => {
     await publishPost({
       content,
       authorId: user?.id ?? "",
       authorName: user?.name ?? "",
       authorProfileImageUrl: user?.profileImageUrl ?? "",
-      postDetails: {
-        title: draftPost?.postDetails.title ?? "",
-        targetAudience: draftPost?.postDetails.targetAudience ?? [],
-        postType: draftPost?.postDetails.postType as PostType,
-        actors: draftPost?.postDetails.actors ?? [],
-        tags: draftPost?.postDetails.tags ?? [],
-        thumbnailDetails: {
-          url: draftPost?.postDetails.thumbnailDetails.url ?? "",
-          content: "",
-          title: "",
-        },
+      title: title ?? "",
+      postType,
+      actors: actors ?? [],
+      tags: tags ?? [],
+      genres: genres ?? [],
+      thumbnailDetails: {
+        url: thumbnailDetails.url ?? "",
+        content: thumbnailDetails.content ?? "",
+        title: thumbnailDetails.title ?? "",
       },
     });
-
     if (draftPostId) {
       await deleteDraftPost(draftPostId);
     }
@@ -174,22 +178,14 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
   const updateDraftPostDetails = async (createPostFormDetails: CreatePostFormType) => {
     if (!draftPost) return;
     console.log("createPostFormDetails", createPostFormDetails);
-    const postDetails: PostDetails = {
-      title: createPostFormDetails.title,
-      postType: createPostFormDetails.postType?.toUpperCase() as PostType,
-      actors: createPostFormDetails.actors ?? [],
-      tags: createPostFormDetails.tags ?? [],
-      thumbnailDetails: {
-        url: createPostFormDetails.thumbnailUrl ?? "",
-      },
-    };
-    await updateDraftDetails(draftPostId ?? "", postDetails);
+    
+    await updateDraftDetails(draftPostId ?? "", createPostFormDetails.title);
 
     setDraftPost((prev) => {
       if (!prev) return prev;
       return {
         ...prev,
-        postDetails,
+        title: createPostFormDetails.title,
       };
     });
   };

@@ -7,6 +7,9 @@ import { genreTagRouter } from "./routers/genre&Tags";
 import { likeRouter } from "./routers/likes";
 import { postRouter } from "./routers/post";
 import { presignedR2UrlRouter } from "./routers/presignedR2Url";
+import { userRouter } from "./routers/user";
+import { UsersToFollowRouter } from "./routers/usersToFollow";
+import { router } from "./trpc";
 
 export const appRouter = router({
   user: userRouter,

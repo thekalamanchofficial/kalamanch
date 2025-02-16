@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import { type PostStatus } from "~/app/editor/types/types";
 import EditorActionsBar from "../editorActionsBar/EditorActionsBar";
@@ -11,9 +11,9 @@ import { useDraftContentAutosave } from "./hooks/useDraftContentAutosave";
 type WritingPadProps = {
   handleOpen: () => void;
   title: string;
-  handlePublish: (data: string) => void;
   defaultContentToDisplay: string;
   handleEditorContentChange: (data: string, iterationId: string, showToast?: boolean) => void;
+  handlePublish: (content: string) => void;
   currentIterationId?: string;
   postStatus: PostStatus;
   handleSendForReview: () => void;
@@ -23,13 +23,15 @@ const WritingPad: React.FC<WritingPadProps> = ({
   currentIterationId,
   title,
   handleOpen,
-  handlePublish,
   defaultContentToDisplay,
   handleEditorContentChange,
+  handlePublish,
   postStatus,
   handleSendForReview,
 }) => {
-  const { handleSubmit, control } = useContentForm();
+  const { handleSubmit, control, watch, setFocus } = useContentForm({
+    defaultValues: { content: defaultContentToDisplay },
+  });
 
   const { onContentChange, saveDraftInstantly } = useDraftContentAutosave({
     currentIterationId,
@@ -41,6 +43,12 @@ const WritingPad: React.FC<WritingPadProps> = ({
   const onPublishPost = (data: { content: string }) => {
     handlePublish(data.content);
   };
+
+  const content = watch("content");
+
+  useEffect(() => {
+    setFocus("content");
+  }, [setFocus]);
 
   return (
     <Box
@@ -64,11 +72,12 @@ const WritingPad: React.FC<WritingPadProps> = ({
           control={control}
           name="content"
           defaultValue={defaultContentToDisplay}
-          onChange={onContentChange}
+          onChange={(data) => onContentChange(data, title)}
         />
       </Box>
       <EditorActionsBar
         title={title}
+        content={content}
         postStatus={postStatus}
         handleOpen={handleOpen}
         handleSubmit={handleSubmit(onPublishPost)}

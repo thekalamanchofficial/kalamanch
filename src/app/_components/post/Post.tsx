@@ -86,12 +86,13 @@ const Post = memo<PostProps>(
             )}
           </Box>
           <PostCardContent
-            articleTitle={post.postDetails.title}
+            articleTitle={post.title}
             articleContent={post.content}
-            articleTags={post.postDetails.tags}
-            articleThumbnailUrl={post.postDetails.thumbnailDetails.url}
+            articleTags={post.tags ?? []}
+            articleGenres={post.genres ?? []}
+            articleThumbnailUrl={post.thumbnailDetails.url}
             articleId={post.id}
-            articleDescription={post.postDetails.thumbnailDetails.content ?? ""}
+            articleDescription={post.thumbnailDetails.content ?? ""}
           />
           <PostCardFooter
             likes={likeCount}

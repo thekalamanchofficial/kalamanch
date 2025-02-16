@@ -1,8 +1,9 @@
+import type { PostType } from "@prisma/client";
 import { useState } from "react";
-import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { Post } from "~/app/(with-sidebar)/myfeed/types/types";
 
 type CreatePostFormDataStateProps = {
-  postDetails?: PostDetails;
+  postDetails?: Post | null;
 };
 type CreatePostFormState = {
   formData: {
@@ -10,7 +11,7 @@ type CreatePostFormState = {
     actors?: string[];
     thumbnailUrl?: string;
     tags?: string[];
-    postType?: string;
+    postType?: PostType;
     targetAudience?: string[];
   };
   isCreatePostFormOpen: boolean;
@@ -26,9 +27,8 @@ export const useCreatePostFormDataState = ({
     title: postDetails?.title ?? "",
     actors: postDetails?.actors,
     thumbnailUrl: postDetails?.thumbnailDetails.url,
-    tags: postDetails?.tags,
-    postType: postDetails?.postType?.toLowerCase(),
-    targetAudience: postDetails?.targetAudience,
+    tags: postDetails?.tags?.map((tag) => tag.name),
+    postType: postDetails?.postType,
   };
   const openCreatePostForm = () => setIsCreatePostFormOpen(true);
   const closeCreatePostForm = () => setIsCreatePostFormOpen(false);

@@ -4,10 +4,6 @@ import type { Genre, Tag } from "@prisma/client";
 import { trpc } from "~/app/_trpc/client";
 import type { CreatePostFormType } from "../types/types";
 
-type UseGenresTagsProps = {
-  setValue: UseFormSetValue<CreatePostFormType>;
-};
-
 type UseGenreTagsReturnType = {
   genres: (Genre & { tags: Tag[] })[];
   tags: Tag[];
@@ -21,9 +17,9 @@ type UseGenreTagsReturnType = {
   toggleTag: (tagId: string) => void;
 };
 
-type UseGenreTags = (props: UseGenresTagsProps) => UseGenreTagsReturnType;
+type UseGenreTags = () => UseGenreTagsReturnType;
 
-export const useGenresTags: UseGenreTags = ({ setValue }) => {
+export const useGenresTags: UseGenreTags = () => {
   const {
     data: genres = [],
     isLoading: isGenresLoading,
@@ -45,14 +41,6 @@ export const useGenresTags: UseGenreTags = ({ setValue }) => {
       const updatedGenres = isSelected
         ? prevGenres.filter((id) => id !== genreId)
         : [...prevGenres, genreId];
-
-      const relatedTags = updatedGenres.flatMap(
-        (gId) => genres.find((g) => g.id === gId)?.tags.map((t) => t.id) ?? [],
-      );
-
-      setSelectedTags(relatedTags);
-      setValue("tags", relatedTags);
-
       return updatedGenres;
     });
   };

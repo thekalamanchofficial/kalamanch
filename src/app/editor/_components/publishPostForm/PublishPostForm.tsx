@@ -46,7 +46,6 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
     control,
     formState: { errors },
     watch,
-    setValue,
   } = useCreatePostForm({
     defaultValues: createPostFormData,
   });
@@ -60,7 +59,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
     selectedTags,
     toggleGenre,
     toggleTag,
-  } = useGenresTags({ setValue });
+  } = useGenresTags();
 
   const postType = watch("postType");
   const [actors, setActors] = useState("");
@@ -152,7 +151,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
           <Controller
             control={control}
             name="postType"
-            defaultValue={createPostFormData.postType ?? ""}
+            defaultValue={createPostFormData?.postType}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth error={!!errors?.postType?.message}>
                 <Typography variant="h4">Post type</Typography>
@@ -165,7 +164,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
                   placeholder="Select post type"
                 >
                   {Object.values(PostType).map((type) => (
-                    <MenuItem key={type} value={type.toLowerCase()}>
+                    <MenuItem key={type} value={type}>
                       {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
                     </MenuItem>
                   ))}
@@ -174,7 +173,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               </FormControl>
             )}
           />
-          {postType === "script" && (
+          {postType === PostType.SCRIPT && (
             <Controller
               control={control}
               name="actors"
@@ -224,17 +223,6 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
               }}
             />
           )}
-          {/* <Controller
-            control={control}
-            name="selectedGenres"
-            defaultValue={createPostFormData.selectedGenres}
-            render={({ field: { value, onChange } }) => (
-              <FormControl fullWidth>
-                <Typography variant="h4">Select Genres</Typography>
-                <GenreMultiSelect value={value} onChange={onChange} />
-              </FormControl>
-            )}
-          /> */}
           <Controller
             control={control}
             name="genres"

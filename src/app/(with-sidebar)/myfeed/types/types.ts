@@ -1,4 +1,5 @@
 import { type SxProps } from "@mui/material";
+import type { Genre, PostType, Tag } from "@prisma/client";
 import { type DraftPost, type Iteration } from "~/app/editor/types/types";
 
 export type MenuItemList = {
@@ -54,9 +55,14 @@ export type Post = {
   id: string;
   authorId: string;
   authorName: string;
-  authorProfileImageUrl: string;
+  authorProfileImageUrl?: string;
   content: string;
-  postDetails: PostDetails;
+  title: string;
+  postType: PostType;
+  actors?: string[];
+  tags?: Tag[];
+  genres?: Genre[];
+  thumbnailDetails: ThumbnailDetails;
   likeCount: number;
   likes?: Like[];
   comments?: Comment[];
@@ -65,17 +71,8 @@ export type Post = {
   updatedAt: string;
 };
 
-export type CreatePostProps = {
-  content: string;
-  authorId: string;
-  authorName: string;
-  authorProfileImageUrl: string;
-  postDetails: PostDetails;
-};
-
 export type PostDetails = {
   title: string;
-  targetAudience?: string[];
   postType: string | null;
   actors: string[];
   genres: string[];
@@ -83,12 +80,39 @@ export type PostDetails = {
   thumbnailDetails: ThumbnailDetails;
 };
 
+export type CreatePostProps = {
+  content: string;
+  title: string;
+  authorId: string;
+  authorName: string;
+  authorProfileImageUrl?: string;
+  postType?: PostType;
+  actors?: string[];
+  tags?: string[];
+  genres?: string[];
+  thumbnailDetails: ThumbnailDetails;
+};
+
+export type UpdatePostContentProps = {
+  id: string;
+  content: string;
+};
+
+export type UpdatePostDetailsProps = {
+  id: string;
+  title: string;
+  postType: PostType;
+  actors?: string[];
+  tags?: string[];
+  thumbnailDetails: ThumbnailDetails;
+};
+
 export type ThumbnailDetails = {
-  url: string;
+  url?: string;
   content?: string | null;
   title?: string | null;
-  description?: string | null;
 };
+
 export type PostsFeedProps = {
   articlesList: Post[];
   likedPosts: string[];
@@ -131,10 +155,7 @@ export type UserNameProfileProps = {
 export type PostCardContentProps = {
   articleTitle: string;
   articleContent: string;
-  articleTags: string[];
-  articleThumbnailUrl?: string;
   articleId: string;
-  articleDescription: string;
   savedDate?: string;
 };
 
@@ -176,9 +197,7 @@ export type UserToFollow = {
 };
 
 export type IterationWithReviews = Iteration & {
-  draftPost: Omit<DraftPost, "iterations"> & {
-    postDetails: PostDetails;
-  };
+  draftPost: Omit<DraftPost, "iterations">;
   likes: Like[];
   comments: Comment[];
 };

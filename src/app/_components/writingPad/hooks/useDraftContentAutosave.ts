@@ -6,7 +6,7 @@ import { PostStatus } from "~/app/editor/types/types";
 import { useUser } from "~/context/userContext";
 
 type UseDraftContentAutosaveReturn = {
-  onContentChange: (data: string) => void;
+  onContentChange: (data: string, title: string) => void;
   currentIterationId: string | null | undefined;
   saveDraftInstantly: (showToast?: boolean) => void;
 };
@@ -36,7 +36,7 @@ export const useDraftContentAutosave = ({
     saveContentToDb(data, iterationId, showToast);
   };
 
-  const createDraftPostInDb = async (content: string) => {
+  const createDraftPostInDb = async (content: string, title: string) => {
     if (!user?.id || !user?.name) {
       console.error("User not found");
       return;
@@ -45,16 +45,18 @@ export const useDraftContentAutosave = ({
       authorId: user.id,
       authorName: user.name,
       authorProfileImageUrl: user.profileImageUrl ?? "",
-      postDetails: {
-        title: "",
-        targetAudience: [],
-        postType: null,
-        actors: [],
-        tags: [],
-        thumbnailDetails: {
-          url: "",
-        },
-      },
+      title:
+        title === ""
+          ? new Date().toLocaleString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })
+          : title,
       iterations: [
         {
           iterationName: "Iteration - 1",
@@ -62,8 +64,6 @@ export const useDraftContentAutosave = ({
         },
       ],
     });
-
-    console.log("Draft post created", draftPost);
 
     if (!draftPost?.id) {
       console.error("Draft post not created");
@@ -82,12 +82,13 @@ export const useDraftContentAutosave = ({
     [currentIterationId],
   );
 
-  const onContentChange = (data: string) => {
+  const onContentChange = (data: string, title: string) => {
     if (postStatus !== PostStatus.DRAFT) return;
+
     setContent(data);
 
     if (!currentIterationId) {
-      void createDraftPostInDb(data);
+      void createDraftPostInDb(data, title);
     } else {
       localStorage.setItem(currentIterationId, data);
       throttledSave(data, currentIterationId);

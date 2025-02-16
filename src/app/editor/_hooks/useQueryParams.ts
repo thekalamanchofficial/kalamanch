@@ -12,7 +12,7 @@ export const useQueryParams = (): QueryParams => {
 
   return {
     postId: queryParams.postId ?? "",
-    draftPostId: shouldDraftPost ? (queryParams.draftPostId ?? "") : "",
+    draftPostId: queryParams.draftPostId ?? "",
     shouldDraftPost,
   };
 };

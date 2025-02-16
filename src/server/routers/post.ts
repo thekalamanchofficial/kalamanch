@@ -1,4 +1,4 @@
-import type { PostType } from "@prisma/client";
+import { PostType } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import { inngest } from "~/inngest/client";
@@ -8,7 +8,7 @@ import { protectedProcedure, router } from "../trpc";
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
   title: yup.string().required("Title is required."),
-  postType: yup.string().required("Post type is required."),
+  postType: yup.mixed<PostType>().optional().oneOf(Object.values(PostType)),
   actors: yup.array(yup.string()).optional(),
   thumbnailDetails: yup
     .object({
@@ -20,6 +20,8 @@ const postSchema = yup.object({
   authorId: yup.string().required("Author ID is required."),
   authorName: yup.string().required("Author name is required."),
   authorProfileImageUrl: yup.string().optional(),
+  genres: yup.array(yup.string()).optional(),
+  tags: yup.array(yup.string()).optional(),
 });
 
 const updatePostContentSchema = yup.object({
@@ -30,7 +32,7 @@ const updatePostContentSchema = yup.object({
 const updatePostDetailsSchema = yup.object({
   id: yup.string().required("ID is required."),
   title: yup.string().required("Title is required."),
-  postType: yup.string().required("Post type is required."),
+  postType: yup.mixed<PostType>().oneOf(Object.values(PostType)),
   actors: yup.array(yup.string()).optional(),
   tags: yup.array(yup.string()).optional(),
   thumbnailDetails: yup
@@ -97,6 +99,8 @@ export const postRouter = router({
               },
             },
             likes: true,
+            tags: true,
+            genres: true,
           },
         });
 
@@ -123,6 +127,8 @@ export const postRouter = router({
       const sanitizedInput = {
         ...input,
         actors: cleanArray(input.actors),
+        genres: cleanArray(input.genres),
+        tags: cleanArray(input.tags),
       };
 
       const post = await prisma.post.create({
@@ -132,7 +138,7 @@ export const postRouter = router({
           authorName: sanitizedInput.authorName,
           authorProfileImageUrl: sanitizedInput.authorProfileImageUrl ?? "",
           title: sanitizedInput.title,
-          postType: sanitizedInput.postType.toUpperCase() as PostType,
+          postType: sanitizedInput.postType?.toUpperCase() as PostType,
           actors: sanitizedInput.actors,
           thumbnailDetails: {
             url: sanitizedInput.thumbnailDetails.url ?? "",
@@ -142,6 +148,8 @@ export const postRouter = router({
           likes: { create: [] },
           bids: { create: [] },
           comments: { create: [] },
+          genreIDs: sanitizedInput.genres ?? [],
+          tagIDs: sanitizedInput.tags ?? [],
         },
       });
 
@@ -210,7 +218,7 @@ export const postRouter = router({
           },
           data: {
             title: sanitizedInput.title,
-            postType: sanitizedInput.postType as PostType,
+            postType: sanitizedInput.postType,
             actors: sanitizedInput.actors,
             thumbnailDetails: {
               url: sanitizedInput.thumbnailDetails.url ?? "",

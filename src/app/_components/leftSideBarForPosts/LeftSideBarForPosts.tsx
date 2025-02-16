@@ -122,7 +122,7 @@ const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
                       color: item.id == selectedDraftPostId ? "primary.main" : "font.secondary",
                     }}
                   >
-                    {item.postDetails.title}
+                    {item.title}
                   </Typography>
                   <ArrowForwardIosOutlinedIcon
                     sx={{
@@ -166,7 +166,7 @@ const LeftSideBarForPosts: React.FC<LeftSideBarPropsForPosts> = ({
                         item.id == selectedDraftIterationId ? "primary.main" : "font.secondary",
                     }}
                   >
-                    {item.draftPost.postDetails.title + " - " + item.iterationName}
+                    {item.draftPost.title + " - " + item.iterationName}
                   </Typography>
                   <ArrowForwardIosOutlinedIcon
                     sx={{

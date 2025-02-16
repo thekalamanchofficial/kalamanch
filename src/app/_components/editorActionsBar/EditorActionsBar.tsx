@@ -31,18 +31,20 @@ const textStyle = {
 
 type ActionsBarProps = {
   title: string;
+  content: string;
   handleOpen: () => void;
-  handleSubmit: () => void;
   handleSaveDraft: (showToast?: boolean) => void;
+  handleSubmit: () => void;
   postStatus: PostStatus;
   handleSendForReview: () => void;
 };
 
 const EditorActionsBar: React.FC<ActionsBarProps> = ({
   title,
+  content,
   handleOpen,
-  postStatus,
   handleSubmit,
+  postStatus,
   handleSaveDraft,
   handleSendForReview,
 }) => (
@@ -91,7 +93,7 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         <Typography sx={textStyle}>Save as draft</Typography>
       </Button>
     )}
-    {postStatus == PostStatus.DRAFT && <PublishPostFormButton title={title} />}
+    {postStatus == PostStatus.DRAFT && <PublishPostFormButton title={title} content={content} />}
   </Box>
 );
 

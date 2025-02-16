@@ -1,14 +1,5 @@
 import React, { useCallback, useState } from "react";
-import {
-  Box,
-  Button,
-  CardMedia,
-  Chip,
-  Grid2 as Grid,
-  Typography,
-  useMediaQuery,
-  type Theme,
-} from "@mui/material";
+import { Box, Button, Grid2 as Grid, Typography, useMediaQuery, type Theme } from "@mui/material";
 import { myfeedConfig } from "~/app/(with-sidebar)/myfeed/_config/config";
 import { type PostCardContentProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
@@ -24,9 +15,6 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const PostCardContent: React.FC<PostCardContentProps> = ({
   articleTitle,
   articleContent,
-  articleTags,
-  articleThumbnailUrl = "",
-  articleDescription,
   savedDate,
 }) => {
   const [seeMore, setSeeMore] = useState(false);
@@ -44,11 +32,6 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   const handleSeeLess = useCallback(() => {
     setSeeMore(false);
   }, []);
-
-  const isVideoUrl = (thumbnailUrl: string | null) => {
-    if (!thumbnailUrl) return false;
-    return thumbnailUrl.endsWith(".mp4") || thumbnailUrl.endsWith(".mov");
-  };
 
   return (
     <>
@@ -136,34 +119,12 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
         }}
       >
         <Grid size={isSmallScreen ? 12 : 4}>
-          {isVideoUrl(articleThumbnailUrl) ? (
-            <CardMedia
-              component="video"
-              controls
-              height="220"
-              src={articleThumbnailUrl}
-              sx={{
-                maxWidth: "300px",
-              }}
-            />
-          ) : articleThumbnailUrl !== "" ? (
-            <CardMedia
-              component="img"
-              height="220"
-              image={articleThumbnailUrl}
-              alt="image content"
-              sx={{
-                maxWidth: "300px",
-              }}
-            />
-          ) : (
-            <ImageNotSupportedOutlinedIcon
-              sx={{
-                fontSize: "220px",
-                color: "text.secondary",
-              }}
-            />
-          )}
+          <ImageNotSupportedOutlinedIcon
+            sx={{
+              fontSize: "220px",
+              color: "text.secondary",
+            }}
+          />
         </Grid>
         <Grid
           sx={{
@@ -185,42 +146,13 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
           >
             {articleTitle}
           </Typography>
-          <Typography
-            sx={{
-              color: "text.secondary",
-              fontSize: "15px",
-              marginBottom: "10px",
-            }}
-          >
-            {articleDescription.length > myfeedConfig.SUMMARY_READ_MORE_LENGTH ? (
-              <>
-                {`${articleDescription.slice(0, myfeedConfig.SUMMARY_READ_MORE_LENGTH)} ...`}
-                <SeeMoreButton />
-              </>
-            ) : (
-              articleDescription
-            )}
-          </Typography>
           <Grid
             container
             sx={{
               display: "flex",
               gap: "10px",
             }}
-          >
-            {articleTags.map((tag, index) => (
-              <Grid key={index}>
-                <Chip
-                  label={tag}
-                  variant="filled"
-                  sx={{
-                    color: "font.secondary",
-                    backgroundColor: "common.lightGray",
-                  }}
-                />
-              </Grid>
-            ))}
-          </Grid>
+          ></Grid>
         </Grid>
       </Grid>
     </>

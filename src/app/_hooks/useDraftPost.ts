@@ -13,7 +13,7 @@ type UseDraftPostRespone = {
     iterationName: string,
     content: string,
   ) => Promise<Iteration>;
-  updateDraftDetails: (draftPostId: string, postDetails: PostDetails) => Promise<void>;
+  updateDraftDetails: (draftPostId: string, title: string) => Promise<void>;
   updateDraftIteration: (
     iterationId: string,
     iterationName: string,
@@ -65,14 +65,15 @@ export const useDraftPost = (): UseDraftPostRespone => {
     return updatedIteration;
   };
 
-  const updateDraftDetails = async (draftPostId: string, postDetails: PostDetails) => {
+  const updateDraftDetails = async (draftPostId: string, title: string) => {
     try {
-      await updateDraftDetailsMutation.mutateAsync({ draftPostId, postDetails });
+      await updateDraftDetailsMutation.mutateAsync({ draftPostId, title });
     } catch (error) {
       console.error("Failed to update iteration content:", error);
       handleError(error);
     }
   };
+  
   const addDraftIteration = async (draftPostId: string, iterationName: string, content: string) => {
     const addedIteration = await addDraftIterationMutation.mutateAsync({
       draftPostId,

@@ -1,23 +1,23 @@
 "use client";
 
-import { Box, Button, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useDraftPost } from "~/app/_hooks/useDraftPost";
-import PublishPostForm from "~/app/editor/_components/createPostForm/PublishPostForm";
-import { type CreatePostFormType } from "~/app/editor/types/types";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
+import { Box, Button, Typography } from "@mui/material";
+import { usePost } from "~/app/_hooks/usePost";
+import PublishPostForm from "~/app/editor/_components/publishPostForm/PublishPostForm";
+import { type CreatePostFormType } from "~/app/editor/types/types";
 import { useUser } from "~/context/userContext";
 import { STATIC_TEXTS } from "../static/staticText";
 
 type PublishPostFormButtonProps = {
   title: string;
+  content: string;
 };
 
-const PublishPostFormButton = ({ title }: PublishPostFormButtonProps) => {
+const PublishPostFormButton = ({ title, content }: PublishPostFormButtonProps) => {
   const [createPostFormOpen, setCreatePostFormOpen] = useState(false);
-  const router = useRouter();
   const { user } = useUser();
+  const { publishPost } = usePost();
 
   const handleCreatePostFormClose = () => {
     setCreatePostFormOpen(false);
@@ -29,36 +29,22 @@ const PublishPostFormButton = ({ title }: PublishPostFormButtonProps) => {
       return;
     }
 
-    console.log({
-      publishPostFormData: data,
+    await publishPost({
+      content,
+      authorId: user?.id ?? "",
+      authorName: user?.name ?? "",
+      authorProfileImageUrl: user?.profileImageUrl ?? "",
+      title: title ?? "",
+      postType: data.postType,
+      actors: data.actors ?? [],
+      tags: data.tags ?? [],
+      genres: data.genres ?? [],
+      thumbnailDetails: {
+        url: data.thumbnailUrl ?? "",
+        content: data.thumbnailDescription ?? "",
+        title: data.thumbnailTitle ?? "",
+      },
     });
-
-    // create draft post
-    // const draftPost = await addDraftPost({
-    //   authorId: user.id,
-    //   authorName: user.name,
-    //   authorProfileImageUrl: user.profileImageUrl ?? "",
-    //   postDetails: {
-    //     title: data.title,
-    //     targetAudience: data.targetAudience ?? [],
-    //     postType: data.postType as PostType,
-    //     actors: data.actors ?? [],
-    //     tags: data.tags ?? [],
-    //     thumbnailDetails: {
-    //       url: data.thumbnailUrl ?? "",
-    //     },
-    //   },
-    //   iterations: [{
-    //     iterationName: "Iteration - 1",
-    //     content: "",
-    //   }]
-    // });
-
-    // const queryData = {
-    //   draftPostId: draftPost?.id ?? ""
-    // };
-    // const query = new URLSearchParams(queryData).toString();
-    // router.push(`/editor?${query}`);
   };
 
   return (
@@ -102,7 +88,6 @@ const PublishPostFormButton = ({ title }: PublishPostFormButtonProps) => {
             thumbnailUrl: "",
             thumbnailTitle: "",
             thumbnailDescription: "",
-            postType: "",
             genres: [],
             tags: [],
             actors: [],

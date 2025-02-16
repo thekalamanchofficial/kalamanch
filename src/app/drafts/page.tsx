@@ -11,7 +11,8 @@ import { useDraftPostIterationPublishing } from "./_hooks/useDraftPostIterationP
 import { useUserDraftPostsState } from "./_hooks/useUserDraftPosts";
 
 const Page = () => {
-  const { draftPostsForUser } = useUserDraftPostsState(); // Needed to get all draft posts
+  const { draftPostsForUser } = useUserDraftPostsState();
+
   const { handlePublishDraftPostIteration } = useDraftPostIterationPublishing();
   const { navigateToPostEditor } = useNavigateToPostEditor({});
 

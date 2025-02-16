@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Box, Button, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "../static/staticText";
 import WriteLogo from "~/assets/svg/WriteLogo.svg";
-import { useRouter } from "next/navigation";
+import { PostType } from "@prisma/client";
 
 const CreatePostFormButton = () => {
   const router = useRouter();

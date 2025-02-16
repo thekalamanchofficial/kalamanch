@@ -2,10 +2,10 @@ import { toast } from "react-toastify";
 import { useUser } from "~/context/userContext";
 import { useDraftPost } from "../../_hooks/useDraftPost";
 import { usePost } from "../../_hooks/usePost";
-import type { DraftPost } from "../../editor/types/types";
+import type { PublishDraftPostProps } from "../../editor/types/types";
 
 type UseDraftPostIterationPublishingResponse = {
-  handlePublishDraftPostIteration: (draftpost: DraftPost, iterationId: string) => Promise<void>;
+  handlePublishDraftPostIteration: (draftpost: PublishDraftPostProps, iterationId: string) => Promise<void>;
 };
 
 export const useDraftPostIterationPublishing = (): UseDraftPostIterationPublishingResponse => {
@@ -13,7 +13,7 @@ export const useDraftPostIterationPublishing = (): UseDraftPostIterationPublishi
   const { user } = useUser();
   const { deleteDraftPost } = useDraftPost();
 
-  const handlePublishDraftPostIteration = async (draftpost: DraftPost, iterationId: string) => {
+  const handlePublishDraftPostIteration = async (draftpost: PublishDraftPostProps, iterationId: string) => {
     const iteration = draftpost.iterations.find((i) => i.id == iterationId);
     if (!iteration) {
       toast.error("Iteration not found");
@@ -25,17 +25,15 @@ export const useDraftPostIterationPublishing = (): UseDraftPostIterationPublishi
       authorId: user?.id ?? "",
       authorName: user?.name ?? "",
       authorProfileImageUrl: user?.profileImageUrl ?? "",
-      postDetails: {
-        title: draftpost.postDetails.title,
-        targetAudience: draftpost.postDetails.targetAudience,
-        postType: draftpost.postDetails.postType,
-        actors: draftpost.postDetails.actors,
-        tags: draftpost.postDetails.tags,
-        thumbnailDetails: {
-          url: draftpost.postDetails.thumbnailDetails.url,
-          content: "",
-          title: "",
-        },
+      title: draftpost.title,
+      postType: draftpost.postType,
+      actors: draftpost.actors,
+      tags: draftpost.tags,
+      genres: draftpost.genres,
+      thumbnailDetails: {
+        url: draftpost.thumbnailDetails.url,
+        content: "",
+        title: "",
       },
     });
     await deleteDraftPost(draftpost.id ?? "");

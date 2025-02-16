@@ -4,13 +4,14 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from "react
 import { Box, Card, CardContent } from "@mui/material";
 import PostCardContent from "~/app/_components/postCardContent/PostCardContent";
 import EditPostFooter from "~/app/editor/_components/editPostFooter/EditPostFooter";
-import { PostStatus, type DraftPost } from "~/app/editor/types/types";
+import { PostStatus, type PublishDraftPostProps, type DraftPost } from "~/app/editor/types/types";
 import { useSelectedDraftPost } from "../../_contexts/SelectedDraftPostContext";
 import PublishDraftDialog from "../publishDraftDialog/PublishDraftDialog";
+import type { CreatePostProps } from "~/app/(with-sidebar)/myfeed/types/types";
 
 type DraftPostProps = {
   draftPosts: DraftPost[];
-  handlePublishDraftPostIteration: (draftpost: DraftPost, iterationId: string) => Promise<void>;
+  handlePublishDraftPostIteration: (draftpost: PublishDraftPostProps, iterationId: string) => Promise<void>;
   handleEditDraftPost: (draftPostId: string) => void;
 };
 
@@ -25,16 +26,23 @@ export default function DraftPostsSection({
     setSelectedDraftPostIdInLeftSideBar,
   } = useSelectedDraftPost();
   const postRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
-  const [selectedDraftPostIdForPublishing, setSelectedDraftPostIdForPublishing] = useState("");
+  const [selectedDraftPostForPublishing, setSelectedDraftPostForPublishing] = useState<DraftPost | null>(null);
 
-  const handleDraftIterationPublishing = async (iterationId: string) => {
-    if (selectedDraftPostIdForPublishing) {
+  const handleDraftIterationPublishing = async (iterationId: string, postDetails: CreatePostProps) => {
+    if (selectedDraftPostForPublishing) {
+      if (!selectedDraftPostForPublishing) {
+        console.error("Draft post not found");
+        return;
+      }
       await handlePublishDraftPostIteration(
-        draftPosts.find((post) => post.id === selectedDraftPostIdForPublishing)!,
+        {
+          ...selectedDraftPostForPublishing,
+          ...postDetails,
+        },
         iterationId,
       );
+      setSelectedDraftPostForPublishing(null);
     }
-    setSelectedDraftPostIdForPublishing("");
   };
 
   const handleIntersection = useCallback(
@@ -104,18 +112,15 @@ export default function DraftPostsSection({
             <CardContent>
               <Fragment>
                 <PostCardContent
-                  articleTitle={post.postDetails.title}
+                  articleTitle={post.title}
                   articleContent={post.iterations[0]?.content ?? ""}
-                  articleTags={post.postDetails.tags}
-                  articleThumbnailUrl={post.postDetails.thumbnailDetails.url}
                   articleId={post.id ?? ""}
-                  articleDescription={post.postDetails.thumbnailDetails.content ?? ""}
                   savedDate={post.updatedAt}
                 />
                 <EditPostFooter
                   postStatus={PostStatus.DRAFT}
                   handlePublishOrUnpublishButtonClick={() =>
-                    setSelectedDraftPostIdForPublishing(post.id ?? "")
+                    setSelectedDraftPostForPublishing(post)
                   }
                   handleEditButtonClick={() => {
                     handleEditDraftPost(post.id ?? "");
@@ -127,17 +132,17 @@ export default function DraftPostsSection({
         </div>
       ))}
 
-      {selectedDraftPostIdForPublishing != "" && (
+      {selectedDraftPostForPublishing && (
         <PublishDraftDialog
           iterations={
-            draftPosts.find((post) => post.id === selectedDraftPostIdForPublishing)?.iterations ??
-            []
+            selectedDraftPostForPublishing?.iterations ?? []
           }
+          postTitle={selectedDraftPostForPublishing?.title ?? ""}
           onPublish={handleDraftIterationPublishing}
-          onCancel={() => setSelectedDraftPostIdForPublishing("")}
+          onCancel={() => setSelectedDraftPostForPublishing(null)}
           title="Select Iteration to Publish"
           description="Choose which iteration of your draft you want to publish"
-          open={selectedDraftPostIdForPublishing !== ""}
+          open={selectedDraftPostForPublishing !== null}
         />
       )}
     </Box>

@@ -1,17 +1,16 @@
 "use client";
 
-import { Box, Divider, Grid2 as Grid, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { Box, Divider, Grid2 as Grid, TextField, Typography } from "@mui/material";
 import WritingPad from "../_components/writingPad/WritingPad";
-import CreatePostForm from "./_components/createPostForm/PublishPostForm";
 import { EditorAppBar } from "./_components/editorAppBar/EditorAppBar";
 import EditorLeftSideBarForIterations from "./_components/editorLeftSideBar/EditorLeftSideBarForIterations";
 import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
 import FileUploader from "./_components/fileUploader/FileUploader";
+import PublishPostForm from "./_components/publishPostForm/PublishPostForm";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
 import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
 import { useDraftEditorState } from "./_hooks/useDraftEditorState";
-import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorState";
 import { useQueryParams } from "./_hooks/useQueryParams";
 import { useSendForReview } from "./_hooks/useSendForReview";
@@ -20,8 +19,6 @@ import editorMockData from "./mockDataEditor/mockdata";
 import { PostStatus } from "./types/types";
 
 const Page = () => {
-  const [postTitle, setPostTitle] = useState<string>("");
-
   const { draftPostId, postId, shouldDraftPost } = useQueryParams();
 
   const {
@@ -35,13 +32,15 @@ const Page = () => {
     updateDraftPostDetails,
   } = useDraftEditorState({ draftPostId });
 
+  const [postTitle, setPostTitle] = useState<string>(draftPost?.title ?? "");
+
   const { publishedPost, updatePostContent, updatePostDetails } = usePublishedPostEditorState({
     postId,
   });
 
   const { isCreatePostFormOpen, openCreatePostForm, closeCreatePostForm, formData } =
     useCreatePostFormDataState({
-      postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails,
+      postDetails: publishedPost,
     });
 
   const { sendForReviewDialogOpen, setSendForReviewDialogOpen, handleSendForReview } =
@@ -51,6 +50,14 @@ const Page = () => {
     useUploadTextFromFile({
       addIteration,
     });
+
+  const handlePublish = async (content: string) => {
+    if (!publishedPost) {
+      console.error("No published post found");
+      return;
+    }
+    await updatePostContent(content);
+  };
 
   return (
     <>
@@ -149,13 +156,7 @@ const Page = () => {
               title={postTitle}
               currentIterationId={selectedIteration?.id}
               handleOpen={() => openCreatePostForm()}
-              handlePublish={async (content) => {
-                if (publishedPost) {
-                  await updatePostContent(content);
-                } else {
-                  await handlePublishEditorDraftIteration(content);
-                }
-              }}
+              handlePublish={handlePublish}
               defaultContentToDisplay={
                 (draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""
               }
@@ -165,7 +166,7 @@ const Page = () => {
             />
           </Grid>
           {isCreatePostFormOpen && (
-            <CreatePostForm
+            <PublishPostForm
               handleClose={() => closeCreatePostForm()}
               open={isCreatePostFormOpen}
               createPostFormData={formData}
