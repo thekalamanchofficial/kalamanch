@@ -1,5 +1,13 @@
 import React, { useCallback, useState } from "react";
-import { Box, Button, Grid2 as Grid, Typography, useMediaQuery, type Theme } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardMedia,
+  Grid2 as Grid,
+  Typography,
+  useMediaQuery,
+  type Theme,
+} from "@mui/material";
 import { myfeedConfig } from "~/app/(with-sidebar)/myfeed/_config/config";
 import { type PostCardContentProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
@@ -16,6 +24,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   articleTitle,
   articleContent,
   savedDate,
+  articleThumbnailUrl,
 }) => {
   const [seeMore, setSeeMore] = useState(false);
   const { formatSavedDate } = useSavedDateFormatter();
@@ -32,6 +41,11 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   const handleSeeLess = useCallback(() => {
     setSeeMore(false);
   }, []);
+
+  const isVideoUrl = (thumbnailUrl: string | null | undefined) => {
+    if (!thumbnailUrl) return false;
+    return thumbnailUrl.endsWith(".mp4") || thumbnailUrl.endsWith(".mov");
+  };
 
   return (
     <>
@@ -119,12 +133,34 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
         }}
       >
         <Grid size={isSmallScreen ? 12 : 4}>
-          <ImageNotSupportedOutlinedIcon
-            sx={{
-              fontSize: "220px",
-              color: "text.secondary",
-            }}
-          />
+          {isVideoUrl(articleThumbnailUrl) ? (
+            <CardMedia
+              component="video"
+              controls
+              height="220"
+              src={articleThumbnailUrl}
+              sx={{
+                maxWidth: "300px",
+              }}
+            />
+          ) : articleThumbnailUrl ? (
+            <CardMedia
+              component="img"
+              height="220"
+              image={articleThumbnailUrl}
+              alt="image content"
+              sx={{
+                maxWidth: "300px",
+              }}
+            />
+          ) : (
+            <ImageNotSupportedOutlinedIcon
+              sx={{
+                fontSize: "220px",
+                color: "text.secondary",
+              }}
+            />
+          )}
         </Grid>
         <Grid
           sx={{

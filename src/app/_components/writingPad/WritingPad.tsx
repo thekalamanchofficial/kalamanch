@@ -17,6 +17,7 @@ type WritingPadProps = {
   currentIterationId?: string;
   postStatus: PostStatus;
   handleSendForReview: () => void;
+  draftPostId?: string;
 };
 
 const WritingPad: React.FC<WritingPadProps> = ({
@@ -28,6 +29,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
   handlePublish,
   postStatus,
   handleSendForReview,
+  draftPostId,
 }) => {
   const { handleSubmit, control, watch, setFocus } = useContentForm({
     defaultValues: { content: defaultContentToDisplay },
@@ -83,6 +85,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
         handleSubmit={handleSubmit(onPublishPost)}
         handleSaveDraft={saveDraftInstantly}
         handleSendForReview={handleSendForReview}
+        draftPostId={draftPostId}
       />
     </Box>
   );

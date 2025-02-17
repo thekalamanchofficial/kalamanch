@@ -67,16 +67,9 @@ const DraftIterationReviewPost = memo<DraftIterationReviewPostProps>(
             </Box>
           )}
           <PostCardContent
-            articleTitle={draftIterationReviewPost.draftPost.postDetails.title}
+            articleTitle={draftIterationReviewPost.draftPost.title}
             articleContent={draftIterationReviewPost.content}
-            articleTags={draftIterationReviewPost.draftPost.postDetails.tags}
-            articleThumbnailUrl={
-              draftIterationReviewPost.draftPost.postDetails.thumbnailDetails.url
-            }
             articleId={draftIterationReviewPost.id}
-            articleDescription={
-              draftIterationReviewPost.draftPost.postDetails.thumbnailDetails.content ?? ""
-            }
             savedDate={
               reviewScreen === ReviewScreen.REVIEWS_MY_FEED_SUBTAB
                 ? undefined

@@ -59,7 +59,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
     }
   };
 
-  const saveLastIterationData = async () => {
+  const saveLastIterationData = useCallback(async () => {
     const lastIterationId = selectedIteration?.id;
     if (!lastIterationId) {
       return;
@@ -93,7 +93,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
       lastIterationContent,
     );
     localStorage.removeItem(lastIterationId);
-  };
+  }, [selectedIteration, updateDraftIteration]);
 
   // Handle iteration change
   const handleIterationChange = useCallback(
@@ -102,7 +102,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
       const iteration = draftPost?.iterations?.find((it) => it.id === iterationId);
       if (iteration) setSelectedIteration(iteration);
     },
-    [draftPost], // TODO: lint error
+    [draftPost, saveLastIterationData],
   );
 
   // Handle content change in the editor
@@ -178,7 +178,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
   const updateDraftPostDetails = async (createPostFormDetails: CreatePostFormType) => {
     if (!draftPost) return;
     console.log("createPostFormDetails", createPostFormDetails);
-    
+
     await updateDraftDetails(draftPostId ?? "", createPostFormDetails.title);
 
     setDraftPost((prev) => {

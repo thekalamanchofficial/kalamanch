@@ -29,7 +29,7 @@ const useFeaturedPostPage = (): useFeaturedPostPageProps => {
     },
   );
 
-  const { handleScroll } = useLazyLoading({
+  const { handleScroll: _ } = useLazyLoading({
     // TODO: lint error
     queryLoading: isLoading,
     error: error?.message ?? "",

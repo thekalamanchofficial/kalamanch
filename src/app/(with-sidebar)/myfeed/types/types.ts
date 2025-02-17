@@ -58,7 +58,7 @@ export type Post = {
   authorProfileImageUrl?: string;
   content: string;
   title: string;
-  postType: PostType;
+  postType?: PostType | null;
   actors?: string[];
   tags?: Tag[];
   genres?: Genre[];
@@ -157,6 +157,10 @@ export type PostCardContentProps = {
   articleContent: string;
   articleId: string;
   savedDate?: string;
+  articleTags?: Tag[];
+  articleGenres?: Genre[];
+  articleThumbnailUrl?: string;
+  articleDescription?: string;
 };
 
 export type FollowButtonProps = {
@@ -185,6 +189,13 @@ export type FeaturedPost = {
   authorProfileImageUrl: string;
   authorId: string;
   likeCount: number;
+  genres: Genre[];
+  tags: Tag[];
+  thumbnailDetails: {
+    url: string;
+    content?: string | null;
+    title?: string | null;
+  };
 };
 
 export type UserToFollow = {

@@ -28,7 +28,6 @@ const Page = () => {
     handleIterationChange,
     handleEditorContentChange,
     addIteration,
-    handlePublishEditorDraftIteration,
     updateDraftPostDetails,
   } = useDraftEditorState({ draftPostId });
 
@@ -163,6 +162,7 @@ const Page = () => {
               handleEditorContentChange={handleEditorContentChange}
               postStatus={draftPost || shouldDraftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
               handleSendForReview={() => setSendForReviewDialogOpen(true)}
+              draftPostId={draftPost?.id}
             />
           </Grid>
           {isCreatePostFormOpen && (

@@ -1,5 +1,5 @@
-import type { PostType } from "@prisma/client";
 import { useState } from "react";
+import type { PostType } from "@prisma/client";
 import type { Post } from "~/app/(with-sidebar)/myfeed/types/types";
 
 type CreatePostFormDataStateProps = {

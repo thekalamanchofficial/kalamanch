@@ -82,12 +82,12 @@ export default function DraftIterationReviewFeedbackSection({
       });
     }
     setSelectedDraftIterationId(selectedDraftIterationIdInLeftSideBar);
-  }, [selectedDraftIterationIdInLeftSideBar]); // TODO: lint error
+  }, [selectedDraftIterationIdInLeftSideBar, setSelectedDraftIterationId]);
 
   useEffect(() => {
     setSelectedDraftIterationId(draftIterations[0]?.id ?? "");
     setSelectedDraftIterationIdInLeftSideBar(draftIterations[0]?.id ?? "");
-  }, [draftIterations]); // TODO: lint error
+  }, [draftIterations, setSelectedDraftIterationId, setSelectedDraftIterationIdInLeftSideBar]);
 
   return (
     <Box

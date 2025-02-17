@@ -1,7 +1,6 @@
 import { toast } from "react-toastify";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { handleError } from "~/app/_utils/handleError";
-import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
 import type { CreateDraftPostProps, DraftPost, Iteration } from "../editor/types/types";
 
@@ -73,7 +72,7 @@ export const useDraftPost = (): UseDraftPostRespone => {
       handleError(error);
     }
   };
-  
+
   const addDraftIteration = async (draftPostId: string, iterationName: string, content: string) => {
     const addedIteration = await addDraftIterationMutation.mutateAsync({
       draftPostId,

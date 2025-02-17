@@ -39,7 +39,7 @@ const useFeaturedAuthorPage = (): useFeaturedAuthorPageProps => {
     },
   );
 
-  const { handleScroll } = useLazyLoading({
+  const { handleScroll: _ } = useLazyLoading({
     // TODO: lint error
     queryLoading: isLoading,
     error: error?.message ?? "",

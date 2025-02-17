@@ -178,6 +178,16 @@ export const postRouter = router({
         where: {
           id: postId,
         },
+        include: {
+          tags: true,
+          genres: true,
+          comments: {
+            include: {
+              replies: true,
+            },
+          },
+          likes: true,
+        },
       });
       return post;
     } catch (error) {

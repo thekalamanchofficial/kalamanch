@@ -49,7 +49,7 @@ export type PublishDraftPostProps = {
   genres?: string[];
   thumbnailDetails: ThumbnailDetails;
   iterations: Iteration[];
-}
+};
 
 export type CreateDraftPostProps = {
   authorName: string;

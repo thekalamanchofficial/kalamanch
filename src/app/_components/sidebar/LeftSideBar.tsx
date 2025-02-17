@@ -1,10 +1,10 @@
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { type MenuItemList } from "~/app/(with-sidebar)/myfeed/types/types";
+import OwlSVG from "~/assets/svg/owl.svg";
 import UserMenu from "../userMenu/UserMenu";
 import CreatePostFormButton from "./CreatePostFormButton";
 import LeftSideBarNavLinks from "./LeftSideBarNavLinks";
-import OwlSVG from "~/assets/svg/owl.svg";
 
 type LeftSideBarProps = {
   menuItems: MenuItemList[];

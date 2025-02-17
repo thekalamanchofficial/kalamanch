@@ -37,16 +37,18 @@ type ActionsBarProps = {
   handleSubmit: () => void;
   postStatus: PostStatus;
   handleSendForReview: () => void;
+  draftPostId?: string;
 };
 
 const EditorActionsBar: React.FC<ActionsBarProps> = ({
   title,
   content,
   handleOpen,
-  handleSubmit,
+  handleSubmit: _,
   postStatus,
   handleSaveDraft,
   handleSendForReview,
+  draftPostId,
 }) => (
   <Box
     sx={{
@@ -93,7 +95,9 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         <Typography sx={textStyle}>Save as draft</Typography>
       </Button>
     )}
-    {postStatus == PostStatus.DRAFT && <PublishPostFormButton title={title} content={content} />}
+    {postStatus == PostStatus.DRAFT && (
+      <PublishPostFormButton title={title} content={content} draftPostId={draftPostId} />
+    )}
   </Box>
 );
 

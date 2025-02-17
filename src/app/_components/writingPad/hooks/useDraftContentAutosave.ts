@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import throttle from "lodash/throttle";
 import { useDraftPost } from "~/app/_hooks/useDraftPost";
@@ -10,6 +10,7 @@ type UseDraftContentAutosaveReturn = {
   currentIterationId: string | null | undefined;
   saveDraftInstantly: (showToast?: boolean) => void;
 };
+
 type UseDraftContentAutosaveProps = {
   currentIterationId: string | null | undefined;
   initialContent: string;
@@ -23,18 +24,21 @@ export const useDraftContentAutosave = ({
   saveContentToDb,
   postStatus,
 }: UseDraftContentAutosaveProps): UseDraftContentAutosaveReturn => {
-  const [content, setContent] = useState<string>(initialContent);
-  const [lastSavedContent, setLastSavedContent] = useState<string>(initialContent);
+  const [content, setContent] = useState(initialContent);
+  const [lastSavedContent, setLastSavedContent] = useState(initialContent);
   const { addDraftPost } = useDraftPost();
   const { user } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const saveContent = (data: string, iterationId: string, showToast?: boolean) => {
-    if (data === lastSavedContent) return;
-    setLastSavedContent(data);
-    saveContentToDb(data, iterationId, showToast);
-  };
+  const saveContent = useCallback(
+    (data: string, iterationId: string, showToast?: boolean) => {
+      if (data === lastSavedContent) return;
+      setLastSavedContent(data);
+      saveContentToDb(data, iterationId, showToast);
+    },
+    [lastSavedContent, saveContentToDb],
+  );
 
   const createDraftPostInDb = async (content: string, title: string) => {
     if (!user?.id || !user?.name) {
@@ -46,17 +50,16 @@ export const useDraftContentAutosave = ({
       authorName: user.name,
       authorProfileImageUrl: user.profileImageUrl ?? "",
       title:
-        title === ""
-          ? new Date().toLocaleString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            })
-          : title,
+        title ||
+        new Date().toLocaleString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
       iterations: [
         {
           iterationName: "Iteration - 1",
@@ -73,17 +76,17 @@ export const useDraftContentAutosave = ({
     const params = new URLSearchParams(searchParams);
     params.set("draftPostId", draftPost.id);
 
-    router.replace(window.location.pathname + "?" + params.toString());
+    router.replace(`${window.location.pathname}?${params.toString()}`);
   };
 
-  const throttledSave = useCallback(
-    // TODO: lint error
-    throttle(saveContent, 60000), // Save every 1 minute
-    [currentIterationId],
+  const throttledSave = useRef(
+    throttle((data: string, iterationId: string) => {
+      saveContent(data, iterationId);
+    }, 60000), // Save every 1 minute
   );
 
   const onContentChange = (data: string, title: string) => {
-    if (postStatus !== PostStatus.DRAFT) return;
+    if (postStatus !== PostStatus.DRAFT || data === content) return;
 
     setContent(data);
 
@@ -91,21 +94,25 @@ export const useDraftContentAutosave = ({
       void createDraftPostInDb(data, title);
     } else {
       localStorage.setItem(currentIterationId, data);
-      throttledSave(data, currentIterationId);
+      throttledSave.current(data, currentIterationId);
     }
   };
 
-  const saveDraftInstantly = (showToast?: boolean) => {
-    if (!currentIterationId) return;
-    saveContent(content, currentIterationId, showToast);
-    localStorage.removeItem(currentIterationId); // TODO - Use Context instead of local storage
-  };
+  const saveDraftInstantly = useCallback(
+    (showToast?: boolean) => {
+      if (!currentIterationId) return;
+      saveContent(content, currentIterationId, showToast);
+      localStorage.removeItem(currentIterationId); // TODO - Use Context instead of local storage
+    },
+    [currentIterationId, saveContent, content],
+  );
 
   useEffect(() => {
+    const throttleSaveRef = throttledSave.current;
     return () => {
-      throttledSave.cancel();
+      throttleSaveRef.cancel();
     };
-  }, []); // TODO: lint error
+  }, []);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -127,7 +134,7 @@ export const useDraftContentAutosave = ({
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [content, lastSavedContent]);
+  }, [saveDraftInstantly]);
 
   return { onContentChange, currentIterationId, saveDraftInstantly };
 };

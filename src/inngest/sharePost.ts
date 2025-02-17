@@ -17,7 +17,9 @@ const onFailure = async ({
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
-    select: { postDetails: true },
+    include: {
+      tags: true,
+    },
   });
 
   const sender = await prisma.user.findUnique({
@@ -26,7 +28,7 @@ const onFailure = async ({
   });
 
   const senderName = sender?.name ?? "";
-  const postTitle = post?.postDetails?.title ?? "Post";
+  const postTitle = post?.title ?? "Post";
 
   try {
     await sendEmail({
@@ -54,6 +56,9 @@ export const sharePostViaEmail = inngest.createFunction(
 
     const post = await prisma.post.findUnique({
       where: { id: postId },
+      include: {
+        tags: true,
+      },
     });
 
     if (!post) {
@@ -76,11 +81,10 @@ export const sharePostViaEmail = inngest.createFunction(
       context: {
         senderName: sender.name,
         authorName: post.authorName,
-        postTitle: post.postDetails.title,
+        postTitle: post.title,
         postUrl: `${baseUrl}/posts/${postId}`,
-        tags: post.postDetails.tags,
-        thumbnailContent:
-          post?.postDetails?.thumbnailDetails?.content ?? "Placeholder thumbnail content",
+        tags: post.tags?.map((tag) => tag.name) ?? [],
+        thumbnailContent: post?.thumbnailDetails?.content ?? "Placeholder thumbnail content",
       },
     };
 

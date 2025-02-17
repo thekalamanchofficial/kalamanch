@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import DescriptionOutlinedIcon from "@mui/icons-material/Publish";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -15,22 +14,21 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import PublishPostFormButton from "~/app/_components/sidebar/PublishPostFormButton";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { type Iteration } from "~/app/editor/types/types";
-import type { CreatePostProps } from "~/app/(with-sidebar)/myfeed/types/types";
-import PublishPostFormButton from "~/app/_components/sidebar/PublishPostFormButton";
 
 export type PublishDialogProps = {
   iterations: Iteration[];
-  onPublish: (iterationId: string, postDetails: CreatePostProps) => Promise<void>;
   onCancel?: () => void;
   open: boolean;
   title?: string;
   description?: string;
   postTitle?: string;
+  draftPostId?: string;
 };
 
-const StyledRadio = styled(Radio)(({ theme }) => ({
+const StyledRadio = styled(Radio)(({ theme: _ }) => ({
   // TODO: lint error
   "&.Mui-checked": {
     color: "primary.main",
@@ -39,19 +37,15 @@ const StyledRadio = styled(Radio)(({ theme }) => ({
 
 export default function PublishDraftDialog({
   iterations,
-  onPublish,
   onCancel,
   open,
   title = STATIC_TEXTS.EDITOR_PAGE.PUBLISH_DRAFT,
   description = STATIC_TEXTS.EDITOR_PAGE.SELECT_ITERATION_DESCRIPTION,
   postTitle,
+  draftPostId,
 }: PublishDialogProps) {
   const [selectedIteration, setSelectedIteration] = useState<Iteration | null>(null);
   const [error] = useState<string | null>(null);
-
-  const handleOnPublish = async (selectedIteration: string, postDetails: CreatePostProps) => {
-    await onPublish(selectedIteration, postDetails);
-  };
 
   return (
     <>
@@ -67,7 +61,11 @@ export default function PublishDraftDialog({
           <FormControl component="fieldset" sx={{ mt: 2, width: "100%" }}>
             <RadioGroup
               value={selectedIteration?.id}
-              onChange={(e) => setSelectedIteration(iterations.find((iteration) => iteration.id === e.target.value) ?? null)}
+              onChange={(e) =>
+                setSelectedIteration(
+                  iterations.find((iteration) => iteration.id === e.target.value) ?? null,
+                )
+              }
             >
               {iterations.map((iteration) => (
                 <FormControlLabel
@@ -115,6 +113,7 @@ export default function PublishDraftDialog({
           <PublishPostFormButton
             title={postTitle ?? ""}
             content={selectedIteration?.content ?? ""}
+            draftPostId={draftPostId ?? ""}
           />
         </DialogActions>
       </Dialog>

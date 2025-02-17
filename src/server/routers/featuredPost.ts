@@ -1,3 +1,4 @@
+import type { Genre, Tag } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import prisma from "~/server/db";
@@ -32,15 +33,20 @@ export const featuredPostRouter = router({
           },
           select: {
             id: true,
-            postDetails: {
-              select: {
-                title: true,
-              },
-            },
+            title: true,
             authorName: true,
             authorId: true,
             authorProfileImageUrl: true,
             likeCount: true,
+            thumbnailDetails: {
+              select: {
+                url: true,
+                content: true,
+                title: true,
+              },
+            },
+            genres: true,
+            tags: true,
           },
           take: limit,
           skip: skip,
@@ -49,20 +55,32 @@ export const featuredPostRouter = router({
         const featuredPostWithLikeCount = featuredPosts.map(
           (featuredPost: {
             id: string;
-            postDetails: {
-              title: string;
-            };
+            title: string;
             authorName: string;
             authorId: string;
             authorProfileImageUrl?: string | null;
             likeCount: number;
+            genres: Genre[];
+            tags: Tag[];
+            thumbnailDetails: {
+              url: string;
+              content?: string | null;
+              title?: string | null;
+            };
           }) => ({
             id: featuredPost.id,
-            title: featuredPost.postDetails?.title,
+            title: featuredPost.title,
             authorName: featuredPost.authorName,
             authorId: featuredPost.authorId,
             authorProfileImageUrl: featuredPost.authorProfileImageUrl ?? "",
             likeCount: featuredPost.likeCount,
+            genres: featuredPost.genres,
+            tags: featuredPost.tags,
+            thumbnailDetails: {
+              url: featuredPost.thumbnailDetails.url,
+              content: featuredPost.thumbnailDetails.content,
+              title: featuredPost.thumbnailDetails.title,
+            },
           }),
         );
         return {

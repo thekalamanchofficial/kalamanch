@@ -60,14 +60,14 @@ export const generateMetadata = async ({
   params: { postId: string };
 }): Promise<Metadata> => {
   const post = await trpcServer.post.getPost(params.postId);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://kalamanch.org";
 
   if (!post) {
     return {
       title: "Post not found - Kalamanch",
       description: "The post you're looking for is not available on Kalamanch.",
       alternates: {
-        // TODO: get it from env
-        canonical: `https://kalamanch.com/posts/${params.postId}`,
+        canonical: `${baseUrl}/posts/${params.postId}`,
       },
       robots: {
         index: false,
@@ -76,32 +76,21 @@ export const generateMetadata = async ({
     };
   }
 
+  const title = `${post.title} - Kalamanch`;
   const description = post.content.slice(0, 150) || "Explore the latest post on Kalamanch.";
-  // TODO: get it from env
-  const thumbnailUrl =
-    post.postDetails.thumbnailDetails.url || "https://kalamanch.com/default-thumbnail.jpg";
-  const title = `${post.postDetails.title} - Kalamanch`;
+  const thumbnailUrl = post.thumbnailDetails.url.startsWith("http")
+    ? post.thumbnailDetails.url
+    : `${baseUrl}${post.thumbnailDetails.url}`;
 
   return {
     title,
     description,
-    twitter: {
-      card: thumbnailUrl ? "summary_large_image" : "summary",
-      title,
-      description,
-      images: [thumbnailUrl],
-    },
     alternates: {
-      // TODO: get it from env
-      canonical: `https://kalamanch.com/posts/${params.postId}`,
+      canonical: `${baseUrl}/posts/${params.postId}`,
     },
     robots: {
       index: true,
       follow: true,
-    },
-    appleWebApp: {
-      title,
-      statusBarStyle: "default",
     },
     keywords: [
       "Kalamanch",
@@ -111,36 +100,45 @@ export const generateMetadata = async ({
       "Social Media",
       "Community",
       "Art",
-      post.postDetails.title,
-      ...(post.postDetails.tags || []),
+      post.title,
+      ...(post.tags?.map((tag) => tag.name) || []),
     ],
     authors: [
       {
         name: post.authorName || "Kalamanch",
-        // TODO: get it from env
-        url: `https://kalamanch.com/authors/${post.authorId || "default"}`,
+        url: `${baseUrl}/authors/${post.authorId || "default"}`,
       },
     ],
     openGraph: {
       title,
       description,
-      // TODO: get it from env
-      url: `https://kalamanch.com/posts/${params.postId}`,
+      url: `${baseUrl}/posts/${params.postId}`,
       siteName: "Kalamanch",
       type: "article",
-      publishedTime: post.createdAt.toString(),
-      modifiedTime: post.updatedAt.toString(),
-      // TODO: get it from env
-      authors: [`https://kalamanch.com/authors/${post.authorId || "default"}`],
+      publishedTime: post.createdAt.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+      authors: [`${baseUrl}/authors/${post.authorId || "default"}`],
       images: [
         {
           url: thumbnailUrl,
           width: 1200,
           height: 630,
-          alt: post.postDetails.title || "Kalamanch Post",
+          alt: post.thumbnailDetails.title ?? "Kalamanch Post",
         },
       ],
       locale: "en_US",
+      tags: post.tags?.map((tag) => tag.name) ?? [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [thumbnailUrl],
+      site: "@kalamanch",
+    },
+    appleWebApp: {
+      title,
+      statusBarStyle: "default",
     },
     themeColor: "#ffffff",
     viewport: "width=device-width, initial-scale=1.0, maximum-scale=1.0",

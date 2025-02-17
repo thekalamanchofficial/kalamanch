@@ -1,8 +1,6 @@
 import { useState } from "react";
-import type { UseFormSetValue } from "react-hook-form";
 import type { Genre, Tag } from "@prisma/client";
 import { trpc } from "~/app/_trpc/client";
-import type { CreatePostFormType } from "../types/types";
 
 type UseGenreTagsReturnType = {
   genres: (Genre & { tags: Tag[] })[];

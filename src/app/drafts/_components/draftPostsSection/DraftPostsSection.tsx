@@ -4,46 +4,24 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from "react
 import { Box, Card, CardContent } from "@mui/material";
 import PostCardContent from "~/app/_components/postCardContent/PostCardContent";
 import EditPostFooter from "~/app/editor/_components/editPostFooter/EditPostFooter";
-import { PostStatus, type PublishDraftPostProps, type DraftPost } from "~/app/editor/types/types";
+import { PostStatus, type DraftPost } from "~/app/editor/types/types";
 import { useSelectedDraftPost } from "../../_contexts/SelectedDraftPostContext";
 import PublishDraftDialog from "../publishDraftDialog/PublishDraftDialog";
-import type { CreatePostProps } from "~/app/(with-sidebar)/myfeed/types/types";
 
 type DraftPostProps = {
   draftPosts: DraftPost[];
-  handlePublishDraftPostIteration: (draftpost: PublishDraftPostProps, iterationId: string) => Promise<void>;
   handleEditDraftPost: (draftPostId: string) => void;
 };
 
-export default function DraftPostsSection({
-  draftPosts,
-  handlePublishDraftPostIteration,
-  handleEditDraftPost,
-}: DraftPostProps) {
+export default function DraftPostsSection({ draftPosts, handleEditDraftPost }: DraftPostProps) {
   const {
     setSelectedDraftPostId,
     selectedDraftPostIdInLeftSideBar,
     setSelectedDraftPostIdInLeftSideBar,
   } = useSelectedDraftPost();
   const postRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
-  const [selectedDraftPostForPublishing, setSelectedDraftPostForPublishing] = useState<DraftPost | null>(null);
-
-  const handleDraftIterationPublishing = async (iterationId: string, postDetails: CreatePostProps) => {
-    if (selectedDraftPostForPublishing) {
-      if (!selectedDraftPostForPublishing) {
-        console.error("Draft post not found");
-        return;
-      }
-      await handlePublishDraftPostIteration(
-        {
-          ...selectedDraftPostForPublishing,
-          ...postDetails,
-        },
-        iterationId,
-      );
-      setSelectedDraftPostForPublishing(null);
-    }
-  };
+  const [selectedDraftPostForPublishing, setSelectedDraftPostForPublishing] =
+    useState<DraftPost | null>(null);
 
   const handleIntersection = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -134,15 +112,13 @@ export default function DraftPostsSection({
 
       {selectedDraftPostForPublishing && (
         <PublishDraftDialog
-          iterations={
-            selectedDraftPostForPublishing?.iterations ?? []
-          }
+          iterations={selectedDraftPostForPublishing?.iterations ?? []}
           postTitle={selectedDraftPostForPublishing?.title ?? ""}
-          onPublish={handleDraftIterationPublishing}
           onCancel={() => setSelectedDraftPostForPublishing(null)}
           title="Select Iteration to Publish"
           description="Choose which iteration of your draft you want to publish"
           open={selectedDraftPostForPublishing !== null}
+          draftPostId={selectedDraftPostForPublishing?.id}
         />
       )}
     </Box>

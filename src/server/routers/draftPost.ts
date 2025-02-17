@@ -59,7 +59,6 @@ export const draftPostRouter = router({
     }),
 
   addDraftPost: protectedProcedure.input(addDraftPostSchema).mutation(async ({ input }) => {
-    console.log("input", input);
     const draftPost = await prisma.draftPost.create({
       data: {
         authorId: input.authorId,

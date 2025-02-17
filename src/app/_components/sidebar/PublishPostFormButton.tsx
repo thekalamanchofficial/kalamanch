@@ -3,6 +3,7 @@
 import { useState } from "react";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import { Box, Button, Typography } from "@mui/material";
+import { useDraftPost } from "~/app/_hooks/useDraftPost";
 import { usePost } from "~/app/_hooks/usePost";
 import PublishPostForm from "~/app/editor/_components/publishPostForm/PublishPostForm";
 import { type CreatePostFormType } from "~/app/editor/types/types";
@@ -12,12 +13,14 @@ import { STATIC_TEXTS } from "../static/staticText";
 type PublishPostFormButtonProps = {
   title: string;
   content: string;
+  draftPostId?: string;
 };
 
-const PublishPostFormButton = ({ title, content }: PublishPostFormButtonProps) => {
+const PublishPostFormButton = ({ title, content, draftPostId }: PublishPostFormButtonProps) => {
   const [createPostFormOpen, setCreatePostFormOpen] = useState(false);
   const { user } = useUser();
   const { publishPost } = usePost();
+  const { deleteDraftPost } = useDraftPost();
 
   const handleCreatePostFormClose = () => {
     setCreatePostFormOpen(false);
@@ -45,6 +48,10 @@ const PublishPostFormButton = ({ title, content }: PublishPostFormButtonProps) =
         title: data.thumbnailTitle ?? "",
       },
     });
+
+    if (draftPostId) {
+      await deleteDraftPost(draftPostId);
+    }
   };
 
   return (

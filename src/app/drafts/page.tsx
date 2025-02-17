@@ -7,13 +7,11 @@ import { useNavigateToPostEditor } from "../editor/_hooks/useNavigateToPostEdito
 import { PostEntityType, PostStatus } from "../editor/types/types";
 import { DraftAppBar } from "./_components/draftAppBar/DraftAppBar";
 import DraftPostsSection from "./_components/draftPostsSection/DraftPostsSection";
-import { useDraftPostIterationPublishing } from "./_hooks/useDraftPostIterationPublishing";
 import { useUserDraftPostsState } from "./_hooks/useUserDraftPosts";
 
 const Page = () => {
   const { draftPostsForUser } = useUserDraftPostsState();
 
-  const { handlePublishDraftPostIteration } = useDraftPostIterationPublishing();
   const { navigateToPostEditor } = useNavigateToPostEditor({});
 
   return (
@@ -54,7 +52,6 @@ const Page = () => {
           <Grid size={12} sx={{ height: "100%", width: "100%" }}>
             <DraftPostsSection
               draftPosts={draftPostsForUser}
-              handlePublishDraftPostIteration={handlePublishDraftPostIteration}
               handleEditDraftPost={(postId: string) =>
                 navigateToPostEditor(postId, PostStatus.DRAFT)
               }

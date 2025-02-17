@@ -13,7 +13,6 @@ import {
   DialogTitle,
   FormControl,
   FormHelperText,
-  Grid2 as Grid,
   MenuItem,
   Select,
   TextField,
@@ -78,6 +77,10 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
     >
       <DialogTitle>Create Post</DialogTitle>
       <DialogContent>
+        <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
+          Only the title is mandatory. However, providing additional details will help in better
+          reach.
+        </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <Controller
             control={control}

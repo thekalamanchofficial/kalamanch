@@ -1,5 +1,6 @@
 "use client";
 
+import ImageNotSupportedOutlinedIcon from "@mui/icons-material/ImageNotSupportedOutlined";
 import { Box, CardMedia, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import Loader from "~/app/_components/loader/Loader";
 import SeeMoreButton from "~/app/_components/seeMoreButton/SeeMoreButton";
@@ -8,6 +9,10 @@ import useFeaturedPostPage from "./_hooks/useFeaturedPostPage";
 
 const Page = () => {
   const { post, isLoading, handleClick } = useFeaturedPostPage();
+  const isVideoUrl = (thumbnailUrl: string | null | undefined) => {
+    if (!thumbnailUrl) return false;
+    return thumbnailUrl.endsWith(".mp4") || thumbnailUrl.endsWith(".mov");
+  };
   return (
     <Grid
       container
@@ -77,17 +82,34 @@ const Page = () => {
                     height: "auto",
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    height="80"
-                    image={"https://picsum.photos/200"}
-                    alt="green iguana"
-                    sx={{
-                      width: "100%",
-                      maxWidth: "400px",
-                      height: "250px",
-                    }}
-                  />
+                  {isVideoUrl(item.thumbnailDetails.url) ? (
+                    <CardMedia
+                      component="video"
+                      controls
+                      height="220"
+                      src={item.thumbnailDetails.url}
+                      sx={{
+                        maxWidth: "300px",
+                      }}
+                    />
+                  ) : isVideoUrl(item.thumbnailDetails.url) ? (
+                    <CardMedia
+                      component="video"
+                      controls
+                      height="220"
+                      src={item.thumbnailDetails.url}
+                      sx={{
+                        maxWidth: "300px",
+                      }}
+                    />
+                  ) : (
+                    <ImageNotSupportedOutlinedIcon
+                      sx={{
+                        fontSize: "220px",
+                        color: "text.secondary",
+                      }}
+                    />
+                  )}
                   <Box
                     sx={{
                       display: "flex",
