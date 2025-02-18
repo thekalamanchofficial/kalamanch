@@ -2,7 +2,10 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { handleError } from "~/app/_utils/handleError";
-import type { CreatePostProps, UpdatePostDetailsProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import type {
+  CreatePostProps,
+  UpdatePostDetailsProps,
+} from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
 
 type UsePostResponse = {

@@ -39,7 +39,7 @@ export const useDraftContentAutosave = ({
       setLastSavedContent(data);
       saveContentToDb(data, iterationId, showToast);
     },
-    [lastSavedContent, saveContentToDb]
+    [lastSavedContent, saveContentToDb],
   );
 
   const createDraftPostInDb = async (content: string, title: string) => {
@@ -85,7 +85,7 @@ export const useDraftContentAutosave = ({
   const throttledSave = useRef(
     throttle((data: string, iterationId: string) => {
       saveContent(data, iterationId);
-    }, 60000) // Save every 1 minute
+    }, 60000), // Save every 1 minute
   );
 
   const onContentChange = (data: string, title: string) => {
@@ -112,7 +112,7 @@ export const useDraftContentAutosave = ({
         localStorage.removeItem(currentIterationId); // TODO - Use Context instead of local storage
       }
     },
-    [currentIterationId, saveContent, content]
+    [currentIterationId, saveContent, content],
   );
 
   useEffect(() => {
