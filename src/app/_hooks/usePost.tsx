@@ -2,14 +2,14 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { handleError } from "~/app/_utils/handleError";
-import type { CreatePostProps } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { CreatePostProps, UpdatePostDetailsProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
 
 type UsePostResponse = {
   publishPost: (postData: CreatePostProps) => Promise<void>;
   deletePost: (postId: string) => Promise<void>;
   updatePostContent: (postId: string, content: string) => Promise<void>;
-  updatePostDetails: (postId: string, postDetails: CreatePostProps) => Promise<void>;
+  updatePostDetails: (postId: string, updatePostDetails: UpdatePostDetailsProps) => Promise<void>;
 };
 
 const createMutationOptions = (successMessage: string) => ({
@@ -53,17 +53,15 @@ export const usePost = (): UsePostResponse => {
         id: postId,
         content,
       });
+      router.push("/");
     } catch (error) {
       console.error("Failed to update post content:", error);
     }
   };
 
-  const updatePostDetails = async (postId: string, postDetails: CreatePostProps) => {
+  const updatePostDetails = async (postId: string, updatedPostDetails: UpdatePostDetailsProps) => {
     try {
-      await updatePostDetailsMutation.mutateAsync({
-        id: postId,
-        ...postDetails,
-      });
+      await updatePostDetailsMutation.mutateAsync(updatedPostDetails);
     } catch (error) {
       console.error("Failed to update post details:", error);
     }

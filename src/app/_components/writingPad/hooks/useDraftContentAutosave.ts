@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import throttle from "lodash/throttle";
@@ -37,7 +39,7 @@ export const useDraftContentAutosave = ({
       setLastSavedContent(data);
       saveContentToDb(data, iterationId, showToast);
     },
-    [lastSavedContent, saveContentToDb],
+    [lastSavedContent, saveContentToDb]
   );
 
   const createDraftPostInDb = async (content: string, title: string) => {
@@ -73,16 +75,17 @@ export const useDraftContentAutosave = ({
       return;
     }
 
-    const params = new URLSearchParams(searchParams);
-    params.set("draftPostId", draftPost.id);
-
-    router.replace(`${window.location.pathname}?${params.toString()}`);
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(searchParams);
+      params.set("draftPostId", draftPost.id);
+      router.replace(`${window.location.pathname}?${params.toString()}`);
+    }
   };
 
   const throttledSave = useRef(
     throttle((data: string, iterationId: string) => {
       saveContent(data, iterationId);
-    }, 60000), // Save every 1 minute
+    }, 60000) // Save every 1 minute
   );
 
   const onContentChange = (data: string, title: string) => {
@@ -93,7 +96,9 @@ export const useDraftContentAutosave = ({
     if (!currentIterationId) {
       void createDraftPostInDb(data, title);
     } else {
-      localStorage.setItem(currentIterationId, data);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(currentIterationId, data);
+      }
       throttledSave.current(data, currentIterationId);
     }
   };
@@ -102,9 +107,12 @@ export const useDraftContentAutosave = ({
     (showToast?: boolean) => {
       if (!currentIterationId) return;
       saveContent(content, currentIterationId, showToast);
-      localStorage.removeItem(currentIterationId); // TODO - Use Context instead of local storage
+
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(currentIterationId); // TODO - Use Context instead of local storage
+      }
     },
-    [currentIterationId, saveContent, content],
+    [currentIterationId, saveContent, content]
   );
 
   useEffect(() => {
@@ -115,6 +123,8 @@ export const useDraftContentAutosave = ({
   }, []);
 
   useEffect(() => {
+    if (typeof document === "undefined") return;
+
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
         saveDraftInstantly();

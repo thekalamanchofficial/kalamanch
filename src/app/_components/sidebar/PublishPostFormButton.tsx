@@ -37,7 +37,7 @@ const PublishPostFormButton = ({ title, content, draftPostId }: PublishPostFormB
       authorId: user?.id ?? "",
       authorName: user?.name ?? "",
       authorProfileImageUrl: user?.profileImageUrl ?? "",
-      title: title ?? "",
+      title: data.title ?? "",
       postType: data.postType,
       actors: data.actors ?? [],
       tags: data.tags ?? [],
@@ -90,7 +90,7 @@ const PublishPostFormButton = ({ title, content, draftPostId }: PublishPostFormB
           open={createPostFormOpen}
           handleClose={handleCreatePostFormClose}
           handleFormSubmit={handleFormSubmit}
-          createPostFormData={{
+          postFormData={{
             title,
             thumbnailUrl: "",
             thumbnailTitle: "",

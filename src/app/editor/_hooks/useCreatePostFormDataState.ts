@@ -9,29 +9,34 @@ type CreatePostFormState = {
   formData: {
     title: string;
     actors?: string[];
-    thumbnailUrl?: string;
     tags?: string[];
+    genres?: string[];
     postType?: PostType;
-    targetAudience?: string[];
+    thumbnailUrl?: string;
+    thumbnailTitle?: string;
+    thumbnailDescription?: string;
   };
-  isCreatePostFormOpen: boolean;
-  openCreatePostForm: () => void;
-  closeCreatePostForm: () => void;
+  isPublishPostFormOpen: boolean;
+  openPublishPostForm: () => void;
+  closePublishPostForm: () => void;
 };
 
 export const useCreatePostFormDataState = ({
   postDetails,
 }: CreatePostFormDataStateProps): CreatePostFormState => {
-  const [isCreatePostFormOpen, setIsCreatePostFormOpen] = useState(false);
+  const [isPublishPostFormOpen, setIsPublishPostFormOpen] = useState(false);
   const formData = {
     title: postDetails?.title ?? "",
     actors: postDetails?.actors,
-    thumbnailUrl: postDetails?.thumbnailDetails.url,
-    tags: postDetails?.tags?.map((tag) => tag.name),
-    postType: postDetails?.postType,
+    tags: postDetails?.tags?.map((tag) => tag.id),
+    postType: postDetails?.postType ?? undefined,
+    genres: postDetails?.genres?.map((genre) => genre.id),
+    thumbnailUrl: postDetails?.thumbnailDetails.url ?? "",
+    thumbnailTitle: postDetails?.thumbnailDetails.title ?? "",
+    thumbnailDescription: postDetails?.thumbnailDetails.content ?? "",
   };
-  const openCreatePostForm = () => setIsCreatePostFormOpen(true);
-  const closeCreatePostForm = () => setIsCreatePostFormOpen(false);
+  const openPublishPostForm = () => setIsPublishPostFormOpen(true);
+  const closePublishPostForm = () => setIsPublishPostFormOpen(false);
 
-  return { formData, isCreatePostFormOpen, openCreatePostForm, closeCreatePostForm };
+  return { formData, isPublishPostFormOpen, openPublishPostForm, closePublishPostForm };
 };

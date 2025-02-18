@@ -25,18 +25,18 @@ import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
 import { useGenresTags } from "../../_hooks/useGenreTags";
 import { type CreatePostFormType } from "../../types/types";
 
-export type CreatePostFormProps = {
+export type PublishPostFormProps = {
   open: boolean;
   handleClose: () => void;
-  createPostFormData: CreatePostFormType;
+  postFormData: CreatePostFormType;
   handleFormSubmit: (data: CreatePostFormType) => void;
   update?: boolean;
 };
 
-export const PublishPostForm: React.FC<CreatePostFormProps> = ({
+export const PublishPostForm: React.FC<PublishPostFormProps> = ({
   open,
   handleClose,
-  createPostFormData,
+  postFormData,
   handleFormSubmit,
   update,
 }) => {
@@ -46,9 +46,8 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
     formState: { errors },
     watch,
   } = useCreatePostForm({
-    defaultValues: createPostFormData,
+    defaultValues: postFormData,
   });
-
   const {
     genres,
     tags,
@@ -75,7 +74,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
         },
       }}
     >
-      <DialogTitle>Create Post</DialogTitle>
+      <DialogTitle>{update ? "Update Post" : "Publish Post"}</DialogTitle>
       <DialogContent>
         <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
           Only the title is mandatory. However, providing additional details will help in better
@@ -85,7 +84,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
           <Controller
             control={control}
             name="title"
-            defaultValue={createPostFormData.title}
+            defaultValue={postFormData.title}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth>
                 <Typography variant="h4">Title</Typography>
@@ -107,7 +106,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
           <Controller
             control={control}
             name="thumbnailUrl"
-            defaultValue={createPostFormData?.thumbnailUrl}
+            defaultValue={postFormData?.thumbnailUrl}
             render={({ field: { onChange, value } }) => (
               <FormControl fullWidth>
                 <Typography variant="h4">Upload Thumbnail</Typography>
@@ -118,7 +117,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
           <Controller
             control={control}
             name="thumbnailTitle"
-            defaultValue={createPostFormData?.thumbnailTitle}
+            defaultValue={postFormData?.thumbnailTitle}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth>
                 <Typography variant="h4">Thumbnail Title</Typography>
@@ -136,7 +135,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
           <Controller
             control={control}
             name="thumbnailDescription"
-            defaultValue={createPostFormData?.thumbnailDescription}
+            defaultValue={postFormData?.thumbnailDescription}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth>
                 <Typography variant="h4">Thumbnail Description</Typography>
@@ -154,7 +153,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
           <Controller
             control={control}
             name="postType"
-            defaultValue={createPostFormData?.postType}
+            defaultValue={postFormData?.postType}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth error={!!errors?.postType?.message}>
                 <Typography variant="h4">Post type</Typography>
@@ -180,7 +179,7 @@ export const PublishPostForm: React.FC<CreatePostFormProps> = ({
             <Controller
               control={control}
               name="actors"
-              defaultValue={createPostFormData.actors}
+              defaultValue={postFormData.actors}
               render={({ field: { value = [], onChange } }) => {
                 const handleAddActors = (e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key === "Enter" && actors.trim()) {

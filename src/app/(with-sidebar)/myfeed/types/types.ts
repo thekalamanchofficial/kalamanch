@@ -101,9 +101,10 @@ export type UpdatePostContentProps = {
 export type UpdatePostDetailsProps = {
   id: string;
   title: string;
-  postType: PostType;
+  postType?: PostType;
   actors?: string[];
   tags?: string[];
+  genres?: string[];
   thumbnailDetails: ThumbnailDetails;
 };
 
