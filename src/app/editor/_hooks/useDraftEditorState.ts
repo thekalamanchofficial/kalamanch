@@ -22,6 +22,7 @@ type DraftEditorState = {
     content: string,
     iterationId: string,
     showToast?: boolean,
+    title?: string
   ) => Promise<void>;
   addIteration: (content?: string) => Promise<void>;
 };
@@ -107,7 +108,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
 
   // Handle content change in the editor
   const handleEditorContentChange = useCallback(
-    async (content: string, iterationId: string, showToast?: boolean) => {
+    async (content: string, iterationId: string, showToast?: boolean, title?: string) => {
       if (!draftPostId) return console.warn("Missing draftPostId ");
       const iterationName = draftPost?.iterations?.find(
         (it) => it.id === iterationId,
@@ -119,10 +120,13 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
           content,
         );
 
+        await updateDraftDetails(draftPostId, title ?? "");
+
         setDraftPost((prev) => {
           if (!prev) return null;
           return {
             ...prev,
+            title: title ?? prev.title,
             iterations: prev.iterations?.map((it) =>
               it.id === iterationId ? updatedIteration : it,
             ),
@@ -142,7 +146,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
         console.log(err);
       }
     },
-    [draftPostId, draftPost, selectedIteration, updateDraftIteration],
+    [draftPostId, draftPost, selectedIteration, updateDraftIteration, updateDraftDetails],
   );
 
   const handlePublishEditorDraftIteration = async ({

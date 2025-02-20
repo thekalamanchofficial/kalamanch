@@ -16,7 +16,7 @@ type UseDraftContentAutosaveReturn = {
 type UseDraftContentAutosaveProps = {
   currentIterationId: string | null | undefined;
   initialContent: string;
-  saveContentToDb: (content: string, currentIterationId: string, showToast?: boolean) => void;
+  saveContentToDb: (content: string, currentIterationId: string, showToast?: boolean, title?: string) => void;
   postStatus: PostStatus;
 };
 
@@ -34,10 +34,10 @@ export const useDraftContentAutosave = ({
   const searchParams = useSearchParams();
 
   const saveContent = useCallback(
-    (data: string, iterationId: string, showToast?: boolean) => {
+    (data: string, iterationId: string, showToast?: boolean, title?: string) => {
       if (data === lastSavedContent) return;
       setLastSavedContent(data);
-      saveContentToDb(data, iterationId, showToast);
+      saveContentToDb(data, iterationId, showToast, title);
     },
     [lastSavedContent, saveContentToDb],
   );
@@ -83,8 +83,8 @@ export const useDraftContentAutosave = ({
   };
 
   const throttledSave = useRef(
-    throttle((data: string, iterationId: string) => {
-      saveContent(data, iterationId);
+    throttle((data: string, iterationId: string, title: string) => {
+      saveContent(data, iterationId, false, title);
     }, 60000), // Save every 1 minute
   );
 
@@ -99,7 +99,7 @@ export const useDraftContentAutosave = ({
       if (typeof window !== "undefined") {
         localStorage.setItem(currentIterationId, data);
       }
-      throttledSave.current(data, currentIterationId);
+      throttledSave.current(data, currentIterationId, title);
     }
   };
 

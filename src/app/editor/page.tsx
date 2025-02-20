@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import CreateIcon from "@mui/icons-material/Create";
 import { Box, Divider, Grid2 as Grid, Stack, TextField, Typography } from "@mui/material";
@@ -59,6 +59,14 @@ const Page = () => {
     }
     await updatePostContent(content);
   };
+
+  useEffect(() => {
+    if (draftPost) {
+      setPostTitle(draftPost?.title ?? "");
+    } else if (publishedPost) {
+      setPostTitle(publishedPost?.title ?? "");
+    }
+  }, [draftPost, publishedPost]);
 
   return (
     <>

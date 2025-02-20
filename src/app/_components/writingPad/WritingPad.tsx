@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Box } from "@mui/material";
 import { type PostStatus } from "~/app/editor/types/types";
 import EditorActionsBar from "../editorActionsBar/EditorActionsBar";
@@ -12,7 +12,12 @@ type WritingPadProps = {
   handleOpen: () => void;
   title: string;
   defaultContentToDisplay: string;
-  handleEditorContentChange: (data: string, iterationId: string, showToast?: boolean) => void;
+  handleEditorContentChange: (
+    data: string,
+    iterationId: string,
+    showToast?: boolean,
+    title?: string,
+  ) => void;
   handlePublish: (content: string) => void;
   currentIterationId?: string;
   postStatus: PostStatus;
@@ -31,7 +36,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
   handleSendForReview,
   draftPostId,
 }) => {
-  const { handleSubmit, control, watch, setFocus } = useContentForm({
+  const { handleSubmit, control, watch } = useContentForm({
     defaultValues: { content: defaultContentToDisplay },
   });
 
@@ -47,10 +52,6 @@ const WritingPad: React.FC<WritingPadProps> = ({
   };
 
   const content = watch("content");
-
-  useEffect(() => {
-    setFocus("content");
-  }, [setFocus]);
 
   return (
     <Box
