@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CardMedia,
+  Chip,
   Grid2 as Grid,
   Typography,
   useMediaQuery,
@@ -25,6 +26,9 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   articleContent,
   savedDate,
   articleThumbnailUrl,
+  articleThumbnailContent,
+  articleThumbnailTitle,
+  articleTags,
 }) => {
   const [seeMore, setSeeMore] = useState(false);
   const { formatSavedDate } = useSavedDateFormatter();
@@ -180,7 +184,24 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
               py: "10px",
             }}
           >
-            {articleTitle}
+            {articleThumbnailTitle}
+          </Typography>
+          <Typography
+            sx={{
+              color: "text.secondary",
+              fontSize: "15px",
+              marginBottom: "10px",
+            }}
+          >
+            {articleThumbnailContent &&
+            articleThumbnailContent?.length > myfeedConfig.SUMMARY_READ_MORE_LENGTH ? (
+              <>
+                {`${articleThumbnailContent?.slice(0, myfeedConfig.SUMMARY_READ_MORE_LENGTH)} ...`}
+                <SeeMoreButton />
+              </>
+            ) : (
+              articleThumbnailContent
+            )}
           </Typography>
           <Grid
             container
@@ -188,7 +209,19 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
               display: "flex",
               gap: "10px",
             }}
-          ></Grid>
+          >
+            {articleTags?.map((tag, index) => (
+              <Chip
+                key={index}
+                label={tag.name}
+                variant="filled"
+                sx={{
+                  color: "font.secondary",
+                  backgroundColor: "common.lightGray",
+                }}
+              />
+            ))}
+          </Grid>
         </Grid>
       </Grid>
     </>

@@ -161,7 +161,8 @@ export type PostCardContentProps = {
   articleTags?: Tag[];
   articleGenres?: Genre[];
   articleThumbnailUrl?: string;
-  articleDescription?: string;
+  articleThumbnailContent?: string;
+  articleThumbnailTitle?: string;
 };
 
 export type FollowButtonProps = {

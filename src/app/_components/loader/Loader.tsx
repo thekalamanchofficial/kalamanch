@@ -4,7 +4,7 @@ import { Box, CircularProgress } from "@mui/material";
 type LoaderProps = {
   height: string;
   width: string;
-  title: string;
+  title?: string;
 };
 const Loader: React.FC<LoaderProps> = ({ height, width, title }) => {
   return (

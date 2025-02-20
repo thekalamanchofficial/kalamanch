@@ -82,14 +82,18 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
       padding: "10px",
     }}
   >
-    <Button sx={buttonStyle} onClick={handleOpen}>
-      <EditNoteIcon />
-      <Typography sx={textStyle}>Edit details</Typography>
-    </Button>
-    <Button sx={buttonStyle} onClick={handleSendForReview}>
-      <ChecklistIcon />
-      <Typography sx={textStyle}>Send for review</Typography>
-    </Button>
+    {postStatus == PostStatus.PUBLISHED && (
+      <Button sx={buttonStyle} onClick={handleOpen}>
+        <EditNoteIcon />
+        <Typography sx={textStyle}>Edit details</Typography>
+      </Button>
+    )}
+    {postStatus == PostStatus.DRAFT && (
+      <Button sx={buttonStyle} onClick={handleSendForReview}>
+        <ChecklistIcon />
+        <Typography sx={textStyle}>Send for review</Typography>
+      </Button>
+    )}
     {postStatus == PostStatus.DRAFT && (
       <Button sx={buttonStyle} onClick={() => handleSaveDraft(true)}>
         <FolderIcon />

@@ -2,8 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import debounce from "lodash/debounce";
 import throttle from "lodash/throttle";
 import { useDraftPost } from "~/app/_hooks/useDraftPost";
+import {
+  DRAFT_AUTO_CREATE_DEBOUCE_DELAY,
+  DRAFT_AUTO_SAVE_THROTTLE_DELAY,
+} from "~/app/editor/_config/config";
 import { PostStatus } from "~/app/editor/types/types";
 import { useUser } from "~/context/userContext";
 
@@ -16,7 +21,12 @@ type UseDraftContentAutosaveReturn = {
 type UseDraftContentAutosaveProps = {
   currentIterationId: string | null | undefined;
   initialContent: string;
-  saveContentToDb: (content: string, currentIterationId: string, showToast?: boolean, title?: string) => void;
+  saveContentToDb: (
+    content: string,
+    currentIterationId: string,
+    showToast?: boolean,
+    title?: string,
+  ) => void;
   postStatus: PostStatus;
 };
 
@@ -33,6 +43,49 @@ export const useDraftContentAutosave = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const createDraftPostInDbRef = useRef(
+    debounce(async (content: string, title: string) => {
+      if (!user?.id || !user?.name) {
+        console.error("User not found");
+        return;
+      }
+
+      const draftPost = await addDraftPost({
+        authorId: user.id,
+        authorName: user.name,
+        authorProfileImageUrl: user.profileImageUrl ?? "",
+        title:
+          title ||
+          new Date().toLocaleString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        iterations: [
+          {
+            iterationName: "Iteration - 1",
+            content,
+          },
+        ],
+      });
+
+      if (!draftPost?.id) {
+        console.error("Draft post not created");
+        return;
+      }
+
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(searchParams);
+        params.set("draftPostId", draftPost.id);
+        router.replace(`${window.location.pathname}?${params.toString()}`);
+      }
+    }, DRAFT_AUTO_CREATE_DEBOUCE_DELAY),
+  );
+
   const saveContent = useCallback(
     (data: string, iterationId: string, showToast?: boolean, title?: string) => {
       if (data === lastSavedContent) return;
@@ -42,50 +95,10 @@ export const useDraftContentAutosave = ({
     [lastSavedContent, saveContentToDb],
   );
 
-  const createDraftPostInDb = async (content: string, title: string) => {
-    if (!user?.id || !user?.name) {
-      console.error("User not found");
-      return;
-    }
-    const draftPost = await addDraftPost({
-      authorId: user.id,
-      authorName: user.name,
-      authorProfileImageUrl: user.profileImageUrl ?? "",
-      title:
-        title ||
-        new Date().toLocaleString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
-      iterations: [
-        {
-          iterationName: "Iteration - 1",
-          content,
-        },
-      ],
-    });
-
-    if (!draftPost?.id) {
-      console.error("Draft post not created");
-      return;
-    }
-
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(searchParams);
-      params.set("draftPostId", draftPost.id);
-      router.replace(`${window.location.pathname}?${params.toString()}`);
-    }
-  };
-
   const throttledSave = useRef(
     throttle((data: string, iterationId: string, title: string) => {
       saveContent(data, iterationId, false, title);
-    }, 60000), // Save every 1 minute
+    }, DRAFT_AUTO_SAVE_THROTTLE_DELAY),
   );
 
   const onContentChange = (data: string, title: string) => {
@@ -94,7 +107,7 @@ export const useDraftContentAutosave = ({
     setContent(data);
 
     if (!currentIterationId) {
-      void createDraftPostInDb(data, title);
+      void createDraftPostInDbRef.current(data, title);
     } else {
       if (typeof window !== "undefined") {
         localStorage.setItem(currentIterationId, data);
@@ -116,9 +129,16 @@ export const useDraftContentAutosave = ({
   );
 
   useEffect(() => {
-    const throttleSaveRef = throttledSave.current;
+    const throttledFn = throttledSave.current;
     return () => {
-      throttleSaveRef.cancel();
+      throttledFn.cancel();
+    };
+  }, []);
+
+  useEffect(() => {
+    const debouncedFn = createDraftPostInDbRef.current;
+    return () => {
+      debouncedFn.cancel();
     };
   }, []);
 

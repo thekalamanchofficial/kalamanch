@@ -91,8 +91,9 @@ const Post = memo<PostProps>(
             articleTags={post.tags ?? []}
             articleGenres={post.genres ?? []}
             articleThumbnailUrl={post.thumbnailDetails.url}
+            articleThumbnailContent={post.thumbnailDetails.content ?? ""}
+            articleThumbnailTitle={post.thumbnailDetails.title ?? ""}
             articleId={post.id}
-            articleDescription={post.thumbnailDetails.content ?? ""}
           />
           <PostCardFooter
             likes={likeCount}
