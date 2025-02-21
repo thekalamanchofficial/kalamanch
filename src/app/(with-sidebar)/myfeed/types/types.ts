@@ -7,6 +7,7 @@ export type MenuItemList = {
   route: string;
   icon: React.ReactNode;
 };
+
 export type Comment = {
   id: string;
   postId?: string | null | undefined;
@@ -86,7 +87,7 @@ export type CreatePostProps = {
   authorId: string;
   authorName: string;
   authorProfileImageUrl?: string;
-  postType?: PostType;
+  postTypeId?: string;
   actors?: string[];
   tags?: string[];
   genres?: string[];
@@ -101,7 +102,7 @@ export type UpdatePostContentProps = {
 export type UpdatePostDetailsProps = {
   id: string;
   title: string;
-  postType?: PostType;
+  postType?: string;
   actors?: string[];
   tags?: string[];
   genres?: string[];

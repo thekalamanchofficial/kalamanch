@@ -7,12 +7,13 @@ import type {
   UpdatePostDetailsProps,
 } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
+import type { Post } from "@prisma/client";
 
 type UsePostResponse = {
   publishPost: (postData: CreatePostProps) => Promise<void>;
   deletePost: (postId: string) => Promise<void>;
   updatePostContent: (postId: string, content: string) => Promise<void>;
-  updatePostDetails: (postId: string, updatePostDetails: UpdatePostDetailsProps) => Promise<void>;
+  updatePostDetails: (postId: string, updatePostDetails: UpdatePostDetailsProps) => Promise<Post | undefined>;
 };
 
 const createMutationOptions = (successMessage: string) => ({
@@ -64,7 +65,12 @@ export const usePost = (): UsePostResponse => {
 
   const updatePostDetails = async (postId: string, updatedPostDetails: UpdatePostDetailsProps) => {
     try {
-      await updatePostDetailsMutation.mutateAsync(updatedPostDetails);
+      const updatedPost = await updatePostDetailsMutation.mutateAsync(updatedPostDetails);
+      return {
+        ...updatedPost,
+        createdAt: new Date(updatedPost.createdAt),
+        updatedAt: new Date(updatedPost.updatedAt),
+      };
     } catch (error) {
       console.error("Failed to update post details:", error);
     }

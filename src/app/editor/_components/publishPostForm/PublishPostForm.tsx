@@ -18,11 +18,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { PostType } from "@prisma/client";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import ThumbnailUploader from "~/app/_components/thumbnailUploader/ThumbnailUploader";
 import { useCreatePostForm } from "../../_hooks/useCreatePostForm";
 import { useGenresTags } from "../../_hooks/useGenreTags";
+import usePostTypes from "../../_hooks/usePostTypes";
 import { type CreatePostFormType } from "../../types/types";
 
 export type PublishPostFormProps = {
@@ -44,7 +44,6 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
     handleSubmit,
     control,
     formState: { errors },
-    watch,
   } = useCreatePostForm({
     defaultValues: postFormData,
   });
@@ -59,9 +58,11 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
     toggleTag,
   } = useGenresTags();
 
-  const postType = watch("postType");
-  const [actors, setActors] = useState("");
+  const { postTypes, handlePostTypeSelect, selectedPostType } = usePostTypes({
+    postTypeId: postFormData?.postTypeId,
+  });
 
+  const [actors, setActors] = useState("");
   return (
     <Dialog
       open={open}
@@ -152,30 +153,33 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
           />
           <Controller
             control={control}
-            name="postType"
-            defaultValue={postFormData?.postType}
+            name="postTypeId"
+            defaultValue={selectedPostType?.id}
             render={({ field: { value, onChange } }) => (
-              <FormControl fullWidth error={!!errors?.postType?.message}>
+              <FormControl fullWidth error={!!errors?.postTypeId?.message}>
                 <Typography variant="h4">Post type</Typography>
                 <Select
                   value={value}
-                  onChange={onChange}
+                  onChange={(event) => {
+                    handlePostTypeSelect(event.target.value);
+                    onChange(event);
+                  }}
                   id="postType"
                   variant="outlined"
                   sx={{ height: "50px" }}
                   placeholder="Select post type"
                 >
-                  {Object.values(PostType).map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
+                  {postTypes.map((postType) => (
+                    <MenuItem key={postType.id} value={postType.id}>
+                      {postType.name.charAt(0).toUpperCase() + postType.name.slice(1).toLowerCase()}
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{errors?.postType?.message}</FormHelperText>
+                <FormHelperText>{errors?.postTypeId?.message}</FormHelperText>
               </FormControl>
             )}
           />
-          {postType === PostType.SCRIPT && (
+          {selectedPostType?.name === "SCRIPT" && (
             <Controller
               control={control}
               name="actors"

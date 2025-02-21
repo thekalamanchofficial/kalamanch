@@ -1,4 +1,3 @@
-import type { PostType } from "@prisma/client";
 import type { ThumbnailDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 
 export enum EditorTabsEnum {
@@ -11,7 +10,7 @@ export type CreatePostFormType = {
   thumbnailTitle?: string;
   thumbnailDescription?: string;
   genres?: string[];
-  postType?: PostType;
+  postTypeId?: string;
   tags?: string[];
   actors?: string[];
 };
@@ -43,7 +42,7 @@ export type PublishDraftPostProps = {
   authorProfileImageUrl: string;
   authorId: string;
   title: string;
-  postType?: PostType;
+  postType?: string;
   actors?: string[];
   tags?: string[];
   genres?: string[];

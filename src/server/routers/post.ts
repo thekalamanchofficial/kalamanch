@@ -1,4 +1,3 @@
-import { PostType } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import { inngest } from "~/inngest/client";
@@ -8,7 +7,7 @@ import { protectedProcedure, router } from "../trpc";
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
   title: yup.string().required("Title is required."),
-  postType: yup.mixed<PostType>().optional().oneOf(Object.values(PostType)),
+  postTypeId: yup.string().optional(),
   actors: yup.array(yup.string()).optional(),
   thumbnailDetails: yup
     .object({
@@ -32,7 +31,7 @@ const updatePostContentSchema = yup.object({
 const updatePostDetailsSchema = yup.object({
   id: yup.string().required("ID is required."),
   title: yup.string().required("Title is required."),
-  postType: yup.mixed<PostType>().oneOf(Object.values(PostType)),
+  postTypeId: yup.string().optional(),
   actors: yup.array(yup.string()).optional(),
   tags: yup.array(yup.string()).optional(),
   thumbnailDetails: yup
@@ -101,6 +100,7 @@ export const postRouter = router({
             likes: true,
             tags: true,
             genres: true,
+            postType: true,
           },
         });
 
@@ -138,7 +138,6 @@ export const postRouter = router({
           authorName: sanitizedInput.authorName,
           authorProfileImageUrl: sanitizedInput.authorProfileImageUrl ?? "",
           title: sanitizedInput.title,
-          postType: sanitizedInput.postType?.toUpperCase() as PostType,
           actors: sanitizedInput.actors,
           thumbnailDetails: {
             url: sanitizedInput.thumbnailDetails.url ?? "",
@@ -148,8 +147,13 @@ export const postRouter = router({
           likes: { create: [] },
           bids: { create: [] },
           comments: { create: [] },
-          genreIDs: sanitizedInput.genres ?? [],
-          tagIDs: sanitizedInput.tags ?? [],
+          genres: {
+            connect: sanitizedInput.genres?.map((genre) => ({ id: genre })) ?? [],
+          },
+          tags: {
+            connect: sanitizedInput.tags?.map((tag) => ({ id: tag })) ?? [],
+          },
+          postTypeId: sanitizedInput.postTypeId,
         },
       });
 
@@ -159,6 +163,7 @@ export const postRouter = router({
       throw new Error("Failed to create the post.");
     }
   }),
+
   deletePost: protectedProcedure.input(yup.string()).mutation(async ({ input: postId }) => {
     try {
       const post = await prisma.post.delete({
@@ -172,6 +177,7 @@ export const postRouter = router({
       throw new Error("Failed to delete the post.");
     }
   }),
+
   getPost: protectedProcedure.input(yup.string()).query(async ({ input: postId }) => {
     try {
       const post = await prisma.post.findUnique({
@@ -187,6 +193,7 @@ export const postRouter = router({
             },
           },
           likes: true,
+          postType: true,
         },
       });
       return post;
@@ -195,6 +202,7 @@ export const postRouter = router({
       throw new Error("Failed to fetch the post.");
     }
   }),
+
   updatePostContent: protectedProcedure
     .input(updatePostContentSchema)
     .mutation(async ({ input }) => {
@@ -213,6 +221,7 @@ export const postRouter = router({
         throw new Error("Failed to update the post.");
       }
     }),
+
   updatePostDetails: protectedProcedure
     .input(updatePostDetailsSchema)
     .mutation(async ({ input }) => {
@@ -228,13 +237,18 @@ export const postRouter = router({
           },
           data: {
             title: sanitizedInput.title,
-            postType: sanitizedInput.postType,
             actors: sanitizedInput.actors,
             thumbnailDetails: {
               url: sanitizedInput.thumbnailDetails.url ?? "",
               content: sanitizedInput.thumbnailDetails.content,
               title: sanitizedInput.thumbnailDetails.title,
             },
+            postTypeId: sanitizedInput.postTypeId,
+          },
+          include: {
+            genres: true,
+            tags: true,
+            postType: true,
           },
         });
         return post;
@@ -243,6 +257,7 @@ export const postRouter = router({
         throw new Error("Failed to update the post.");
       }
     }),
+
   sharePost: protectedProcedure.input(sharePostSchema).mutation(async ({ input }) => {
     try {
       const { postId, userEmail, emails } = input;
@@ -295,6 +310,16 @@ export const postRouter = router({
       });
     } catch (error) {
       console.error("Error fetching tags:", error);
+      throw error;
+    }
+  }),
+
+  getPostTypes: protectedProcedure.query(async () => {
+    try {
+      const postTypes = await prisma.postType.findMany();
+      return postTypes;
+    } catch (error) {
+      console.error("Error fetching post types:", error);
       throw error;
     }
   }),

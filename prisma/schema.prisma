@@ -37,12 +37,13 @@ model Post {
   authorProfileImageUrl String
   content               String
   title                 String
-  postType              PostType?
-  actors                String[] @default([])
+  postTypeId            String?      @db.ObjectId
+  postType              PostType?    @relation(fields: [postTypeId], references: [id]) 
+  actors                String[]    @default([])
   thumbnailDetails      ThumbnailDetails
-  likeCount             Int      @default(0)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  likeCount             Int         @default(0)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
 
   author     User      @relation(fields: [authorId], references: [id])
   likes      Like[]
@@ -59,6 +60,7 @@ model Post {
   @@index([createdAt])
   @@index([isFeatured])
 }
+
 
 type ThumbnailDetails {
   url     String
@@ -130,14 +132,6 @@ model UserToFollow {
   user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum PostType {
-  BLOG
-  ARTICLE
-  ANNOUNCEMENT
-  NEWS
-  SCRIPT
-}
-
 enum PostStatus {
   DRAFT
   PUBLISHED
@@ -205,4 +199,10 @@ model Tag {
   genres   Genre[]  @relation(fields: [genreIDs], references: [id])
   postIds  String[] @db.ObjectId
   posts    Post[]   @relation(fields: [postIds], references: [id])
+}
+
+model PostType {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String @unique
+  posts Post[] // Relation to Post model
 }

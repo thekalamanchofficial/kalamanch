@@ -152,7 +152,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
   const handlePublishEditorDraftIteration = async ({
     content,
     title,
-    postType,
+    postTypeId,
     actors,
     tags,
     genres,
@@ -164,7 +164,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
       authorName: user?.name ?? "",
       authorProfileImageUrl: user?.profileImageUrl ?? "",
       title: title ?? "",
-      postType,
+      postTypeId,
       actors: actors ?? [],
       tags: tags ?? [],
       genres: genres ?? [],

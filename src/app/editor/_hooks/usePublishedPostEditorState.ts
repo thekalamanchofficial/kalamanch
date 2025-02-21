@@ -49,7 +49,7 @@ export const usePublishedPostEditorState = ({
     const updatePostDetails: UpdatePostDetailsProps = {
       id: publishedPost.id,
       title: updateFormDetails.title,
-      postType: updateFormDetails.postType,
+      postType: updateFormDetails.postTypeId,
       actors: updateFormDetails.actors,
       tags: updateFormDetails.tags,
       genres: updateFormDetails.genres,
@@ -59,14 +59,17 @@ export const usePublishedPostEditorState = ({
         title: updateFormDetails.thumbnailTitle,
       },
     };
-    await updatePostDetailsCallBack(publishedPost.id, updatePostDetails);
+    const updatedPost = await updatePostDetailsCallBack(publishedPost.id, updatePostDetails);
+    if (!updatedPost) return;
     setPublishedPost((prev) => {
       if (!prev) return prev;
       return {
         ...prev,
-        ...updateFormDetails,
+        ...updatedPost,
         tags: tags.filter((tag) => updateFormDetails.tags?.includes(tag.id)),
         genres: genres.filter((genre) => updateFormDetails.genres?.includes(genre.id)),
+        createdAt: new Date(updatedPost?.createdAt).toISOString(),
+        updatedAt: new Date(updatedPost?.updatedAt).toISOString(),
       };
     });
   };
