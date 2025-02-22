@@ -149,11 +149,11 @@
                   border: "none",
                   textAlign: "center",
                 },
-                "& .MuiInput-underline:before, & .MuiInput-underline:after, & .MuiInput-underline:hover:before":
-                  {
-                    borderBottom: "none",
-                    outline: "none",
-                  },
+              }}
+              slotProps={{
+                input: {
+                  disableUnderline: true,
+                },
               }}
               value={postTitle}
               onChange={(e) => setPostTitle(e.target.value)}

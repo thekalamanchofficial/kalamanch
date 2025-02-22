@@ -51,6 +51,9 @@ const sharePostSchema = yup.object({
 const getTagsSchema = yup.object({
   genres: yup.array(yup.string()).optional(),
 });
+const createPostTypeSchema = yup.object({
+  name: yup.string().required(),
+});
 const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
 
@@ -320,6 +323,20 @@ export const postRouter = router({
       return postTypes;
     } catch (error) {
       console.error("Error fetching post types:", error);
+      throw error;
+    }
+  }),
+
+  addPostType: protectedProcedure.input(createPostTypeSchema).mutation(async ({ input }) => {
+    try {
+      const postType = await prisma.postType.create({
+        data: {
+          name: input.name,
+        },
+      });
+      return postType;
+    } catch (error) {
+      console.error("Error adding post type:", error);
       throw error;
     }
   }),
