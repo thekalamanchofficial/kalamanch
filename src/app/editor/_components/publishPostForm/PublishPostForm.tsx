@@ -40,29 +40,22 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
   handleFormSubmit,
   update,
 }) => {
+  const [actors, setActors] = useState("");
+
   const {
     handleSubmit,
     control,
     formState: { errors },
+    watch,
   } = useCreatePostForm({
     defaultValues: postFormData,
   });
-  const {
-    genres,
-    tags,
-    isGenresLoading,
-    isTagsLoading,
-    selectedGenres,
-    selectedTags,
-    toggleGenre,
-    toggleTag,
-  } = useGenresTags();
+  const { genres, tags, isGenresLoading, isTagsLoading } = useGenresTags();
 
-  const { postTypes, handlePostTypeSelect, selectedPostType } = usePostTypes({
-    postTypeId: postFormData?.postTypeId,
-  });
+  const { postTypes } = usePostTypes();
 
-  const [actors, setActors] = useState("");
+  const selectedPostType = watch("postTypeId");
+
   return (
     <Dialog
       open={open}
@@ -154,16 +147,13 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
           <Controller
             control={control}
             name="postTypeId"
-            defaultValue={selectedPostType?.id}
+            defaultValue={selectedPostType}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth error={!!errors?.postTypeId?.message}>
                 <Typography variant="h4">Post type</Typography>
                 <Select
                   value={value}
-                  onChange={(event) => {
-                    handlePostTypeSelect(event.target.value);
-                    onChange(event);
-                  }}
+                  onChange={onChange}
                   id="postType"
                   variant="outlined"
                   sx={{ height: "50px" }}
@@ -179,7 +169,7 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
               </FormControl>
             )}
           />
-          {selectedPostType?.name === "SCRIPT" && (
+          {postTypes.find((postType) => postType.id === selectedPostType)?.name === "SCRIPT" && (
             <Controller
               control={control}
               name="actors"
@@ -232,7 +222,6 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
           <Controller
             control={control}
             name="genres"
-            defaultValue={selectedGenres}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth>
                 <Typography variant="h4">Select relevant genres</Typography>
@@ -247,7 +236,6 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
                           key={genre.id}
                           label={genre.name}
                           onClick={() => {
-                            toggleGenre(genre.id);
                             onChange(
                               isSelected
                                 ? value?.filter((id) => id !== genre.id)
@@ -256,7 +244,6 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
                           }}
                           {...(isSelected && {
                             onDelete: () => {
-                              toggleGenre(genre.id);
                               onChange(value?.filter((id) => id !== genre.id));
                             },
                             deleteIcon: <CloseIcon />,
@@ -275,11 +262,9 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
               </FormControl>
             )}
           />
-
           <Controller
             control={control}
             name="tags"
-            defaultValue={selectedTags}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth>
                 <Typography variant="h4">Select relevant tags</Typography>
@@ -294,7 +279,6 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
                           key={tag.id}
                           label={tag.name}
                           onClick={() => {
-                            toggleTag(tag.id);
                             onChange(
                               isSelected
                                 ? value?.filter((id) => id !== tag.id)
@@ -303,7 +287,6 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
                           }}
                           {...(isSelected && {
                             onDelete: () => {
-                              toggleTag(tag.id);
                               onChange(value?.filter((id) => id !== tag.id));
                             },
                             deleteIcon: <CloseIcon />,

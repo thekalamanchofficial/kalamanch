@@ -15,7 +15,7 @@ import { useUser } from "~/context/userContext";
 type UseDraftContentAutosaveReturn = {
   onContentChange: (data: string, title: string) => void;
   currentIterationId: string | null | undefined;
-  saveDraftInstantly: (showToast?: boolean) => void;
+  saveDraftInstantly: (showToast?: boolean, title?: string) => void;
 };
 
 type UseDraftContentAutosaveProps = {
@@ -117,9 +117,9 @@ export const useDraftContentAutosave = ({
   };
 
   const saveDraftInstantly = useCallback(
-    (showToast?: boolean) => {
+    (showToast?: boolean, title?: string) => {
       if (!currentIterationId) return;
-      saveContent(content, currentIterationId, showToast);
+      saveContent(content, currentIterationId, showToast, title);
 
       if (typeof window !== "undefined") {
         localStorage.removeItem(currentIterationId); // TODO - Use Context instead of local storage

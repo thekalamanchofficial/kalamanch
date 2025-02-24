@@ -34,7 +34,7 @@ type ActionsBarProps = {
   title: string;
   content: string;
   handleOpen: () => void;
-  handleSaveDraft: (showToast?: boolean) => void;
+  handleSaveDraft: (showToast?: boolean, title?: string) => void;
   handleSubmit: () => void;
   postStatus: PostStatus;
   handleSendForReview: () => void;
@@ -95,7 +95,7 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
       </Button>
     )}
     {postStatus == PostStatus.DRAFT && (
-      <Button sx={buttonStyle} onClick={() => handleSaveDraft(true)}>
+      <Button sx={buttonStyle} onClick={() => handleSaveDraft(true, title)}>
         <FolderIcon />
         <Typography sx={textStyle}>Save as draft</Typography>
       </Button>

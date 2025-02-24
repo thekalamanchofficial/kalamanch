@@ -31,9 +31,10 @@ const updatePostContentSchema = yup.object({
 const updatePostDetailsSchema = yup.object({
   id: yup.string().required("ID is required."),
   title: yup.string().required("Title is required."),
-  postTypeId: yup.string().optional(),
+  postType: yup.string().optional(),
   actors: yup.array(yup.string()).optional(),
   tags: yup.array(yup.string()).optional(),
+  genres: yup.array(yup.string()).optional(),
   thumbnailDetails: yup
     .object({
       url: yup.string().optional(),
@@ -74,14 +75,6 @@ export const postRouter = router({
         const { limit, skip, interests, authorId } = input;
 
         const query: { authorId?: string } = {};
-
-        // if (interests && interests.length > 0) {
-        //   query.tags = {
-        //     hasSome: interests.filter(
-        //       (interest): interest is string => interest !== undefined,
-        //     ),
-        //   };
-        // }
 
         if (authorId) {
           query.authorId = authorId;
@@ -246,7 +239,13 @@ export const postRouter = router({
               content: sanitizedInput.thumbnailDetails.content,
               title: sanitizedInput.thumbnailDetails.title,
             },
-            postTypeId: sanitizedInput.postTypeId,
+            postTypeId: sanitizedInput.postType,
+            genres: {
+              connect: sanitizedInput.genres?.map((genre) => ({ id: genre })) ?? [],
+            },
+            tags: {
+              connect: sanitizedInput.tags?.map((tag) => ({ id: tag })) ?? [],
+            },
           },
           include: {
             genres: true,

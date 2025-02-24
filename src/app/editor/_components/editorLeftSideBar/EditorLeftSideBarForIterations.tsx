@@ -17,6 +17,7 @@ type EditorLeftSideBarPropsForIterations = {
   handleAddIteration: (content?: string) => void;
   handleSaveLastIterationData: () => void;
   showIterations?: boolean;
+  showImportText?: boolean;
   handleImportText: () => void;
 };
 
@@ -27,6 +28,7 @@ const EditorLeftSideBarForIterations: React.FC<EditorLeftSideBarPropsForIteratio
   selectedIterationId,
   handleSaveLastIterationData,
   showIterations,
+  showImportText,
   handleImportText,
 }) => {
   const router = useRouter();
@@ -81,46 +83,15 @@ const EditorLeftSideBarForIterations: React.FC<EditorLeftSideBarPropsForIteratio
         }}
       />
 
-      {showIterations && (
-        <Grid
-          container
-          sx={{
-            marginTop: 2,
-            px: 3,
-            gap: "20px",
-          }}
-        >
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "16px",
-            }}
-          >
-            Iterations
-          </Typography>
-          <Button
-            sx={{
-              display: "flex",
-              justifyContent: "start",
-              alignItems: "center",
-              gap: "8px",
-              width: "100%",
-              backgroundColor: "primary.main",
-              minHeight: "auto",
-              color: "white",
-              py: "10px",
-            }}
-            onClick={() => handleAddIteration()}
-          >
-            <AddIcon />
-            <Typography
-              sx={{
-                fontSize: "15px",
-              }}
-            >
-              {STATIC_TEXTS.EDITOR_PAGE.ADD_ITERATION}
-            </Typography>
-          </Button>
+      <Grid
+        container
+        sx={{
+          marginTop: 2,
+          px: 3,
+          gap: "20px",
+        }}
+      >
+        {showImportText && (
           <Button
             sx={{
               display: "flex",
@@ -144,49 +115,85 @@ const EditorLeftSideBarForIterations: React.FC<EditorLeftSideBarPropsForIteratio
               {STATIC_TEXTS.EDITOR_PAGE.IMPORT_TEXT}
             </Typography>
           </Button>
-          <Box
-            sx={{
-              color: "black",
-              width: "100%",
-            }}
-          >
-            {iterations.map((item, index) => {
-              return (
-                <Box
-                  sx={{
-                    borderRadius: "4px",
-                    border: "1px solid ",
-                    borderColor: "common.strokePrimary",
-                    padding: "8px 10px",
-                    marginTop: "10px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    cursor: "pointer",
-                  }}
-                  key={item.id}
-                  onClick={() => handleIterationSelected(item.id)}
-                >
-                  <Typography
+        )}
+
+        {showIterations && (
+          <>
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: "16px",
+              }}
+            >
+              Iterations
+            </Typography>
+            <Button
+              sx={{
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "8px",
+                width: "100%",
+                backgroundColor: "primary.main",
+                minHeight: "auto",
+                color: "white",
+                py: "10px",
+              }}
+              onClick={() => handleAddIteration()}
+            >
+              <AddIcon />
+              <Typography
+                sx={{
+                  fontSize: "15px",
+                }}
+              >
+                {STATIC_TEXTS.EDITOR_PAGE.ADD_ITERATION}
+              </Typography>
+            </Button>
+            <Box
+              sx={{
+                color: "black",
+                width: "100%",
+              }}
+            >
+              {iterations.map((item, index) => {
+                return (
+                  <Box
                     sx={{
-                      fontSize: "14px",
-                      color: item.id == selectedIterationId ? "#260EB9" : "font.secondary",
+                      borderRadius: "4px",
+                      border: "1px solid ",
+                      borderColor: "common.strokePrimary",
+                      padding: "8px 10px",
+                      marginTop: "10px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      cursor: "pointer",
                     }}
+                    key={item.id}
+                    onClick={() => handleIterationSelected(item.id)}
                   >
-                    {item?.iterationName != "" ? item?.iterationName : `Iteration ${index + 1}`}
-                  </Typography>
-                  <ArrowForwardIosOutlinedIcon
-                    sx={{
-                      color: item.id == selectedIterationId ? "#260EB9" : "common.gray",
-                      fontSize: "12px",
-                    }}
-                  />
-                </Box>
-              );
-            })}
-          </Box>
-        </Grid>
-      )}
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        color: item.id == selectedIterationId ? "#260EB9" : "font.secondary",
+                      }}
+                    >
+                      {item?.iterationName != "" ? item?.iterationName : `Iteration ${index + 1}`}
+                    </Typography>
+                    <ArrowForwardIosOutlinedIcon
+                      sx={{
+                        color: item.id == selectedIterationId ? "#260EB9" : "common.gray",
+                        fontSize: "12px",
+                      }}
+                    />
+                  </Box>
+                );
+              })}
+            </Box>
+          </>
+        )}
+      </Grid>
     </Grid>
   );
 };

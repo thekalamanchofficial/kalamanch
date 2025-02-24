@@ -184,7 +184,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
               py: "10px",
             }}
           >
-            {articleThumbnailTitle}
+            {articleThumbnailTitle ? articleThumbnailTitle : articleTitle}
           </Typography>
           <Typography
             sx={{

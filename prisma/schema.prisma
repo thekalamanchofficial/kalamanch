@@ -31,19 +31,19 @@ model User {
 }
 
 model Post {
-  id                    String      @id @default(auto()) @map("_id") @db.ObjectId
-  authorId              String      @db.ObjectId
+  id                    String           @id @default(auto()) @map("_id") @db.ObjectId
+  authorId              String           @db.ObjectId
   authorName            String
   authorProfileImageUrl String
   content               String
   title                 String
-  postTypeId            String?      @db.ObjectId
-  postType              PostType?    @relation(fields: [postTypeId], references: [id]) 
-  actors                String[]    @default([])
+  postTypeId            String?          @db.ObjectId
+  postType              PostType?        @relation(fields: [postTypeId], references: [id])
+  actors                String[]         @default([])
   thumbnailDetails      ThumbnailDetails
-  likeCount             Int         @default(0)
-  createdAt             DateTime    @default(now())
-  updatedAt             DateTime    @updatedAt
+  likeCount             Int              @default(0)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
 
   author     User      @relation(fields: [authorId], references: [id])
   likes      Like[]
@@ -51,16 +51,15 @@ model Post {
   bids       Bid[]
   isFeatured Boolean   @default(false)
 
-  genreIDs String[] @db.ObjectId
-  tagIDs   String[] @db.ObjectId
-  genres   Genre[]  @relation(fields: [genreIDs], references: [id])
-  tags     Tag[]    @relation(fields: [tagIDs], references: [id])
+  genreIds String[] @db.ObjectId
+  tagIds   String[] @db.ObjectId
+  genres   Genre[]  @relation(fields: [genreIds], references: [id])
+  tags     Tag[]    @relation(fields: [tagIds], references: [id])
 
   @@index([authorId])
   @@index([createdAt])
   @@index([isFeatured])
 }
-
 
 type ThumbnailDetails {
   url     String
@@ -159,9 +158,9 @@ model DraftPost {
   authorProfileImageUrl String
   title                 String
   iterations            Iterations[]
-  likeCount             Int      @default(0)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  likeCount             Int          @default(0)
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
 
   @@index([authorId])
 }
@@ -186,8 +185,8 @@ model DraftPostIterationReviews {
 model Genre {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   name    String   @unique
-  tagIDs  String[] @db.ObjectId
-  tags    Tag[]    @relation(fields: [tagIDs], references: [id])
+  tagIds  String[] @db.ObjectId
+  tags    Tag[]    @relation(fields: [tagIds], references: [id])
   postIds String[] @db.ObjectId
   posts   Post[]   @relation(fields: [postIds], references: [id])
 }
@@ -195,8 +194,8 @@ model Genre {
 model Tag {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
   name     String   @unique
-  genreIDs String[] @db.ObjectId
-  genres   Genre[]  @relation(fields: [genreIDs], references: [id])
+  genreIds String[] @db.ObjectId
+  genres   Genre[]  @relation(fields: [genreIds], references: [id])
   postIds  String[] @db.ObjectId
   posts    Post[]   @relation(fields: [postIds], references: [id])
 }
@@ -204,5 +203,5 @@ model Tag {
 model PostType {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   name  String @unique
-  posts Post[] // Relation to Post model
+  posts Post[]
 }

@@ -1,5 +1,3 @@
-import { toast } from "react-toastify";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { handleError } from "~/app/_utils/handleError";
 import { trpc } from "~/server/client";
 import type { CreateDraftPostProps, DraftPost, Iteration } from "../editor/types/types";
@@ -22,16 +20,14 @@ type UseDraftPostRespone = {
 };
 
 export const useDraftPost = (): UseDraftPostRespone => {
-  const createMutationOptions = (successMessage: string) => ({
-    onSuccess: () => toast.success(successMessage),
+  const createMutationOptions = () => ({
     onError: (error: unknown) => handleError(error),
   });
 
   const deleteDraftPostMutation = trpc.draftPost.deleteDraftPost.useMutation();
   const updateDraftIterationMutation = trpc.draftPost.updateIteration.useMutation();
-  const updateDraftDetailsMutation = trpc.draftPost.updateDraftPostDetails.useMutation(
-    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.DRAFT_DETAILS_UPDATED_MESSAGE),
-  );
+  const updateDraftDetailsMutation =
+    trpc.draftPost.updateDraftPostDetails.useMutation(createMutationOptions());
   const addDraftIterationMutation = trpc.draftPost.addIteration.useMutation();
   const addDraftPostMutation = trpc.draftPost.addDraftPost.useMutation();
 

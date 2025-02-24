@@ -54,9 +54,6 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({ onMediaUpload, in
   const handleMediaChange = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
-
-      console.log("file", file);
-
       if (file) {
         const uploadedThumbnailUrl = await uploadFile(
           file,

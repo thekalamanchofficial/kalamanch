@@ -4,16 +4,21 @@ import { trpc } from "~/server/client";
 
 type useUserDraftPostsStateResponse = {
   draftPostsForUser: DraftPost[];
+  isLoading: boolean;
+  isPending: boolean;
 };
 
 export const useUserDraftPostsState = (): useUserDraftPostsStateResponse => {
   const { user } = useUser();
 
-  const draftPostsQuery = trpc.draftPost.getDraftPostsForUser.useQuery(user?.id ?? "", {
-    enabled: !!user,
-  });
+  const { data, isLoading, isPending } = trpc.draftPost.getDraftPostsForUser.useQuery(
+    user?.id ?? "",
+    { enabled: !!user },
+  );
 
   return {
-    draftPostsForUser: draftPostsQuery.data ?? [],
+    draftPostsForUser: data ?? [],
+    isLoading,
+    isPending,
   };
 };

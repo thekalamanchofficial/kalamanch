@@ -87,13 +87,13 @@ export const genreTagRouter = router({
       const tag = await prisma.tag.create({
         data: {
           name: input.name,
-          genreIDs: input?.genreIds,
+          genreIds: input?.genreIds,
         },
       });
 
       await prisma.genre.updateMany({
         where: { id: { in: input.genreIds } },
-        data: { tagIDs: { push: tag.id } },
+        data: { tagIds: { push: tag.id } },
       });
 
       return tag;

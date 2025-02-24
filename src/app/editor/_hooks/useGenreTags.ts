@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { Genre, Tag } from "@prisma/client";
 import { trpc } from "~/app/_trpc/client";
 
@@ -9,10 +8,6 @@ type UseGenreTagsReturnType = {
   isTagsLoading: boolean;
   genresError: unknown;
   tagsError: unknown;
-  selectedGenres: string[];
-  selectedTags: string[];
-  toggleGenre: (genreId: string) => void;
-  toggleTag: (tagId: string) => void;
 };
 
 type UseGenreTags = () => UseGenreTagsReturnType;
@@ -30,25 +25,6 @@ export const useGenresTags: UseGenreTags = () => {
     error: tagsError,
   } = trpc.genreTagRouter.getTags.useQuery();
 
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  const toggleGenre = (genreId: string) => {
-    setSelectedGenres((prevGenres) => {
-      const isSelected = prevGenres.includes(genreId);
-      const updatedGenres = isSelected
-        ? prevGenres.filter((id) => id !== genreId)
-        : [...prevGenres, genreId];
-      return updatedGenres;
-    });
-  };
-
-  const toggleTag = (tagId: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId],
-    );
-  };
-
   return {
     genres,
     tags,
@@ -56,9 +32,5 @@ export const useGenresTags: UseGenreTags = () => {
     isTagsLoading,
     genresError,
     tagsError,
-    selectedGenres,
-    selectedTags,
-    toggleGenre,
-    toggleTag,
   };
 };

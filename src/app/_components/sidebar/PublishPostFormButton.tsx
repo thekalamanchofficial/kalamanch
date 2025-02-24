@@ -5,6 +5,7 @@ import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import { Box, Button, Typography } from "@mui/material";
 import { useDraftPost } from "~/app/_hooks/useDraftPost";
 import { usePost } from "~/app/_hooks/usePost";
+import isDateTitleFormat from "~/app/_utils/isDateTitleFormat";
 import PublishPostForm from "~/app/editor/_components/publishPostForm/PublishPostForm";
 import { type CreatePostFormType } from "~/app/editor/types/types";
 import { useUser } from "~/context/userContext";
@@ -91,7 +92,7 @@ const PublishPostFormButton = ({ title, content, draftPostId }: PublishPostFormB
           handleClose={handleCreatePostFormClose}
           handleFormSubmit={handleFormSubmit}
           postFormData={{
-            title,
+            title: !isDateTitleFormat(title) ? title : "",
             thumbnailUrl: "",
             thumbnailTitle: "",
             thumbnailDescription: "",

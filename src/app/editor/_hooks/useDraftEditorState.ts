@@ -6,6 +6,7 @@ import { useUser } from "~/context/userContext";
 import { useDraftPost } from "../../_hooks/useDraftPost";
 import { usePost } from "../../_hooks/usePost";
 import type { CreatePostFormType, DraftPost, Iteration } from "../types/types";
+import { useRouter } from "next/navigation";
 
 type DraftEditorStateProps = {
   draftPostId: string | null;
@@ -22,7 +23,7 @@ type DraftEditorState = {
     content: string,
     iterationId: string,
     showToast?: boolean,
-    title?: string
+    title?: string,
   ) => Promise<void>;
   addIteration: (content?: string) => Promise<void>;
 };
@@ -36,27 +37,66 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
     updateDraftIteration,
     addDraftIteration,
     deleteDraftPost,
+    addDraftPost,
   } = useDraftPost();
   const { user } = useUser();
   const { publishPost } = usePost();
   const draftPostData = getDraftPost(draftPostId);
+  const router = useRouter();
 
-  const addIteration = async (content?: string) => {
-    if (!draftPostId) return console.warn("Missing draftPostId");
-    await saveLastIterationData();
-    const newIterationName = `Iteration - ${draftPost?.iterations?.length ? draftPost.iterations.length + 1 : 1}`;
-    try {
-      const addedIteration = await addDraftIteration(draftPostId, newIterationName, content ?? "");
-      setDraftPost((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          iterations: [...prev.iterations, addedIteration],
-        };
+  const addIteration = async (content?: string, title?: string) => {
+    if (!draftPostId && user && content) {
+      const draftPost = await addDraftPost({
+        authorId: user.id,
+        authorName: user.name,
+        authorProfileImageUrl: user.profileImageUrl ?? "",
+        title:
+          title ??
+          new Date().toLocaleString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        iterations: [
+          {
+            iterationName: "Iteration - 1",
+            content,
+          },
+        ],
       });
-      setSelectedIteration(addedIteration);
-    } catch (error) {
-      handleError(error);
+      if (!draftPost?.iterations?.[0]) return;
+      setDraftPost(draftPost);
+      setSelectedIteration(draftPost.iterations[0]);
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        params.set("draftPostId", draftPost.id);
+        router.replace(`${window.location.pathname}?${params.toString()}`);
+      }
+      return;
+    } else if (draftPostId) {
+      await saveLastIterationData();
+      const newIterationName = `Iteration - ${draftPost?.iterations?.length ? draftPost.iterations.length + 1 : 1}`;
+      try {
+        const addedIteration = await addDraftIteration(
+          draftPostId,
+          newIterationName,
+          content ?? "",
+        );
+        setDraftPost((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            iterations: [...prev.iterations, addedIteration],
+          };
+        });
+        setSelectedIteration(addedIteration);
+      } catch (error) {
+        handleError(error);
+      }
     }
   };
 
@@ -136,6 +176,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
         if (selectedIteration && selectedIteration.id === iterationId) {
           setSelectedIteration(updatedIteration);
         }
+        
         if (showToast) {
           toast.success("Draft saved successfully!");
         }
