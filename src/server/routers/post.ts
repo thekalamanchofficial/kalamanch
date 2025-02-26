@@ -1,4 +1,3 @@
-import type { PostType } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import { inngest } from "~/inngest/client";
@@ -7,25 +6,21 @@ import { protectedProcedure, router } from "../trpc";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
-  postDetails: yup
+  title: yup.string().required("Title is required."),
+  postTypeId: yup.string().optional(),
+  actors: yup.array(yup.string()).optional(),
+  thumbnailDetails: yup
     .object({
-      title: yup.string().required("Title is required."),
-      targetAudience: yup.array(yup.string()).required("Target audience is required."),
-      postType: yup.string().required("Post type is required."),
-      actors: yup.array(yup.string()).optional(),
-      tags: yup.array(yup.string()).optional(),
-      thumbnailDetails: yup
-        .object({
-          url: yup.string().optional(),
-          content: yup.string().optional().nullable(),
-          title: yup.string().optional().nullable(),
-        })
-        .required(),
+      url: yup.string().optional(),
+      content: yup.string().optional().nullable(),
+      title: yup.string().optional().nullable(),
     })
-    .required("Post details are required."),
+    .required(),
   authorId: yup.string().required("Author ID is required."),
   authorName: yup.string().required("Author name is required."),
   authorProfileImageUrl: yup.string().optional(),
+  genres: yup.array(yup.string()).optional(),
+  tags: yup.array(yup.string()).optional(),
 });
 
 const updatePostContentSchema = yup.object({
@@ -35,25 +30,30 @@ const updatePostContentSchema = yup.object({
 
 const updatePostDetailsSchema = yup.object({
   id: yup.string().required("ID is required."),
-  postDetails: yup.object({
-    title: yup.string().required("Title is required."),
-    targetAudience: yup.array(yup.string()).required("Target audience is required."),
-    postType: yup.string().required("Post type is required."),
-    actors: yup.array(yup.string()).optional(),
-    tags: yup.array(yup.string()).optional(),
-    thumbnailDetails: yup
-      .object({
-        url: yup.string().optional(),
-        content: yup.string().optional().nullable(),
-        title: yup.string().optional().nullable(),
-      })
-      .required(),
-  }),
+  title: yup.string().required("Title is required."),
+  postType: yup.string().optional(),
+  actors: yup.array(yup.string()).optional(),
+  tags: yup.array(yup.string()).optional(),
+  genres: yup.array(yup.string()).optional(),
+  thumbnailDetails: yup
+    .object({
+      url: yup.string().optional(),
+      content: yup.string().optional().nullable(),
+      title: yup.string().optional().nullable(),
+    })
+    .required(),
 });
+
 const sharePostSchema = yup.object({
   postId: yup.string().required(),
   userEmail: yup.string().email().required(),
   emails: yup.array(yup.string().email().required()).required(),
+});
+const getTagsSchema = yup.object({
+  genres: yup.array(yup.string()).optional(),
+});
+const createPostTypeSchema = yup.object({
+  name: yup.string().required(),
 });
 const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
@@ -71,15 +71,10 @@ export const postRouter = router({
     )
     .query(async ({ input }) => {
       try {
+        // Todo: Add logic to handle interests
         const { limit, skip, interests, authorId } = input;
 
-        const query: { tags?: { hasSome: string[] }; authorId?: string } = {};
-
-        if (interests && interests.length > 0) {
-          query.tags = {
-            hasSome: interests.filter((interest): interest is string => interest !== undefined),
-          };
-        }
+        const query: { authorId?: string } = {};
 
         if (authorId) {
           query.authorId = authorId;
@@ -99,6 +94,9 @@ export const postRouter = router({
               },
             },
             likes: true,
+            tags: true,
+            genres: true,
+            postType: true,
           },
         });
 
@@ -124,12 +122,9 @@ export const postRouter = router({
     try {
       const sanitizedInput = {
         ...input,
-        postDetails: {
-          ...input.postDetails,
-          targetAudience: cleanArray(input.postDetails.targetAudience),
-          actors: cleanArray(input.postDetails.actors),
-          tags: cleanArray(input.postDetails.tags),
-        },
+        actors: cleanArray(input.actors),
+        genres: cleanArray(input.genres),
+        tags: cleanArray(input.tags),
       };
 
       const post = await prisma.post.create({
@@ -138,30 +133,34 @@ export const postRouter = router({
           authorId: sanitizedInput.authorId,
           authorName: sanitizedInput.authorName,
           authorProfileImageUrl: sanitizedInput.authorProfileImageUrl ?? "",
-          postDetails: {
-            title: sanitizedInput.postDetails.title,
-            targetAudience: sanitizedInput.postDetails.targetAudience,
-            postType: sanitizedInput.postDetails.postType.toUpperCase() as PostType,
-            actors: sanitizedInput.postDetails.actors,
-            tags: sanitizedInput.postDetails.tags,
-            thumbnailDetails: {
-              url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
-              content: sanitizedInput.postDetails.thumbnailDetails.content ?? null,
-              title: sanitizedInput.postDetails.thumbnailDetails.title ?? null,
-            },
+          title: sanitizedInput.title,
+          actors: sanitizedInput.actors,
+          thumbnailDetails: {
+            url: sanitizedInput.thumbnailDetails.url ?? "",
+            content: sanitizedInput.thumbnailDetails.content ?? null,
+            title: sanitizedInput.thumbnailDetails.title ?? null,
           },
           likes: { create: [] },
           bids: { create: [] },
           comments: { create: [] },
+          genres: {
+            connect: sanitizedInput.genres?.map((genre) => ({ id: genre })) ?? [],
+          },
+          tags: {
+            connect: sanitizedInput.tags?.map((tag) => ({ id: tag })) ?? [],
+          },
+          postTypeId: sanitizedInput.postTypeId ? sanitizedInput.postTypeId : null,
         },
       });
 
       return post;
     } catch (error) {
-      handleError(error);
+      // handleError(error);
+      console.log(error);
       throw new Error("Failed to create the post.");
     }
   }),
+
   deletePost: protectedProcedure.input(yup.string()).mutation(async ({ input: postId }) => {
     try {
       const post = await prisma.post.delete({
@@ -175,11 +174,23 @@ export const postRouter = router({
       throw new Error("Failed to delete the post.");
     }
   }),
+
   getPost: protectedProcedure.input(yup.string()).query(async ({ input: postId }) => {
     try {
       const post = await prisma.post.findUnique({
         where: {
           id: postId,
+        },
+        include: {
+          tags: true,
+          genres: true,
+          comments: {
+            include: {
+              replies: true,
+            },
+          },
+          likes: true,
+          postType: true,
         },
       });
       return post;
@@ -188,6 +199,7 @@ export const postRouter = router({
       throw new Error("Failed to fetch the post.");
     }
   }),
+
   updatePostContent: protectedProcedure
     .input(updatePostContentSchema)
     .mutation(async ({ input }) => {
@@ -206,18 +218,14 @@ export const postRouter = router({
         throw new Error("Failed to update the post.");
       }
     }),
+
   updatePostDetails: protectedProcedure
     .input(updatePostDetailsSchema)
     .mutation(async ({ input }) => {
       try {
         const sanitizedInput = {
           ...input,
-          postDetails: {
-            ...input.postDetails,
-            targetAudience: cleanArray(input.postDetails.targetAudience),
-            actors: cleanArray(input.postDetails.actors),
-            tags: cleanArray(input.postDetails.tags),
-          },
+          actors: cleanArray(input.actors),
         };
 
         const post = await prisma.post.update({
@@ -225,18 +233,25 @@ export const postRouter = router({
             id: sanitizedInput.id,
           },
           data: {
-            postDetails: {
-              title: sanitizedInput.postDetails.title,
-              targetAudience: sanitizedInput.postDetails.targetAudience,
-              postType: sanitizedInput.postDetails.postType as PostType,
-              actors: sanitizedInput.postDetails.actors,
-              tags: sanitizedInput.postDetails.tags,
-              thumbnailDetails: {
-                url: sanitizedInput.postDetails.thumbnailDetails.url ?? "",
-                content: sanitizedInput.postDetails.thumbnailDetails.content,
-                title: sanitizedInput.postDetails.thumbnailDetails.title,
-              },
+            title: sanitizedInput.title,
+            actors: sanitizedInput.actors,
+            thumbnailDetails: {
+              url: sanitizedInput.thumbnailDetails.url ?? "",
+              content: sanitizedInput.thumbnailDetails.content,
+              title: sanitizedInput.thumbnailDetails.title,
             },
+            postTypeId: sanitizedInput.postType,
+            genres: {
+              connect: sanitizedInput.genres?.map((genre) => ({ id: genre })) ?? [],
+            },
+            tags: {
+              connect: sanitizedInput.tags?.map((tag) => ({ id: tag })) ?? [],
+            },
+          },
+          include: {
+            genres: true,
+            tags: true,
+            postType: true,
           },
         });
         return post;
@@ -245,6 +260,7 @@ export const postRouter = router({
         throw new Error("Failed to update the post.");
       }
     }),
+
   sharePost: protectedProcedure.input(sharePostSchema).mutation(async ({ input }) => {
     try {
       const { postId, userEmail, emails } = input;
@@ -260,6 +276,67 @@ export const postRouter = router({
     } catch (error) {
       // handleError(error);
       console.log(error);
+      throw error;
+    }
+  }),
+
+  getGenres: protectedProcedure.query(async () => {
+    try {
+      const genres = await prisma.genre.findMany();
+      return genres;
+    } catch (error) {
+      console.error("Error fetching genres:", error);
+      throw error;
+    }
+  }),
+
+  getTags: protectedProcedure.input(getTagsSchema).query(async ({ input }) => {
+    try {
+      const { genres } = input;
+
+      const whereCondition =
+        genres && genres.length > 0
+          ? {
+              genres: {
+                some: {
+                  id: {
+                    in: genres.filter((genre): genre is string => Boolean(genre)),
+                  },
+                },
+              },
+            }
+          : undefined;
+
+      return await prisma.tag.findMany({
+        where: whereCondition,
+        include: { genres: true },
+      });
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+      throw error;
+    }
+  }),
+
+  getPostTypes: protectedProcedure.query(async () => {
+    try {
+      const postTypes = await prisma.postType.findMany();
+      return postTypes;
+    } catch (error) {
+      console.error("Error fetching post types:", error);
+      throw error;
+    }
+  }),
+
+  addPostType: protectedProcedure.input(createPostTypeSchema).mutation(async ({ input }) => {
+    try {
+      const postType = await prisma.postType.create({
+        data: {
+          name: input.name,
+        },
+      });
+      return postType;
+    } catch (error) {
+      console.error("Error adding post type:", error);
       throw error;
     }
   }),

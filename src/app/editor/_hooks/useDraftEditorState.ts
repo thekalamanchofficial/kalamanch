@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import type { PostType } from "@prisma/client";
 import { handleError } from "~/app/_utils/handleError";
-import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { CreatePostProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { useUser } from "~/context/userContext";
 import { useDraftPost } from "../../_hooks/useDraftPost";
 import { usePost } from "../../_hooks/usePost";
 import type { CreatePostFormType, DraftPost, Iteration } from "../types/types";
+import { useRouter } from "next/navigation";
 
 type DraftEditorStateProps = {
   draftPostId: string | null;
@@ -15,7 +15,7 @@ type DraftEditorState = {
   saveLastIterationData: () => Promise<void>;
   setDraftPost: React.Dispatch<React.SetStateAction<DraftPost | null>>;
   updateDraftPostDetails: (createPostFormDetails: CreatePostFormType) => Promise<void>;
-  handlePublishEditorDraftIteration: (content: string) => Promise<void>;
+  handlePublishEditorDraftIteration: (input: CreatePostProps) => Promise<void>;
   draftPost: DraftPost | null;
   selectedIteration: Iteration | null;
   handleIterationChange: (iterationId: string) => Promise<void>;
@@ -23,6 +23,7 @@ type DraftEditorState = {
     content: string,
     iterationId: string,
     showToast?: boolean,
+    title?: string,
   ) => Promise<void>;
   addIteration: (content?: string) => Promise<void>;
 };
@@ -36,31 +37,70 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
     updateDraftIteration,
     addDraftIteration,
     deleteDraftPost,
+    addDraftPost,
   } = useDraftPost();
   const { user } = useUser();
   const { publishPost } = usePost();
   const draftPostData = getDraftPost(draftPostId);
+  const router = useRouter();
 
-  const addIteration = async (content?: string) => {
-    if (!draftPostId) return console.warn("Missing draftPostId");
-    await saveLastIterationData();
-    const newIterationName = `Iteration - ${draftPost?.iterations?.length ? draftPost.iterations.length + 1 : 1}`;
-    try {
-      const addedIteration = await addDraftIteration(draftPostId, newIterationName, content ?? "");
-      setDraftPost((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          iterations: [...prev.iterations, addedIteration],
-        };
+  const addIteration = async (content?: string, title?: string) => {
+    if (!draftPostId && user && content) {
+      const draftPost = await addDraftPost({
+        authorId: user.id,
+        authorName: user.name,
+        authorProfileImageUrl: user.profileImageUrl ?? "",
+        title:
+          title ??
+          new Date().toLocaleString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        iterations: [
+          {
+            iterationName: "Iteration - 1",
+            content,
+          },
+        ],
       });
-      setSelectedIteration(addedIteration);
-    } catch (error) {
-      handleError(error);
+      if (!draftPost?.iterations?.[0]) return;
+      setDraftPost(draftPost);
+      setSelectedIteration(draftPost.iterations[0]);
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        params.set("draftPostId", draftPost.id);
+        router.replace(`${window.location.pathname}?${params.toString()}`);
+      }
+      return;
+    } else if (draftPostId) {
+      await saveLastIterationData();
+      const newIterationName = `Iteration - ${draftPost?.iterations?.length ? draftPost.iterations.length + 1 : 1}`;
+      try {
+        const addedIteration = await addDraftIteration(
+          draftPostId,
+          newIterationName,
+          content ?? "",
+        );
+        setDraftPost((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            iterations: [...prev.iterations, addedIteration],
+          };
+        });
+        setSelectedIteration(addedIteration);
+      } catch (error) {
+        handleError(error);
+      }
     }
   };
 
-  const saveLastIterationData = async () => {
+  const saveLastIterationData = useCallback(async () => {
     const lastIterationId = selectedIteration?.id;
     if (!lastIterationId) {
       return;
@@ -94,7 +134,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
       lastIterationContent,
     );
     localStorage.removeItem(lastIterationId);
-  };
+  }, [selectedIteration, updateDraftIteration]);
 
   // Handle iteration change
   const handleIterationChange = useCallback(
@@ -103,12 +143,12 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
       const iteration = draftPost?.iterations?.find((it) => it.id === iterationId);
       if (iteration) setSelectedIteration(iteration);
     },
-    [draftPost], // TODO: lint error
+    [draftPost, saveLastIterationData],
   );
 
   // Handle content change in the editor
   const handleEditorContentChange = useCallback(
-    async (content: string, iterationId: string, showToast?: boolean) => {
+    async (content: string, iterationId: string, showToast?: boolean, title?: string) => {
       if (!draftPostId) return console.warn("Missing draftPostId ");
       const iterationName = draftPost?.iterations?.find(
         (it) => it.id === iterationId,
@@ -120,10 +160,13 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
           content,
         );
 
+        await updateDraftDetails(draftPostId, title ?? "");
+
         setDraftPost((prev) => {
           if (!prev) return null;
           return {
             ...prev,
+            title: title ?? prev.title,
             iterations: prev.iterations?.map((it) =>
               it.id === iterationId ? updatedIteration : it,
             ),
@@ -133,6 +176,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
         if (selectedIteration && selectedIteration.id === iterationId) {
           setSelectedIteration(updatedIteration);
         }
+        
         if (showToast) {
           toast.success("Draft saved successfully!");
         }
@@ -143,29 +187,34 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
         console.log(err);
       }
     },
-    [draftPostId, draftPost, selectedIteration, updateDraftIteration],
+    [draftPostId, draftPost, selectedIteration, updateDraftIteration, updateDraftDetails],
   );
 
-  const handlePublishEditorDraftIteration = async (content: string) => {
+  const handlePublishEditorDraftIteration = async ({
+    content,
+    title,
+    postTypeId,
+    actors,
+    tags,
+    genres,
+    thumbnailDetails,
+  }: CreatePostProps) => {
     await publishPost({
       content,
       authorId: user?.id ?? "",
       authorName: user?.name ?? "",
       authorProfileImageUrl: user?.profileImageUrl ?? "",
-      postDetails: {
-        title: draftPost?.postDetails.title ?? "",
-        targetAudience: draftPost?.postDetails.targetAudience ?? [],
-        postType: draftPost?.postDetails.postType as PostType,
-        actors: draftPost?.postDetails.actors ?? [],
-        tags: draftPost?.postDetails.tags ?? [],
-        thumbnailDetails: {
-          url: draftPost?.postDetails.thumbnailDetails.url ?? "",
-          content: "",
-          title: "",
-        },
+      title: title ?? "",
+      postTypeId,
+      actors: actors ?? [],
+      tags: tags ?? [],
+      genres: genres ?? [],
+      thumbnailDetails: {
+        url: thumbnailDetails.url ?? "",
+        content: thumbnailDetails.content ?? "",
+        title: thumbnailDetails.title ?? "",
       },
     });
-
     if (draftPostId) {
       await deleteDraftPost(draftPostId);
     }
@@ -173,24 +222,13 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
 
   const updateDraftPostDetails = async (createPostFormDetails: CreatePostFormType) => {
     if (!draftPost) return;
-    console.log("createPostFormDetails", createPostFormDetails);
-    const postDetails: PostDetails = {
-      title: createPostFormDetails.title,
-      targetAudience: createPostFormDetails.targetAudience ?? [],
-      postType: createPostFormDetails.postType?.toUpperCase() as PostType,
-      actors: createPostFormDetails.actors ?? [],
-      tags: createPostFormDetails.tags ?? [],
-      thumbnailDetails: {
-        url: createPostFormDetails.thumbnailUrl ?? "",
-      },
-    };
-    await updateDraftDetails(draftPostId ?? "", postDetails);
+    await updateDraftDetails(draftPostId ?? "", createPostFormDetails.title);
 
     setDraftPost((prev) => {
       if (!prev) return prev;
       return {
         ...prev,
-        postDetails,
+        title: createPostFormDetails.title,
       };
     });
   };

@@ -54,7 +54,6 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({ onMediaUpload, in
   const handleMediaChange = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
-
       if (file) {
         const uploadedThumbnailUrl = await uploadFile(
           file,
@@ -96,8 +95,13 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({ onMediaUpload, in
   }, []);
 
   return (
-    <Box mb={2}>
-      <StyledDropZone onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}>
+    <Box my={1}>
+      <StyledDropZone
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onClick={handleButtonClick}
+      >
         {isUploading && <Loader title="Uploading File..." height="100%" width="100%" />}
 
         {!isUploading && selectedMedia && (

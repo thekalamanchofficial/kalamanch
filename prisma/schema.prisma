@@ -31,21 +31,30 @@ model User {
 }
 
 model Post {
-  id                    String      @id @default(auto()) @map("_id") @db.ObjectId
-  authorId              String      @db.ObjectId
+  id                    String           @id @default(auto()) @map("_id") @db.ObjectId
+  authorId              String           @db.ObjectId
   authorName            String
   authorProfileImageUrl String
   content               String
-  postDetails           PostDetails
-  likeCount             Int         @default(0)
-  createdAt             DateTime    @default(now())
-  updatedAt             DateTime    @updatedAt
+  title                 String
+  postTypeId            String?          @db.ObjectId
+  postType              PostType?        @relation(fields: [postTypeId], references: [id])
+  actors                String[]         @default([])
+  thumbnailDetails      ThumbnailDetails
+  likeCount             Int              @default(0)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
 
   author     User      @relation(fields: [authorId], references: [id])
   likes      Like[]
   comments   Comment[]
   bids       Bid[]
   isFeatured Boolean   @default(false)
+
+  genreIds String[] @db.ObjectId
+  tagIds   String[] @db.ObjectId
+  genres   Genre[]  @relation(fields: [genreIds], references: [id])
+  tags     Tag[]    @relation(fields: [tagIds], references: [id])
 
   @@index([authorId])
   @@index([createdAt])
@@ -122,26 +131,9 @@ model UserToFollow {
   user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum PostType {
-  BLOG
-  ARTICLE
-  ANNOUNCEMENT
-  NEWS
-  SCRIPT
-}
-
 enum PostStatus {
   DRAFT
   PUBLISHED
-}
-
-type PostDetails {
-  title            String
-  targetAudience   String[]
-  postType         PostType
-  actors           String[]         @default([])
-  tags             String[]
-  thumbnailDetails ThumbnailDetails
 }
 
 model Iterations {
@@ -164,8 +156,9 @@ model DraftPost {
   authorId              String       @db.ObjectId
   authorName            String
   authorProfileImageUrl String
-  postDetails           PostDetails
+  title                 String
   iterations            Iterations[]
+  likeCount             Int          @default(0)
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
 
@@ -187,4 +180,28 @@ model DraftPostIterationReviews {
   @@index([iterationId])
   @@index([reviewerId])
   @@index([requesterId])
+}
+
+model Genre {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String   @unique
+  tagIds  String[] @db.ObjectId
+  tags    Tag[]    @relation(fields: [tagIds], references: [id])
+  postIds String[] @db.ObjectId
+  posts   Post[]   @relation(fields: [postIds], references: [id])
+}
+
+model Tag {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String   @unique
+  genreIds String[] @db.ObjectId
+  genres   Genre[]  @relation(fields: [genreIds], references: [id])
+  postIds  String[] @db.ObjectId
+  posts    Post[]   @relation(fields: [postIds], references: [id])
+}
+
+model PostType {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String @unique
+  posts Post[]
 }

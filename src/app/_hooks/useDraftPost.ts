@@ -1,7 +1,4 @@
-import { toast } from "react-toastify";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { handleError } from "~/app/_utils/handleError";
-import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
 import type { CreateDraftPostProps, DraftPost, Iteration } from "../editor/types/types";
 
@@ -13,7 +10,7 @@ type UseDraftPostRespone = {
     iterationName: string,
     content: string,
   ) => Promise<Iteration>;
-  updateDraftDetails: (draftPostId: string, postDetails: PostDetails) => Promise<void>;
+  updateDraftDetails: (draftPostId: string, title: string) => Promise<void>;
   updateDraftIteration: (
     iterationId: string,
     iterationName: string,
@@ -23,16 +20,14 @@ type UseDraftPostRespone = {
 };
 
 export const useDraftPost = (): UseDraftPostRespone => {
-  const createMutationOptions = (successMessage: string) => ({
-    onSuccess: () => toast.success(successMessage),
+  const createMutationOptions = () => ({
     onError: (error: unknown) => handleError(error),
   });
 
   const deleteDraftPostMutation = trpc.draftPost.deleteDraftPost.useMutation();
   const updateDraftIterationMutation = trpc.draftPost.updateIteration.useMutation();
-  const updateDraftDetailsMutation = trpc.draftPost.updateDraftPostDetails.useMutation(
-    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.DRAFT_DETAILS_UPDATED_MESSAGE),
-  );
+  const updateDraftDetailsMutation =
+    trpc.draftPost.updateDraftPostDetails.useMutation(createMutationOptions());
   const addDraftIterationMutation = trpc.draftPost.addIteration.useMutation();
   const addDraftPostMutation = trpc.draftPost.addDraftPost.useMutation();
 
@@ -65,14 +60,15 @@ export const useDraftPost = (): UseDraftPostRespone => {
     return updatedIteration;
   };
 
-  const updateDraftDetails = async (draftPostId: string, postDetails: PostDetails) => {
+  const updateDraftDetails = async (draftPostId: string, title: string) => {
     try {
-      await updateDraftDetailsMutation.mutateAsync({ draftPostId, postDetails });
+      await updateDraftDetailsMutation.mutateAsync({ draftPostId, title });
     } catch (error) {
       console.error("Failed to update iteration content:", error);
       handleError(error);
     }
   };
+
   const addDraftIteration = async (draftPostId: string, iterationName: string, content: string) => {
     const addedIteration = await addDraftIterationMutation.mutateAsync({
       draftPostId,

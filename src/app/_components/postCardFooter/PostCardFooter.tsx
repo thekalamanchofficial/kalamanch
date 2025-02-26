@@ -91,8 +91,11 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
             sm: "start",
           },
           alignItems: "center",
-          flexWrap: "wrap",
-          gap: "10px",
+          flexWrap: "nowrap",
+          gap: {
+            xs: "5px",
+            sm: "10px",
+          },
         }}
       >
         {showLikes && (

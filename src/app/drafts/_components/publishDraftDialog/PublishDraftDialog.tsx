@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import DescriptionOutlinedIcon from "@mui/icons-material/Publish";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -15,19 +14,21 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import PublishPostFormButton from "~/app/_components/sidebar/PublishPostFormButton";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { type Iteration } from "~/app/editor/types/types";
 
 export type PublishDialogProps = {
   iterations: Iteration[];
-  onPublish: (iterationId: string) => Promise<void>;
   onCancel?: () => void;
   open: boolean;
   title?: string;
   description?: string;
+  postTitle?: string;
+  draftPostId?: string;
 };
 
-const StyledRadio = styled(Radio)(({ theme }) => ({
+const StyledRadio = styled(Radio)(({ theme: _ }) => ({
   // TODO: lint error
   "&.Mui-checked": {
     color: "primary.main",
@@ -36,18 +37,15 @@ const StyledRadio = styled(Radio)(({ theme }) => ({
 
 export default function PublishDraftDialog({
   iterations,
-  onPublish,
   onCancel,
   open,
   title = STATIC_TEXTS.EDITOR_PAGE.PUBLISH_DRAFT,
   description = STATIC_TEXTS.EDITOR_PAGE.SELECT_ITERATION_DESCRIPTION,
+  postTitle,
+  draftPostId,
 }: PublishDialogProps) {
-  const [selectedIteration, setSelectedIteration] = useState<string>("");
+  const [selectedIteration, setSelectedIteration] = useState<Iteration | null>(null);
   const [error] = useState<string | null>(null);
-
-  const handleOnPublish = async (selectedIteration: string) => {
-    await onPublish(selectedIteration);
-  };
 
   return (
     <>
@@ -62,8 +60,12 @@ export default function PublishDraftDialog({
           )}
           <FormControl component="fieldset" sx={{ mt: 2, width: "100%" }}>
             <RadioGroup
-              value={selectedIteration}
-              onChange={(e) => setSelectedIteration(e.target.value)}
+              value={selectedIteration?.id}
+              onChange={(e) =>
+                setSelectedIteration(
+                  iterations.find((iteration) => iteration.id === e.target.value) ?? null,
+                )
+              }
             >
               {iterations.map((iteration) => (
                 <FormControlLabel
@@ -108,23 +110,12 @@ export default function PublishDraftDialog({
           >
             {STATIC_TEXTS.EDITOR_PAGE.CANCEL}
           </Button>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "primary.main",
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "primary.dark",
-              },
-            }}
-            onClick={async () => {
-              await handleOnPublish(selectedIteration);
-            }}
-            disabled={!selectedIteration}
-            startIcon={<DescriptionOutlinedIcon />}
-          >
-            {STATIC_TEXTS.EDITOR_PAGE.PUBLISH}
-          </Button>
+          <PublishPostFormButton
+            title={postTitle ?? ""}
+            content={selectedIteration?.content ?? ""}
+            draftPostId={draftPostId ?? ""}
+            shouldOpenPublishPostForm={() => selectedIteration !== null}
+          />
         </DialogActions>
       </Dialog>
     </>

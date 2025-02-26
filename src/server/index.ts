@@ -3,6 +3,7 @@ import { commentRouter } from "./routers/comment";
 import { draftPostRouter } from "./routers/draftPost";
 import { draftPostIterationReviewsRouter } from "./routers/draftPostIterationReviews";
 import { featuredPostRouter } from "./routers/featuredPost";
+import { genreTagRouter } from "./routers/genre&Tags";
 import { likeRouter } from "./routers/likes";
 import { postRouter } from "./routers/post";
 import { presignedR2UrlRouter } from "./routers/presignedR2Url";
@@ -21,6 +22,7 @@ export const appRouter = router({
   draftPostIterationReview: draftPostIterationReviewsRouter,
   bookmarks: bookmarkRouter,
   presignedR2Url: presignedR2UrlRouter,
+  genreTagRouter: genreTagRouter,
 });
 
 export type AppRouter = typeof appRouter;

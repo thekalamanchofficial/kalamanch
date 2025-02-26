@@ -1,4 +1,4 @@
-import type { PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { ThumbnailDetails } from "~/app/(with-sidebar)/myfeed/types/types";
 
 export enum EditorTabsEnum {
   EDITOR = "Editor",
@@ -6,9 +6,11 @@ export enum EditorTabsEnum {
 }
 export type CreatePostFormType = {
   title: string;
-  targetAudience?: string[];
   thumbnailUrl?: string;
-  postType?: string;
+  thumbnailTitle?: string;
+  thumbnailDescription?: string;
+  genres?: string[];
+  postTypeId?: string;
   tags?: string[];
   actors?: string[];
 };
@@ -24,27 +26,39 @@ export type Iteration = {
 };
 
 export type DraftPost = {
-  id?: string;
+  id: string;
   authorName: string;
   authorProfileImageUrl: string;
   authorId: string;
-  postDetails: PostDetails;
   iterations: Iteration[];
   createdAt: string;
   updatedAt: string;
+  title: string;
+};
+
+export type PublishDraftPostProps = {
+  id: string;
+  authorName: string;
+  authorProfileImageUrl: string;
+  authorId: string;
+  title: string;
+  postType?: string;
+  actors?: string[];
+  tags?: string[];
+  genres?: string[];
+  thumbnailDetails: ThumbnailDetails;
+  iterations: Iteration[];
 };
 
 export type CreateDraftPostProps = {
   authorName: string;
   authorProfileImageUrl: string;
   authorId: string;
-  postDetails: PostDetails;
-  iterations: [
-    {
-      iterationName: string;
-      content: string;
-    },
-  ];
+  title: string;
+  iterations: {
+    iterationName: string;
+    content: string;
+  }[];
 };
 
 export type QueryParams = {

@@ -1,12 +1,13 @@
 "use client";
 
-import { Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
-import WritingPad from "../_components/writingPad/WritingPad";
-import CreatePostForm from "./_components/createPostForm/CreatePostForm";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { Box, Divider, Grid2 as Grid, TextField, Typography } from "@mui/material";
 import { EditorAppBar } from "./_components/editorAppBar/EditorAppBar";
 import EditorLeftSideBarForIterations from "./_components/editorLeftSideBar/EditorLeftSideBarForIterations";
 import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
 import FileUploader from "./_components/fileUploader/FileUploader";
+import PublishPostForm from "./_components/publishPostForm/PublishPostForm";
 import SendForReviewDialog from "./_components/sendForReviewDialog/SendForReviewDialog";
 import { useCreatePostFormDataState } from "./_hooks/useCreatePostFormDataState";
 import { useDraftEditorState } from "./_hooks/useDraftEditorState";
@@ -17,8 +18,11 @@ import useUploadTextFromFile from "./_hooks/useUploadTextFromFile";
 import editorMockData from "./mockDataEditor/mockdata";
 import { PostStatus } from "./types/types";
 
+const WritingPad = dynamic(() => import("../_components/writingPad/WritingPad"), { ssr: false });
+
 const Page = () => {
-  const { draftPostId, postId } = useQueryParams();
+  const { draftPostId, postId, shouldDraftPost } = useQueryParams();
+  const [postTitle, setPostTitle] = useState<string>("");
 
   const {
     draftPost,
@@ -27,7 +31,6 @@ const Page = () => {
     handleIterationChange,
     handleEditorContentChange,
     addIteration,
-    handlePublishEditorDraftIteration,
     updateDraftPostDetails,
   } = useDraftEditorState({ draftPostId });
 
@@ -35,9 +38,9 @@ const Page = () => {
     postId,
   });
 
-  const { isCreatePostFormOpen, openCreatePostForm, closeCreatePostForm, formData } =
+  const { isPublishPostFormOpen, openPublishPostForm, closePublishPostForm, formData } =
     useCreatePostFormDataState({
-      postDetails: draftPost ? draftPost.postDetails : publishedPost?.postDetails,
+      postDetails: publishedPost,
     });
 
   const { sendForReviewDialogOpen, setSendForReviewDialogOpen, handleSendForReview } =
@@ -47,6 +50,22 @@ const Page = () => {
     useUploadTextFromFile({
       addIteration,
     });
+
+  const handlePublish = async (content: string) => {
+    if (!publishedPost) {
+      console.error("No published post found");
+      return;
+    }
+    await updatePostContent(content);
+  };
+
+  useEffect(() => {
+    if (draftPost) {
+      setPostTitle(draftPost?.title ?? "");
+    } else if (publishedPost) {
+      setPostTitle(publishedPost?.title ?? "");
+    }
+  }, [draftPost, publishedPost]);
 
   return (
     <>
@@ -71,6 +90,7 @@ const Page = () => {
       >
         <EditorLeftSideBarForIterations
           showIterations={Boolean(draftPost)}
+          showImportText={Boolean(!postId)}
           iterations={draftPost?.iterations ?? []}
           handleSaveLastIterationData={saveLastIterationData}
           handleAddIteration={addIteration}
@@ -95,57 +115,83 @@ const Page = () => {
           },
         }}
       >
-        <Box sx={{ padding: "8px 20px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "start",
+            flexDirection: "column",
+            padding: "8px 10px 0 10px",
+          }}
+        >
           <Typography
             sx={{
               fontWeight: "bold",
               fontSize: "16px",
               color: "primary.main",
-              display: {
-                xs: "none",
-                md: "block",
-              },
+              marginInline: "8px",
+              display: { xs: "none", md: "block" },
             }}
           >
             Editor
           </Typography>
+
+          <TextField
+            variant="standard"
+            fullWidth
+            placeholder="Enter title of your writing"
+            sx={{
+              flex: 1,
+              backgroundColor: "white",
+              borderRadius: "6px",
+              "& .MuiInputBase-input": {
+                fontWeight: "400",
+                color: "text.primary",
+                padding: "5px 0",
+                border: "none",
+                textAlign: "center",
+              },
+            }}
+            slotProps={{
+              input: {
+                disableUnderline: true,
+              },
+            }}
+            value={postTitle}
+            onChange={(e) => setPostTitle(e.target.value)}
+          />
         </Box>
         <Divider />
-        <Box>
+        <Box sx={{ width: "100%" }}>
           <Grid size={12} sx={{ height: "90vh", width: "100%" }}>
             <WritingPad
               key={draftPost ? selectedIteration?.id : publishedPost?.id}
+              title={postTitle}
               currentIterationId={selectedIteration?.id}
-              handleOpen={() => openCreatePostForm()}
-              handlePublish={async (content) => {
-                if (publishedPost) {
-                  await updatePostContent(content);
-                } else {
-                  await handlePublishEditorDraftIteration(content);
-                }
-              }}
+              handleOpen={() => openPublishPostForm()}
+              handlePublish={handlePublish}
               defaultContentToDisplay={
                 (draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""
               }
               handleEditorContentChange={handleEditorContentChange}
-              postStatus={draftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
+              postStatus={draftPost || shouldDraftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
               handleSendForReview={() => setSendForReviewDialogOpen(true)}
+              draftPostId={draftPost?.id}
             />
           </Grid>
-          {isCreatePostFormOpen && (
-            <CreatePostForm
-              handleClose={() => closeCreatePostForm()}
-              open={isCreatePostFormOpen}
-              createPostFormData={formData}
+          {isPublishPostFormOpen && (
+            <PublishPostForm
+              handleClose={() => closePublishPostForm()}
+              open={isPublishPostFormOpen}
+              postFormData={{ ...formData, postTypeId: formData?.postType?.id }}
               handleFormSubmit={async (details) => {
                 if (publishedPost) {
                   await updatePostDetails(details);
                 } else {
                   await updateDraftPostDetails(details);
                 }
-                closeCreatePostForm();
+                closePublishPostForm();
               }}
-              update={Boolean(draftPost)}
+              update={Boolean(publishedPost)}
             />
           )}
           <FileUploader

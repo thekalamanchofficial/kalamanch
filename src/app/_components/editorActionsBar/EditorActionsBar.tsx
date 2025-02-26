@@ -7,6 +7,7 @@ import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FolderIcon from "@mui/icons-material/Folder";
 import { Box, Button, Typography } from "@mui/material";
 import { PostStatus } from "~/app/editor/types/types";
+import PublishPostFormButton from "../sidebar/PublishPostFormButton";
 
 const buttonStyle = {
   backgroundColor: "secondary.main",
@@ -30,19 +31,27 @@ const textStyle = {
 };
 
 type ActionsBarProps = {
+  title: string;
+  content: string;
   handleOpen: () => void;
+  handleSaveDraft: (showToast?: boolean, title?: string) => void;
   handleSubmit: () => void;
-  handleSaveDraft: (showToast?: boolean) => void;
   postStatus: PostStatus;
   handleSendForReview: () => void;
+  draftPostId?: string;
+  handleOpenPublishPostForm: () => boolean;
 };
 
 const EditorActionsBar: React.FC<ActionsBarProps> = ({
+  title,
+  content,
   handleOpen,
-  postStatus,
   handleSubmit,
+  postStatus,
   handleSaveDraft,
   handleSendForReview,
+  draftPostId,
+  handleOpenPublishPostForm,
 }) => (
   <Box
     sx={{
@@ -65,7 +74,7 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         sm: "center",
       },
       marginTop: {
-        xs: "75px",
+        xs: "100px",
         sm: "0",
       },
       height: {
@@ -75,29 +84,38 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
       padding: "10px",
     }}
   >
-    <Button sx={buttonStyle} onClick={handleOpen}>
-      <EditNoteIcon />
-      <Typography sx={textStyle}>Edit details</Typography>
-    </Button>
-    <Button sx={buttonStyle} onClick={handleSendForReview}>
-      <ChecklistIcon />
-      <Typography sx={textStyle}>Send for review</Typography>
-    </Button>
+    {postStatus == PostStatus.PUBLISHED && (
+      <Button sx={buttonStyle} onClick={handleOpen}>
+        <EditNoteIcon />
+        <Typography sx={textStyle}>Edit details</Typography>
+      </Button>
+    )}
     {postStatus == PostStatus.DRAFT && (
-      <Button sx={buttonStyle} onClick={() => handleSaveDraft(true)}>
+      <Button sx={buttonStyle} onClick={handleSendForReview}>
+        <ChecklistIcon />
+        <Typography sx={textStyle}>Send for review</Typography>
+      </Button>
+    )}
+    {postStatus == PostStatus.DRAFT && (
+      <Button sx={buttonStyle} onClick={() => handleSaveDraft(true, title)}>
         <FolderIcon />
         <Typography sx={textStyle}>Save as draft</Typography>
       </Button>
     )}
-    <Button
-      sx={{ ...buttonStyle, backgroundColor: "primary.main", color: "white" }}
-      onClick={handleSubmit}
-    >
-      <FeedOutlinedIcon />
-      <Typography sx={textStyle}>
-        {postStatus == PostStatus.DRAFT ? "Publish" : "Update"}
-      </Typography>
-    </Button>
+    {postStatus == PostStatus.DRAFT && (
+      <PublishPostFormButton
+        title={title}
+        content={content}
+        draftPostId={draftPostId}
+        shouldOpenPublishPostForm={handleOpenPublishPostForm}
+      />
+    )}
+    {postStatus == PostStatus.PUBLISHED && (
+      <Button sx={buttonStyle} onClick={handleSubmit}>
+        <FeedOutlinedIcon />
+        <Typography sx={textStyle}>Update</Typography>
+      </Button>
+    )}
   </Box>
 );
 

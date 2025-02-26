@@ -10,32 +10,18 @@ import PublishDraftDialog from "../publishDraftDialog/PublishDraftDialog";
 
 type DraftPostProps = {
   draftPosts: DraftPost[];
-  handlePublishDraftPostIteration: (draftpost: DraftPost, iterationId: string) => Promise<void>;
   handleEditDraftPost: (draftPostId: string) => void;
 };
 
-export default function DraftPostsSection({
-  draftPosts,
-  handlePublishDraftPostIteration,
-  handleEditDraftPost,
-}: DraftPostProps) {
+export default function DraftPostsSection({ draftPosts, handleEditDraftPost }: DraftPostProps) {
   const {
     setSelectedDraftPostId,
     selectedDraftPostIdInLeftSideBar,
     setSelectedDraftPostIdInLeftSideBar,
   } = useSelectedDraftPost();
   const postRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
-  const [selectedDraftPostIdForPublishing, setSelectedDraftPostIdForPublishing] = useState("");
-
-  const handleDraftIterationPublishing = async (iterationId: string) => {
-    if (selectedDraftPostIdForPublishing) {
-      await handlePublishDraftPostIteration(
-        draftPosts.find((post) => post.id === selectedDraftPostIdForPublishing)!,
-        iterationId,
-      );
-    }
-    setSelectedDraftPostIdForPublishing("");
-  };
+  const [selectedDraftPostForPublishing, setSelectedDraftPostForPublishing] =
+    useState<DraftPost | null>(null);
 
   const handleIntersection = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -104,18 +90,15 @@ export default function DraftPostsSection({
             <CardContent>
               <Fragment>
                 <PostCardContent
-                  articleTitle={post.postDetails.title}
+                  articleTitle={post.title}
                   articleContent={post.iterations[0]?.content ?? ""}
-                  articleTags={post.postDetails.tags}
-                  articleThumbnailUrl={post.postDetails.thumbnailDetails.url}
                   articleId={post.id ?? ""}
-                  articleDescription={post.postDetails.thumbnailDetails.content ?? ""}
                   savedDate={post.updatedAt}
                 />
                 <EditPostFooter
                   postStatus={PostStatus.DRAFT}
                   handlePublishOrUnpublishButtonClick={() =>
-                    setSelectedDraftPostIdForPublishing(post.id ?? "")
+                    setSelectedDraftPostForPublishing(post)
                   }
                   handleEditButtonClick={() => {
                     handleEditDraftPost(post.id ?? "");
@@ -127,17 +110,15 @@ export default function DraftPostsSection({
         </div>
       ))}
 
-      {selectedDraftPostIdForPublishing != "" && (
+      {selectedDraftPostForPublishing && (
         <PublishDraftDialog
-          iterations={
-            draftPosts.find((post) => post.id === selectedDraftPostIdForPublishing)?.iterations ??
-            []
-          }
-          onPublish={handleDraftIterationPublishing}
-          onCancel={() => setSelectedDraftPostIdForPublishing("")}
+          iterations={selectedDraftPostForPublishing?.iterations ?? []}
+          postTitle={selectedDraftPostForPublishing?.title ?? ""}
+          onCancel={() => setSelectedDraftPostForPublishing(null)}
           title="Select Iteration to Publish"
           description="Choose which iteration of your draft you want to publish"
-          open={selectedDraftPostIdForPublishing !== ""}
+          open={selectedDraftPostForPublishing !== null}
+          draftPostId={selectedDraftPostForPublishing?.id}
         />
       )}
     </Box>

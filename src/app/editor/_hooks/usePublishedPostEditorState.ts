@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import type { PostType } from "@prisma/client";
-import type { Post, PostDetails } from "~/app/(with-sidebar)/myfeed/types/types";
+import type { Post, UpdatePostDetailsProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
 import { usePost } from "../../_hooks/usePost";
 import type { CreatePostFormType } from "../types/types";
+import { useGenresTags } from "./useGenreTags";
 
 type UsePublishedPostEditorStateResponse = {
   publishedPost: Post | null;
   setPublishedPost: React.Dispatch<React.SetStateAction<Post | null>>;
   updatePostContent: (content: string) => Promise<void>;
-  updatePostDetails: (createPostFormDetails: CreatePostFormType) => Promise<void>;
+  updatePostDetails: (updatePostDetails: CreatePostFormType) => Promise<void>;
 };
 type UsePublishedPostEditorStateProps = {
   postId?: string | undefined;
@@ -23,6 +23,8 @@ export const usePublishedPostEditorState = ({
     updatePostDetails: updatePostDetailsCallBack,
     updatePostContent: updatePostContentCallBack,
   } = usePost();
+
+  const { tags, genres } = useGenresTags();
 
   const { data: post } = trpc.post.getPost.useQuery(postId, {
     enabled: Boolean(postId),
@@ -42,24 +44,32 @@ export const usePublishedPostEditorState = ({
     });
   };
 
-  const updatePostDetails = async (createPostFormDetails: CreatePostFormType) => {
+  const updatePostDetails = async (updateFormDetails: CreatePostFormType) => {
     if (!publishedPost) return;
-    const postDetails: PostDetails = {
-      title: createPostFormDetails.title,
-      targetAudience: createPostFormDetails.targetAudience ?? [],
-      postType: createPostFormDetails.postType?.toUpperCase() as PostType,
-      actors: createPostFormDetails.actors ?? [],
-      tags: createPostFormDetails.tags ?? [],
+    const updatePostDetails: UpdatePostDetailsProps = {
+      id: publishedPost.id,
+      title: updateFormDetails.title,
+      postType: updateFormDetails.postTypeId,
+      actors: updateFormDetails.actors,
+      tags: updateFormDetails.tags,
+      genres: updateFormDetails.genres,
       thumbnailDetails: {
-        url: createPostFormDetails.thumbnailUrl ?? "",
+        url: updateFormDetails.thumbnailUrl,
+        content: updateFormDetails.thumbnailDescription,
+        title: updateFormDetails.thumbnailTitle,
       },
     };
-    await updatePostDetailsCallBack(publishedPost.id, postDetails);
+    const updatedPost = await updatePostDetailsCallBack(publishedPost.id, updatePostDetails);
+    if (!updatedPost) return;
     setPublishedPost((prev) => {
       if (!prev) return prev;
       return {
         ...prev,
-        postDetails,
+        ...updatedPost,
+        tags: tags.filter((tag) => updateFormDetails.tags?.includes(tag.id)),
+        genres: genres.filter((genre) => updateFormDetails.genres?.includes(genre.id)),
+        createdAt: new Date(updatedPost?.createdAt).toISOString(),
+        updatedAt: new Date(updatedPost?.updatedAt).toISOString(),
       };
     });
   };
