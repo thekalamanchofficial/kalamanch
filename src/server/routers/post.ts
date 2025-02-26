@@ -149,13 +149,14 @@ export const postRouter = router({
           tags: {
             connect: sanitizedInput.tags?.map((tag) => ({ id: tag })) ?? [],
           },
-          postTypeId: sanitizedInput.postTypeId,
+          postTypeId: sanitizedInput.postTypeId ? sanitizedInput.postTypeId : null,
         },
       });
 
       return post;
     } catch (error) {
-      handleError(error);
+      // handleError(error);
+      console.log(error);
       throw new Error("Failed to create the post.");
     }
   }),

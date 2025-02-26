@@ -222,8 +222,6 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
 
   const updateDraftPostDetails = async (createPostFormDetails: CreatePostFormType) => {
     if (!draftPost) return;
-    console.log("createPostFormDetails", createPostFormDetails);
-
     await updateDraftDetails(draftPostId ?? "", createPostFormDetails.title);
 
     setDraftPost((prev) => {

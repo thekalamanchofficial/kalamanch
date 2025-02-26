@@ -114,6 +114,7 @@ export default function PublishDraftDialog({
             title={postTitle ?? ""}
             content={selectedIteration?.content ?? ""}
             draftPostId={draftPostId ?? ""}
+            shouldOpenPublishPostForm={() => selectedIteration !== null}
           />
         </DialogActions>
       </Dialog>

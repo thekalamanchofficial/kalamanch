@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Box } from "@mui/material";
+import isContentEmpty from "~/app/_utils/isContentEmpty";
 import { type PostStatus } from "~/app/editor/types/types";
 import EditorActionsBar from "../editorActionsBar/EditorActionsBar";
 import WritingPadEditor from "../writingPagEditor/WritingPadEditor";
@@ -36,22 +37,34 @@ const WritingPad: React.FC<WritingPadProps> = ({
   handleSendForReview,
   draftPostId,
 }) => {
-  const { handleSubmit, control, watch } = useContentForm({
+  const { handleSubmit, control, watch, setError } = useContentForm({
     defaultValues: { content: defaultContentToDisplay },
   });
+
+  const content = watch("content");
 
   const { onContentChange, saveDraftInstantly } = useDraftContentAutosave({
     currentIterationId,
     initialContent: defaultContentToDisplay,
     saveContentToDb: handleEditorContentChange,
     postStatus,
+    title,
   });
 
   const onPublishPost = (data: { content: string }) => {
     handlePublish(data.content);
   };
 
-  const content = watch("content");
+  const handleOpenPublishPostForm = () => {
+    if (isContentEmpty(content)) {
+      setError("content", {
+        type: "manual",
+        message: "Content cannot be empty",
+      });
+      return false;
+    }
+    return true;
+  };
 
   return (
     <Box
@@ -87,6 +100,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
         handleSaveDraft={saveDraftInstantly}
         handleSendForReview={handleSendForReview}
         draftPostId={draftPostId}
+        handleOpenPublishPostForm={handleOpenPublishPostForm}
       />
     </Box>
   );

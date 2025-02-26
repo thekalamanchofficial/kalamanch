@@ -39,6 +39,7 @@ type ActionsBarProps = {
   postStatus: PostStatus;
   handleSendForReview: () => void;
   draftPostId?: string;
+  handleOpenPublishPostForm: () => boolean;
 };
 
 const EditorActionsBar: React.FC<ActionsBarProps> = ({
@@ -50,6 +51,7 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
   handleSaveDraft,
   handleSendForReview,
   draftPostId,
+  handleOpenPublishPostForm,
 }) => (
   <Box
     sx={{
@@ -72,7 +74,7 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         sm: "center",
       },
       marginTop: {
-        xs: "75px",
+        xs: "100px",
         sm: "0",
       },
       height: {
@@ -101,7 +103,12 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
       </Button>
     )}
     {postStatus == PostStatus.DRAFT && (
-      <PublishPostFormButton title={title} content={content} draftPostId={draftPostId} />
+      <PublishPostFormButton
+        title={title}
+        content={content}
+        draftPostId={draftPostId}
+        shouldOpenPublishPostForm={handleOpenPublishPostForm}
+      />
     )}
     {postStatus == PostStatus.PUBLISHED && (
       <Button sx={buttonStyle} onClick={handleSubmit}>

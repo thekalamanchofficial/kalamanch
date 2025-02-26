@@ -34,7 +34,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   const { formatSavedDate } = useSavedDateFormatter();
   const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
 
-  const quillCOnfig = {
+  const quillConfig = {
     toolbar: false,
   };
 
@@ -49,6 +49,22 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   const isVideoUrl = (thumbnailUrl: string | null | undefined) => {
     if (!thumbnailUrl) return false;
     return thumbnailUrl.endsWith(".mp4") || thumbnailUrl.endsWith(".mov");
+  };
+
+  const renderQuillContent = (content: string, isArticleThumbnailContent: boolean) => {
+    const shouldShowSeeMore = !seeMore && content.length > myfeedConfig.SUMMARY_READ_MORE_LENGTH;
+    const displayedContent =
+      shouldShowSeeMore || isArticleThumbnailContent
+        ? content.slice(0, myfeedConfig.SUMMARY_READ_MORE_LENGTH)
+        : content;
+
+    return (
+      <div className="quill-container">
+        <ReactQuill value={displayedContent} readOnly theme="snow" modules={quillConfig} />
+        {shouldShowSeeMore && <SeeMoreButton onClick={handleSeeMore} />}
+        {!isArticleThumbnailContent && seeMore && <SeeLessButton onClick={handleSeeLess} />}
+      </div>
+    );
   };
 
   return (
@@ -99,30 +115,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
           )}
         </Box>
 
-        {!seeMore ? (
-          <>
-            {articleContent.length > myfeedConfig.ARTICLE_READ_MORE_LENGTH ? (
-              <div className="quill-container">
-                <ReactQuill
-                  value={articleContent.slice(0, myfeedConfig.ARTICLE_READ_MORE_LENGTH)}
-                  readOnly
-                  theme="snow"
-                  modules={quillCOnfig}
-                />
-                <SeeMoreButton onClick={handleSeeMore} />
-              </div>
-            ) : (
-              <div className="quill-container">
-                <ReactQuill value={articleContent} readOnly theme="snow" modules={quillCOnfig} />
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="quill-container">
-            <ReactQuill value={articleContent} readOnly theme="snow" modules={quillCOnfig} />
-            <SeeLessButton onClick={handleSeeLess} />
-          </div>
-        )}
+        {renderQuillContent(articleContent, false)}
       </Box>
       <Grid
         container
@@ -202,6 +195,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
             ) : (
               articleThumbnailContent
             )}
+            {!articleThumbnailContent && renderQuillContent(articleContent, true)}
           </Typography>
           <Grid
             container

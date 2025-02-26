@@ -28,6 +28,7 @@ type UseDraftContentAutosaveProps = {
     title?: string,
   ) => void;
   postStatus: PostStatus;
+  title: string;
 };
 
 export const useDraftContentAutosave = ({
@@ -35,6 +36,7 @@ export const useDraftContentAutosave = ({
   initialContent,
   saveContentToDb,
   postStatus,
+  title,
 }: UseDraftContentAutosaveProps): UseDraftContentAutosaveReturn => {
   const [content, setContent] = useState(initialContent);
   const [lastSavedContent, setLastSavedContent] = useState(initialContent);
@@ -147,12 +149,12 @@ export const useDraftContentAutosave = ({
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
-        saveDraftInstantly();
+        saveDraftInstantly(false, title);
       }
     };
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      saveDraftInstantly();
+      saveDraftInstantly(false, title);
       e.preventDefault();
       e.returnValue = "";
     };
@@ -164,7 +166,7 @@ export const useDraftContentAutosave = ({
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [saveDraftInstantly]);
+  }, [saveDraftInstantly, title]);
 
   return { onContentChange, currentIterationId, saveDraftInstantly };
 };

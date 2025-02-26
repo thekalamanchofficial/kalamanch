@@ -15,9 +15,15 @@ type PublishPostFormButtonProps = {
   title: string;
   content: string;
   draftPostId?: string;
+  shouldOpenPublishPostForm: () => boolean;
 };
 
-const PublishPostFormButton = ({ title, content, draftPostId }: PublishPostFormButtonProps) => {
+const PublishPostFormButton = ({
+  title,
+  content,
+  draftPostId,
+  shouldOpenPublishPostForm,
+}: PublishPostFormButtonProps) => {
   const [createPostFormOpen, setCreatePostFormOpen] = useState(false);
   const { user } = useUser();
   const { publishPost } = usePost();
@@ -27,31 +33,40 @@ const PublishPostFormButton = ({ title, content, draftPostId }: PublishPostFormB
     setCreatePostFormOpen(false);
   };
 
+  const handleCreatePostFormOpen = () => {
+    if (!shouldOpenPublishPostForm()) return;
+    setCreatePostFormOpen(true);
+  };
+
   const handleFormSubmit = async (data: CreatePostFormType) => {
-    if (!user?.id || !user?.name) {
-      console.error("User not found");
-      return;
-    }
+    try {
+      if (!user?.id || !user?.name) {
+        console.error("User not found");
+        return;
+      }
 
-    await publishPost({
-      content,
-      authorId: user?.id ?? "",
-      authorName: user?.name ?? "",
-      authorProfileImageUrl: user?.profileImageUrl ?? "",
-      title: data.title ?? "",
-      postTypeId: data.postTypeId ?? "",
-      actors: data.actors ?? [],
-      tags: data.tags ?? [],
-      genres: data.genres ?? [],
-      thumbnailDetails: {
-        url: data.thumbnailUrl ?? "",
-        content: data.thumbnailDescription ?? "",
-        title: data.thumbnailTitle ?? "",
-      },
-    });
+      await publishPost({
+        content,
+        authorId: user?.id ?? "",
+        authorName: user?.name ?? "",
+        authorProfileImageUrl: user?.profileImageUrl ?? "",
+        title: data.title ?? "",
+        postTypeId: data.postTypeId ?? "",
+        actors: data.actors ?? [],
+        tags: data.tags ?? [],
+        genres: data.genres ?? [],
+        thumbnailDetails: {
+          url: data.thumbnailUrl ?? "",
+          content: data.thumbnailDescription ?? "",
+          title: data.thumbnailTitle ?? "",
+        },
+      });
 
-    if (draftPostId) {
-      await deleteDraftPost(draftPostId);
+      if (draftPostId) {
+        await deleteDraftPost(draftPostId);
+      }
+    } catch (error) {
+      console.error("Failed to publish post:", error);
     }
   };
 
@@ -74,7 +89,7 @@ const PublishPostFormButton = ({ title, content, draftPostId }: PublishPostFormB
           alignItems: "center",
           px: "12px",
         }}
-        onClick={() => setCreatePostFormOpen(true)}
+        onClick={handleCreatePostFormOpen}
       >
         <Typography
           variant="h6"

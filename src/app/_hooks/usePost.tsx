@@ -42,6 +42,7 @@ export const usePost = (): UsePostResponse => {
       router.push("/");
     } catch (error) {
       console.error("Failed to publish post:", error);
+      throw new Error("Failed to publish post.");
     }
   };
   const deletePost = async (postId: string) => {
