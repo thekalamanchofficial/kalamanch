@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import { handleError } from "~/app/_utils/handleError";
 import type { CreatePostProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import { useUser } from "~/context/userContext";
 import { useDraftPost } from "../../_hooks/useDraftPost";
 import { usePost } from "../../_hooks/usePost";
 import type { CreatePostFormType, DraftPost, Iteration } from "../types/types";
-import { useRouter } from "next/navigation";
 
 type DraftEditorStateProps = {
   draftPostId: string | null;
@@ -176,7 +176,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
         if (selectedIteration && selectedIteration.id === iterationId) {
           setSelectedIteration(updatedIteration);
         }
-        
+
         if (showToast) {
           toast.success("Draft saved successfully!");
         }
