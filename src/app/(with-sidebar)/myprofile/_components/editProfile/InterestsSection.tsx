@@ -19,7 +19,7 @@ type InterestsSectionProps = {
   name: "readingInterests" | "writingInterests";
   defaultValue: { genres: string[]; tags: string[] };
   errors: FieldErrors<EditProfileDetails>;
-  genres: Array<{ id: string; name: string; tags: Array<{ id: string; name: string }> }>;
+  genres: Array<{ id: string; name: string }>;
   tags: Array<{ id: string; name: string }>;
   isLoading: boolean;
 };

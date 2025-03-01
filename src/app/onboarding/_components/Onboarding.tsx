@@ -52,16 +52,17 @@ export const useOnboardingForm = (): UseFormReturn<OnboardingDataType> =>
     },
   });
 
-const ProgressIndicator: React.FC<{ currentSection: "writing" | "reading" }> = ({
-  currentSection,
-}) => (
+const ProgressIndicator: React.FC<{
+  writingComplete: boolean;
+  readingComplete: boolean;
+}> = ({ writingComplete, readingComplete }) => (
   <Box display="flex" gap={2} justifyContent="center" mb={4}>
     <Box
       sx={{
         width: "120px",
         height: "4px",
         borderRadius: "2px",
-        backgroundColor: currentSection === "writing" ? "primary.main" : "primary.light",
+        backgroundColor: writingComplete ? "primary.main" : "grey.300",
         transition: "all 0.3s ease",
       }}
     />
@@ -70,7 +71,7 @@ const ProgressIndicator: React.FC<{ currentSection: "writing" | "reading" }> = (
         width: "120px",
         height: "4px",
         borderRadius: "2px",
-        backgroundColor: currentSection === "reading" ? "primary.main" : "primary.light",
+        backgroundColor: readingComplete ? "primary.main" : "grey.300",
         transition: "all 0.3s ease",
       }}
     />
@@ -107,22 +108,13 @@ const SelectableChip: React.FC<{
   />
 );
 
-const ErrorDot: React.FC<{ message: string }> = ({ message }) => (
+const ErrorMessage: React.FC<{ message: string }> = ({ message }) => (
   <Typography
     color="error"
     fontSize="12px"
     mt={0.5}
     sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
   >
-    <Box
-      component="span"
-      sx={{
-        width: "4px",
-        height: "4px",
-        borderRadius: "50%",
-        backgroundColor: "error.main",
-      }}
-    />
     {message}
   </Typography>
 );
@@ -197,7 +189,7 @@ const PreferenceSection: React.FC<{
         />
       </Grid>
 
-      {error && <ErrorDot message={error} />}
+      {error && <ErrorMessage message={error} />}
     </Box>
   );
 };
@@ -219,15 +211,24 @@ export const Onboarding: React.FC<OnboardingProps> = ({
   isSubmitting,
 }) => {
   const methods = useOnboardingForm();
-  const { handleSubmit, watch } = methods;
+  const {
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = methods;
 
   const formValues = watch();
-  const [currentSection, setCurrentSection] = React.useState<"writing" | "reading">("writing");
 
   const writingGenresCount = formValues.writingGenres.length;
   const writingTagsCount = formValues.writingTags.length;
   const readingGenresCount = formValues.readingGenres.length;
   const readingTagsCount = formValues.readingTags.length;
+
+  const writingComplete = writingGenresCount > 0 && writingTagsCount > 0;
+  const readingComplete = readingGenresCount > 0 && readingTagsCount > 0;
+
+  const error =
+    errors.writingGenres ?? errors.writingTags ?? errors.readingGenres ?? errors.readingTags;
 
   return (
     <Grid
@@ -282,7 +283,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({
           >
             {STATIC_TEXTS.INTEREST_FORM.FORM_DESCRIPTION}
           </Typography>
-          <ProgressIndicator currentSection={currentSection} />
+          <ProgressIndicator writingComplete={writingComplete} readingComplete={readingComplete} />
         </Box>
 
         <Box
@@ -315,7 +316,6 @@ export const Onboarding: React.FC<OnboardingProps> = ({
                 p: { xs: 2, sm: 3 },
                 mb: { xs: 2, sm: 3 },
               }}
-              onFocus={() => setCurrentSection("writing")}
             >
               <Typography
                 variant="h2"
@@ -369,7 +369,6 @@ export const Onboarding: React.FC<OnboardingProps> = ({
                 borderRadius: { xs: 1, sm: 2 },
                 p: { xs: 2, sm: 3 },
               }}
-              onFocus={() => setCurrentSection("reading")}
             >
               <Typography variant="h2" fontSize="24px" lineHeight="32px" fontWeight="bold" mb={1}>
                 What do you like to read about?
@@ -418,10 +417,20 @@ export const Onboarding: React.FC<OnboardingProps> = ({
             borderColor: "grey.100",
             backgroundColor: "white",
             display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             justifyContent: "center",
+            gap: 2,
             mt: "auto",
           }}
         >
+          <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+            {error && (
+              <ErrorMessage
+                message={"Please select at least one genre and tag for both writing and reading"}
+              />
+            )}
+          </Box>
           <Button
             type="button"
             variant="contained"
@@ -444,6 +453,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({
                 transform: "translateY(0)",
               },
             }}
+            disabled={isSubmitting || isGenresLoading || isTagsLoading}
           >
             {isSubmitting ? "Submitting..." : "Let's get started"}
           </Button>

@@ -1,4 +1,4 @@
-import { clerkClient } from "@clerk/nextjs/server";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import prisma from "~/server/db";
@@ -114,18 +114,17 @@ export const userRouter = router({
       },
     });
 
-    const clerkUser = await clerkClient.users.getUserList({
-      emailAddress: [user.email],
-    });
+    const clerkUser = await currentUser();
 
-    if (clerkUser.data[0]) {
-      await clerkClient.users.updateUserMetadata(clerkUser.data[0].id, {
+    if (clerkUser) {
+      await clerkClient.users.updateUserMetadata(clerkUser.id, {
         publicMetadata: {
           readingInterests: user.readingInterests,
           writingInterests: user.writingInterests,
         },
       });
     }
+
     return user;
   }),
 
@@ -141,7 +140,7 @@ export const userRouter = router({
       });
       return user?.following;
     }),
-    
+
   followUser: protectedProcedure
     .input(
       yup.object({
