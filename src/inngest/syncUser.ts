@@ -22,7 +22,14 @@ export const syncUser = inngest.createFunction(
         email,
         name,
         birthdate: (event.data.unsafe_metadata.birthdate as Date) ?? null,
-        interests: [],
+        readingInterests: {
+          genres: [],
+          tags: [],
+        },
+        writingInterests: {
+          genres: [],
+          tags: [],
+        },
         following: [],
         followers: [],
         bookmarks: [],

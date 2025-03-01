@@ -4,13 +4,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
   Button,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
-  Grid2 as Grid,
   IconButton,
   Paper,
   TextField,
@@ -22,8 +20,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hooks/useEditProfileForm";
-import { INTEREST_ARRAY } from "~/app/sign-up/_config/config";
+import { useGenresTags } from "~/app/editor/_hooks/useGenreTags";
 import { type EditProfileDetails } from "../../types/types";
+import InterestsSection from "./InterestsSection";
 
 export type EditProfileProps = {
   open: boolean;
@@ -40,6 +39,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 }) => {
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const [education, setEducation] = useState("");
+  const { genres, tags, isGenresLoading, isTagsLoading } = useGenresTags();
 
   const {
     handleSubmit,
@@ -153,43 +153,27 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             );
           }}
         />
-        <Controller
+
+        <InterestsSection
+          title="Reading Interests"
           control={control}
-          name="interests"
-          defaultValue={profileData.interests ? [...profileData.interests] : []}
-          render={({ field: { value, onChange } }) => (
-            <FormControl fullWidth>
-              <Typography variant="h6" gutterBottom>
-                Select your interests
-              </Typography>
-              <Grid container spacing={1}>
-                {INTEREST_ARRAY.map((interest) => {
-                  const isSelected = value?.includes(interest);
-                  return (
-                    <Grid key={interest}>
-                      <Chip
-                        label={interest}
-                        onClick={() => {
-                          if (isSelected) {
-                            onChange(value?.filter((item) => item !== interest));
-                          } else {
-                            onChange([...(value ?? []), interest]);
-                          }
-                        }}
-                        color={isSelected ? "primary" : "default"}
-                        variant={isSelected ? "filled" : "outlined"}
-                      />
-                    </Grid>
-                  );
-                })}
-              </Grid>
-              {errors?.interests?.message && (
-                <Typography color="error" variant="body2">
-                  {errors.interests.message}
-                </Typography>
-              )}
-            </FormControl>
-          )}
+          name="readingInterests"
+          defaultValue={profileData.readingInterests ?? { genres: [], tags: [] }}
+          isLoading={isGenresLoading || isTagsLoading}
+          errors={errors}
+          genres={genres}
+          tags={tags}
+        />
+
+        <InterestsSection
+          title="Writing Interests"
+          control={control}
+          name="writingInterests"
+          defaultValue={profileData.writingInterests ?? { genres: [], tags: [] }}
+          isLoading={isGenresLoading || isTagsLoading}
+          errors={errors}
+          genres={genres}
+          tags={tags}
         />
 
         <Controller

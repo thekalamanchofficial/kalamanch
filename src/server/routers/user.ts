@@ -1,3 +1,4 @@
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import prisma from "~/server/db";
@@ -11,10 +12,32 @@ const userSchema = yup.object({
   education: yup.array(yup.string()).optional().default([]),
   professionalAchievements: yup.string().optional().default(""),
   bio: yup.string().optional().default(""),
-  interests: yup.array(yup.string()).default([]),
+  readingInterests: yup.object({
+    genres: yup.array(yup.string()).default([]),
+    tags: yup.array(yup.string()).default([]),
+  }),
+  writingInterests: yup.object({
+    genres: yup.array(yup.string()).default([]),
+    tags: yup.array(yup.string()).default([]),
+  }),
   followers: yup.array(yup.string()).default([]),
   following: yup.array(yup.string()).default([]),
-  bookmarks: yup.array(yup.string()).default([]),
+});
+const updateUserSchema = yup.object({
+  name: yup.string(),
+  email: yup.string().email().required(),
+  bio: yup.string().optional(),
+  readingInterests: yup.object({
+    genres: yup.array(yup.string()).required().min(1),
+    tags: yup.array(yup.string()).required().min(1),
+  }),
+  writingInterests: yup.object({
+    genres: yup.array(yup.string()).required().min(1),
+    tags: yup.array(yup.string()).required().min(1),
+  }),
+  birthdate: yup.date(),
+  education: yup.array(yup.string()).optional(),
+  achievements: yup.string().optional(),
 });
 const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
@@ -28,7 +51,11 @@ export const userRouter = router({
       handleError(error);
     }
   }),
+
   getUserDetails: publicProcedure.input(yup.string().email()).query(async ({ input }) => {
+    if (!input) {
+      throw new Error("Email is required");
+    }
     const userDetails = await prisma.user.findUnique({
       where: { email: input },
       include: {
@@ -46,41 +73,61 @@ export const userRouter = router({
         name: input.name,
         birthdate: input.birthdate,
         profileImageUrl: input.profile ?? "",
-        interests: input.interests?.filter(
-          (interest): interest is string => interest !== undefined,
-        ),
+        readingInterests: {
+          genres: input.readingInterests.genres.filter(
+            (genre): genre is string => genre !== undefined,
+          ),
+          tags: input.readingInterests.tags.filter((tag): tag is string => tag !== undefined),
+        },
+        writingInterests: {
+          genres: input.writingInterests.genres.filter(
+            (genre): genre is string => genre !== undefined,
+          ),
+          tags: input.writingInterests.tags.filter((tag): tag is string => tag !== undefined),
+        },
       },
     });
     return user;
   }),
-  updateUser: protectedProcedure
-    .input(
-      yup.object({
-        name: yup.string(),
-        email: yup.string().email().required(),
-        bio: yup.string().optional(),
-        interests: yup.array(yup.string()).required().min(1),
-        birthdate: yup.date(),
-        education: yup.array(yup.string()).optional(),
-        achievements: yup.string().optional(),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const user = await prisma.user.update({
-        where: { email: input.email },
-        data: {
-          name: input.name,
-          bio: input.bio,
-          birthdate: input.birthdate,
-          education: input.education?.filter((edu): edu is string => edu !== undefined),
-          interests: input.interests?.filter(
-            (interest): interest is string => interest !== undefined,
+
+  updateUser: protectedProcedure.input(updateUserSchema).mutation(async ({ input }) => {
+    const user = await prisma.user.update({
+      where: { email: input.email },
+      data: {
+        name: input.name,
+        bio: input.bio,
+        birthdate: input.birthdate,
+        education: input.education?.filter((edu): edu is string => edu !== undefined),
+        readingInterests: {
+          genres: input.readingInterests.genres.filter(
+            (genre): genre is string => genre !== undefined,
           ),
-          professionalCredentials: input.achievements,
+          tags: input.readingInterests.tags.filter((tag): tag is string => tag !== undefined),
+        },
+        writingInterests: {
+          genres: input.writingInterests.genres.filter(
+            (genre): genre is string => genre !== undefined,
+          ),
+          tags: input.writingInterests.tags.filter((tag): tag is string => tag !== undefined),
+        },
+        professionalCredentials: input.achievements,
+      },
+    });
+
+    const clerkUser = await currentUser();
+
+    if (clerkUser) {
+      await clerkClient.users.updateUserMetadata(clerkUser.id, {
+        publicMetadata: {
+          readingInterests: user.readingInterests,
+          writingInterests: user.writingInterests,
         },
       });
-      return user;
-    }),
+    }
+
+    return user;
+  }),
+
   getUserFollowings: protectedProcedure
     .input(
       yup.object({
@@ -93,6 +140,7 @@ export const userRouter = router({
       });
       return user?.following;
     }),
+
   followUser: protectedProcedure
     .input(
       yup.object({
@@ -179,6 +227,7 @@ export const userRouter = router({
         console.log(error);
       }
     }),
+
   searchUsersSortedByFollowing: protectedProcedure
     .input(
       yup.object({
@@ -261,6 +310,7 @@ export const userRouter = router({
       searchResults.push(...remainingResults);
       return searchResults;
     }),
+
   updateProfileImageUrl: publicProcedure
     .input(
       yup.object({
@@ -277,6 +327,7 @@ export const userRouter = router({
       });
       return user;
     }),
+
   updateCoverImageUrl: publicProcedure
     .input(
       yup.object({

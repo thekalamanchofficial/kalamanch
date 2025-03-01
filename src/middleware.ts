@@ -8,12 +8,12 @@ const isPublicRoute = createRouteMatcher([
   "/api/inngest(.*)",
   "/api/trpc/presignedR2Url(.*)",
 ]);
-const isOnboardingRoute = createRouteMatcher(["/onboarding"]);
+const isOnboardingRoute = createRouteMatcher(["/onboarding", "/api/trpc(.*)"]);
 
 export default clerkMiddleware(async (auth, request) => {
   const { userId, sessionClaims } = auth();
 
-  // For users visiting /onboarding, don't try to redirect
+  // For users visiting /onboarding or making API calls during onboarding, don't try to redirect
   if (userId && isOnboardingRoute(request)) {
     return NextResponse.next();
   }

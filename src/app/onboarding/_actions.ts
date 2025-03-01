@@ -1,9 +1,15 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { type OnboardingDataType } from "./_components/Onboarding";
 
-export const completeOnboarding = async (formData: OnboardingDataType) => {
+type OnboardingSubmitData = {
+  readingGenres: string[];
+  readingTags: string[];
+  writingGenres: string[];
+  writingTags: string[];
+};
+
+export const completeOnboarding = async (formData: OnboardingSubmitData) => {
   const { userId } = auth();
 
   if (!userId) {
@@ -16,7 +22,14 @@ export const completeOnboarding = async (formData: OnboardingDataType) => {
     const res = await client.users.updateUser(userId, {
       publicMetadata: {
         onboardingComplete: true,
-        interests: formData.interests,
+        readingInterests: {
+          genres: formData.readingGenres,
+          tags: formData.readingTags,
+        },
+        writingInterests: {
+          genres: formData.writingGenres,
+          tags: formData.writingTags,
+        },
       },
     });
 

@@ -28,7 +28,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
     bio: "",
-    interests: [],
+    readingInterests: { genres: [], tags: [] },
+    writingInterests: { genres: [], tags: [] },
     birthdate: new Date(),
     education: [],
     professionalAchievements: "",
@@ -58,7 +59,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
     setUserInfo({
       name: userDetails?.name ?? "",
       bio: userDetails?.bio ?? "",
-      interests: userDetails?.interests ?? [],
+      readingInterests: userDetails?.readingInterests ?? { genres: [], tags: [] },
+      writingInterests: userDetails?.writingInterests ?? { genres: [], tags: [] },
       birthdate: userDetails?.birthdate ? new Date(userDetails.birthdate) : new Date(),
       education: userDetails?.education ?? [],
       professionalAchievements: userDetails?.professionalCredentials ?? "",
@@ -125,7 +127,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const handleSave = async ({
     name,
     bio,
-    interests,
+    readingInterests,
+    writingInterests,
     birthdate,
     education,
     professionalAchievements,
@@ -133,7 +136,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
     name: string;
     bio: string;
     birthdate: Date;
-    interests: string[];
+    readingInterests: { genres: string[]; tags: string[] };
+    writingInterests: { genres: string[]; tags: string[] };
     education: string[];
     professionalAchievements: string;
   }) => {
@@ -147,7 +151,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
         birthdate,
         education,
         achievements: professionalAchievements,
-        interests,
+        readingInterests: { genres: readingInterests.genres, tags: readingInterests.tags },
+        writingInterests: { genres: writingInterests.genres, tags: writingInterests.tags },
       });
       toast.update(toastId, {
         render: "Profile updated successfully!",
@@ -159,7 +164,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
       setUserInfo({
         name,
         bio,
-        interests,
+        readingInterests,
+        writingInterests,
         birthdate,
         education,
         professionalAchievements,
@@ -179,18 +185,20 @@ const useMyProfilePage = (): UseMyProfilePage => {
     name,
     bio,
     birthdate,
-    interests,
     education,
     professionalAchievements,
+    readingInterests,
+    writingInterests,
   }: SaveUserInfo) => {
     try {
       await handleSave({
         name,
         birthdate,
         bio: bio ?? "",
-        interests: interests ?? [],
         education: education ?? [],
         professionalAchievements: professionalAchievements ?? "",
+        readingInterests: readingInterests ?? { genres: [], tags: [] },
+        writingInterests: writingInterests ?? { genres: [], tags: [] },
       });
       handleEditProfileClose();
     } catch (error) {

@@ -1,5 +1,6 @@
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import type { Post } from "@prisma/client";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { handleError } from "~/app/_utils/handleError";
 import type {
@@ -7,13 +8,15 @@ import type {
   UpdatePostDetailsProps,
 } from "~/app/(with-sidebar)/myfeed/types/types";
 import { trpc } from "~/server/client";
-import type { Post } from "@prisma/client";
 
 type UsePostResponse = {
   publishPost: (postData: CreatePostProps) => Promise<void>;
   deletePost: (postId: string) => Promise<void>;
   updatePostContent: (postId: string, content: string) => Promise<void>;
-  updatePostDetails: (postId: string, updatePostDetails: UpdatePostDetailsProps) => Promise<Post | undefined>;
+  updatePostDetails: (
+    postId: string,
+    updatePostDetails: UpdatePostDetailsProps,
+  ) => Promise<Post | undefined>;
 };
 
 const createMutationOptions = (successMessage: string) => ({

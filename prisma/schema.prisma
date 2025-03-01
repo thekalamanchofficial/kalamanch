@@ -14,7 +14,8 @@ model User {
   profileImageUrl         String
   coverImageUrl           String?
   birthdate               DateTime?
-  interests               String[]
+  readingInterests        Interests
+  writingInterests        Interests
   bio                     String?
   education               String[]                    @default([])
   professionalCredentials String                      @default("")
@@ -28,6 +29,11 @@ model User {
   posts                   Post[]
   requestedReviews        DraftPostIterationReviews[] @relation("RequesterRelation")
   draftsToReview          DraftPostIterationReviews[] @relation("ReviewerRelation")
+}
+
+type Interests {
+  genres String[] @default([])
+  tags   String[] @default([])
 }
 
 model Post {

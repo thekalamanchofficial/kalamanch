@@ -1,3 +1,4 @@
+import type { Interests } from "@prisma/client";
 import type { FileUploadSource } from "types/enums";
 import type { Like, Post, UserToFollow } from "../../myfeed/types/types";
 
@@ -8,11 +9,12 @@ export enum MyProfileTabsEnum {
 
 export type EditProfileDetails = {
   name: string;
-  interests: string[];
   bio?: string;
   birthdate: Date;
   education?: string[];
   professionalAchievements?: string;
+  readingInterests: Interests;
+  writingInterests: Interests;
 };
 
 export type UserSchema = {
@@ -22,7 +24,8 @@ export type UserSchema = {
   profileImageUrl: string;
   coverImageUrl?: string | null | undefined;
   birthdate?: string | null;
-  interests: string[];
+  readingInterests: Interests;
+  writingInterests: Interests;
   bio: string | null;
   education: string[];
   professionalAchievements?: string;
@@ -38,7 +41,8 @@ export type UserSchema = {
 export type UserInfo = {
   name: string;
   bio: string;
-  interests: string[];
+  readingInterests: Interests;
+  writingInterests: Interests;
   birthdate: Date;
   education: string[];
   profileImageUrl?: string;
@@ -75,7 +79,8 @@ export type SaveUserInfo = {
   name: string;
   bio?: string;
   birthdate: Date;
-  interests?: string[];
+  readingInterests?: Interests;
+  writingInterests?: Interests;
   education?: string[];
   professionalAchievements?: string;
 };

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Box } from "@mui/material";
-import isContentEmpty from "~/app/_utils/isContentEmpty";
+import { isContentEmpty } from "~/app/_utils/utils";
 import { type PostStatus } from "~/app/editor/types/types";
 import EditorActionsBar from "../editorActionsBar/EditorActionsBar";
 import WritingPadEditor from "../writingPagEditor/WritingPadEditor";

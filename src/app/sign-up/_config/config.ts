@@ -12,22 +12,6 @@ export const enum SignInFormStages {
   WITH_GOOGLE = "withGoogle",
 }
 
-export const INTEREST_ARRAY = [
-  "Technology",
-  "Science",
-  "Arts",
-  "Literature",
-  "Philosophy",
-  "History",
-  "Politics",
-  "Economics",
-  "Society",
-  "Culture",
-  "Sports",
-  "Health",
-  "Education",
-];
-
 export const STEPS = [
   {
     label: "Create Profile",

@@ -62,7 +62,8 @@ export const genreTagRouter = router({
       });
       return tags;
     } catch (error) {
-      handleError(error);
+      // handleError(error);
+      console.log("Failed to fetch tags.", error);
       throw new Error("Failed to fetch tags.");
     }
   }),
