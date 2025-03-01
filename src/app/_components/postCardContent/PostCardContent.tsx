@@ -185,6 +185,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
               fontSize: "15px",
               marginBottom: "10px",
             }}
+            component="div"
           >
             {articleThumbnailContent &&
             articleThumbnailContent?.length > myfeedConfig.SUMMARY_READ_MORE_LENGTH ? (

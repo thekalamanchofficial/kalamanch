@@ -3,8 +3,10 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 
 type OnboardingSubmitData = {
-  genres: string[];
-  tags: string[];
+  readingGenres: string[];
+  readingTags: string[];
+  writingGenres: string[];
+  writingTags: string[];
 };
 
 export const completeOnboarding = async (formData: OnboardingSubmitData) => {
@@ -20,8 +22,14 @@ export const completeOnboarding = async (formData: OnboardingSubmitData) => {
     const res = await client.users.updateUser(userId, {
       publicMetadata: {
         onboardingComplete: true,
-        genres: formData.genres,
-        tags: formData.tags,
+        readingInterests: {
+          genres: formData.readingGenres,
+          tags: formData.readingTags,
+        },
+        writingInterests: {
+          genres: formData.writingGenres,
+          tags: formData.writingTags,
+        },
       },
     });
 

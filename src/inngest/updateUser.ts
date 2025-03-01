@@ -11,10 +11,26 @@ export const updateUser = inngest.createFunction(
       throw new Error("Email not found when updating user");
     }
 
+    const readingInterests = (event.data.public_metadata.readingInterests as {
+      genres: string[];
+      tags: string[];
+    }) ?? {
+      genres: [],
+      tags: [],
+    };
+    const writingInterests = (event.data.public_metadata.writingInterests as {
+      genres: string[];
+      tags: string[];
+    }) ?? {
+      genres: [],
+      tags: [],
+    };
+
     await prisma.user.update({
       where: { email },
       data: {
-        interests: (event.data.public_metadata.interests as string[]) ?? [],
+        readingInterests,
+        writingInterests,
       },
     });
   },

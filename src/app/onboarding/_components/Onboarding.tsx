@@ -52,7 +52,6 @@ export const useOnboardingForm = (): UseFormReturn<OnboardingDataType> =>
     },
   });
 
-// Add progress indicator component
 const ProgressIndicator: React.FC<{ currentSection: "writing" | "reading" }> = ({
   currentSection,
 }) => (
@@ -203,20 +202,28 @@ const PreferenceSection: React.FC<{
   );
 };
 
-export const Onboarding: React.FC<{
+type OnboardingProps = {
   onSubmit: (data: OnboardingDataType) => void;
   genres: Array<{ id: string; name: string }>;
   tags: Array<{ id: string; name: string }>;
   isGenresLoading: boolean;
   isTagsLoading: boolean;
-}> = ({ onSubmit, genres, tags, isGenresLoading, isTagsLoading }) => {
+  isSubmitting: boolean;
+};
+export const Onboarding: React.FC<OnboardingProps> = ({
+  onSubmit,
+  genres,
+  tags,
+  isGenresLoading,
+  isTagsLoading,
+  isSubmitting,
+}) => {
   const methods = useOnboardingForm();
   const { handleSubmit, watch } = methods;
 
   const formValues = watch();
   const [currentSection, setCurrentSection] = React.useState<"writing" | "reading">("writing");
 
-  // Calculate selected counts
   const writingGenresCount = formValues.writingGenres.length;
   const writingTagsCount = formValues.writingTags.length;
   const readingGenresCount = formValues.readingGenres.length;
@@ -240,7 +247,7 @@ export const Onboarding: React.FC<{
         width="100%"
         flexDirection="column"
         sx={{
-          backgroundColor: "#fff",
+          backgroundColor: "background.paper",
           maxWidth: "800px",
           height: { xs: "100vh", sm: "90vh" },
           width: "100%",
@@ -438,7 +445,7 @@ export const Onboarding: React.FC<{
               },
             }}
           >
-            {"Let's get started"}
+            {isSubmitting ? "Submitting..." : "Let's get started"}
           </Button>
         </Box>
       </Grid>
