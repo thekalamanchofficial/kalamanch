@@ -4,6 +4,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Chip,
   FormControl,
   Grid2 as Grid,
@@ -61,7 +62,9 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({
             <AccordionDetails>
               <Grid container spacing={1}>
                 {isLoading ? (
-                  <Loader height={"20px"} width={"20px"} />
+                  <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                    <Loader height={"20px"} width={"20px"} />
+                  </Box>
                 ) : (
                   genres.map((genre) => {
                     const isSelected = currentValue.genres.includes(genre.id);
