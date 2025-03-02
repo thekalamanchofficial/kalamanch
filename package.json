@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "next build && next-sitemap --config next-sitemap.config.cjs",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
@@ -43,6 +43,7 @@
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.0",
     "next": "^14.2.4",
+    "next-sitemap": "^4.2.3",
     "next-svg": "^1.0.7",
     "nodemailer": "^6.9.16",
     "nodemailer-express-handlebars": "^7.0.0",
