@@ -180,7 +180,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const { data: userDetails } = userMutation.getUserDetails.useQuery(
     user?.primaryEmailAddress?.emailAddress,
     {
-      staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+      staleTime: 1 * 60 * 1000,
     },
   );
 
@@ -191,7 +191,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
     },
     {
       enabled: !!user?.primaryEmailAddress?.emailAddress,
-      staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+      staleTime: 1 * 60 * 1000,
     },
   );
 
@@ -199,8 +199,11 @@ const useMyProfilePage = (): UseMyProfilePage => {
     userDetails as UserDetails | null,
     user?.imageUrl,
   );
-  const { setPosts, postDataWithComments, queryLoading, error, postData } =
-    usePostManagement(userDetails?.id, skip, hasMorePosts);
+  const { setPosts, postDataWithComments, queryLoading, error, postData } = usePostManagement(
+    userDetails?.id,
+    skip,
+    hasMorePosts,
+  );
   const { isEditProfileOpen, setIsEditProfileOpen, handleSave } = useProfileEdit(
     userMutation,
     user?.primaryEmailAddress?.emailAddress,

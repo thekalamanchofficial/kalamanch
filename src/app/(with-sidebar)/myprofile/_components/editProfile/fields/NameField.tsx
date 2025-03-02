@@ -9,7 +9,7 @@ interface NameFieldProps {
 
 export const NameField: React.FC<NameFieldProps> = ({ defaultValue }) => {
   const { control } = useFormContext<EditProfileDetails>();
-  
+
   return (
     <Controller
       control={control}
@@ -29,11 +29,11 @@ export const NameField: React.FC<NameFieldProps> = ({ defaultValue }) => {
               "& .Mui-disabled": {
                 WebkitTextFillColor: "#101828 !important",
                 cursor: "not-allowed",
-              }
+              },
             }}
           />
         </FormControl>
       )}
     />
   );
-}; 
+};

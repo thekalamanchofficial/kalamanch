@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Controller, type FieldErrors, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, type FieldErrors } from "react-hook-form";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, FormControl, IconButton, Paper, TextField, Typography } from "@mui/material";
 import { type EditProfileDetails } from "../../../types/types";
@@ -9,10 +9,7 @@ interface EducationFieldProps {
   defaultValue: string[];
 }
 
-export const EducationField: React.FC<EducationFieldProps> = ({ 
-  errors, 
-  defaultValue 
-}) => {
+export const EducationField: React.FC<EducationFieldProps> = ({ errors, defaultValue }) => {
   const [education, setEducation] = useState("");
   const { control } = useFormContext<EditProfileDetails>();
 
@@ -39,8 +36,8 @@ export const EducationField: React.FC<EducationFieldProps> = ({
           <FormControl fullWidth>
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
+                display: "flex",
+                flexDirection: "column",
                 gap: 2,
               }}
             >
@@ -58,11 +55,11 @@ export const EducationField: React.FC<EducationFieldProps> = ({
                 variant="outlined"
                 fullWidth
               />
-              <Box 
-                sx={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: 1 
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
                 }}
               >
                 {value.map((edu, index) => (
@@ -70,13 +67,13 @@ export const EducationField: React.FC<EducationFieldProps> = ({
                     key={index}
                     elevation={3}
                     sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                       padding: 2,
                       borderRadius: 2,
-                      width: '100%',
-                      boxSizing: 'border-box',
+                      width: "100%",
+                      boxSizing: "border-box",
                     }}
                   >
                     <Typography variant="body1">{edu}</Typography>
@@ -92,4 +89,4 @@ export const EducationField: React.FC<EducationFieldProps> = ({
       }}
     />
   );
-}; 
+};

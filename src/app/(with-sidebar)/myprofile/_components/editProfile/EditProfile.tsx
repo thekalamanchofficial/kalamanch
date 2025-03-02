@@ -1,4 +1,4 @@
-import { type FieldErrors, FormProvider } from "react-hook-form";
+import { FormProvider, type FieldErrors } from "react-hook-form";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import type { Genre, Tag } from "@prisma/client";
 import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hooks/useEditProfileForm";
@@ -36,10 +36,7 @@ const FormFields: React.FC<FormFieldsProps> = ({
     <>
       <NameField defaultValue={profileData.name ?? ""} />
       <BioField errors={errors} defaultValue={profileData.bio ?? ""} />
-      <BirthdateField
-        errors={errors}
-        defaultValue={profileData.birthdate ?? ""}
-      />
+      <BirthdateField errors={errors} defaultValue={profileData.birthdate ?? ""} />
 
       <InterestsSection
         title="Reading Interests"
@@ -61,13 +58,10 @@ const FormFields: React.FC<FormFieldsProps> = ({
         tags={tags}
       />
 
-      <EducationField
-        errors={errors}
-        defaultValue={profileData.education ?? []}
-      />
+      <EducationField errors={errors} defaultValue={profileData.education ?? []} />
     </>
   );
-}
+};
 
 export const EditProfile: React.FC<EditProfileProps> = ({
   open,
@@ -77,7 +71,10 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 }) => {
   const { genres, tags, isGenresLoading, isTagsLoading } = useGenresTags();
   const methods = useEditProfileForm({ defaultValues: profileData });
-  const { handleSubmit, formState: { errors } } = methods;
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = methods;
 
   const onSubmit = async (data: EditProfileDetails) => {
     await handleProfileSave({
@@ -128,11 +125,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           <Button variant="outlined" onClick={handleClose} sx={{ width: "100px" }}>
             Cancel
           </Button>
-          <Button
-            variant="contained"
-            onClick={handleSubmit(onSubmit)}
-            sx={{ width: "100px" }}
-          >
+          <Button variant="contained" onClick={handleSubmit(onSubmit)} sx={{ width: "100px" }}>
             Save
           </Button>
         </DialogActions>

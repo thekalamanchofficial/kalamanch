@@ -1,4 +1,4 @@
-import { Controller, type FieldErrors, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, type FieldErrors } from "react-hook-form";
 import { FormControl, TextField } from "@mui/material";
 import { type EditProfileDetails } from "../../../types/types";
 
@@ -9,7 +9,7 @@ interface BioFieldProps {
 
 export const BioField: React.FC<BioFieldProps> = ({ errors, defaultValue }) => {
   const { control } = useFormContext<EditProfileDetails>();
-  
+
   return (
     <Controller
       control={control}
@@ -38,4 +38,4 @@ export const BioField: React.FC<BioFieldProps> = ({ errors, defaultValue }) => {
       )}
     />
   );
-}; 
+};

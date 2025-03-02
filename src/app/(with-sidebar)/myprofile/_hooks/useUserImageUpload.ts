@@ -21,7 +21,7 @@ const useUserImageUpload: UserImageUploadType = () => {
     mutateAsync: updateProfileImage,
     isPending: isProfileImageLoading,
     isError: isProfileImageError,
-    error: profileImageError
+    error: profileImageError,
   } = trpc.user.updateProfileImageUrl.useMutation({
     onSuccess: () => {
       toast.success("Profile image updated successfully");
@@ -36,7 +36,7 @@ const useUserImageUpload: UserImageUploadType = () => {
     mutateAsync: updateCoverImage,
     isPending: isCoverImageLoading,
     isError: isCoverImageError,
-    error: coverImageError
+    error: coverImageError,
   } = trpc.user.updateCoverImageUrl.useMutation({
     onSuccess: () => {
       toast.success("Cover image updated successfully");

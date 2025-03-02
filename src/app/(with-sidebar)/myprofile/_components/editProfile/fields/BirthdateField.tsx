@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Controller, type FieldErrors, useFormContext } from "react-hook-form";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { Controller, useFormContext, type FieldErrors } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { type Dayjs } from "dayjs";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { type EditProfileDetails } from "../../../types/types";
@@ -12,10 +12,7 @@ interface BirthdateFieldProps {
   defaultValue: string;
 }
 
-export const BirthdateField: React.FC<BirthdateFieldProps> = ({ 
-  errors, 
-  defaultValue 
-}) => {
+export const BirthdateField: React.FC<BirthdateFieldProps> = ({ errors, defaultValue }) => {
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const { control } = useFormContext<EditProfileDetails>();
 
@@ -65,4 +62,4 @@ export const BirthdateField: React.FC<BirthdateFieldProps> = ({
       )}
     />
   );
-}; 
+};

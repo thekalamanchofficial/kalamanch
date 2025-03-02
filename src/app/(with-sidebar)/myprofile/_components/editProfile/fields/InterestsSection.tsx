@@ -1,4 +1,4 @@
-import { Controller, type FieldErrors, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, type FieldErrors } from "react-hook-form";
 import CloseIcon from "@mui/icons-material/Close";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
@@ -100,11 +100,11 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({
   tags,
 }) => {
   const { control } = useFormContext<EditProfileDetails>();
-  
+
   return (
     <Box
       sx={{
-        display: 'flex',
+        display: "flex",
         flexDirection: "column",
         gap: 1,
         backgroundColor: "grey.50",
@@ -115,13 +115,9 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({
       <Typography variant="h6" fontWeight="500">
         {title}
       </Typography>
-      <Typography
-        variant="body1"
-        fontSize="15px"
-        lineHeight="24px"
-        color="text.secondary"
-      >
-        Select genres and tags that best describe your {name === "readingInterests" ? "reading" : "writing"} interests
+      <Typography variant="body1" fontSize="15px" lineHeight="24px" color="text.secondary">
+        Select genres and tags that best describe your{" "}
+        {name === "readingInterests" ? "reading" : "writing"} interests
       </Typography>
 
       {isLoading ? (
@@ -189,7 +185,9 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({
                                 if (isSelected) {
                                   onChange({
                                     ...currentValue,
-                                    genres: currentValue.genres.filter((g: string) => g !== genre.id),
+                                    genres: currentValue.genres.filter(
+                                      (g: string) => g !== genre.id,
+                                    ),
                                   });
                                 } else {
                                   onChange({
