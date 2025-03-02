@@ -17,14 +17,30 @@ import {
 import { PostStatus } from "~/app/editor/types/types";
 import { trpc } from "~/server/client";
 
-const useMyProfilePage = (): UseMyProfilePage => {
-  const { user } = useClerk();
-  const [tab, setTab] = useState(MyProfileTabsEnum.MY_POSTS);
-  const [skip, setSkip] = useState(0);
-  const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
-  const [post, setPosts] = useState<Post[]>([]);
-  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+interface Interests {
+  genres: string[];
+  tags: string[];
+}
 
+interface UserDetails {
+  id?: string;
+  name?: string;
+  bio?: string | null;
+  readingInterests?: Interests;
+  writingInterests?: Interests;
+  birthdate?: string | Date | null;
+  education?: string[];
+  professionalCredentials?: string;
+  profileImageUrl?: string;
+  coverImageUrl?: string;
+  posts: Post[];
+  followers: string[];
+}
+
+const useUserInfoState = (
+  userDetails: UserDetails | null | undefined,
+  userImageUrl: string | undefined,
+) => {
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
     bio: "",
@@ -37,12 +53,135 @@ const useMyProfilePage = (): UseMyProfilePage => {
     coverImageUrl: "",
   });
 
+  useEffect(() => {
+    if (!userDetails) return;
+
+    setUserInfo({
+      name: userDetails.name ?? "",
+      bio: userDetails.bio ?? "",
+      readingInterests: userDetails.readingInterests ?? { genres: [], tags: [] },
+      writingInterests: userDetails.writingInterests ?? { genres: [], tags: [] },
+      birthdate: userDetails.birthdate ? new Date(userDetails.birthdate) : new Date(),
+      education: userDetails.education ?? [],
+      professionalAchievements: userDetails.professionalCredentials ?? "",
+      profileImageUrl: userDetails.profileImageUrl ?? userImageUrl ?? "",
+      coverImageUrl: userDetails.coverImageUrl ?? "",
+    });
+  }, [userDetails, userImageUrl]);
+
+  return { userInfo, setUserInfo };
+};
+
+const usePostManagement = (userId: string | undefined, skip: number, hasMorePosts: boolean) => {
+  const [posts, setPosts] = useState<Post[]>([]);
   const postMutation = trpc.post;
-  const likeMutation = trpc.likes;
+
+  const {
+    data: postData,
+    isLoading: queryLoading,
+    error,
+  } = postMutation.getPosts.useQuery(
+    {
+      authorId: userId,
+      skip,
+      limit: skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
+    },
+    {
+      enabled: Boolean(userId) && hasMorePosts,
+    },
+  );
+
+  const postDataWithComments = useMemo(() => {
+    return (
+      posts?.map((postItem) => ({
+        ...postItem,
+        comments: postItem.comments?.map((comment) => ({
+          ...comment,
+          postId: postItem.id,
+        })),
+      })) ?? []
+    );
+  }, [posts]);
+
+  useEffect(() => {
+    if (postData?.posts) {
+      setPosts((prev) => {
+        const existingPostIds = new Set(prev.map((post) => post.id));
+        const newPosts = postData.posts.filter((post) => !existingPostIds.has(post.id));
+        return [...prev, ...newPosts];
+      });
+    }
+  }, [postData]);
+
+  return { posts, setPosts, postDataWithComments, queryLoading, error, postData };
+};
+
+const useProfileEdit = (userMutation: typeof trpc.user, userEmail: string | undefined) => {
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const updateUser = userMutation.updateUser.useMutation();
+
+  const handleSave = async (saveData: SaveUserInfo): Promise<void> => {
+    const toastId = toast.loading("Updating profile...");
+
+    try {
+      await updateUser.mutateAsync({
+        email: userEmail ?? "",
+        name: saveData.name,
+        bio: saveData.bio,
+        birthdate: saveData.birthdate,
+        education: saveData.education,
+        achievements: saveData.professionalAchievements,
+        readingInterests: {
+          genres: saveData.readingInterests?.genres ?? [],
+          tags: saveData.readingInterests?.tags ?? [],
+        },
+        writingInterests: {
+          genres: saveData.writingInterests?.genres ?? [],
+          tags: saveData.writingInterests?.tags ?? [],
+        },
+      });
+
+      toast.update(toastId, {
+        render: "Profile updated successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      setIsEditProfileOpen(false);
+    } catch (error) {
+      handleError(error);
+      toast.update(toastId, {
+        render: "Failed to update profile. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      throw error;
+    }
+  };
+
+  return {
+    isEditProfileOpen,
+    setIsEditProfileOpen,
+    handleSave,
+  };
+};
+
+const useMyProfilePage = (): UseMyProfilePage => {
+  const { user } = useClerk();
+  const [tab, setTab] = useState(MyProfileTabsEnum.MY_POSTS);
+  const [skip, setSkip] = useState(0);
+  const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
+
   const userMutation = trpc.user;
+  const likeMutation = trpc.likes;
 
   const { data: userDetails } = userMutation.getUserDetails.useQuery(
     user?.primaryEmailAddress?.emailAddress,
+    {
+      staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    },
   );
 
   const { data: userLikedPosts } = likeMutation.getUserLikedPost.useQuery(
@@ -52,159 +191,20 @@ const useMyProfilePage = (): UseMyProfilePage => {
     },
     {
       enabled: !!user?.primaryEmailAddress?.emailAddress,
+      staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     },
   );
 
-  useEffect(() => {
-    setUserInfo({
-      name: userDetails?.name ?? "",
-      bio: userDetails?.bio ?? "",
-      readingInterests: userDetails?.readingInterests ?? { genres: [], tags: [] },
-      writingInterests: userDetails?.writingInterests ?? { genres: [], tags: [] },
-      birthdate: userDetails?.birthdate ? new Date(userDetails.birthdate) : new Date(),
-      education: userDetails?.education ?? [],
-      professionalAchievements: userDetails?.professionalCredentials ?? "",
-      profileImageUrl: userDetails?.profileImageUrl ?? user?.imageUrl ?? "",
-      coverImageUrl: userDetails?.coverImageUrl ?? "",
-    });
-  }, [userDetails, user?.imageUrl]);
-
-  const {
-    data: postData,
-    isLoading: queryLoading,
-    error,
-  } = postMutation.getPosts.useQuery(
-    {
-      authorId: userDetails?.id,
-      skip,
-      limit: skip === 0 ? config.lazyLoading.initialLimit : config.lazyLoading.limit,
-    },
-    {
-      enabled: Boolean(userDetails?.id) && hasMorePosts,
-    },
+  const { userInfo, setUserInfo } = useUserInfoState(
+    userDetails as UserDetails | null,
+    user?.imageUrl,
   );
-
-  const postDataWithComments: Post[] = useMemo(() => {
-    return (
-      post?.map((postItem) => ({
-        ...postItem,
-        comments: postItem.comments?.map((comment) => ({
-          ...comment,
-          postId: postItem.id,
-        })),
-      })) ?? []
-    );
-  }, [post]);
-
-  const handleEditProfileOpen = () => {
-    setIsEditProfileOpen(true);
-  };
-
-  const handleEditProfileClose = () => {
-    setIsEditProfileOpen(false);
-  };
-
-  const handleChange = (newTab: MyProfileTabsEnum) => {
-    setTab(newTab);
-  };
-
-  const handleImageUpdate = (uploadSource: FileUploadSource, url: string) => {
-    if (uploadSource === FileUploadSource.PROFILE_IMAGE) {
-      setUserInfo({
-        ...userInfo,
-        profileImageUrl: url,
-      });
-    } else if (uploadSource === FileUploadSource.PROFILE_COVER_IMAGE) {
-      setUserInfo({
-        ...userInfo,
-        coverImageUrl: url,
-      });
-    }
-  };
-
-  const updateUser = userMutation.updateUser.useMutation();
-
-  const handleSave = async ({
-    name,
-    bio,
-    readingInterests,
-    writingInterests,
-    birthdate,
-    education,
-    professionalAchievements,
-  }: {
-    name: string;
-    bio: string;
-    birthdate: Date;
-    readingInterests: { genres: string[]; tags: string[] };
-    writingInterests: { genres: string[]; tags: string[] };
-    education: string[];
-    professionalAchievements: string;
-  }) => {
-    const toastId = toast.loading("Updating profile...");
-
-    try {
-      await updateUser.mutateAsync({
-        name,
-        bio,
-        email: user?.primaryEmailAddress?.emailAddress ?? "",
-        birthdate,
-        education,
-        achievements: professionalAchievements,
-        readingInterests: { genres: readingInterests.genres, tags: readingInterests.tags },
-        writingInterests: { genres: writingInterests.genres, tags: writingInterests.tags },
-      });
-      toast.update(toastId, {
-        render: "Profile updated successfully!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-
-      setUserInfo({
-        name,
-        bio,
-        readingInterests,
-        writingInterests,
-        birthdate,
-        education,
-        professionalAchievements,
-      });
-    } catch (error) {
-      handleError(error);
-      toast.update(toastId, {
-        render: "Failed to update profile. Please try again.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-    }
-  };
-
-  const callSave = async ({
-    name,
-    bio,
-    birthdate,
-    education,
-    professionalAchievements,
-    readingInterests,
-    writingInterests,
-  }: SaveUserInfo) => {
-    try {
-      await handleSave({
-        name,
-        birthdate,
-        bio: bio ?? "",
-        education: education ?? [],
-        professionalAchievements: professionalAchievements ?? "",
-        readingInterests: readingInterests ?? { genres: [], tags: [] },
-        writingInterests: writingInterests ?? { genres: [], tags: [] },
-      });
-      handleEditProfileClose();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const { setPosts, postDataWithComments, queryLoading, error, postData } =
+    usePostManagement(userDetails?.id, skip, hasMorePosts);
+  const { isEditProfileOpen, setIsEditProfileOpen, handleSave } = useProfileEdit(
+    userMutation,
+    user?.primaryEmailAddress?.emailAddress,
+  );
 
   const { handleScroll } = useLazyLoading({
     queryLoading,
@@ -226,16 +226,28 @@ const useMyProfilePage = (): UseMyProfilePage => {
     userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
   });
 
-  useEffect(() => {
-    if (postData?.posts) {
-      setPosts((prev) => {
-        const existingPostIds = new Set(prev.map((post) => post.id));
-        // TODO: find a better way to remove duplicate posts, try out using trpc infinite query.
-        const newPosts = postData.posts.filter((post) => !existingPostIds.has(post.id));
-        return [...prev, ...newPosts];
-      });
+  const handleImageUpdate = (uploadSource: FileUploadSource, url: string) => {
+    setUserInfo((prev) => ({
+      ...prev,
+      ...(uploadSource === FileUploadSource.PROFILE_IMAGE
+        ? { profileImageUrl: url }
+        : { coverImageUrl: url }),
+    }));
+  };
+
+  const handleEditProfileOpen = () => setIsEditProfileOpen(true);
+  const handleEditProfileClose = () => setIsEditProfileOpen(false);
+  const handleChange = (newTab: MyProfileTabsEnum) => setTab(newTab);
+
+  const callSave = async (saveData: SaveUserInfo) => {
+    try {
+      await handleSave(saveData);
+      setUserInfo((prev) => ({ ...prev, ...saveData }));
+      handleEditProfileClose();
+    } catch (error) {
+      console.error(error);
     }
-  }, [postData]);
+  };
 
   return {
     setPosts,

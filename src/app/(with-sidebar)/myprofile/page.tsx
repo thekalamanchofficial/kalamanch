@@ -140,7 +140,10 @@ const MyProfile = () => {
         <EditProfile
           open={isEditProfileOpen}
           handleClose={handleEditProfileClose}
-          profileData={userInfo}
+          profileData={{
+            ...userInfo,
+            birthdate: userInfo.birthdate?.toISOString() ?? "",
+          }}
           handleProfileSave={callSave}
         />
       )}

@@ -1,35 +1,73 @@
-import { useState } from "react";
-import { Controller } from "react-hook-form";
-import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  IconButton,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs from "dayjs";
-import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { type FieldErrors, FormProvider } from "react-hook-form";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import type { Genre, Tag } from "@prisma/client";
 import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hooks/useEditProfileForm";
 import { useGenresTags } from "~/app/editor/_hooks/useGenreTags";
-import { type EditProfileDetails } from "../../types/types";
-import InterestsSection from "./InterestsSection";
+import { type EditProfileDetails, type SaveUserInfo } from "../../types/types";
+import { BioField } from "./fields/BioField";
+import { BirthdateField } from "./fields/BirthdateField";
+import { EducationField } from "./fields/EducationField";
+import InterestsSection from "./fields/InterestsSection";
+import { NameField } from "./fields/NameField";
 
 export type EditProfileProps = {
   open: boolean;
   handleClose: () => void;
   profileData: EditProfileDetails;
-  handleProfileSave: (data: EditProfileDetails) => Promise<void>;
+  handleProfileSave: (data: SaveUserInfo) => Promise<void>;
 };
+
+interface FormFieldsProps {
+  errors: FieldErrors<EditProfileDetails>;
+  profileData: EditProfileDetails;
+  genres: Genre[];
+  tags: Tag[];
+  isLoading: boolean;
+}
+
+const FormFields: React.FC<FormFieldsProps> = ({
+  errors,
+  profileData,
+  genres,
+  tags,
+  isLoading,
+}) => {
+  return (
+    <>
+      <NameField defaultValue={profileData.name ?? ""} />
+      <BioField errors={errors} defaultValue={profileData.bio ?? ""} />
+      <BirthdateField
+        errors={errors}
+        defaultValue={profileData.birthdate ?? ""}
+      />
+
+      <InterestsSection
+        title="Reading Interests"
+        name="readingInterests"
+        defaultValue={profileData.readingInterests ?? { genres: [], tags: [] }}
+        isLoading={isLoading}
+        errors={errors}
+        genres={genres}
+        tags={tags}
+      />
+
+      <InterestsSection
+        title="Writing Interests"
+        name="writingInterests"
+        defaultValue={profileData.writingInterests ?? { genres: [], tags: [] }}
+        isLoading={isLoading}
+        errors={errors}
+        genres={genres}
+        tags={tags}
+      />
+
+      <EducationField
+        errors={errors}
+        defaultValue={profileData.education ?? []}
+      />
+    </>
+  );
+}
 
 export const EditProfile: React.FC<EditProfileProps> = ({
   open,
@@ -37,19 +75,15 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   profileData,
   handleProfileSave,
 }) => {
-  const [openDatePicker, setOpenDatePicker] = useState(false);
-  const [education, setEducation] = useState("");
   const { genres, tags, isGenresLoading, isTagsLoading } = useGenresTags();
+  const methods = useEditProfileForm({ defaultValues: profileData });
+  const { handleSubmit, formState: { errors } } = methods;
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useEditProfileForm({ defaultValues: profileData });
-
-  const onDatepickerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setOpenDatePicker((open) => !open);
+  const onSubmit = async (data: EditProfileDetails) => {
+    await handleProfileSave({
+      ...data,
+      birthdate: new Date(data.birthdate),
+    });
   };
 
   return (
@@ -65,226 +99,44 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       }}
     >
       <DialogTitle>Edit Profile</DialogTitle>
-      <DialogContent>
-        <Controller
-          control={control}
-          name="name"
-          defaultValue={profileData.name}
-          render={({ field: { value, onChange } }) => (
-            <FormControl fullWidth>
-              <TextField
-                type="text"
-                value={value}
-                onChange={onChange}
-                id="name"
-                label={STATIC_TEXTS.DETAILS_FORM.LABELS.NAME}
-                placeholder="Enter your name"
-                helperText={errors?.name?.message}
-                error={!!errors?.name?.message}
-                variant="outlined"
-                fullWidth
-                sx={{ mb: 2, mt: 2 }}
-              />
-            </FormControl>
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="bio"
-          defaultValue={profileData.bio}
-          render={({ field: { value, onChange } }) => (
-            <FormControl fullWidth>
-              <TextField
-                type="text"
-                value={value}
-                onChange={onChange}
-                id="bio"
-                label="Bio"
-                placeholder="Enter your bio"
-                helperText={errors?.bio?.message}
-                error={!!errors?.bio?.message}
-                variant="outlined"
-                fullWidth
-                sx={{
-                  mb: 2,
-                  "& .MuiInputBase-inputMultiline": { minHeight: 64 },
-                }}
-                multiline
-              />
-            </FormControl>
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="birthdate"
-          defaultValue={profileData.birthdate}
-          render={({ field: { onChange, value } }) => {
-            return (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  onChange={(newValue) => {
-                    console.log(newValue);
-                    onChange(newValue);
-                  }}
-                  value={dayjs(value)}
-                  open={openDatePicker}
-                  onOpen={() => setOpenDatePicker(true)}
-                  onClose={() => setOpenDatePicker(false)}
-                  label={STATIC_TEXTS.DETAILS_FORM.LABELS.BIRTHDATE}
-                  disableFuture
-                  slotProps={{
-                    popper: {
-                      placement: "bottom-end",
-                    },
-                    textField: {
-                      helperText: errors?.birthdate?.message,
-                      error: !!errors?.birthdate?.message,
-                      onClick: () => setOpenDatePicker(true),
-                      onKeyDown: onDatepickerKeyDown,
-                      variant: "outlined",
-                      placeholder: "DD/MM/YYYY",
-                    },
-                  }}
-                  sx={{ mb: 2 }}
-                />
-              </LocalizationProvider>
-            );
+      <FormProvider {...methods}>
+        <DialogContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+            pb: 3,
+            pt: 2,
+            "&::-webkit-scrollbar": {
+              width: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(0,0,0,0.1)",
+              borderRadius: "4px",
+            },
           }}
-        />
-
-        <InterestsSection
-          title="Reading Interests"
-          control={control}
-          name="readingInterests"
-          defaultValue={profileData.readingInterests ?? { genres: [], tags: [] }}
-          isLoading={isGenresLoading || isTagsLoading}
-          errors={errors}
-          genres={genres}
-          tags={tags}
-        />
-
-        <InterestsSection
-          title="Writing Interests"
-          control={control}
-          name="writingInterests"
-          defaultValue={profileData.writingInterests ?? { genres: [], tags: [] }}
-          isLoading={isGenresLoading || isTagsLoading}
-          errors={errors}
-          genres={genres}
-          tags={tags}
-        />
-
-        <Controller
-          control={control}
-          name="education"
-          defaultValue={profileData.education ?? []}
-          render={({ field: { value = [], onChange } }) => {
-            const handleAddEducation = (e: React.KeyboardEvent<HTMLInputElement>) => {
-              if (e.key === "Enter" && education.trim()) {
-                const updatedEducation = [...value, education.trim()];
-                onChange(updatedEducation);
-                setEducation("");
-              }
-            };
-
-            const handleRemoveEducation = (index: number) => {
-              const updatedEducation = value.filter((_, i) => i !== index);
-              onChange(updatedEducation);
-            };
-
-            return (
-              <FormControl fullWidth>
-                <Typography variant="h6" sx={{ mb: 1, mt: 2 }}>
-                  Education
-                </Typography>
-                <TextField
-                  type="text"
-                  value={education}
-                  onChange={(e) => setEducation(e.target.value)}
-                  onKeyDown={handleAddEducation}
-                  id="education"
-                  label="Add Education"
-                  placeholder="Enter your education and press Enter"
-                  helperText={errors?.education?.message}
-                  error={!!errors?.education?.message}
-                  variant="outlined"
-                  fullWidth
-                  sx={{
-                    mb: 2,
-                    "& .MuiInputBase-inputMultiline": { minHeight: 64 },
-                  }}
-                />
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                  {value.map((edu, index) => (
-                    <Paper
-                      key={index}
-                      elevation={3}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: 2,
-                        borderRadius: 2,
-                        width: "100%",
-                        maxWidth: "100%",
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      <Typography variant="body1">{edu}</Typography>
-                      <IconButton onClick={() => handleRemoveEducation(index)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </Paper>
-                  ))}
-                </Box>
-              </FormControl>
-            );
-          }}
-        />
-        <Controller
-          control={control}
-          name="professionalAchievements"
-          defaultValue={profileData.professionalAchievements}
-          render={({ field: { value, onChange } }) => (
-            <FormControl fullWidth>
-              <Typography variant="h6" gutterBottom sx={{ mt: 2, mb: 1 }}>
-                Professional Achievements
-              </Typography>
-              <TextField
-                type="text"
-                value={value}
-                onChange={onChange}
-                id="achievements"
-                label="Add achievements"
-                placeholder="Share your Professional achievements"
-                helperText={errors?.bio?.message}
-                error={!!errors?.bio?.message}
-                variant="outlined"
-                fullWidth
-                sx={{
-                  mb: 2,
-                  "& .MuiInputBase-inputMultiline": { minHeight: 64 },
-                }}
-                multiline
-              />
-            </FormControl>
-          )}
-        />
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: "space-between", padding: 3 }}>
-        <Button variant="outlined" onClick={handleClose} sx={{ width: "100px" }}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleSubmit(handleProfileSave)}
-          sx={{ width: "100px" }}
         >
-          Save
-        </Button>
-      </DialogActions>
+          <FormFields
+            errors={errors}
+            profileData={profileData}
+            genres={genres ?? []}
+            tags={tags ?? []}
+            isLoading={isGenresLoading || isTagsLoading}
+          />
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "space-between", padding: 3 }}>
+          <Button variant="outlined" onClick={handleClose} sx={{ width: "100px" }}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSubmit(onSubmit)}
+            sx={{ width: "100px" }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </FormProvider>
     </Dialog>
   );
 };

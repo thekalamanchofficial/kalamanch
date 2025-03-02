@@ -311,7 +311,7 @@ export const userRouter = router({
       return searchResults;
     }),
 
-  updateProfileImageUrl: publicProcedure
+  updateProfileImageUrl: protectedProcedure
     .input(
       yup.object({
         profileImageUrl: yup.string().required(),
@@ -328,7 +328,7 @@ export const userRouter = router({
       return user;
     }),
 
-  updateCoverImageUrl: publicProcedure
+  updateCoverImageUrl: protectedProcedure
     .input(
       yup.object({
         coverImageUrl: yup.string().optional().nullable(),
