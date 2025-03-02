@@ -7,6 +7,9 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks(.*)",
   "/api/inngest(.*)",
   "/api/trpc/presignedR2Url(.*)",
+  "/api/robots(.*)",
+  "/sitemap.xml",
+  "/robots.txt",
 ]);
 const isOnboardingRoute = createRouteMatcher(["/onboarding", "/api/trpc(.*)"]);
 
