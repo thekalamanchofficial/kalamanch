@@ -7,15 +7,20 @@ export enum MyProfileTabsEnum {
   LIKED_POSTS = "Liked Posts",
 }
 
-export type EditProfileDetails = {
+export interface EditProfileDetails {
   name: string;
-  bio?: string;
-  birthdate: Date;
-  education?: string[];
-  professionalAchievements?: string;
-  readingInterests: Interests;
-  writingInterests: Interests;
-};
+  bio: string;
+  birthdate: string;
+  education: string[];
+  readingInterests: {
+    genres: string[];
+    tags: string[];
+  };
+  writingInterests: {
+    genres: string[];
+    tags: string[];
+  };
+}
 
 export type UserSchema = {
   id: string;
@@ -28,7 +33,6 @@ export type UserSchema = {
   writingInterests: Interests;
   bio: string | null;
   education: string[];
-  professionalAchievements?: string;
   following?: string[];
   followers?: string[];
   bookmarks?: string[];
@@ -47,7 +51,6 @@ export type UserInfo = {
   education: string[];
   profileImageUrl?: string;
   coverImageUrl?: string | null | undefined;
-  professionalAchievements: string;
 };
 
 export type UseMyProfilePage = {
@@ -82,5 +85,4 @@ export type SaveUserInfo = {
   readingInterests?: Interests;
   writingInterests?: Interests;
   education?: string[];
-  professionalAchievements?: string;
 };

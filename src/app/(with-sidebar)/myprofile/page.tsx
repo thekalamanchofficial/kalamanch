@@ -10,7 +10,7 @@ import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import ProfileCard from "~/app/(with-sidebar)/myprofile/_components/profileCard/ProfileCard";
 import { tabs } from "~/app/(with-sidebar)/myprofile/_config/config";
-import UseMyProfilePage from "~/app/(with-sidebar)/myprofile/_hooks/useMyProfile";
+import useMyProfilePage from "~/app/(with-sidebar)/myprofile/_hooks/useMyProfile";
 import { EditProfile } from "./_components/editProfile/EditProfile";
 
 const MyProfile = () => {
@@ -34,7 +34,7 @@ const MyProfile = () => {
     userLikedPosts,
     setPosts,
     handleImageUpdate,
-  } = UseMyProfilePage();
+  } = useMyProfilePage();
 
   const renderUI = useMemo(() => {
     if (errorMessage) {
@@ -140,7 +140,10 @@ const MyProfile = () => {
         <EditProfile
           open={isEditProfileOpen}
           handleClose={handleEditProfileClose}
-          profileData={userInfo}
+          profileData={{
+            ...userInfo,
+            birthdate: userInfo.birthdate?.toISOString() ?? "",
+          }}
           handleProfileSave={callSave}
         />
       )}

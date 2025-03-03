@@ -18,7 +18,6 @@ model User {
   writingInterests        Interests
   bio                     String?
   education               String[]                    @default([])
-  professionalCredentials String                      @default("")
   following               String[]                    @db.ObjectId
   followers               String[]                    @db.ObjectId
   bookmarks               String[]                    @db.ObjectId

@@ -29,8 +29,12 @@ export const updateUser = inngest.createFunction(
     await prisma.user.update({
       where: { email },
       data: {
+        bio: (event.data.public_metadata.bio as string) ?? null,
+        education: (event.data.public_metadata.education as string[]) ?? null,
+        birthdate: (event.data.public_metadata.birthdate as string) ?? null,
         readingInterests,
         writingInterests,
+        profileImageUrl: event.data.image_url ?? null,
       },
     });
   },

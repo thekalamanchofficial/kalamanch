@@ -1,57 +1,75 @@
-import { useState } from "react";
+import { toast } from "react-toastify";
 import { FileUploadSource } from "types/enums";
 import { useUploadFileToR2 } from "~/app/_hooks/useUploadFileToR2";
-import { handleError } from "~/app/_utils/handleError";
 import { useUser } from "~/context/userContext";
 import { trpc } from "~/server/client";
 
 type UserImageUploadReturn = {
   uploadImage: (file: File, fileUploadSource: FileUploadSource) => Promise<string>;
-  loading: boolean;
+  isLoading: boolean;
 };
 
 type UserImageUploadType = () => UserImageUploadReturn;
 
 const useUserImageUpload: UserImageUploadType = () => {
-  const [loading, setLoading] = useState(false);
   const { uploadFile } = useUploadFileToR2();
   const { user } = useUser();
 
-  const updateProfileImageMutation = trpc.user.updateProfileImageUrl.useMutation();
-  const updateCoverImageMutation = trpc.user.updateCoverImageUrl.useMutation();
+  const { mutateAsync: updateProfileImage, isPending: isProfileImageLoading } =
+    trpc.user.updateProfileImageUrl.useMutation({
+      onSuccess: () => {
+        toast.success("Profile image updated successfully");
+      },
+      onError: (error) => {
+        toast.error("Failed to update profile image");
+        console.log(error);
+      },
+    });
+
+  const { mutateAsync: updateCoverImage, isPending: isCoverImageLoading } =
+    trpc.user.updateCoverImageUrl.useMutation({
+      onSuccess: () => {
+        toast.success("Cover image updated successfully");
+      },
+      onError: (error) => {
+        toast.error("Failed to update cover image");
+        console.log(error);
+      },
+    });
 
   const uploadImage = async (file: File, fileUploadSource: FileUploadSource): Promise<string> => {
-    setLoading(true);
+    const toastId = toast.loading("Uploading image...");
     try {
       const uploadedThumbnailUrl = await uploadFile(file, fileUploadSource);
       if (!uploadedThumbnailUrl) {
         throw new Error("Failed to upload the file to Cloudflare R2.");
       }
+
       if (fileUploadSource === FileUploadSource.PROFILE_IMAGE) {
-        await updateProfileImageMutation.mutateAsync({
+        await updateProfileImage({
           userId: user?.id ?? "",
           profileImageUrl: uploadedThumbnailUrl,
         });
       }
+
       if (fileUploadSource === FileUploadSource.PROFILE_COVER_IMAGE) {
-        await updateCoverImageMutation.mutateAsync({
+        await updateCoverImage({
           userId: user?.id ?? "",
           coverImageUrl: uploadedThumbnailUrl,
         });
       }
+
+      toast.dismiss(toastId);
       return uploadedThumbnailUrl;
     } catch (error) {
-      console.log(error);
-      handleError("Failed to upload the file.");
-      throw new Error("Failed to upload the file.");
-    } finally {
-      setLoading(false);
+      toast.dismiss(toastId);
+      throw error;
     }
   };
 
   return {
     uploadImage,
-    loading,
+    isLoading: isProfileImageLoading || isCoverImageLoading,
   };
 };
 
