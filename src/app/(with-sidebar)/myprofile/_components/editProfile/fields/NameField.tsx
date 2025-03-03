@@ -3,7 +3,7 @@ import { FormControl, TextField } from "@mui/material";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { type EditProfileDetails } from "../../../types/types";
 
-interface NameFieldProps {
+type NameFieldProps = {
   defaultValue: string;
 }
 

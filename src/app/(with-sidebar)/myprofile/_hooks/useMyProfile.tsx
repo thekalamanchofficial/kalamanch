@@ -8,6 +8,7 @@ import useLazyLoading from "~/app/_hooks/useLazyLoading";
 import useLikePosts from "~/app/_hooks/useLikePosts";
 import { handleError } from "~/app/_utils/handleError";
 import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
+import { USER_QUERY_STALE_TIME } from "~/app/(with-sidebar)/myprofile/_config/config";
 import {
   MyProfileTabsEnum,
   type SaveUserInfo,
@@ -176,7 +177,7 @@ const useMyProfilePage = (): UseMyProfilePage => {
   const { data: userDetails } = userMutation.getUserDetails.useQuery(
     user?.primaryEmailAddress?.emailAddress,
     {
-      staleTime: 1 * 60 * 1000,
+      staleTime: USER_QUERY_STALE_TIME,
     },
   );
 

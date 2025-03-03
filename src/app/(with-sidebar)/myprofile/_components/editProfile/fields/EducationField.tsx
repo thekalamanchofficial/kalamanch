@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, FormControl, IconButton, Paper, TextField, Typography } from "@mui/material";
 import { type EditProfileDetails } from "../../../types/types";
 
-interface EducationFieldProps {
+type EducationFieldProps = {
   errors: FieldErrors<EditProfileDetails>;
   defaultValue: string[];
 }

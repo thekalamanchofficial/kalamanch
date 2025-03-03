@@ -2,7 +2,7 @@ import { Controller, useFormContext, type FieldErrors } from "react-hook-form";
 import { FormControl, TextField } from "@mui/material";
 import { type EditProfileDetails } from "../../../types/types";
 
-interface BioFieldProps {
+type BioFieldProps = {
   errors: FieldErrors<EditProfileDetails>;
   defaultValue: string;
 }

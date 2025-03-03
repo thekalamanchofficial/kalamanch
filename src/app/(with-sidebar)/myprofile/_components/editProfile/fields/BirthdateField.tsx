@@ -7,7 +7,7 @@ import dayjs, { type Dayjs } from "dayjs";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
 import { type EditProfileDetails } from "../../../types/types";
 
-interface BirthdateFieldProps {
+type BirthdateFieldProps = {
   errors: FieldErrors<EditProfileDetails>;
   defaultValue: string;
 }

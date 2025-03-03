@@ -7,3 +7,5 @@ export const tabs: { label: string; value: MyProfileTabsEnum }[] = [
     value: MyProfileTabsEnum.LIKED_POSTS,
   },
 ];
+
+export const USER_QUERY_STALE_TIME = 1 * 60 * 1000;
