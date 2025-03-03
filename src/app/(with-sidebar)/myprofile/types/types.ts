@@ -33,7 +33,6 @@ export type UserSchema = {
   writingInterests: Interests;
   bio: string | null;
   education: string[];
-  professionalAchievements?: string;
   following?: string[];
   followers?: string[];
   bookmarks?: string[];
@@ -52,7 +51,6 @@ export type UserInfo = {
   education: string[];
   profileImageUrl?: string;
   coverImageUrl?: string | null | undefined;
-  professionalAchievements: string;
 };
 
 export type UseMyProfilePage = {
@@ -87,5 +85,4 @@ export type SaveUserInfo = {
   readingInterests?: Interests;
   writingInterests?: Interests;
   education?: string[];
-  professionalAchievements?: string;
 };

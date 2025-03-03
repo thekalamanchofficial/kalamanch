@@ -30,7 +30,6 @@ interface UserDetails {
   writingInterests?: Interests;
   birthdate?: string | Date | null;
   education?: string[];
-  professionalCredentials?: string;
   profileImageUrl?: string;
   coverImageUrl?: string;
   posts: Post[];
@@ -48,7 +47,6 @@ const useUserInfoState = (
     writingInterests: { genres: [], tags: [] },
     birthdate: new Date(),
     education: [],
-    professionalAchievements: "",
     profileImageUrl: "",
     coverImageUrl: "",
   });
@@ -63,7 +61,6 @@ const useUserInfoState = (
       writingInterests: userDetails.writingInterests ?? { genres: [], tags: [] },
       birthdate: userDetails.birthdate ? new Date(userDetails.birthdate) : new Date(),
       education: userDetails.education ?? [],
-      professionalAchievements: userDetails.professionalCredentials ?? "",
       profileImageUrl: userDetails.profileImageUrl ?? userImageUrl ?? "",
       coverImageUrl: userDetails.coverImageUrl ?? "",
     });
@@ -130,7 +127,6 @@ const useProfileEdit = (userMutation: typeof trpc.user, userEmail: string | unde
         bio: saveData.bio,
         birthdate: saveData.birthdate,
         education: saveData.education,
-        achievements: saveData.professionalAchievements,
         readingInterests: {
           genres: saveData.readingInterests?.genres ?? [],
           tags: saveData.readingInterests?.tags ?? [],

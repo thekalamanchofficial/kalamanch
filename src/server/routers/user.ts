@@ -10,7 +10,6 @@ const userSchema = yup.object({
   birthdate: yup.date().nullable().default(null),
   profile: yup.string().optional(),
   education: yup.array(yup.string()).optional().default([]),
-  professionalAchievements: yup.string().optional().default(""),
   bio: yup.string().optional().default(""),
   readingInterests: yup.object({
     genres: yup.array(yup.string()).default([]),
@@ -37,7 +36,6 @@ const updateUserSchema = yup.object({
   }),
   birthdate: yup.date(),
   education: yup.array(yup.string()).optional(),
-  achievements: yup.string().optional(),
 });
 const cleanArray = (array?: (string | undefined)[]): string[] =>
   array?.filter((item): item is string => item !== undefined) ?? [];
@@ -110,7 +108,6 @@ export const userRouter = router({
           ),
           tags: input.writingInterests.tags.filter((tag): tag is string => tag !== undefined),
         },
-        professionalCredentials: input.achievements,
       },
     });
 
