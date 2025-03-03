@@ -300,13 +300,20 @@ export const userRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const user = await prisma.user.update({
-        where: { id: input.userId },
-        data: {
-          profileImageUrl: input.profileImageUrl,
-        },
+      const fileExtension = input.profileImageUrl.split(".").pop()?.toLowerCase() ?? "jpeg";
+      const response = await fetch(input.profileImageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], `profile.${fileExtension}`, {
+        type: `image/${fileExtension}`,
       });
-      return user;
+
+      const clerkUser = await currentUser();
+      if (clerkUser) {
+        await clerkClient.users.updateUserProfileImage(clerkUser.id, {
+          file,
+        });
+      }
+      return { message: "Profile image updated successfully" };
     }),
 
   updateCoverImageUrl: protectedProcedure
