@@ -89,40 +89,24 @@ export const userRouter = router({
   }),
 
   updateUser: protectedProcedure.input(updateUserSchema).mutation(async ({ input }) => {
-    const user = await prisma.user.update({
-      where: { email: input.email },
-      data: {
-        name: input.name,
-        bio: input.bio,
-        birthdate: input.birthdate,
-        education: input.education?.filter((edu): edu is string => edu !== undefined),
-        readingInterests: {
-          genres: input.readingInterests.genres.filter(
-            (genre): genre is string => genre !== undefined,
-          ),
-          tags: input.readingInterests.tags.filter((tag): tag is string => tag !== undefined),
-        },
-        writingInterests: {
-          genres: input.writingInterests.genres.filter(
-            (genre): genre is string => genre !== undefined,
-          ),
-          tags: input.writingInterests.tags.filter((tag): tag is string => tag !== undefined),
-        },
-      },
-    });
-
     const clerkUser = await currentUser();
 
     if (clerkUser) {
       await clerkClient.users.updateUserMetadata(clerkUser.id, {
         publicMetadata: {
-          readingInterests: user.readingInterests,
-          writingInterests: user.writingInterests,
+          readingInterests: input.readingInterests,
+          writingInterests: input.writingInterests,
+          bio: input.bio,
+          education: input.education,
+          birthdate: input.birthdate,
         },
       });
     }
 
-    return user;
+    return {
+      message: "User updated successfully",
+      user: clerkUser,
+    };
   }),
 
   getUserFollowings: protectedProcedure
