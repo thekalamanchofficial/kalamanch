@@ -2,7 +2,7 @@ import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import { inngest } from "~/inngest/client";
 import prisma from "~/server/db";
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, router, publicProcedure } from "../trpc";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
@@ -340,4 +340,43 @@ export const postRouter = router({
       throw error;
     }
   }),
+
+  searchPosts: publicProcedure
+    .input(
+      yup.object({
+        searchQuery: yup.string().required(),
+        limit: yup.number().default(5),
+      })
+    )
+    .query(async ({ input }) => {
+      const posts = await prisma.post.findMany({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: input.searchQuery,
+                mode: "insensitive",
+              },
+            },
+            {
+              content: {
+                contains: input.searchQuery,
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
+        take: input.limit,
+        orderBy: {
+          title: "asc",
+        },
+        select: {
+          id: true,
+          title: true,
+          authorName: true,
+        },
+      });
+
+      return posts;
+    }),
 });

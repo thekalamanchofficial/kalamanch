@@ -6,11 +6,23 @@ import UserMenu from "../userMenu/UserMenu";
 import CreatePostFormButton from "./CreatePostFormButton";
 import LeftSideBarNavLinks from "./LeftSideBarNavLinks";
 
-type LeftSideBarProps = {
-  menuItems: MenuItemList[];
-};
+const Header = () => (
+  <Stack direction="row" justifyContent="start" alignItems="center" sx={{ px: "12px" }}>
+    <OwlSVG />
+    <Typography variant="h5" fontWeight="bold" color="primary">
+      {STATIC_TEXTS.APP_TITLE}
+    </Typography>
+  </Stack>
+);
 
-const LeftSideBarServer: React.FC<LeftSideBarProps> = ({ menuItems }) => {
+const Navigation = ({ menuItems }: { menuItems: MenuItemList[] }) => (
+  <Box sx={{ marginTop: 2, px: "8px" }}>
+    <LeftSideBarNavLinks menuItems={menuItems} />
+    <UserMenu />
+  </Box>
+);
+
+const LeftSideBar = ({ menuItems }: { menuItems: MenuItemList[] }) => {
   return (
     <Box
       sx={{
@@ -20,23 +32,12 @@ const LeftSideBarServer: React.FC<LeftSideBarProps> = ({ menuItems }) => {
         position: "relative",
       }}
     >
-      <Stack direction="row" justifyContent="start" alignItems="center" sx={{ px: "12px" }}>
-        <OwlSVG />
-        <Typography variant="h5" fontWeight="bold" color="primary">
-          {STATIC_TEXTS.APP_TITLE}
-        </Typography>
-      </Stack>
-
+      <Header />
       <Divider sx={{ width: "100%" }} />
-
       <CreatePostFormButton />
-
-      <Box sx={{ marginTop: 2, px: "8px" }}>
-        <LeftSideBarNavLinks menuItems={menuItems} />
-        <UserMenu />
-      </Box>
+      <Navigation menuItems={menuItems} />
     </Box>
   );
 };
 
-export default LeftSideBarServer;
+export default LeftSideBar;

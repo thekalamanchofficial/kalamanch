@@ -332,4 +332,44 @@ export const userRouter = router({
       });
       return user;
     }),
+
+  searchProfiles: publicProcedure
+    .input(
+      yup.object({
+        searchQuery: yup.string().required(),
+        limit: yup.number().default(5),
+      }),
+    )
+    .query(async ({ input }) => {
+      const profiles = await prisma.user.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: input.searchQuery,
+                mode: "insensitive",
+              },
+            },
+            {
+              bio: {
+                contains: input.searchQuery,
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
+        take: input.limit,
+        orderBy: {
+          name: "asc",
+        },
+        select: {
+          id: true,
+          name: true,
+          bio: true,
+          profileImageUrl: true,
+        },
+      });
+
+      return profiles;
+    }),
 });
