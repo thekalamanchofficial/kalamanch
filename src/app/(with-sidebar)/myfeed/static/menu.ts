@@ -52,6 +52,6 @@ export const MENU_ITEMS = [
   {
     label: "Profile",
     icon: "AccountCircleOutlinedIcon",
-    route: "/myprofile",
+    route: "/profile",
   },
 ];

@@ -8,12 +8,18 @@ import Loader from "~/app/_components/loader/Loader";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
-import ProfileCard from "~/app/(with-sidebar)/myprofile/_components/profileCard/ProfileCard";
-import { tabs } from "~/app/(with-sidebar)/myprofile/_config/config";
-import useMyProfilePage from "~/app/(with-sidebar)/myprofile/_hooks/useMyProfile";
-import { EditProfile } from "./_components/editProfile/EditProfile";
+import ProfileCard from "~/app/(with-sidebar)/profile/_components/profileCard/ProfileCard";
+import { tabs } from "~/app/(with-sidebar)/profile/_config/config";
+import useProfile from "~/app/(with-sidebar)/profile/_hooks/useProfile";
+import { EditProfile } from "../editProfile/EditProfile";
+import type { trpcServer } from "~/app/_trpc/server";
 
-const MyProfile = () => {
+type ProfileProps = {
+  userDetails: Awaited<ReturnType<typeof trpcServer.user.getUserDetails>>;
+  isOwner: boolean;
+};
+
+const Profile: React.FC<ProfileProps> = ({ userDetails, isOwner }) => {
   const {
     tab,
     skip,
@@ -34,7 +40,7 @@ const MyProfile = () => {
     userLikedPosts,
     setPosts,
     handleImageUpdate,
-  } = useMyProfilePage();
+  } = useProfile(userDetails, isOwner);
 
   const renderUI = useMemo(() => {
     if (errorMessage) {
@@ -133,6 +139,7 @@ const MyProfile = () => {
         name={userInfo.name}
         handleEditProfileOpen={handleEditProfileOpen}
         onImageUpdate={handleImageUpdate}
+        isOwner={isOwner}
       />
       <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
       {renderUI}
@@ -151,4 +158,4 @@ const MyProfile = () => {
   );
 };
 
-export default MyProfile;
+export default Profile;

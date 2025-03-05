@@ -64,6 +64,19 @@ export const userRouter = router({
     return userDetails;
   }),
 
+  getUserDetailsById: publicProcedure.input(yup.string().required()).query(async ({ input }) => {
+    if (!input) {
+      throw new Error("User ID is required");
+    }
+    const userDetails = await prisma.user.findUnique({
+      where: { id: input },
+      include: {
+        posts: true,
+      },
+    });
+    return userDetails;
+  }),
+
   addUser: publicProcedure.input(userSchema).mutation(async ({ input }) => {
     const user = await prisma.user.create({
       data: {

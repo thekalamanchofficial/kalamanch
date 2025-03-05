@@ -1,7 +1,7 @@
 import { FormProvider, type FieldErrors } from "react-hook-form";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import type { Genre, Tag } from "@prisma/client";
-import { useEditProfileForm } from "~/app/(with-sidebar)/myprofile/_hooks/useEditProfileForm";
+import { useEditProfileForm } from "~/app/(with-sidebar)/profile/_hooks/useEditProfileForm";
 import { useGenresTags } from "~/app/editor/_hooks/useGenreTags";
 import { type EditProfileDetails, type SaveUserInfo } from "../../types/types";
 import { BioField } from "./fields/BioField";

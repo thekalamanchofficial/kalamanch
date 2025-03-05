@@ -29,6 +29,7 @@ interface ProfileCardProps {
   coverImage?: string;
   handleEditProfileOpen: () => void;
   onImageUpdate: (uploadSource: FileUploadSource, url: string) => void;
+  isOwner: boolean;
 }
 
 const styles = {
@@ -122,7 +123,8 @@ const CoverImageSection: React.FC<{
   coverImage?: string;
   onImageSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   inputRef: React.RefObject<HTMLInputElement>;
-}> = ({ coverImage, onImageSelect, inputRef }) => (
+  isOwner: boolean;
+}> = ({ coverImage, onImageSelect, inputRef, isOwner }) => (
   <Box
     sx={{
       ...styles.coverImage,
@@ -130,21 +132,25 @@ const CoverImageSection: React.FC<{
       backgroundColor: `${coverImage ? "" : "secondary.main"}`,
     }}
   >
-    <Button
-      variant="contained"
-      startIcon={<CameraAltIcon />}
-      sx={styles.changeCoverButton}
-      onClick={() => inputRef.current?.click()}
-    >
-      {STATIC_TEXTS.MY_PROFILE_PAGE.CHANGE_COVER}
-    </Button>
-    <input
-      ref={inputRef}
-      type="file"
-      hidden
-      accept="image/jpeg,image/png,image/jpg"
-      onChange={onImageSelect}
-    />
+    {isOwner && (
+      <>
+        <Button
+          variant="contained"
+          startIcon={<CameraAltIcon />}
+          sx={styles.changeCoverButton}
+          onClick={() => inputRef.current?.click()}
+        >
+          {STATIC_TEXTS.MY_PROFILE_PAGE.CHANGE_COVER}
+        </Button>
+        <input
+          ref={inputRef}
+          type="file"
+          hidden
+          accept="image/jpeg,image/png,image/jpg"
+          onChange={onImageSelect}
+        />
+      </>
+    )}
   </Box>
 );
 
@@ -153,38 +159,43 @@ const ProfileImageSection: React.FC<{
   name: string;
   onImageSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   inputRef: React.RefObject<HTMLInputElement>;
-}> = ({ profileImage, name, onImageSelect, inputRef }) => (
+  isOwner: boolean;
+}> = ({ profileImage, name, onImageSelect, inputRef, isOwner }) => (
   <Box sx={styles.profileImageContainer}>
     <Avatar src={profileImage} alt={name} sx={styles.profileAvatar} />
-    <IconButton
-      sx={{
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        backgroundColor: (theme) => theme.palette.grey[800],
-        "&:hover": {
-          backgroundColor: (theme) => theme.palette.grey[900],
-        },
-        "&.MuiIconButton-root": {
-          minHeight: 36,
-        },
-      }}
-      onClick={() => inputRef.current?.click()}
-    >
-      <CameraAltIcon
-        fontSize="small"
-        sx={{
-          color: (theme) => theme.palette.grey[100],
-        }}
-      />
-    </IconButton>
-    <input
-      ref={inputRef}
-      type="file"
-      hidden
-      accept="image/jpeg,image/png,image/jpg"
-      onChange={onImageSelect}
-    />
+    {isOwner && (
+      <>
+        <IconButton
+          sx={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            backgroundColor: (theme) => theme.palette.grey[800],
+            "&:hover": {
+              backgroundColor: (theme) => theme.palette.grey[900],
+            },
+            "&.MuiIconButton-root": {
+              minHeight: 36,
+            },
+          }}
+          onClick={() => inputRef.current?.click()}
+        >
+          <CameraAltIcon
+            fontSize="small"
+            sx={{
+              color: (theme) => theme.palette.grey[100],
+            }}
+          />
+        </IconButton>
+        <input
+          ref={inputRef}
+          type="file"
+          hidden
+          accept="image/jpeg,image/png,image/jpg"
+          onChange={onImageSelect}
+        />
+      </>
+    )}
   </Box>
 );
 
@@ -218,6 +229,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   coverImage,
   handleEditProfileOpen,
   onImageUpdate,
+  isOwner,
 }) => {
   const profileInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
@@ -239,6 +251,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           await handleImageUpload(e.target.files?.[0], FileUploadSource.PROFILE_COVER_IMAGE);
         }}
         inputRef={coverInputRef}
+        isOwner={isOwner}
       />
 
       <CardContent sx={styles.cardContent}>
@@ -250,17 +263,20 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               await handleImageUpload(e.target.files?.[0], FileUploadSource.PROFILE_IMAGE);
             }}
             inputRef={profileInputRef}
+            isOwner={isOwner}
           />
 
-          <Button
-            variant="text"
-            size="small"
-            startIcon={<ModeEditOutlineOutlinedIcon />}
-            sx={styles.editProfileButton}
-            onClick={handleEditProfileOpen}
-          >
-            Edit Profile
-          </Button>
+          {isOwner && (
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<ModeEditOutlineOutlinedIcon />}
+              sx={styles.editProfileButton}
+              onClick={handleEditProfileOpen}
+            >
+              Edit Profile
+            </Button>
+          )}
         </Box>
 
         <Box sx={styles.profileInfo} gap={1}>

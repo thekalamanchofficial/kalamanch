@@ -1,20 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { useClerk } from "@clerk/nextjs";
 import { FileUploadSource } from "types/enums";
 import config from "~/app/_config/config";
 import useBookmarkPosts from "~/app/_hooks/useBookmarkPosts";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
 import useLikePosts from "~/app/_hooks/useLikePosts";
+import type { trpcServer } from "~/app/_trpc/server";
 import { handleError } from "~/app/_utils/handleError";
 import { type Post } from "~/app/(with-sidebar)/myfeed/types/types";
-import { USER_QUERY_STALE_TIME } from "~/app/(with-sidebar)/myprofile/_config/config";
 import {
   MyProfileTabsEnum,
   type SaveUserInfo,
   type UseMyProfilePage,
   type UserInfo,
-} from "~/app/(with-sidebar)/myprofile/types/types";
+} from "~/app/(with-sidebar)/profile/types/types";
 import { PostStatus } from "~/app/editor/types/types";
 import { trpc } from "~/server/client";
 
@@ -114,13 +113,12 @@ const usePostManagement = (userId: string | undefined, skip: number, hasMorePost
   return { posts, setPosts, postDataWithComments, queryLoading, error, postData };
 };
 
-const useProfileEdit = (userMutation: typeof trpc.user, userEmail: string | undefined) => {
+const useProfileEdit = (userTrpcP: typeof trpc.user, userEmail: string | undefined) => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-  const updateUser = userMutation.updateUser.useMutation();
+  const updateUser = userTrpcP.updateUser.useMutation();
 
   const handleSave = async (saveData: SaveUserInfo): Promise<void> => {
     const toastId = toast.loading("Updating profile...");
-
     try {
       await updateUser.mutateAsync({
         email: userEmail ?? "",
@@ -165,36 +163,31 @@ const useProfileEdit = (userMutation: typeof trpc.user, userEmail: string | unde
   };
 };
 
-const useMyProfilePage = (): UseMyProfilePage => {
-  const { user } = useClerk();
+const useProfilePage = (
+  userDetails: Awaited<ReturnType<typeof trpcServer.user.getUserDetails>>,
+  isOwner: boolean,
+): UseMyProfilePage => {
   const [tab, setTab] = useState(MyProfileTabsEnum.MY_POSTS);
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState<boolean>(true);
 
-  const userMutation = trpc.user;
-  const likeMutation = trpc.likes;
+  const userTrpcProcedure = trpc.user;
+  const likeTrpcProcedure = trpc.likes;
 
-  const { data: userDetails } = userMutation.getUserDetails.useQuery(
-    user?.primaryEmailAddress?.emailAddress,
+  const { data: userLikedPosts } = likeTrpcProcedure.getUserLikedPost.useQuery(
     {
-      staleTime: USER_QUERY_STALE_TIME,
-    },
-  );
-
-  const { data: userLikedPosts } = likeMutation.getUserLikedPost.useQuery(
-    {
-      userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+      userEmail: userDetails?.email ?? "",
       postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
     },
     {
-      enabled: !!user?.primaryEmailAddress?.emailAddress,
+      enabled: !!userDetails?.email,
       staleTime: 1 * 60 * 1000,
     },
   );
 
   const { userInfo, setUserInfo } = useUserInfoState(
     userDetails as UserDetails | null,
-    user?.imageUrl,
+    userDetails?.profileImageUrl,
   );
   const { setPosts, postDataWithComments, queryLoading, error, postData } = usePostManagement(
     userDetails?.id,
@@ -202,8 +195,8 @@ const useMyProfilePage = (): UseMyProfilePage => {
     hasMorePosts,
   );
   const { isEditProfileOpen, setIsEditProfileOpen, handleSave } = useProfileEdit(
-    userMutation,
-    user?.primaryEmailAddress?.emailAddress,
+    userTrpcProcedure,
+    userDetails?.email,
   );
 
   const { handleScroll } = useLazyLoading({
@@ -218,15 +211,19 @@ const useMyProfilePage = (): UseMyProfilePage => {
   });
 
   const { likedPosts } = useLikePosts({
-    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+    userEmail: userDetails?.email ?? "",
     postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
   });
 
   const { bookmarkedPosts } = useBookmarkPosts({
-    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+    userEmail: userDetails?.email ?? "",
   });
 
   const handleImageUpdate = (uploadSource: FileUploadSource, url: string) => {
+    if (!isOwner) {
+      toast.error("You are not authorized to update this profile.");
+      return;
+    }
     setUserInfo((prev) => ({
       ...prev,
       ...(uploadSource === FileUploadSource.PROFILE_IMAGE
@@ -235,11 +232,22 @@ const useMyProfilePage = (): UseMyProfilePage => {
     }));
   };
 
-  const handleEditProfileOpen = () => setIsEditProfileOpen(true);
+  const handleEditProfileOpen = () => {
+    if (!isOwner) {
+      toast.error("You are not authorized to update this profile.");
+      return;
+    }
+    setIsEditProfileOpen(true);
+  };
+
   const handleEditProfileClose = () => setIsEditProfileOpen(false);
   const handleChange = (newTab: MyProfileTabsEnum) => setTab(newTab);
 
   const callSave = async (saveData: SaveUserInfo) => {
+    if (!isOwner) {
+      toast.error("You are not authorized to update this profile.");
+      return;
+    }
     try {
       await handleSave(saveData);
       setUserInfo((prev) => ({ ...prev, ...saveData }));
@@ -275,4 +283,4 @@ const useMyProfilePage = (): UseMyProfilePage => {
   };
 };
 
-export default useMyProfilePage;
+export default useProfilePage;
