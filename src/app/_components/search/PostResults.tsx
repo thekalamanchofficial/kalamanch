@@ -1,5 +1,5 @@
-import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
 import Link from "next/link";
+import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
 
 type SearchPost = {
   id: string;
@@ -71,4 +71,4 @@ export const PostResults = ({ posts, onClose }: PostResultsProps) => {
       </List>
     </Box>
   );
-}; 
+};

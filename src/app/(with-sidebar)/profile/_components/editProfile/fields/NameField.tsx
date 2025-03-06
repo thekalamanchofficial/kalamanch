@@ -5,7 +5,7 @@ import { type EditProfileDetails } from "../../../types/types";
 
 type NameFieldProps = {
   defaultValue: string;
-}
+};
 
 export const NameField: React.FC<NameFieldProps> = ({ defaultValue }) => {
   const { control } = useFormContext<EditProfileDetails>();

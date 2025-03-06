@@ -1,5 +1,13 @@
-import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 import Link from "next/link";
+import {
+  Avatar,
+  Box,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 import type { Profile } from "./types/types";
 
 type ProfileResultsProps = {
@@ -78,4 +86,4 @@ export const ProfileResults = ({ profiles, onClose }: ProfileResultsProps) => {
       </List>
     </Box>
   );
-}; 
+};

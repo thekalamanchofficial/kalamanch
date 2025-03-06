@@ -5,7 +5,7 @@ import { type EditProfileDetails } from "../../../types/types";
 type BioFieldProps = {
   errors: FieldErrors<EditProfileDetails>;
   defaultValue: string;
-}
+};
 
 export const BioField: React.FC<BioFieldProps> = ({ errors, defaultValue }) => {
   const { control } = useFormContext<EditProfileDetails>();

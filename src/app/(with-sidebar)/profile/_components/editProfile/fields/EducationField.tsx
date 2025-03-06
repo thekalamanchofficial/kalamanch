@@ -7,7 +7,7 @@ import { type EditProfileDetails } from "../../../types/types";
 type EducationFieldProps = {
   errors: FieldErrors<EditProfileDetails>;
   defaultValue: string[];
-}
+};
 
 export const EducationField: React.FC<EducationFieldProps> = ({ errors, defaultValue }) => {
   const [education, setEducation] = useState("");

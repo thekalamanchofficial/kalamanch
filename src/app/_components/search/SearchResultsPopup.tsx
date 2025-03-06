@@ -1,3 +1,5 @@
+import { useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Box, CircularProgress, Divider, Paper, Typography } from "@mui/material";
 import { trpc } from "~/app/_trpc/client";
 import { PostResults } from "./PostResults";
@@ -54,21 +56,50 @@ export const LoadingState = () => (
 );
 
 const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, onClose }) => {
+  const router = useRouter();
   const { data: profilesData, isLoading: isProfilesLoading } = trpc.user.searchProfiles.useQuery(
-    { searchQuery, limit: 5 },
+    {
+      searchQuery,
+      limit: 5,
+      skip: 0,
+      sortBy: "relevant",
+      filterType: "all",
+    },
     { enabled: searchQuery.length > 0 },
   );
 
   const { data: postsData, isLoading: isPostsLoading } = trpc.post.searchPosts.useQuery(
-    { searchQuery, limit: 5 },
+    {
+      searchQuery,
+      limit: 5,
+      skip: 0,
+      sortBy: "recent",
+      filterType: "all",
+    },
     { enabled: searchQuery.length > 0 },
   );
+
+  const handleKeyPress = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Enter" && searchQuery.length > 0) {
+        router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+        onClose?.();
+      }
+    },
+    [searchQuery, router, onClose],
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+    return () => document.removeEventListener("keydown", handleKeyPress);
+  }, [handleKeyPress]);
 
   if (searchQuery.length === 0) return null;
 
   const isLoading = isProfilesLoading || isPostsLoading;
-  const profiles = profilesData ?? [];
-  const posts = postsData ?? [];
+  const profiles = profilesData?.profiles ?? [];
+  const postsResult = Array.isArray(postsData) ? { posts: [] } : (postsData ?? { posts: [] });
+  const posts = postsResult.posts;
   const hasResults = profiles.length > 0 || posts.length > 0;
 
   return (

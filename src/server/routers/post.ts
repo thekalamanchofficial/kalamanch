@@ -1,8 +1,9 @@
+import type { Prisma } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import { inngest } from "~/inngest/client";
 import prisma from "~/server/db";
-import { protectedProcedure, router, publicProcedure } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
@@ -65,14 +66,13 @@ export const postRouter = router({
       yup.object({
         limit: yup.number().min(1).default(5),
         skip: yup.number().min(0).default(0),
-        interests: yup.array(yup.string()).optional(),
         authorId: yup.string().optional(),
       }),
     )
     .query(async ({ input }) => {
       try {
         // Todo: Add logic to handle interests
-        const { limit, skip, interests, authorId } = input;
+        const { limit, skip, authorId } = input;
 
         const query: { authorId?: string } = {};
 
@@ -345,38 +345,114 @@ export const postRouter = router({
     .input(
       yup.object({
         searchQuery: yup.string().required(),
-        limit: yup.number().default(5),
-      })
+        limit: yup.number().default(10),
+        skip: yup.number().default(0),
+        sortBy: yup.string().oneOf(["recent", "popular", "relevant"]).default("recent"),
+        filterType: yup.string().oneOf(["all", "posts", "people"]).default("all"),
+      }),
     )
     .query(async ({ input }) => {
+      // If filter type is people, return empty array
+      if (input.filterType === "people") {
+        return {
+          posts: [],
+          totalCount: 0,
+          hasMore: false,
+        };
+      }
+
+      // Build search query
+      const where = {
+        OR: [
+          {
+            title: {
+              contains: input.searchQuery,
+              mode: "insensitive" as Prisma.QueryMode,
+            },
+          },
+          {
+            content: {
+              contains: input.searchQuery,
+              mode: "insensitive" as Prisma.QueryMode,
+            },
+          },
+          {
+            authorName: {
+              contains: input.searchQuery,
+              mode: "insensitive" as Prisma.QueryMode,
+            },
+          },
+          {
+            tags: {
+              some: {
+                name: {
+                  contains: input.searchQuery,
+                  mode: "insensitive" as Prisma.QueryMode,
+                },
+              },
+            },
+          },
+        ],
+      };
+
+      // Get total count for pagination
+      const totalCount = await prisma.post.count({ where });
+
+      // Determine sort order based on sortBy parameter
+      let orderBy: Prisma.PostOrderByWithRelationInput | Prisma.PostOrderByWithRelationInput[] = {
+        createdAt: "desc",
+      };
+
+      switch (input.sortBy) {
+        case "recent":
+          orderBy = { createdAt: "desc" };
+          break;
+        case "popular":
+          orderBy = [
+            { likes: { _count: "desc" } },
+            { comments: { _count: "desc" } },
+            { createdAt: "desc" },
+          ];
+          break;
+        case "relevant":
+          // For relevance, we prioritize exact matches in title, then content
+          orderBy = [{ title: "asc" }, { content: "asc" }, { createdAt: "desc" }];
+          break;
+        default:
+          orderBy = { createdAt: "desc" };
+      }
+
+      // Fetch posts with sorting applied
       const posts = await prisma.post.findMany({
-        where: {
-          OR: [
-            {
-              title: {
-                contains: input.searchQuery,
-                mode: "insensitive",
-              },
-            },
-            {
-              content: {
-                contains: input.searchQuery,
-                mode: "insensitive",
-              },
-            },
-          ],
-        },
+        where,
         take: input.limit,
-        orderBy: {
-          title: "asc",
-        },
+        skip: input.skip,
+        orderBy,
         select: {
           id: true,
           title: true,
           authorName: true,
+          thumbnailDetails: true,
+          content: true,
+          tags: true,
+          genres: true,
+          postType: true,
+          createdAt: true,
+          updatedAt: true,
+          authorId: true,
+          authorProfileImageUrl: true,
+          likes: true,
+          comments: true,
+          bids: true,
         },
       });
 
-      return posts;
+      const hasMore = totalCount > input.skip + posts.length;
+
+      return {
+        posts,
+        totalCount,
+        hasMore,
+      };
     }),
 });

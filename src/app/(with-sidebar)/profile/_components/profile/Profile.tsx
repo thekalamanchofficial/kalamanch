@@ -8,11 +8,11 @@ import Loader from "~/app/_components/loader/Loader";
 import PostsFeed from "~/app/_components/postsFeed/PostsFeed";
 import ShowMessage from "~/app/_components/showMessage/ShowMessage";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import type { trpcServer } from "~/app/_trpc/server";
 import ProfileCard from "~/app/(with-sidebar)/profile/_components/profileCard/ProfileCard";
 import { tabs } from "~/app/(with-sidebar)/profile/_config/config";
 import useProfile from "~/app/(with-sidebar)/profile/_hooks/useProfile";
 import { EditProfile } from "../editProfile/EditProfile";
-import type { trpcServer } from "~/app/_trpc/server";
 
 type ProfileProps = {
   userDetails: Awaited<ReturnType<typeof trpcServer.user.getUserDetails>>;

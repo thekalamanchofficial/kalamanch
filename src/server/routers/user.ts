@@ -1,4 +1,5 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
+import type { Prisma } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import prisma from "~/server/db";
@@ -350,39 +351,82 @@ export const userRouter = router({
     .input(
       yup.object({
         searchQuery: yup.string().required(),
-        limit: yup.number().default(5),
+        limit: yup.number().default(10),
+        skip: yup.number().default(0),
+        sortBy: yup.string().oneOf(["recent", "popular", "relevant"]).default("relevant"),
+        filterType: yup.string().oneOf(["all", "posts", "people"]).default("all"),
       }),
     )
     .query(async ({ input }) => {
+      if (input.filterType === "posts") {
+        return { profiles: [], totalCount: 0, hasMore: false };
+      }
+
+      const where = {
+        OR: [
+          {
+            name: {
+              contains: input.searchQuery,
+              mode: "insensitive" as Prisma.QueryMode,
+            },
+          },
+          {
+            bio: {
+              contains: input.searchQuery,
+              mode: "insensitive" as Prisma.QueryMode,
+            },
+          },
+        ],
+      };
+
+      const totalCount = await prisma.user.count({ where });
+
+      type OrderByOption = Record<string, "asc" | "desc">;
+      let orderBy: OrderByOption | OrderByOption[] = { name: "asc" };
+
+      switch (input.sortBy) {
+        case "recent":
+          orderBy = { updatedAt: "desc" };
+          break;
+        case "popular":
+          orderBy = { updatedAt: "desc" };
+          break;
+        case "relevant":
+          orderBy = [{ name: "asc" }, { updatedAt: "desc" }];
+          break;
+        default:
+          orderBy = { name: "asc" };
+      }
+
       const profiles = await prisma.user.findMany({
-        where: {
-          OR: [
-            {
-              name: {
-                contains: input.searchQuery,
-                mode: "insensitive",
-              },
-            },
-            {
-              bio: {
-                contains: input.searchQuery,
-                mode: "insensitive",
-              },
-            },
-          ],
-        },
+        where,
         take: input.limit,
-        orderBy: {
-          name: "asc",
-        },
+        skip: input.skip,
+        orderBy,
         select: {
           id: true,
           name: true,
           bio: true,
           profileImageUrl: true,
+          coverImageUrl: true,
+          readingInterests: true,
+          writingInterests: true,
+          followers: true,
+          following: true,
         },
       });
 
-      return profiles;
+      const sortedProfiles =
+        input.sortBy === "popular"
+          ? [...profiles].sort((a, b) => (b.followers?.length || 0) - (a.followers?.length || 0))
+          : profiles;
+
+      const hasMore = totalCount > input.skip + profiles.length;
+
+      return {
+        profiles: sortedProfiles,
+        totalCount,
+        hasMore,
+      };
     }),
 });

@@ -1,7 +1,7 @@
-import { trpcServer } from "~/app/_trpc/server";
-import Profile from "../_components/profile/Profile";
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
+import { trpcServer } from "~/app/_trpc/server";
+import Profile from "../_components/profile/Profile";
 
 const page = async ({ params }: { params: { profileId: string } }) => {
   const clerkUser = await currentUser();

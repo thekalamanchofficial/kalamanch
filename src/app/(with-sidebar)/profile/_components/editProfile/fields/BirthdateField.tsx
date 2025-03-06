@@ -10,7 +10,7 @@ import { type EditProfileDetails } from "../../../types/types";
 type BirthdateFieldProps = {
   errors: FieldErrors<EditProfileDetails>;
   defaultValue: string;
-}
+};
 
 export const BirthdateField: React.FC<BirthdateFieldProps> = ({ errors, defaultValue }) => {
   const [openDatePicker, setOpenDatePicker] = useState(false);

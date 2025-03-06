@@ -15,4 +15,4 @@ export interface Profile {
 export interface SearchResults {
   profiles: Profile[];
   posts: Post[];
-} 
+}
