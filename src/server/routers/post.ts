@@ -348,21 +348,10 @@ export const postRouter = router({
         limit: yup.number().default(10),
         skip: yup.number().default(0),
         sortBy: yup.string().oneOf(["recent", "popular", "relevant"]).default("recent"),
-        filterType: yup.string().oneOf(["all", "posts", "people"]).default("all"),
       }),
     )
     .query(async ({ input }) => {
-      // If filter type is people, return empty array
-      if (input.filterType === "people") {
-        return {
-          posts: [],
-          totalCount: 0,
-          hasMore: false,
-        };
-      }
-
-      // Build search query
-      const where = {
+      const where: Prisma.PostWhereInput = {
         OR: [
           {
             title: {
@@ -395,10 +384,8 @@ export const postRouter = router({
         ],
       };
 
-      // Get total count for pagination
       const totalCount = await prisma.post.count({ where });
 
-      // Determine sort order based on sortBy parameter
       let orderBy: Prisma.PostOrderByWithRelationInput | Prisma.PostOrderByWithRelationInput[] = {
         createdAt: "desc",
       };
@@ -408,21 +395,72 @@ export const postRouter = router({
           orderBy = { createdAt: "desc" };
           break;
         case "popular":
-          orderBy = [
-            { likes: { _count: "desc" } },
-            { comments: { _count: "desc" } },
-            { createdAt: "desc" },
-          ];
+          const postsWithCounts = await prisma.post.findMany({
+            where,
+            select: {
+              id: true,
+              _count: {
+                select: {
+                  likes: true,
+                  comments: true,
+                },
+              },
+            },
+          });
+
+          const sortedIds = postsWithCounts
+            .sort((a, b) => {
+              const scoreA = a._count.likes * 2 + a._count.comments;
+              const scoreB = b._count.likes * 2 + a._count.comments;
+              return scoreB - scoreA;
+            })
+            .map((p) => p.id);
+
+          where.id = { in: sortedIds };
+          orderBy = {
+            createdAt: "desc",
+          };
           break;
         case "relevant":
-          // For relevance, we prioritize exact matches in title, then content
-          orderBy = [{ title: "asc" }, { content: "asc" }, { createdAt: "desc" }];
+          const searchTerms = input.searchQuery.toLowerCase().split(" ");
+          const postsWithRelevance = await prisma.post.findMany({
+            where,
+            select: {
+              id: true,
+              title: true,
+              content: true,
+            },
+          });
+
+          const sortedByRelevance = postsWithRelevance
+            .map((post) => {
+              let score = 0;
+              const titleLower = post.title.toLowerCase();
+              const contentLower = post.content.toLowerCase();
+
+              if (titleLower === input.searchQuery.toLowerCase()) {
+                score += 100;
+              }
+
+              searchTerms.forEach((term) => {
+                if (titleLower.includes(term)) score += 10;
+                if (contentLower.includes(term)) score += 5;
+              });
+
+              return { id: post.id, score };
+            })
+            .sort((a, b) => b.score - a.score)
+            .map((p) => p.id);
+
+          where.id = { in: sortedByRelevance };
+          orderBy = {
+            createdAt: "desc",
+          };
           break;
         default:
           orderBy = { createdAt: "desc" };
       }
 
-      // Fetch posts with sorting applied
       const posts = await prisma.post.findMany({
         where,
         take: input.limit,

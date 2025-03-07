@@ -3,6 +3,11 @@ import { currentUser } from "@clerk/nextjs/server";
 import { trpcServer } from "~/app/_trpc/server";
 import Profile from "./_components/profile/Profile";
 
+export const metadata = {
+  title: "My Profile",
+  description: "View and edit your profile",
+};
+
 const page = async () => {
   const userTrpcProcedure = trpcServer.user;
   const clerkUser = await currentUser();

@@ -44,7 +44,6 @@ export default function ClientSearchPage({
   const [filterType, setFilterType] = useState<FilterTypeOption>(initialFilterType);
   const [profilesPage, setProfilesPage] = useState(initialProfilesPage);
   const [postsPage, setPostsPage] = useState(initialPostsPage);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const profilesSkip = useMemo(() => (profilesPage - 1) * SEARCH_ITEMS_PER_PAGE, [profilesPage]);
   const postsSkip = useMemo(() => (postsPage - 1) * SEARCH_ITEMS_PER_PAGE, [postsPage]);
@@ -81,19 +80,21 @@ export default function ClientSearchPage({
     [searchQuery, filterType],
   );
 
-  const { data: profilesData, isLoading: isProfilesLoading } = trpc.user.searchProfiles.useQuery(
-    profilesQueryParams,
-    {
-      enabled: isProfilesQueryEnabled,
-    },
-  );
+  const {
+    data: profilesData,
+    isLoading: isProfilesLoading,
+    isFetching: isProfilesFetching,
+  } = trpc.user.searchProfiles.useQuery(profilesQueryParams, {
+    enabled: isProfilesQueryEnabled,
+  });
 
-  const { data: postsData, isLoading: isPostsLoading } = trpc.post.searchPosts.useQuery(
-    postsQueryParams,
-    {
-      enabled: isPostsQueryEnabled,
-    },
-  );
+  const {
+    data: postsData,
+    isLoading: isPostsLoading,
+    isFetching: isPostsFetching,
+  } = trpc.post.searchPosts.useQuery(postsQueryParams, {
+    enabled: isPostsQueryEnabled,
+  });
 
   useEffect(() => {
     if (searchQuery) {
@@ -112,12 +113,6 @@ export default function ClientSearchPage({
       router.push(`${pathname}?${params.toString()}`);
     }
   }, [sortBy, filterType, profilesPage, postsPage, searchQuery, pathname, router]);
-
-  useEffect(() => {
-    if (!isProfilesLoading && !isPostsLoading) {
-      setIsInitialLoad(false);
-    }
-  }, [isProfilesLoading, isPostsLoading]);
 
   const { profiles, totalProfiles, profilesTotalPages } = useMemo(() => {
     const profilesResult = profilesData ?? { profiles: [], hasMore: false, totalCount: 0 };
@@ -146,7 +141,7 @@ export default function ClientSearchPage({
   );
 
   const isLoading = isProfilesLoading || isPostsLoading;
-  const combinedLoading = isLoading || isInitialLoad;
+  const isFetching = isProfilesFetching || isPostsFetching;
 
   const showProfiles = useMemo(
     () => profiles.length > 0 && (filterType === "all" || filterType === "people"),
@@ -200,7 +195,7 @@ export default function ClientSearchPage({
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          mt: 2,
+          mt: 4,
           mb: 4,
           width: "100%",
         }}
@@ -238,11 +233,11 @@ export default function ClientSearchPage({
       />
 
       <Grid container spacing={3}>
-        {combinedLoading && <SearchLoading />}
+        {isLoading && <SearchLoading />}
 
-        {!hasResults && !combinedLoading && <NoResults searchQuery={searchQuery} />}
+        {!hasResults && !isLoading && !isFetching && <NoResults searchQuery={searchQuery} />}
 
-        {showProfiles && !isInitialLoad && (
+        {showProfiles && !isLoading && (
           <Grid container spacing={0} sx={{ width: "100%", mb: 3 }}>
             <ProfilesList profiles={profiles} isTablet={isTablet} />
 
@@ -251,14 +246,14 @@ export default function ClientSearchPage({
                 currentPage={profilesPage}
                 totalPages={profilesTotalPages}
                 totalItems={totalProfiles}
-                isLoading={isProfilesLoading}
+                isLoading={isProfilesFetching}
                 onChange={handleProfilesPageChange}
               />
             )}
           </Grid>
         )}
 
-        {showPosts && !isInitialLoad && (
+        {showPosts && !isLoading && (
           <Grid container spacing={0} sx={{ width: "100%" }}>
             <PostsList posts={posts} />
 
@@ -267,7 +262,7 @@ export default function ClientSearchPage({
                 currentPage={postsPage}
                 totalPages={postsTotalPages}
                 totalItems={totalPosts}
-                isLoading={isPostsLoading}
+                isLoading={isPostsFetching}
                 onChange={handlePostsPageChange}
               />
             )}

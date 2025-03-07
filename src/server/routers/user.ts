@@ -354,14 +354,9 @@ export const userRouter = router({
         limit: yup.number().default(10),
         skip: yup.number().default(0),
         sortBy: yup.string().oneOf(["recent", "popular", "relevant"]).default("relevant"),
-        filterType: yup.string().oneOf(["all", "posts", "people"]).default("all"),
       }),
     )
     .query(async ({ input }) => {
-      if (input.filterType === "posts") {
-        return { profiles: [], totalCount: 0, hasMore: false };
-      }
-
       const where = {
         OR: [
           {
@@ -384,15 +379,41 @@ export const userRouter = router({
       type OrderByOption = Record<string, "asc" | "desc">;
       let orderBy: OrderByOption | OrderByOption[] = { name: "asc" };
 
+      if (input.sortBy === "popular") {
+        const profiles = await prisma.user.findMany({
+          where,
+          select: {
+            id: true,
+            name: true,
+            bio: true,
+            profileImageUrl: true,
+            coverImageUrl: true,
+            readingInterests: true,
+            writingInterests: true,
+            followers: true,
+            following: true,
+          },
+        });
+
+        const sortedProfiles = profiles.sort(
+          (a, b) => (b.followers?.length || 0) - (a.followers?.length || 0),
+        );
+
+        const paginatedProfiles = sortedProfiles.slice(input.skip, input.skip + input.limit);
+
+        return {
+          profiles: paginatedProfiles,
+          totalCount,
+          hasMore: totalCount > input.skip + paginatedProfiles.length,
+        };
+      }
+
       switch (input.sortBy) {
         case "recent":
-          orderBy = { updatedAt: "desc" };
-          break;
-        case "popular":
-          orderBy = { updatedAt: "desc" };
+          orderBy = { createdAt: "desc" };
           break;
         case "relevant":
-          orderBy = [{ name: "asc" }, { updatedAt: "desc" }];
+          orderBy = [{ name: "asc" }, { createdAt: "desc" }] as OrderByOption[];
           break;
         default:
           orderBy = { name: "asc" };
@@ -416,15 +437,10 @@ export const userRouter = router({
         },
       });
 
-      const sortedProfiles =
-        input.sortBy === "popular"
-          ? [...profiles].sort((a, b) => (b.followers?.length || 0) - (a.followers?.length || 0))
-          : profiles;
-
       const hasMore = totalCount > input.skip + profiles.length;
 
       return {
-        profiles: sortedProfiles,
+        profiles,
         totalCount,
         hasMore,
       };

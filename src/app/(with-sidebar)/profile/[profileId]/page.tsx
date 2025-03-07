@@ -28,45 +28,49 @@ export async function generateMetadata({ params }: { params: { profileId: string
   const userTrpcProcedure = trpcServer.user;
   const userDetails = await userTrpcProcedure.getUserDetailsById(params.profileId);
 
+  if (!userDetails) {
+    return {
+      title: "User Profile",
+      description: "User profile page",
+    };
+  }
+
+  const profileImageUrl = userDetails.profileImageUrl || undefined;
+
   return {
-    title: userDetails?.name,
-    description: userDetails?.bio,
+    title: userDetails.name ?? "User Profile",
+    description: userDetails.bio ?? "User profile page",
     openGraph: {
-      title: userDetails?.name,
-      description: userDetails?.bio,
-      images: userDetails?.profileImageUrl,
+      title: userDetails.name ?? "User Profile",
+      description: userDetails.bio ?? "User profile page",
+      images: profileImageUrl ? [profileImageUrl] : undefined,
     },
     twitter: {
-      title: userDetails?.name,
-      description: userDetails?.bio,
-      images: userDetails?.profileImageUrl,
+      title: userDetails.name ?? "User Profile",
+      description: userDetails.bio ?? "User profile page",
+      images: profileImageUrl ? [profileImageUrl] : undefined,
     },
     alternates: {
-      canonical: `/profile/${userDetails?.id}`,
+      canonical: `/profile/${userDetails.id}`,
     },
     robots: {
       index: true,
       follow: true,
     },
-    icons: {
-      icon: userDetails?.profileImageUrl,
-    },
+    icons: profileImageUrl
+      ? {
+          icon: profileImageUrl,
+        }
+      : undefined,
     themeColor: "#000000",
     viewport: {
       width: "device-width",
       initialScale: 1,
     },
     category: "social",
-    creator: userDetails?.name,
-    publisher: userDetails?.name,
-    authors: [userDetails?.name],
-    section: "social",
-    tag: userDetails?.name,
-    url: `https://${process.env.NEXT_PUBLIC_BASE_URL}/profile/${userDetails?.id}`,
-    locale: "en",
-    type: "website",
-    siteName: userDetails?.name,
-    images: userDetails?.profileImageUrl,
-    localeAlternates: ["en", "en-US", "en-GB"],
+    creator: userDetails.name ?? "User",
+    publisher: userDetails.name ?? "User",
+    authors: [{ name: userDetails.name ?? "User" }],
+    keywords: ["profile", "social", userDetails.name ?? "user"],
   };
 }

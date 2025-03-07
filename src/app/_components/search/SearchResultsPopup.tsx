@@ -63,7 +63,6 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
       limit: 5,
       skip: 0,
       sortBy: "relevant",
-      filterType: "all",
     },
     { enabled: searchQuery.length > 0 },
   );
@@ -74,7 +73,6 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
       limit: 5,
       skip: 0,
       sortBy: "recent",
-      filterType: "all",
     },
     { enabled: searchQuery.length > 0 },
   );

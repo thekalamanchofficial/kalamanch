@@ -7,7 +7,7 @@ export enum MyProfileTabsEnum {
   LIKED_POSTS = "Liked Posts",
 }
 
-export interface EditProfileDetails {
+export type EditProfileDetails = {
   name: string;
   bio: string;
   birthdate: string;
@@ -20,7 +20,7 @@ export interface EditProfileDetails {
     genres: string[];
     tags: string[];
   };
-}
+};
 
 export type UserSchema = {
   id: string;

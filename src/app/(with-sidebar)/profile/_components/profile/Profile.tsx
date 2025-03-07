@@ -140,6 +140,8 @@ const Profile: React.FC<ProfileProps> = ({ userDetails, isOwner }) => {
         handleEditProfileOpen={handleEditProfileOpen}
         onImageUpdate={handleImageUpdate}
         isOwner={isOwner}
+        userId={userDetails?.id ?? ""}
+        isLoading={queryLoading}
       />
       <CustomTabs tabs={tabs} activeTab={tab} onTabChange={handleChange} />
       {renderUI}

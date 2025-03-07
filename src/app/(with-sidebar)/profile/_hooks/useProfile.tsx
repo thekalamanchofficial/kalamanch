@@ -17,12 +17,12 @@ import {
 import { PostStatus } from "~/app/editor/types/types";
 import { trpc } from "~/server/client";
 
-interface Interests {
+type Interests = {
   genres: string[];
   tags: string[];
-}
+};
 
-interface UserDetails {
+type UserDetails = {
   id?: string;
   name?: string;
   bio?: string | null;
@@ -34,7 +34,7 @@ interface UserDetails {
   coverImageUrl?: string;
   posts: Post[];
   followers: string[];
-}
+};
 
 const useUserInfoState = (
   userDetails: UserDetails | null | undefined,

@@ -16,14 +16,14 @@ import PostCardContent from "../postCardContent/PostCardContent";
 import PostCardFooter from "../postCardFooter/PostCardFooter";
 import UserNameProfile from "../userNameProfile/UserNameProfile";
 
-interface PostProps {
+type PostProps = {
   post: PostType;
   userFollowing?: string[];
   isLiked: boolean;
   isBookmarked: boolean;
   setPosts?: React.Dispatch<React.SetStateAction<PostType[]>>;
   isUserPublishedPostFeed?: boolean;
-}
+};
 
 const Post = memo<PostProps>(
   ({ post, userFollowing, isLiked, isBookmarked, setPosts, isUserPublishedPostFeed }) => {
@@ -78,7 +78,7 @@ const Post = memo<PostProps>(
               AuthorName={post.authorName}
               AuthorImage={post.authorProfileImageUrl}
             />
-            {userEmail !== post.authorId && (
+            {userEmail !== post.authorId && !isUserPublishedPostFeed && (
               <FollowButton
                 authorProfileLink={post.authorId}
                 isFollowing={userFollowing?.includes(post.authorId)}
