@@ -18,3 +18,5 @@ export const FILTER_OPTIONS: Record<FilterTypeOption, string> = {
 export const DEFAULT_SORT_BY: SortByOption = "recent";
 export const DEFAULT_FILTER_TYPE: FilterTypeOption = "all";
 export const DEFAULT_PAGE = 1;
+
+export const SEARCH_RESULTS_CACHE_TIME = 10000;

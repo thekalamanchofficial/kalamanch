@@ -12,12 +12,12 @@ export default function SearchHeader({ searchQuery }: SearchHeaderProps) {
       sx={{
         position: "sticky",
         top: 0,
-        zIndex: 1100,
         backgroundColor: "rgba(245, 247, 254, 0.95)",
         backdropFilter: "blur(10px)",
         borderBottom: "1px solid rgba(0, 0, 0, 0.06)",
         p: { xs: 1, sm: 1.5, md: 2 },
         mb: { xs: 2, sm: 3 },
+        borderRadius: 2,
       }}
     >
       <Box

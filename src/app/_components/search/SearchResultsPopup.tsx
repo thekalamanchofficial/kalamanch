@@ -1,7 +1,11 @@
+"use client";
+
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Box, CircularProgress, Divider, Paper, Typography } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import { alpha, Box, CircularProgress, Divider, Link, Paper, Typography } from "@mui/material";
 import { trpc } from "~/app/_trpc/client";
+import { SEARCH_RESULTS_CACHE_TIME } from "~/app/(with-sidebar)/search/_config/config";
 import { PostResults } from "./PostResults";
 import { ProfileResults } from "./ProfileResults";
 import type { SearchResultsPopupProps } from "./types/types";
@@ -41,6 +45,42 @@ export const NoResults: React.FC<{ searchQuery: string }> = ({ searchQuery }) =>
   </Box>
 );
 
+export const EmptyQuery = () => (
+  <Box
+    sx={{
+      p: 4,
+      textAlign: "center",
+      color: "text.secondary",
+      minHeight: 120,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 1,
+    }}
+  >
+    <SearchIcon sx={{ fontSize: 40, color: "text.disabled", opacity: 0.5 }} />
+    <Typography
+      variant="body1"
+      sx={{
+        color: "text.secondary",
+        fontWeight: 500,
+      }}
+    >
+      Type to search
+    </Typography>
+    <Typography
+      variant="body2"
+      sx={{
+        color: "text.disabled",
+        fontSize: "0.875rem",
+      }}
+    >
+      Search for posts, profiles, and more
+    </Typography>
+  </Box>
+);
+
 export const LoadingState = () => (
   <Box
     sx={{
@@ -57,6 +97,7 @@ export const LoadingState = () => (
 
 const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, onClose }) => {
   const router = useRouter();
+
   const { data: profilesData, isLoading: isProfilesLoading } = trpc.user.searchProfiles.useQuery(
     {
       searchQuery,
@@ -64,7 +105,10 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
       skip: 0,
       sortBy: "relevant",
     },
-    { enabled: searchQuery.length > 0 },
+    {
+      enabled: searchQuery.length > 0,
+      staleTime: SEARCH_RESULTS_CACHE_TIME,
+    },
   );
 
   const { data: postsData, isLoading: isPostsLoading } = trpc.post.searchPosts.useQuery(
@@ -74,13 +118,17 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
       skip: 0,
       sortBy: "recent",
     },
-    { enabled: searchQuery.length > 0 },
+    {
+      enabled: searchQuery.length > 0,
+      staleTime: SEARCH_RESULTS_CACHE_TIME,
+    },
   );
 
   const handleKeyPress = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Enter" && searchQuery.length > 0) {
-        router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      if (e.key === "Enter" && searchQuery.trim().length > 0) {
+        e.preventDefault();
+        router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
         onClose?.();
       }
     },
@@ -91,8 +139,6 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
     document.addEventListener("keydown", handleKeyPress);
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, [handleKeyPress]);
-
-  if (searchQuery.length === 0) return null;
 
   const isLoading = isProfilesLoading || isPostsLoading;
   const profiles = profilesData?.profiles ?? [];
@@ -109,12 +155,26 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
         left: 0,
         right: 0,
         maxHeight: "400px",
-        overflow: "auto",
+        overflowY: "auto",
+        overflowX: "hidden",
         zIndex: 1300,
         backgroundColor: "background.paper",
-        borderRadius: "8px",
-        boxShadow: (theme) => `0 4px 20px ${theme.palette.grey[200]}`,
+        borderRadius: "12px",
+        boxShadow: (theme) => `0 6px 24px ${alpha(theme.palette.common.black, 0.12)}`,
         transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        opacity: 1,
+        transform: "translateY(0)",
+        animation: "fadeIn 0.2s ease-out",
+        "@keyframes fadeIn": {
+          "0%": {
+            opacity: 0,
+            transform: "translateY(-8px)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateY(0)",
+          },
+        },
         "&::-webkit-scrollbar": {
           width: "4px",
         },
@@ -132,6 +192,8 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
     >
       {isLoading ? (
         <LoadingState />
+      ) : searchQuery.length === 0 ? (
+        <EmptyQuery />
       ) : !hasResults ? (
         <NoResults searchQuery={searchQuery} />
       ) : (
@@ -139,6 +201,25 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
           <ProfileResults profiles={profiles} onClose={onClose} />
           {profiles.length > 0 && posts.length > 0 && <Divider sx={{ opacity: 0.4 }} />}
           <PostResults posts={posts} onClose={onClose} />
+          <Box
+            sx={{
+              p: 1.5,
+              textAlign: "center",
+              backgroundColor: (theme) => alpha(theme.palette.primary.light, 0.05),
+              borderTop: "1px solid",
+              borderTopColor: (theme) => alpha(theme.palette.divider, 0.5),
+              cursor: "pointer",
+              "&:hover": {
+                backgroundColor: (theme) => alpha(theme.palette.primary.light, 0.1),
+              },
+            }}
+          >
+            <Link href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}>
+              <Typography variant="body2" color="primary" sx={{ fontWeight: 500 }}>
+                View all results
+              </Typography>
+            </Link>
+          </Box>
         </>
       )}
     </Paper>
