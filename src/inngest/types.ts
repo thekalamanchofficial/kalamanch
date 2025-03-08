@@ -12,9 +12,17 @@ export type SharePostPayload = {
   };
 };
 
+export type ContactUsPayload = {
+  data: {
+    userEmail: string;
+    message: string;
+  };
+};
+
 export type Events = {
   "clerk/user.created": ClerkUserEventPayload;
   "clerk/user.updated": ClerkUserEventPayload;
   "post/post.share": SharePostPayload;
   "inngest/function.failed": SharePostPayload | ClerkUserEventPayload;
+  "contact/conatct-us": ContactUsPayload;
 };

@@ -1,5 +1,6 @@
 import { bookmarkRouter } from "./routers/bookmark";
 import { commentRouter } from "./routers/comment";
+import { contactUsRouter } from "./routers/contactUs";
 import { draftPostRouter } from "./routers/draftPost";
 import { draftPostIterationReviewsRouter } from "./routers/draftPostIterationReviews";
 import { featuredPostRouter } from "./routers/featuredPost";
@@ -23,6 +24,7 @@ export const appRouter = router({
   bookmarks: bookmarkRouter,
   presignedR2Url: presignedR2UrlRouter,
   genreTagRouter: genreTagRouter,
+  contactUsRouter: contactUsRouter,
 });
 
 export type AppRouter = typeof appRouter;
