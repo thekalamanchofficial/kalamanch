@@ -15,7 +15,7 @@ const CreatePostFormButton = () => {
   return (
     <Box
       sx={{
-        marginTop: 4,
+        marginTop: 2,
         px: "8px",
       }}
     >
@@ -28,7 +28,7 @@ const CreatePostFormButton = () => {
           display: "flex",
           height: "40px",
           backgroundColor: "primary.main",
-          justifyContent: "start",
+          justifyContent: "center",
           alignItems: "center",
           px: "12px",
         }}

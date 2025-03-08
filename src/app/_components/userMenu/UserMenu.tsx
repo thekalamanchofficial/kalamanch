@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useClerk } from "@clerk/nextjs";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
@@ -10,10 +10,18 @@ import { STATIC_TEXTS } from "../static/staticText";
 
 const UserMenu = () => {
   const { user, signOut } = useClerk();
-
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
   const open = Boolean(anchorEl);
+
+  // Use useEffect to update the image URL and user name after client-side hydration
+  useEffect(() => {
+    if (user) {
+      setImageUrl(user.imageUrl);
+      setUserName(user.firstName ?? (user.unsafeMetadata?.name as string));
+    }
+  }, [user]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -52,12 +60,12 @@ const UserMenu = () => {
       <Box display="flex" alignItems="center">
         <Avatar
           alt="user profile picture"
-          src={user?.imageUrl}
+          src={imageUrl ?? undefined}
           sx={{ width: 38, height: 38, mr: 1 }}
         />
 
         <Typography color="text.secondary" variant="subtitle2">
-          {user?.firstName === null ? (user?.unsafeMetadata?.name as string) : user?.firstName}
+          {userName}
         </Typography>
       </Box>
       <Box>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { debounce } from "lodash";
 import config from "~/app/_config/config";
 import useLazyLoading from "~/app/_hooks/useLazyLoading";
-import type { UserSchema } from "~/app/(with-sidebar)/myprofile/types/types";
+import type { UserSchema } from "~/app/(with-sidebar)/profile/types/types";
 import { useUser } from "~/context/userContext";
 import { trpc } from "~/server/client";
 

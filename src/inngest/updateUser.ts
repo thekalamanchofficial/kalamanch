@@ -35,6 +35,7 @@ export const updateUser = inngest.createFunction(
         readingInterests,
         writingInterests,
         profileImageUrl: event.data.image_url ?? null,
+        updatedAt: new Date(),
       },
     });
   },

@@ -2,7 +2,12 @@ import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import { inngest } from "~/inngest/client";
 import prisma from "~/server/db";
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
+import {
+  createPostSearchCondition,
+  sortPostsByPopularity,
+  sortPostsByRelevance,
+} from "../utils/searchUtils";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
@@ -65,14 +70,13 @@ export const postRouter = router({
       yup.object({
         limit: yup.number().min(1).default(5),
         skip: yup.number().min(0).default(0),
-        interests: yup.array(yup.string()).optional(),
         authorId: yup.string().optional(),
       }),
     )
     .query(async ({ input }) => {
       try {
         // Todo: Add logic to handle interests
-        const { limit, skip, interests, authorId } = input;
+        const { limit, skip, authorId } = input;
 
         const query: { authorId?: string } = {};
 
@@ -340,4 +344,66 @@ export const postRouter = router({
       throw error;
     }
   }),
+
+  searchPosts: publicProcedure
+    .input(
+      yup.object({
+        searchQuery: yup.string().required(),
+        limit: yup.number().default(10),
+        skip: yup.number().default(0),
+        sortBy: yup.string().oneOf(["recent", "popular", "relevant"]).default("recent"),
+      }),
+    )
+    .query(async ({ input }) => {
+      const searchTerms = input.searchQuery.toLowerCase().split(" ");
+
+      const baseWhere = createPostSearchCondition(input.searchQuery);
+
+      const totalCount = await prisma.post.count({ where: baseWhere });
+
+      if (input.sortBy === "popular") {
+        return await sortPostsByPopularity(baseWhere, input.limit, input.skip, totalCount);
+      } else if (input.sortBy === "relevant") {
+        return await sortPostsByRelevance(
+          baseWhere,
+          searchTerms,
+          input.searchQuery,
+          input.limit,
+          input.skip,
+          totalCount,
+        );
+      }
+
+      const posts = await prisma.post.findMany({
+        where: baseWhere,
+        take: input.limit,
+        skip: input.skip,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          title: true,
+          authorName: true,
+          thumbnailDetails: true,
+          content: true,
+          tags: true,
+          genres: true,
+          postType: true,
+          createdAt: true,
+          updatedAt: true,
+          authorId: true,
+          authorProfileImageUrl: true,
+          likes: true,
+          comments: true,
+          bids: true,
+        },
+      });
+
+      const hasMore = totalCount > input.skip + posts.length;
+
+      return {
+        posts,
+        totalCount,
+        hasMore,
+      };
+    }),
 });
