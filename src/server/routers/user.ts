@@ -1,9 +1,13 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
-import type { Prisma } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import prisma from "~/server/db";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
+import {
+  createUserSearchCondition,
+  sortProfilesByPopularity,
+  sortProfilesByRelevance,
+} from "../utils/searchUtils";
 
 const userSchema = yup.object({
   email: yup.string().email().required(),
@@ -357,73 +361,29 @@ export const userRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const where = {
-        OR: [
-          {
-            name: {
-              contains: input.searchQuery,
-              mode: "insensitive" as Prisma.QueryMode,
-            },
-          },
-          {
-            bio: {
-              contains: input.searchQuery,
-              mode: "insensitive" as Prisma.QueryMode,
-            },
-          },
-        ],
-      };
+      const baseWhere = createUserSearchCondition(input.searchQuery);
+      const searchTerms = input.searchQuery.toLowerCase().split(" ");
 
-      const totalCount = await prisma.user.count({ where });
-
-      type OrderByOption = Record<string, "asc" | "desc">;
-      let orderBy: OrderByOption | OrderByOption[] = { name: "asc" };
+      const totalCount = await prisma.user.count({ where: baseWhere });
 
       if (input.sortBy === "popular") {
-        const profiles = await prisma.user.findMany({
-          where,
-          select: {
-            id: true,
-            name: true,
-            bio: true,
-            profileImageUrl: true,
-            coverImageUrl: true,
-            readingInterests: true,
-            writingInterests: true,
-            followers: true,
-            following: true,
-          },
-        });
-
-        const sortedProfiles = profiles.sort(
-          (a, b) => (b.followers?.length || 0) - (a.followers?.length || 0),
-        );
-
-        const paginatedProfiles = sortedProfiles.slice(input.skip, input.skip + input.limit);
-
-        return {
-          profiles: paginatedProfiles,
+        return await sortProfilesByPopularity(baseWhere, input.limit, input.skip, totalCount);
+      } else if (input.sortBy === "relevant") {
+        return await sortProfilesByRelevance(
+          baseWhere,
+          searchTerms,
+          input.searchQuery,
+          input.limit,
+          input.skip,
           totalCount,
-          hasMore: totalCount > input.skip + paginatedProfiles.length,
-        };
-      }
-
-      switch (input.sortBy) {
-        case "recent":
-          orderBy = { createdAt: "desc" };
-          break;
-        case "relevant":
-          orderBy = [{ name: "asc" }, { createdAt: "desc" }] as OrderByOption[];
-          break;
-        default:
-          orderBy = { name: "asc" };
+        );
       }
 
       const profiles = await prisma.user.findMany({
-        where,
+        where: baseWhere,
         take: input.limit,
         skip: input.skip,
-        orderBy,
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           name: true,

@@ -1,9 +1,13 @@
-import type { Prisma } from "@prisma/client";
 import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import { inngest } from "~/inngest/client";
 import prisma from "~/server/db";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
+import {
+  createPostSearchCondition,
+  sortPostsByPopularity,
+  sortPostsByRelevance,
+} from "../utils/searchUtils";
 
 const postSchema = yup.object({
   content: yup.string().required("Content is required."),
@@ -351,121 +355,30 @@ export const postRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const where: Prisma.PostWhereInput = {
-        OR: [
-          {
-            title: {
-              contains: input.searchQuery,
-              mode: "insensitive" as Prisma.QueryMode,
-            },
-          },
-          {
-            content: {
-              contains: input.searchQuery,
-              mode: "insensitive" as Prisma.QueryMode,
-            },
-          },
-          {
-            authorName: {
-              contains: input.searchQuery,
-              mode: "insensitive" as Prisma.QueryMode,
-            },
-          },
-          {
-            tags: {
-              some: {
-                name: {
-                  contains: input.searchQuery,
-                  mode: "insensitive" as Prisma.QueryMode,
-                },
-              },
-            },
-          },
-        ],
-      };
+      const searchTerms = input.searchQuery.toLowerCase().split(" ");
 
-      const totalCount = await prisma.post.count({ where });
+      const baseWhere = createPostSearchCondition(input.searchQuery);
 
-      let orderBy: Prisma.PostOrderByWithRelationInput | Prisma.PostOrderByWithRelationInput[] = {
-        createdAt: "desc",
-      };
+      const totalCount = await prisma.post.count({ where: baseWhere });
 
-      switch (input.sortBy) {
-        case "recent":
-          orderBy = { createdAt: "desc" };
-          break;
-        case "popular":
-          const postsWithCounts = await prisma.post.findMany({
-            where,
-            select: {
-              id: true,
-              _count: {
-                select: {
-                  likes: true,
-                  comments: true,
-                },
-              },
-            },
-          });
-
-          const sortedIds = postsWithCounts
-            .sort((a, b) => {
-              const scoreA = a._count.likes * 2 + a._count.comments;
-              const scoreB = b._count.likes * 2 + a._count.comments;
-              return scoreB - scoreA;
-            })
-            .map((p) => p.id);
-
-          where.id = { in: sortedIds };
-          orderBy = {
-            createdAt: "desc",
-          };
-          break;
-        case "relevant":
-          const searchTerms = input.searchQuery.toLowerCase().split(" ");
-          const postsWithRelevance = await prisma.post.findMany({
-            where,
-            select: {
-              id: true,
-              title: true,
-              content: true,
-            },
-          });
-
-          const sortedByRelevance = postsWithRelevance
-            .map((post) => {
-              let score = 0;
-              const titleLower = post.title.toLowerCase();
-              const contentLower = post.content.toLowerCase();
-
-              if (titleLower === input.searchQuery.toLowerCase()) {
-                score += 100;
-              }
-
-              searchTerms.forEach((term) => {
-                if (titleLower.includes(term)) score += 10;
-                if (contentLower.includes(term)) score += 5;
-              });
-
-              return { id: post.id, score };
-            })
-            .sort((a, b) => b.score - a.score)
-            .map((p) => p.id);
-
-          where.id = { in: sortedByRelevance };
-          orderBy = {
-            createdAt: "desc",
-          };
-          break;
-        default:
-          orderBy = { createdAt: "desc" };
+      if (input.sortBy === "popular") {
+        return await sortPostsByPopularity(baseWhere, input.limit, input.skip, totalCount);
+      } else if (input.sortBy === "relevant") {
+        return await sortPostsByRelevance(
+          baseWhere,
+          searchTerms,
+          input.searchQuery,
+          input.limit,
+          input.skip,
+          totalCount,
+        );
       }
 
       const posts = await prisma.post.findMany({
-        where,
+        where: baseWhere,
         take: input.limit,
         skip: input.skip,
-        orderBy,
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           title: true,
