@@ -1,6 +1,6 @@
 import * as yup from "yup";
 import { inngest } from "~/inngest/client";
-import { protectedProcedure, router } from "../trpc";
+import { publicProcedure, router } from "../trpc";
 
 const contactUsSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -9,7 +9,7 @@ const contactUsSchema = yup.object().shape({
 });
 
 export const contactUsRouter = router({
-  contactUs: protectedProcedure.input(contactUsSchema).mutation(async ({ input }) => {
+  contactUs: publicProcedure.input(contactUsSchema).mutation(async ({ input }) => {
     try {
       const { email, message, name } = input;
 
