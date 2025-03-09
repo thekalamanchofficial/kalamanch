@@ -8,7 +8,7 @@ const Layout = ({ children }: { children: ReactElement }) => {
     <Box
       sx={{
         flexGrow: 1,
-        backgroundColor: "#fafafa",
+        backgroundColor: "#f5f5f5",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -21,10 +21,7 @@ const Layout = ({ children }: { children: ReactElement }) => {
         sx={{
           height: "100%",
           width: "100%",
-          maxWidth: "1572px",
           justifyContent: "center",
-          px: 1,
-          py: "40px",
         }}
       >
         {children}

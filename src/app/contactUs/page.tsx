@@ -44,20 +44,20 @@ const Page = () => {
   return (
     <Box
       sx={{
-        height: `calc(100vh - 80px)`,
         width: "100%",
         justifyItems: "center",
         alignItems: "center",
+        height: `calc(100vh - 77px)`,
       }}
     >
       <Grid
         container
         justifyContent="center"
         alignItems="center"
-        minHeight={`calc(100vh - 105px)`}
+        height="100%"
         size={{ xs: 12, sm: 8, md: 6, lg: 4 }}
       >
-        <Grid size={12}>
+        <Grid size={12} padding={3} sx={{ backgroundColor: "#FFF" }}>
           <Typography variant="h4" textAlign="center" mb={3}>
             Contact Us
           </Typography>

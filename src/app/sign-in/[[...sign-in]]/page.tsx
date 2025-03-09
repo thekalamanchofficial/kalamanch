@@ -16,7 +16,6 @@ const SignInPage = () => {
   return (
     <Box
       sx={{
-        height: `calc(100vh - 105px)`,
         width: "100%",
         justifyItems: "center",
         alignItems: "center",
@@ -24,13 +23,14 @@ const SignInPage = () => {
     >
       <Grid
         sx={{
-          minHeight: "100vh",
+          height: `calc(100vh - 77px)`,
           width: "100%",
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "secondary.main",
           px: 6,
-          py: 14,
+          pt: 14,
+          pb: 10,
         }}
         container
         spacing={2}
@@ -203,7 +203,7 @@ const SignInPage = () => {
           </ul>
         )}
       </Grid>
-      <Footer />;
+      <Footer />
     </Box>
   );
 };
