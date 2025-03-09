@@ -5,8 +5,8 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Alert, Box, Button, Grid2 as Grid, TextField, Typography } from "@mui/material";
 import * as yup from "yup";
-import { trpc } from "~/server/client";
 import { Footer } from "../_components/footer/Footer";
+import { trpc } from "../_trpc/client";
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
