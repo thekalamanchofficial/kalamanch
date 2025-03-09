@@ -192,8 +192,9 @@ const TopNavBar = () => {
                   py: 1,
                   minWidth: "110px",
                   backgroundColor: pathname === "/myfeed" ? "secondary.main" : "transparent",
-                  '&:hover': {
-                    backgroundColor: pathname === "/myfeed" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+                  "&:hover": {
+                    backgroundColor:
+                      pathname === "/myfeed" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
                   },
                 }}
               >
@@ -215,8 +216,10 @@ const TopNavBar = () => {
                   minWidth: "110px",
                   fontWeight: Boolean(todoMenuAnchor) ? "bold" : "normal",
                   backgroundColor: Boolean(todoMenuAnchor) ? "secondary.main" : "transparent",
-                  '&:hover': {
-                    backgroundColor: Boolean(todoMenuAnchor) ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+                  "&:hover": {
+                    backgroundColor: Boolean(todoMenuAnchor)
+                      ? "secondary.main"
+                      : "rgba(0, 0, 0, 0.04)",
                   },
                 }}
               >
@@ -245,8 +248,10 @@ const TopNavBar = () => {
                     minWidth: "120px",
                     fontWeight: Boolean(profileMenuAnchor) ? "bold" : "normal",
                     backgroundColor: Boolean(profileMenuAnchor) ? "secondary.main" : "transparent",
-                    '&:hover': {
-                      backgroundColor: Boolean(profileMenuAnchor) ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+                    "&:hover": {
+                      backgroundColor: Boolean(profileMenuAnchor)
+                        ? "secondary.main"
+                        : "rgba(0, 0, 0, 0.04)",
                     },
                   }}
                   startIcon={
