@@ -58,6 +58,8 @@ const FollowButton: React.FC<FollowButtonProps> = ({
         height: "25px",
         margin: "3px 5px ",
         fontSize: "15px",
+        border: "1px solid",
+        borderColor: "primary.main",
         ...style,
       }}
       onClick={async () => {

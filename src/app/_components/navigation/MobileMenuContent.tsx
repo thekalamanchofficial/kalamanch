@@ -52,33 +52,101 @@ const MobileMenuContent = ({
           <ListItemButton
             onClick={() => navigateTo("/myfeed")}
             selected={pathname === "/myfeed"}
-            sx={{ py: 1.5 }}
+            sx={{ 
+              py: 1.5,
+              color: "primary.main",
+              backgroundColor: pathname === "/myfeed" ? "secondary.main" : "transparent",
+              '&:hover': {
+                backgroundColor: pathname === "/myfeed" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+              },
+              '&.Mui-selected': {
+                backgroundColor: "secondary.main",
+              },
+              '&.Mui-selected:hover': {
+                backgroundColor: "secondary.main",
+              }
+            }}
           >
             <ListItemIcon>
               <HomeOutlinedIcon
-                color={pathname === "/myfeed" ? "primary" : "inherit"}
+                color="primary"
                 fontSize="medium"
               />
             </ListItemIcon>
-            <ListItemText primary="Home" primaryTypographyProps={{ fontSize: "1.05rem" }} />
+            <ListItemText 
+              primary="Home" 
+              primaryTypographyProps={{ 
+                fontSize: "1.05rem",
+                fontWeight: pathname === "/myfeed" ? "bold" : "normal",
+                color: "primary.main"
+              }} 
+            />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton onClick={() => navigateTo("/profile/" + user?.id)} sx={{ py: 1.5 }}>
+          <ListItemButton 
+            onClick={() => navigateTo("/profile/" + user?.id)} 
+            selected={pathname?.startsWith("/profile/" + user?.id)}
+            sx={{ 
+              py: 1.5,
+              color: "primary.main",
+              backgroundColor: pathname?.startsWith("/profile/" + user?.id) ? "secondary.main" : "transparent",
+              '&:hover': {
+                backgroundColor: pathname?.startsWith("/profile/" + user?.id) ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+              },
+              '&.Mui-selected': {
+                backgroundColor: "secondary.main",
+              },
+              '&.Mui-selected:hover': {
+                backgroundColor: "secondary.main",
+              }
+            }}
+          >
             <ListItemIcon>
-              <PersonIcon fontSize="medium" />
+              <PersonIcon color="primary" fontSize="medium" />
             </ListItemIcon>
-            <ListItemText primary="My Profile" primaryTypographyProps={{ fontSize: "1.05rem" }} />
+            <ListItemText 
+              primary="My Profile" 
+              primaryTypographyProps={{ 
+                fontSize: "1.05rem",
+                fontWeight: pathname?.startsWith("/profile/" + user?.id) ? "bold" : "normal",
+                color: "primary.main"
+              }} 
+            />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton onClick={() => navigateTo("/saved")} sx={{ py: 1.5 }}>
+          <ListItemButton 
+            onClick={() => navigateTo("/saved")} 
+            selected={pathname === "/saved"}
+            sx={{ 
+              py: 1.5,
+              color: "primary.main",
+              backgroundColor: pathname === "/saved" ? "secondary.main" : "transparent",
+              '&:hover': {
+                backgroundColor: pathname === "/saved" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+              },
+              '&.Mui-selected': {
+                backgroundColor: "secondary.main",
+              },
+              '&.Mui-selected:hover': {
+                backgroundColor: "secondary.main",
+              }
+            }}
+          >
             <ListItemIcon>
-              <BookmarkBorderOutlinedIcon fontSize="medium" />
+              <BookmarkBorderOutlinedIcon color="primary" fontSize="medium" />
             </ListItemIcon>
-            <ListItemText primary="Saved" primaryTypographyProps={{ fontSize: "1.05rem" }} />
+            <ListItemText 
+              primary="Saved" 
+              primaryTypographyProps={{ 
+                fontSize: "1.05rem",
+                fontWeight: pathname === "/saved" ? "bold" : "normal",
+                color: "primary.main"
+              }} 
+            />
           </ListItemButton>
         </ListItem>
       </List>
@@ -95,22 +163,67 @@ const MobileMenuContent = ({
 
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => navigateTo("/drafts")} sx={{ py: 1.5 }}>
+          <ListItemButton 
+            onClick={() => navigateTo("/drafts")} 
+            selected={pathname === "/drafts"}
+            sx={{ 
+              py: 1.5,
+              color: "primary.main",
+              backgroundColor: pathname === "/drafts" ? "secondary.main" : "transparent",
+              '&:hover': {
+                backgroundColor: pathname === "/drafts" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+              },
+              '&.Mui-selected': {
+                backgroundColor: "secondary.main",
+              },
+              '&.Mui-selected:hover': {
+                backgroundColor: "secondary.main",
+              }
+            }}
+          >
             <ListItemIcon>
-              <ModeEditOutlinedIcon fontSize="medium" />
+              <ModeEditOutlinedIcon color="primary" fontSize="medium" />
             </ListItemIcon>
-            <ListItemText primary="Drafts" primaryTypographyProps={{ fontSize: "1.05rem" }} />
+            <ListItemText 
+              primary="Drafts" 
+              primaryTypographyProps={{ 
+                fontSize: "1.05rem",
+                fontWeight: pathname === "/drafts" ? "bold" : "normal",
+                color: "primary.main"
+              }} 
+            />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton onClick={() => navigateTo("/review-feedback")} sx={{ py: 1.5 }}>
+          <ListItemButton 
+            onClick={() => navigateTo("/review-feedback")} 
+            selected={pathname === "/review-feedback"}
+            sx={{ 
+              py: 1.5,
+              color: "primary.main",
+              backgroundColor: pathname === "/review-feedback" ? "secondary.main" : "transparent",
+              '&:hover': {
+                backgroundColor: pathname === "/review-feedback" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+              },
+              '&.Mui-selected': {
+                backgroundColor: "secondary.main",
+              },
+              '&.Mui-selected:hover': {
+                backgroundColor: "secondary.main",
+              }
+            }}
+          >
             <ListItemIcon>
-              <FeedbackOutlinedIcon fontSize="medium" />
+              <FeedbackOutlinedIcon color="primary" fontSize="medium" />
             </ListItemIcon>
             <ListItemText
               primary="Review Feedback"
-              primaryTypographyProps={{ fontSize: "1.05rem" }}
+              primaryTypographyProps={{ 
+                fontSize: "1.05rem",
+                fontWeight: pathname === "/review-feedback" ? "bold" : "normal",
+                color: "primary.main"
+              }}
             />
           </ListItemButton>
         </ListItem>
@@ -120,11 +233,23 @@ const MobileMenuContent = ({
 
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={handleLogout} sx={{ py: 1.5 }}>
+          <ListItemButton 
+            onClick={handleLogout} 
+            sx={{ 
+              py: 1.5,
+              color: "primary.main"
+            }}
+          >
             <ListItemIcon>
-              <LogoutIcon fontSize="medium" />
+              <LogoutIcon color="primary" fontSize="medium" />
             </ListItemIcon>
-            <ListItemText primary="Logout" primaryTypographyProps={{ fontSize: "1.05rem" }} />
+            <ListItemText 
+              primary="Logout" 
+              primaryTypographyProps={{ 
+                fontSize: "1.05rem",
+                color: "primary.main"
+              }} 
+            />
           </ListItemButton>
         </ListItem>
       </List>

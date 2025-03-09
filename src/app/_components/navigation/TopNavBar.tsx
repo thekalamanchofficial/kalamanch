@@ -180,16 +180,20 @@ const TopNavBar = () => {
               <Button
                 component={Link}
                 href="/myfeed"
-                color={pathname === "/myfeed" ? "primary" : "inherit"}
+                color="inherit"
                 startIcon={<HomeOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
                 sx={{
                   display: { xs: "none", md: "flex" },
                   fontWeight: pathname === "/myfeed" ? "bold" : "normal",
-                  color: pathname === "/myfeed" ? "primary.main" : "text.primary",
+                  color: "primary.main",
                   fontSize: "1.05rem",
                   px: 2,
                   py: 1,
                   minWidth: "110px",
+                  backgroundColor: pathname === "/myfeed" ? "secondary.main" : "transparent",
+                  '&:hover': {
+                    backgroundColor: pathname === "/myfeed" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+                  },
                 }}
               >
                 Home
@@ -203,11 +207,16 @@ const TopNavBar = () => {
                 onClick={handleTodoMenuOpen}
                 sx={{
                   display: { xs: "none", md: "flex" },
-                  color: "text.primary",
+                  color: "primary.main",
                   fontSize: "1.05rem",
                   px: 2,
                   py: 1,
                   minWidth: "110px",
+                  fontWeight: Boolean(todoMenuAnchor) ? "bold" : "normal",
+                  backgroundColor: Boolean(todoMenuAnchor) ? "secondary.main" : "transparent",
+                  '&:hover': {
+                    backgroundColor: Boolean(todoMenuAnchor) ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+                  },
                 }}
               >
                 Todo
@@ -228,11 +237,16 @@ const TopNavBar = () => {
                   color="inherit"
                   sx={{
                     textTransform: "none",
-                    color: "text.primary",
+                    color: "primary.main",
                     fontSize: "1.05rem",
                     px: 2,
                     py: 0.75,
                     minWidth: "120px",
+                    fontWeight: Boolean(profileMenuAnchor) ? "bold" : "normal",
+                    backgroundColor: Boolean(profileMenuAnchor) ? "secondary.main" : "transparent",
+                    '&:hover': {
+                      backgroundColor: Boolean(profileMenuAnchor) ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+                    },
                   }}
                   startIcon={
                     <Avatar
