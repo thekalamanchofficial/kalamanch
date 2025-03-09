@@ -133,11 +133,12 @@ const TopNavBar = () => {
               display: { xs: "none", sm: "flex" },
               justifyContent: "center",
               width: { xs: "100%", md: "45%" },
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
               zIndex: theme.zIndex.modal + 1,
-              maxWidth: "500px",
+              maxWidth: {
+                xs: "100%",
+                md: "400px",
+                lg: "500px",
+              },
             }}
           >
             <SearchBar

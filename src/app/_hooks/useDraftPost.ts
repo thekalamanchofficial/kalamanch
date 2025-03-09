@@ -1,5 +1,5 @@
 import { handleError } from "~/app/_utils/handleError";
-import { trpc } from "~/server/client";
+import { trpc } from "../_trpc/client";
 import type { CreateDraftPostProps, DraftPost, Iteration } from "../editor/types/types";
 
 type UseDraftPostRespone = {
@@ -30,7 +30,6 @@ export const useDraftPost = (): UseDraftPostRespone => {
     trpc.draftPost.updateDraftPostDetails.useMutation(createMutationOptions());
   const addDraftIterationMutation = trpc.draftPost.addIteration.useMutation();
   const addDraftPostMutation = trpc.draftPost.addDraftPost.useMutation();
-  const utils = trpc.useUtils();
 
   const getDraftPost = (draftPostId: string | null | undefined) => {
     const { data } = trpc.draftPost.getDraftPost.useQuery(draftPostId ?? "", {
@@ -42,7 +41,6 @@ export const useDraftPost = (): UseDraftPostRespone => {
   const deleteDraftPost = async (postId: string) => {
     try {
       await deleteDraftPostMutation.mutateAsync(postId);
-      await utils.draftPost.getDraftPostsForUser.invalidate();
     } catch (error) {
       console.error("Failed to delete post:", error);
       handleError(error);
@@ -65,7 +63,6 @@ export const useDraftPost = (): UseDraftPostRespone => {
   const updateDraftDetails = async (draftPostId: string, title: string) => {
     try {
       await updateDraftDetailsMutation.mutateAsync({ draftPostId, title });
-      await utils.draftPost.getDraftPostsForUser.invalidate();
     } catch (error) {
       console.error("Failed to update iteration content:", error);
       handleError(error);
@@ -83,7 +80,6 @@ export const useDraftPost = (): UseDraftPostRespone => {
 
   const addDraftPost = async (draftPost: CreateDraftPostProps) => {
     const draftPostResponse = await addDraftPostMutation.mutateAsync(draftPost);
-    await utils.draftPost.getDraftPostsForUser.invalidate();
     return draftPostResponse;
   };
 

@@ -2,7 +2,6 @@
 
 import { memo, useCallback, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useClerk } from "@clerk/nextjs";
 import { Box, Card, CardContent } from "@mui/material";
 import { type Post as PostType } from "~/app/(with-sidebar)/myfeed/types/types";
 import { usePostUnpublishing } from "~/app/editor/_hooks/usePostUnpublishing";
@@ -15,6 +14,7 @@ import FollowButton from "../followButton/FollowButton";
 import PostCardContent from "../postCardContent/PostCardContent";
 import PostCardFooter from "../postCardFooter/PostCardFooter";
 import UserNameProfile from "../userNameProfile/UserNameProfile";
+import { useUser } from "~/context/userContext";
 
 type PostProps = {
   post: PostType;
@@ -27,8 +27,8 @@ type PostProps = {
 
 const Post = memo<PostProps>(
   ({ post, userFollowing, isLiked, isBookmarked, setPosts, isUserPublishedPostFeed }) => {
-    const { user } = useClerk();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    const { user } = useUser();
+    const userEmail = user?.email;
     const [isCommentOpen, setIsCommentOpen] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
@@ -52,8 +52,8 @@ const Post = memo<PostProps>(
       postId: post.id,
       postStatus: PostStatus.PUBLISHED.toString().toUpperCase(),
       userEmail,
-      userName: user?.fullName ?? userEmail,
-      userProfileImageUrl: user?.imageUrl,
+      userName: user?.name ?? userEmail,
+      userProfileImageUrl: user?.profileImageUrl ?? "",
     });
 
     const toggleComments = useCallback(() => {
@@ -78,7 +78,7 @@ const Post = memo<PostProps>(
               AuthorName={post.authorName}
               AuthorImage={post.authorProfileImageUrl}
             />
-            {userEmail !== post.authorId && !isUserPublishedPostFeed && (
+            {user?.id !== post.authorId && !isUserPublishedPostFeed && (
               <FollowButton
                 authorProfileLink={post.authorId}
                 isFollowing={userFollowing?.includes(post.authorId)}

@@ -7,7 +7,7 @@ import type {
   CreatePostProps,
   UpdatePostDetailsProps,
 } from "~/app/(with-sidebar)/myfeed/types/types";
-import { trpc } from "~/server/client";
+import { trpc } from "../_trpc/client";
 
 type UsePostResponse = {
   publishPost: (postData: CreatePostProps) => Promise<void>;
@@ -38,12 +38,10 @@ export const usePost = (): UsePostResponse => {
   const updatePostDetailsMutation = trpc.post.updatePostDetails.useMutation(
     createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UPDATED_SUCCESS_MESSAGE),
   );
-  const utils = trpc.useUtils();
 
   const publishPost = async (postData: CreatePostProps) => {
     try {
       await addPostMutation.mutateAsync(postData);
-      await utils.post.getPosts.invalidate();
       router.push("/");
     } catch (error) {
       console.error("Failed to publish post:", error);
@@ -53,7 +51,6 @@ export const usePost = (): UsePostResponse => {
   const deletePost = async (postId: string) => {
     try {
       await deletePostMutation.mutateAsync(postId);
-      await utils.post.getPosts.invalidate();
     } catch (error) {
       console.error("Failed to delete post:", error);
     }
@@ -64,7 +61,6 @@ export const usePost = (): UsePostResponse => {
         id: postId,
         content,
       });
-      await utils.post.getPosts.invalidate();
       router.push("/");
     } catch (error) {
       console.error("Failed to update post content:", error);
@@ -74,7 +70,6 @@ export const usePost = (): UsePostResponse => {
   const updatePostDetails = async (postId: string, updatedPostDetails: UpdatePostDetailsProps) => {
     try {
       const updatedPost = await updatePostDetailsMutation.mutateAsync(updatedPostDetails);
-      await utils.post.getPosts.invalidate();
       return {
         ...updatedPost,
         createdAt: new Date(updatedPost.createdAt),

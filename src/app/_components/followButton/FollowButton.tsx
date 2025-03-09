@@ -60,6 +60,9 @@ const FollowButton: React.FC<FollowButtonProps> = ({
         fontSize: "15px",
         border: "1px solid",
         borderColor: "primary.main",
+        "&.MuiButton-root": {
+          minHeight: "32px",
+        },
         ...style,
       }}
       onClick={async () => {

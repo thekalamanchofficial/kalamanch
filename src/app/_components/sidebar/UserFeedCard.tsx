@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import ArticleIcon from "@mui/icons-material/Article";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import PersonIcon from "@mui/icons-material/Person";
@@ -21,6 +22,7 @@ import { useUser } from "~/context/userContext";
 const UserFeedCard = () => {
   const { user, isLoading } = useUser();
   const theme = useTheme();
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -61,6 +63,10 @@ const UserFeedCard = () => {
     return count >= 1000 ? `${(count / 1000).toFixed(1)}K` : count.toString();
   };
 
+  const handleProfileClick = () => {
+    router.push(`/profile/${user.id}`);
+  };
+
   const followerCount = user.followers?.length ?? 0;
   const followingCount = user.following?.length ?? 0;
   const postCount = user.posts?.length ?? 0;
@@ -87,7 +93,9 @@ const UserFeedCard = () => {
               width: 64,
               height: 64,
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              cursor: "pointer",
             }}
+            onClick={handleProfileClick}
           />
           <Box>
             <Typography
