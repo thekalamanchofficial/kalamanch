@@ -6,6 +6,7 @@ import { Box, Card, CardContent } from "@mui/material";
 import { type Post as PostType } from "~/app/(with-sidebar)/myfeed/types/types";
 import { usePostUnpublishing } from "~/app/editor/_hooks/usePostUnpublishing";
 import { PostStatus } from "~/app/editor/types/types";
+import { useUser } from "~/context/userContext";
 import { useBookmark } from "~/hooks/useBookmark";
 import { useComments } from "~/hooks/useComments";
 import { useLike } from "~/hooks/useLike";
@@ -14,7 +15,6 @@ import FollowButton from "../followButton/FollowButton";
 import PostCardContent from "../postCardContent/PostCardContent";
 import PostCardFooter from "../postCardFooter/PostCardFooter";
 import UserNameProfile from "../userNameProfile/UserNameProfile";
-import { useUser } from "~/context/userContext";
 
 type PostProps = {
   post: PostType;

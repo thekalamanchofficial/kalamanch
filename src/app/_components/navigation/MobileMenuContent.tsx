@@ -52,100 +52,101 @@ const MobileMenuContent = ({
           <ListItemButton
             onClick={() => navigateTo("/myfeed")}
             selected={pathname === "/myfeed"}
-            sx={{ 
+            sx={{
               py: 1.5,
               color: "primary.main",
               backgroundColor: pathname === "/myfeed" ? "secondary.main" : "transparent",
-              '&:hover': {
+              "&:hover": {
                 backgroundColor: pathname === "/myfeed" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
               },
-              '&.Mui-selected': {
+              "&.Mui-selected": {
                 backgroundColor: "secondary.main",
               },
-              '&.Mui-selected:hover': {
+              "&.Mui-selected:hover": {
                 backgroundColor: "secondary.main",
-              }
+              },
             }}
           >
             <ListItemIcon>
-              <HomeOutlinedIcon
-                color="primary"
-                fontSize="medium"
-              />
+              <HomeOutlinedIcon color="primary" fontSize="medium" />
             </ListItemIcon>
-            <ListItemText 
-              primary="Home" 
-              primaryTypographyProps={{ 
+            <ListItemText
+              primary="Home"
+              primaryTypographyProps={{
                 fontSize: "1.05rem",
                 fontWeight: pathname === "/myfeed" ? "bold" : "normal",
-                color: "primary.main"
-              }} 
+                color: "primary.main",
+              }}
             />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => navigateTo("/profile/" + user?.id)} 
+          <ListItemButton
+            onClick={() => navigateTo("/profile/" + user?.id)}
             selected={pathname?.startsWith("/profile/" + user?.id)}
-            sx={{ 
+            sx={{
               py: 1.5,
               color: "primary.main",
-              backgroundColor: pathname?.startsWith("/profile/" + user?.id) ? "secondary.main" : "transparent",
-              '&:hover': {
-                backgroundColor: pathname?.startsWith("/profile/" + user?.id) ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+              backgroundColor: pathname?.startsWith("/profile/" + user?.id)
+                ? "secondary.main"
+                : "transparent",
+              "&:hover": {
+                backgroundColor: pathname?.startsWith("/profile/" + user?.id)
+                  ? "secondary.main"
+                  : "rgba(0, 0, 0, 0.04)",
               },
-              '&.Mui-selected': {
+              "&.Mui-selected": {
                 backgroundColor: "secondary.main",
               },
-              '&.Mui-selected:hover': {
+              "&.Mui-selected:hover": {
                 backgroundColor: "secondary.main",
-              }
+              },
             }}
           >
             <ListItemIcon>
               <PersonIcon color="primary" fontSize="medium" />
             </ListItemIcon>
-            <ListItemText 
-              primary="My Profile" 
-              primaryTypographyProps={{ 
+            <ListItemText
+              primary="My Profile"
+              primaryTypographyProps={{
                 fontSize: "1.05rem",
                 fontWeight: pathname?.startsWith("/profile/" + user?.id) ? "bold" : "normal",
-                color: "primary.main"
-              }} 
+                color: "primary.main",
+              }}
             />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => navigateTo("/saved")} 
+          <ListItemButton
+            onClick={() => navigateTo("/saved")}
             selected={pathname === "/saved"}
-            sx={{ 
+            sx={{
               py: 1.5,
               color: "primary.main",
               backgroundColor: pathname === "/saved" ? "secondary.main" : "transparent",
-              '&:hover': {
+              "&:hover": {
                 backgroundColor: pathname === "/saved" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
               },
-              '&.Mui-selected': {
+              "&.Mui-selected": {
                 backgroundColor: "secondary.main",
               },
-              '&.Mui-selected:hover': {
+              "&.Mui-selected:hover": {
                 backgroundColor: "secondary.main",
-              }
+              },
             }}
           >
             <ListItemIcon>
               <BookmarkBorderOutlinedIcon color="primary" fontSize="medium" />
             </ListItemIcon>
-            <ListItemText 
-              primary="Saved" 
-              primaryTypographyProps={{ 
+            <ListItemText
+              primary="Saved"
+              primaryTypographyProps={{
                 fontSize: "1.05rem",
                 fontWeight: pathname === "/saved" ? "bold" : "normal",
-                color: "primary.main"
-              }} 
+                color: "primary.main",
+              }}
             />
           </ListItemButton>
         </ListItem>
@@ -163,55 +164,56 @@ const MobileMenuContent = ({
 
       <List>
         <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => navigateTo("/drafts")} 
+          <ListItemButton
+            onClick={() => navigateTo("/drafts")}
             selected={pathname === "/drafts"}
-            sx={{ 
+            sx={{
               py: 1.5,
               color: "primary.main",
               backgroundColor: pathname === "/drafts" ? "secondary.main" : "transparent",
-              '&:hover': {
+              "&:hover": {
                 backgroundColor: pathname === "/drafts" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
               },
-              '&.Mui-selected': {
+              "&.Mui-selected": {
                 backgroundColor: "secondary.main",
               },
-              '&.Mui-selected:hover': {
+              "&.Mui-selected:hover": {
                 backgroundColor: "secondary.main",
-              }
+              },
             }}
           >
             <ListItemIcon>
               <ModeEditOutlinedIcon color="primary" fontSize="medium" />
             </ListItemIcon>
-            <ListItemText 
-              primary="Drafts" 
-              primaryTypographyProps={{ 
+            <ListItemText
+              primary="Drafts"
+              primaryTypographyProps={{
                 fontSize: "1.05rem",
                 fontWeight: pathname === "/drafts" ? "bold" : "normal",
-                color: "primary.main"
-              }} 
+                color: "primary.main",
+              }}
             />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => navigateTo("/review-feedback")} 
+          <ListItemButton
+            onClick={() => navigateTo("/review-feedback")}
             selected={pathname === "/review-feedback"}
-            sx={{ 
+            sx={{
               py: 1.5,
               color: "primary.main",
               backgroundColor: pathname === "/review-feedback" ? "secondary.main" : "transparent",
-              '&:hover': {
-                backgroundColor: pathname === "/review-feedback" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
+              "&:hover": {
+                backgroundColor:
+                  pathname === "/review-feedback" ? "secondary.main" : "rgba(0, 0, 0, 0.04)",
               },
-              '&.Mui-selected': {
+              "&.Mui-selected": {
                 backgroundColor: "secondary.main",
               },
-              '&.Mui-selected:hover': {
+              "&.Mui-selected:hover": {
                 backgroundColor: "secondary.main",
-              }
+              },
             }}
           >
             <ListItemIcon>
@@ -219,10 +221,10 @@ const MobileMenuContent = ({
             </ListItemIcon>
             <ListItemText
               primary="Review Feedback"
-              primaryTypographyProps={{ 
+              primaryTypographyProps={{
                 fontSize: "1.05rem",
                 fontWeight: pathname === "/review-feedback" ? "bold" : "normal",
-                color: "primary.main"
+                color: "primary.main",
               }}
             />
           </ListItemButton>
@@ -233,22 +235,22 @@ const MobileMenuContent = ({
 
       <List>
         <ListItem disablePadding>
-          <ListItemButton 
-            onClick={handleLogout} 
-            sx={{ 
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
               py: 1.5,
-              color: "primary.main"
+              color: "primary.main",
             }}
           >
             <ListItemIcon>
               <LogoutIcon color="primary" fontSize="medium" />
             </ListItemIcon>
-            <ListItemText 
-              primary="Logout" 
-              primaryTypographyProps={{ 
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{
                 fontSize: "1.05rem",
-                color: "primary.main"
-              }} 
+                color: "primary.main",
+              }}
             />
           </ListItemButton>
         </ListItem>

@@ -82,18 +82,15 @@ const RightSideBar = () => {
                     }}
                   >
                     <Link
-                      href={`/article/${item.id}`}
+                      href={`/posts/${item.id}`}
                       style={{ textDecoration: "none", width: "100%" }}
                     >
                       <Typography
                         sx={{
-                          color: "text.primary",
+                          color: "primary.main",
                           fontWeight: "550",
                           fontSize: "14px",
                           lineHeight: 1.4,
-                          "&:hover": {
-                            color: "primary.main",
-                          },
                         }}
                       >
                         {item.title}

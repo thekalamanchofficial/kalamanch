@@ -85,7 +85,14 @@ const UserFeedCard = () => {
     >
       <CardContent sx={{ p: 2.5 }}>
         {/* Profile header with avatar and name */}
-        <Stack direction="row" spacing={2} alignItems="center" mb={2}>
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          mb={2}
+          sx={{ cursor: "pointer" }}
+          onClick={handleProfileClick}
+        >
           <Avatar
             src={user.profileImageUrl}
             alt={user.name}
@@ -93,9 +100,7 @@ const UserFeedCard = () => {
               width: 64,
               height: 64,
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              cursor: "pointer",
             }}
-            onClick={handleProfileClick}
           />
           <Box>
             <Typography
