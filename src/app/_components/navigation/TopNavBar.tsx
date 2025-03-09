@@ -51,15 +51,6 @@ const TopNavBar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setShowSearchResults(false);
-      setMobileMenuOpen(false);
-    }
-  };
-
   const handleTodoMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setTodoMenuAnchor(event.currentTarget);
   };
@@ -134,7 +125,7 @@ const TopNavBar = () => {
               <MenuIcon />
             </IconButton>
 
-            <Logo onClick={() => router.push("/myfeed")} />
+            <Logo onClick={() => router.push("/myfeed")} isMobile={false} />
           </Box>
 
           <Box
@@ -154,7 +145,6 @@ const TopNavBar = () => {
               setSearchQuery={setSearchQuery}
               showSearchResults={showSearchResults}
               setShowSearchResults={setShowSearchResults}
-              handleSearch={handleSearch}
             />
           </Box>
 
@@ -170,7 +160,6 @@ const TopNavBar = () => {
               setSearchQuery={setSearchQuery}
               showSearchResults={showSearchResults}
               setShowSearchResults={setShowSearchResults}
-              handleSearch={handleSearch}
             />
           </Box>
 

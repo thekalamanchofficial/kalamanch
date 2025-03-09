@@ -42,8 +42,14 @@ type ProfilesListProps = {
 
 const ProfilesList = memo(({ profiles, isTablet }: ProfilesListProps) => {
   const theme = useTheme();
+  const { user } = useUser();
 
-  const profileCount = useMemo(() => profiles.length, [profiles.length]);
+  const filteredProfiles = useMemo(
+    () => profiles.filter((profile) => profile.id !== user?.id),
+    [profiles, user?.id],
+  );
+
+  const profileCount = useMemo(() => filteredProfiles.length, [filteredProfiles.length]);
 
   return (
     <Grow in timeout={400} appear={true}>
@@ -80,7 +86,7 @@ const ProfilesList = memo(({ profiles, isTablet }: ProfilesListProps) => {
           </Box>
 
           <Grid container spacing={isTablet ? 2 : 3}>
-            {profiles.map((profile, index) => (
+            {filteredProfiles.map((profile, index) => (
               <ProfileCard key={profile.id} profile={profile} index={index} isTablet={isTablet} />
             ))}
           </Grid>
@@ -250,9 +256,7 @@ const FollowButton: React.FC<{ userId: string }> = memo(({ userId }) => {
   const { mutate: followUser, isPending } = trpc.user.followUser.useMutation({
     onSuccess: () => {
       void utils.user.getUserDetailsById.invalidate(userId);
-      if (user?.id) {
-        void utils.user.getUserDetailsById.invalidate(user.id);
-      }
+      void utils.user.getUserDetails.invalidate();
     },
     onError: () => {
       toast.error("Failed to follow user. Please try again.");

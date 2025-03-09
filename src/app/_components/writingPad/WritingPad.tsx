@@ -97,7 +97,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
         postStatus={postStatus}
         handleOpen={handleOpen}
         handleSubmit={handleSubmit(onPublishPost)}
-        handleSaveDraft={saveDraftInstantly}
+        handleSaveDraft={() => saveDraftInstantly(true, title)}
         handleSendForReview={handleSendForReview}
         draftPostId={draftPostId}
         handleOpenPublishPostForm={handleOpenPublishPostForm}

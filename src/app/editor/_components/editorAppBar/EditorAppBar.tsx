@@ -90,6 +90,7 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
         >
           <EditorLeftSideBarForIterations
             showIterations={Boolean(draftPost)}
+            showImportText={Boolean(draftPost)}
             iterations={draftPost?.iterations ?? []}
             handleSaveLastIterationData={handleSaveLastIterationData}
             handleAddIteration={handleAddIteration}

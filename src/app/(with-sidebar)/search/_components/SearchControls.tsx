@@ -15,17 +15,12 @@ import {
   useTheme,
   type Theme,
 } from "@mui/material";
-import {
-  FILTER_OPTIONS,
-  SORT_OPTIONS,
-  type FilterTypeOption,
-  type SortByOption,
-} from "../_config/config";
+import { FILTER_OPTIONS, FilterTypeEnum, SORT_OPTIONS, type SortByEnum } from "../_config/config";
 
 type SearchControlsProps = {
   isMobile: boolean;
-  sortBy: SortByOption;
-  filterType: FilterTypeOption;
+  sortBy: SortByEnum;
+  filterType: FilterTypeEnum;
   onSortChange: (value: string) => void;
   onFilterChange: (value: string) => void;
 };
@@ -135,13 +130,13 @@ const SearchControls = memo(
     const theme = useTheme();
 
     // Get filter icon based on filter type
-    const getFilterIcon = (type: FilterTypeOption) => {
+    const getFilterIcon = (type: FilterTypeEnum) => {
       switch (type) {
-        case "all":
+        case FilterTypeEnum.ALL:
           return <SearchIcon fontSize="small" />;
-        case "people":
+        case FilterTypeEnum.PEOPLE:
           return <PersonIcon fontSize="small" />;
-        case "posts":
+        case FilterTypeEnum.POSTS:
           return <ArticleIcon fontSize="small" />;
         default:
           return <SearchIcon fontSize="small" />;
@@ -203,7 +198,7 @@ const SearchControls = memo(
                 {Object.entries(FILTER_OPTIONS).map(([value, label]) => (
                   <FilterButton
                     key={value}
-                    icon={getFilterIcon(value as FilterTypeOption)}
+                    icon={getFilterIcon(value as FilterTypeEnum)}
                     label={label}
                     value={value}
                     currentValue={filterType}

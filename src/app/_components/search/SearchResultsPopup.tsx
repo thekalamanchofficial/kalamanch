@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import SearchIcon from "@mui/icons-material/Search";
 import { alpha, Box, CircularProgress, Divider, Link, Paper, Typography } from "@mui/material";
 import { trpc } from "~/app/_trpc/client";
-import { SEARCH_RESULTS_CACHE_TIME } from "~/app/(with-sidebar)/search/_config/config";
+import {
+  FilterTypeEnum,
+  SEARCH_RESULTS_CACHE_TIME,
+  SortByEnum,
+} from "~/app/(with-sidebar)/search/_config/config";
 import { PostResults } from "./PostResults";
 import { ProfileResults } from "./ProfileResults";
 import type { SearchResultsPopupProps } from "./types/types";
@@ -103,7 +107,7 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
       searchQuery,
       limit: 5,
       skip: 0,
-      sortBy: "relevant",
+      sortBy: SortByEnum.RELEVANT,
     },
     {
       enabled: searchQuery.length > 0,
@@ -116,7 +120,7 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
       searchQuery,
       limit: 5,
       skip: 0,
-      sortBy: "recent",
+      sortBy: SortByEnum.RECENT,
     },
     {
       enabled: searchQuery.length > 0,
@@ -128,23 +132,25 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
     (e: KeyboardEvent) => {
       if (e.key === "Enter" && searchQuery.trim().length > 0) {
         e.preventDefault();
-        router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        router.push(
+          `/search?q=${encodeURIComponent(searchQuery.trim())}&sortBy=${SortByEnum.RELEVANT}&filterType=${FilterTypeEnum.ALL}`,
+        );
         onClose?.();
       }
     },
     [searchQuery, router, onClose],
   );
 
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyPress);
-    return () => document.removeEventListener("keydown", handleKeyPress);
-  }, [handleKeyPress]);
-
   const isLoading = isProfilesLoading || isPostsLoading;
   const profiles = profilesData?.profiles ?? [];
   const postsResult = Array.isArray(postsData) ? { posts: [] } : (postsData ?? { posts: [] });
   const posts = postsResult.posts;
   const hasResults = profiles.length > 0 || posts.length > 0;
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+    return () => document.removeEventListener("keydown", handleKeyPress);
+  }, [handleKeyPress]);
 
   return (
     <Paper
@@ -214,7 +220,9 @@ const SearchResultsPopup: React.FC<SearchResultsPopupProps> = ({ searchQuery, on
               },
             }}
           >
-            <Link href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}>
+            <Link
+              href={`/search?q=${encodeURIComponent(searchQuery.trim())}&sortBy=${SortByEnum.RELEVANT}&filterType=${FilterTypeEnum.ALL}`}
+            >
               <Typography variant="body2" color="primary" sx={{ fontWeight: 500 }}>
                 View all results
               </Typography>

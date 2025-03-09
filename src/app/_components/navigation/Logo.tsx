@@ -6,9 +6,10 @@ import OwlSVG from "~/assets/svg/owl.svg";
 
 export type LogoProps = {
   onClick: () => void;
+  isMobile: boolean;
 };
 
-const Logo = ({ onClick }: LogoProps) => {
+const Logo = ({ onClick, isMobile }: LogoProps) => {
   return (
     <Box
       sx={{
@@ -23,7 +24,10 @@ const Logo = ({ onClick }: LogoProps) => {
         variant="h5"
         fontWeight="bold"
         color="primary"
-        sx={{ ml: 1, display: { xs: "none", sm: "block" } }}
+        sx={{
+          ml: 1,
+          display: isMobile ? { xs: "block", lg: "none" } : { xs: "none", lg: "block" },
+        }}
       >
         {STATIC_TEXTS.APP_TITLE}
       </Typography>

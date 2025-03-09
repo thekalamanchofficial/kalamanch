@@ -1,13 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { IconButton } from "@mui/material";
 
 export default function BackButton() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <IconButton
       aria-label="Go back"
-      onClick={() => window.history.back()}
+      onClick={handleBack}
       sx={{
         mr: 1,
         minHeight: 40,

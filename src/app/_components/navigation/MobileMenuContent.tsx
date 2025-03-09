@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import CreatePostFormButton from "~/app/_components/sidebar/CreatePostFormButton";
 import type { UserSchema } from "~/app/(with-sidebar)/profile/types/types";
+import Logo from "./Logo";
 
 export type MobileMenuContentProps = {
   user: UserSchema | null;
@@ -38,23 +39,9 @@ const MobileMenuContent = ({
 }: MobileMenuContentProps) => {
   return (
     <Box sx={{ width: 300, pt: 2 }} role="presentation">
-      {user && (
-        <Box sx={{ px: 2, py: 1.5, display: "flex", alignItems: "center", gap: 2 }}>
-          <Avatar
-            src={user.profileImageUrl}
-            alt={user.name ?? "User"}
-            sx={{ width: 44, height: 44 }}
-          />
-          <Box>
-            <Typography variant="subtitle1" fontWeight="bold" fontSize="1.1rem">
-              {user.name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" noWrap>
-              {clerkUser?.primaryEmailAddress?.emailAddress}
-            </Typography>
-          </Box>
-        </Box>
-      )}
+      <Box sx={{ px: 2, mb: 2 }}>
+        <Logo onClick={() => navigateTo("/myfeed")} isMobile={true} />
+      </Box>
 
       <Divider sx={{ my: 1 }} />
 
@@ -141,6 +128,27 @@ const MobileMenuContent = ({
           </ListItemButton>
         </ListItem>
       </List>
+
+      {user && (
+        <>
+          <Divider sx={{ my: 1 }} />
+          <Box sx={{ px: 2, py: 1.5, display: "flex", alignItems: "center", gap: 2 }}>
+            <Avatar
+              src={user.profileImageUrl}
+              alt={user.name ?? "User"}
+              sx={{ width: 44, height: 44 }}
+            />
+            <Box>
+              <Typography variant="subtitle1" fontWeight="bold" fontSize="1.1rem">
+                {user.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" noWrap>
+                {clerkUser?.primaryEmailAddress?.emailAddress}
+              </Typography>
+            </Box>
+          </Box>
+        </>
+      )}
     </Box>
   );
 };

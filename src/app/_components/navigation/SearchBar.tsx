@@ -19,7 +19,6 @@ export type SearchBarProps = {
   setSearchQuery: (query: string) => void;
   showSearchResults: boolean;
   setShowSearchResults: (show: boolean) => void;
-  handleSearch: (e: React.FormEvent) => void;
 };
 
 const SearchBar = ({
@@ -27,7 +26,6 @@ const SearchBar = ({
   setSearchQuery,
   showSearchResults,
   setShowSearchResults,
-  handleSearch,
 }: SearchBarProps) => {
   const theme = useTheme();
   const searchResultsRef = React.useRef<HTMLDivElement | null>(null);
@@ -71,83 +69,81 @@ const SearchBar = ({
             zIndex: 1000,
           }}
         >
-          <form onSubmit={handleSearch}>
-            <TextField
-              placeholder="Search posts, people, topics..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onFocus={handleFocus}
-              fullWidth
-              size="medium"
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color="primary" sx={{ fontSize: "1.3rem", ml: 0.5 }} />
-                    </InputAdornment>
-                  ),
-                  endAdornment: searchQuery ? (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="clear search"
-                        onClick={handleClearSearch}
-                        edge="end"
-                        size="small"
-                        sx={{ mr: 0.5 }}
-                        onMouseDown={(e) => e.preventDefault()}
+          <TextField
+            placeholder="Search posts, people, topics..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onFocus={handleFocus}
+            fullWidth
+            size="medium"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color="primary" sx={{ fontSize: "1.3rem", ml: 0.5 }} />
+                  </InputAdornment>
+                ),
+                endAdornment: searchQuery ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="clear search"
+                      onClick={handleClearSearch}
+                      edge="end"
+                      size="small"
+                      sx={{ mr: 0.5 }}
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
+                      <Box
+                        sx={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "0.8rem",
+                          fontWeight: "bold",
+                          color: theme.palette.text.secondary,
+                        }}
                       >
-                        <Box
-                          sx={{
-                            width: 16,
-                            height: 16,
-                            borderRadius: "50%",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "0.8rem",
-                            fontWeight: "bold",
-                            color: theme.palette.text.secondary,
-                          }}
-                        >
-                          <CloseIcon fontSize="small" />
-                        </Box>
-                      </IconButton>
-                    </InputAdornment>
-                  ) : null,
+                        <CloseIcon fontSize="small" />
+                      </Box>
+                    </IconButton>
+                  </InputAdornment>
+                ) : null,
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                height: 44,
+                borderRadius: "24px",
+                backgroundColor: alpha(theme.palette.common.black, 0.04),
+                transition: "all 0.2s ease",
+                pl: 1,
+                pr: searchQuery ? 0.5 : 2,
+                "&:hover": {
+                  backgroundColor: alpha(theme.palette.common.black, 0.06),
+                  boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
                 },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  height: 44,
-                  borderRadius: "24px",
-                  backgroundColor: alpha(theme.palette.common.black, 0.04),
-                  transition: "all 0.2s ease",
-                  pl: 1,
-                  pr: searchQuery ? 0.5 : 2,
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.common.black, 0.06),
-                    boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
-                  },
-                  "&.Mui-focused": {
-                    backgroundColor: "white",
-                    boxShadow: "0 3px 12px rgba(0,0,0,0.12)",
-                    borderColor: theme.palette.primary.main,
-                    borderWidth: 1,
-                  },
+                "&.Mui-focused": {
+                  backgroundColor: "white",
+                  boxShadow: "0 3px 12px rgba(0,0,0,0.12)",
+                  borderColor: theme.palette.primary.main,
+                  borderWidth: 1,
                 },
-                "& .MuiInputBase-input": {
-                  fontSize: "1rem",
-                  "&::placeholder": {
-                    opacity: 0.4,
-                    fontStyle: "italic",
-                  },
+              },
+              "& .MuiInputBase-input": {
+                fontSize: "1rem",
+                "&::placeholder": {
+                  opacity: 0.4,
+                  fontStyle: "italic",
                 },
-                "& .MuiButtonBase-root": {
-                  minHeight: 23,
-                },
-              }}
-            />
-          </form>
+              },
+              "& .MuiButtonBase-root": {
+                minHeight: 23,
+              },
+            }}
+          />
           {showSearchResults && (
             <Box
               ref={searchResultsRef}
