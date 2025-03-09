@@ -159,10 +159,13 @@ const MyFeed = () => {
         sx={{
           overflowY: "scroll",
           width: "100%",
-          height: "100%",
+          minHeight: "calc(100vh - 100px)",
           scrollbarWidth: "none",
           mt: 1,
           pl: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
         {renderUI}

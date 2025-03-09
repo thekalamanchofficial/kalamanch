@@ -1,5 +1,5 @@
 import { handleError } from "~/app/_utils/handleError";
-import { trpc } from "~/server/client";
+import { trpc } from "../_trpc/client";
 import type { CreateDraftPostProps, DraftPost, Iteration } from "../editor/types/types";
 
 type UseDraftPostRespone = {

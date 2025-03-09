@@ -149,7 +149,15 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
   // Handle content change in the editor
   const handleEditorContentChange = useCallback(
     async (content: string, iterationId: string, showToast?: boolean, title?: string) => {
-      if (!draftPostId) return console.warn("Missing draftPostId ");
+      if (!draftPostId) {
+        toast.error("Missing draftPostId");
+        return;
+      }
+      if (!title) {
+        toast.error("Title is required");
+        return;
+      }
+
       const iterationName = draftPost?.iterations?.find(
         (it) => it.id === iterationId,
       )?.iterationName;
@@ -160,7 +168,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
           content,
         );
 
-        await updateDraftDetails(draftPostId, title ?? "");
+        await updateDraftDetails(draftPostId, title);
 
         setDraftPost((prev) => {
           if (!prev) return null;
@@ -204,7 +212,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
       authorId: user?.id ?? "",
       authorName: user?.name ?? "",
       authorProfileImageUrl: user?.profileImageUrl ?? "",
-      title: title ?? "",
+      title: title,
       postTypeId,
       actors: actors ?? [],
       tags: tags ?? [],

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash/debounce";
 import throttle from "lodash/throttle";
@@ -90,7 +91,12 @@ export const useDraftContentAutosave = ({
 
   const saveContent = useCallback(
     (data: string, iterationId: string, showToast?: boolean, title?: string) => {
-      if (data === lastSavedContent) return;
+      if (data === lastSavedContent) {
+        if (showToast) {
+          toast.success("Draft saved successfully!");
+        }
+        return;
+      }
       setLastSavedContent(data);
       saveContentToDb(data, iterationId, showToast, title);
     },

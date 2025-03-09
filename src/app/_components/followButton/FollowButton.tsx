@@ -11,11 +11,25 @@ const FollowButton: React.FC<FollowButtonProps> = ({
   isFollowing = false,
 }) => {
   const { user } = useClerk();
+  const utils = trpc.useUtils();
 
   const [isFollowingState, setIsFollowingState] = useState(isFollowing);
 
   const userMutation = trpc.user;
-  const followUser = userMutation.followUser.useMutation();
+  const followUser = userMutation.followUser.useMutation({
+    onSuccess: async () => {
+      await utils.user.getUserDetails.invalidate();
+
+      if (user?.primaryEmailAddress?.emailAddress) {
+        await utils.user.getUserDetails.invalidate(user.primaryEmailAddress.emailAddress);
+        await utils.user.getUserDetailsById.invalidate(user.primaryEmailAddress.emailAddress);
+      }
+
+      if (authorProfileLink) {
+        await utils.user.getUserDetailsById.invalidate(authorProfileLink);
+      }
+    },
+  });
 
   const followWriter = async () => {
     const userEmail = user?.primaryEmailAddress?.emailAddress;
@@ -44,6 +58,11 @@ const FollowButton: React.FC<FollowButtonProps> = ({
         height: "25px",
         margin: "3px 5px ",
         fontSize: "15px",
+        border: "1px solid",
+        borderColor: "primary.main",
+        "&.MuiButton-root": {
+          minHeight: "32px",
+        },
         ...style,
       }}
       onClick={async () => {
