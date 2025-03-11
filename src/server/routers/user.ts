@@ -3,6 +3,11 @@ import * as yup from "yup";
 import { handleError } from "~/app/_utils/handleError";
 import prisma from "~/server/db";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
+import {
+  createUserSearchCondition,
+  sortProfilesByPopularity,
+  sortProfilesByRelevance,
+} from "../utils/searchUtils";
 
 const userSchema = yup.object({
   email: yup.string().email().required(),
@@ -61,6 +66,19 @@ export const userRouter = router({
       },
     });
 
+    return userDetails;
+  }),
+
+  getUserDetailsById: publicProcedure.input(yup.string().required()).query(async ({ input }) => {
+    if (!input) {
+      throw new Error("User ID is required");
+    }
+    const userDetails = await prisma.user.findUnique({
+      where: { id: input },
+      include: {
+        posts: true,
+      },
+    });
     return userDetails;
   }),
 
@@ -331,5 +349,60 @@ export const userRouter = router({
         },
       });
       return user;
+    }),
+
+  searchProfiles: publicProcedure
+    .input(
+      yup.object({
+        searchQuery: yup.string().required(),
+        limit: yup.number().default(10),
+        skip: yup.number().default(0),
+        sortBy: yup.string().oneOf(["recent", "popular", "relevant"]).default("relevant"),
+      }),
+    )
+    .query(async ({ input }) => {
+      const baseWhere = createUserSearchCondition(input.searchQuery);
+      const searchTerms = input.searchQuery.toLowerCase().split(" ");
+
+      const totalCount = await prisma.user.count({ where: baseWhere });
+
+      if (input.sortBy === "popular") {
+        return await sortProfilesByPopularity(baseWhere, input.limit, input.skip, totalCount);
+      } else if (input.sortBy === "relevant") {
+        return await sortProfilesByRelevance(
+          baseWhere,
+          searchTerms,
+          input.searchQuery,
+          input.limit,
+          input.skip,
+          totalCount,
+        );
+      }
+
+      const profiles = await prisma.user.findMany({
+        where: baseWhere,
+        take: input.limit,
+        skip: input.skip,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          name: true,
+          bio: true,
+          profileImageUrl: true,
+          coverImageUrl: true,
+          readingInterests: true,
+          writingInterests: true,
+          followers: true,
+          following: true,
+        },
+      });
+
+      const hasMore = totalCount > input.skip + profiles.length;
+
+      return {
+        profiles,
+        totalCount,
+        hasMore,
+      };
     }),
 });

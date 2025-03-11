@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { Box, Chip, Grid2 as Grid, Typography, useMediaQuery, type Theme } from "@mui/material";
+import { Box, Chip, Grid2 as Grid, Typography } from "@mui/material";
 import FollowButton from "~/app/_components/followButton/FollowButton";
 import { trpc } from "~/server/client";
 import SeeMoreButton from "../seeMoreButton/SeeMoreButton";
@@ -16,8 +16,6 @@ import RightSideBarSkeletonAuthor from "./RightSideBarSkeletonAuthor";
 import RightSideBarSkeletonPost from "./RightSideBarSkeletonPost";
 
 const RightSideBar = () => {
-  const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
-
   const { user } = useClerk();
   const router = useRouter();
   const featuredPostMutation = trpc.featuredPost;
@@ -44,58 +42,55 @@ const RightSideBar = () => {
   };
 
   return (
-    <>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
       <Box
         sx={{
           backgroundColor: "white",
-          borderRadius: "5px",
-          width: isSmallScreen ? "auto" : "100%",
+          borderRadius: 2,
+          width: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "start",
-          alignItems: "start",
-          px: "12px",
-          py: "8px",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          overflow: "hidden",
         }}
       >
-        <Typography
-          sx={{
-            color: "text.primary",
-            fontSize: "18px",
-            fontWeight: "550",
-            mt: "2px",
-          }}
-        >
-          Featured Writings
-        </Typography>
-        <Grid container spacing={1}>
-          {featuredPostLoading ? (
-            <RightSideBarSkeletonPost />
-          ) : (featuredPostData?.featuredPosts?.length ?? 0) > 0 ? (
-            featuredPostData?.featuredPosts.map((item, index) => {
-              return (
+        <Box sx={{ p: 2, pb: 1 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: "18px",
+              fontWeight: "550",
+              color: "text.primary",
+            }}
+          >
+            Featured Writings
+          </Typography>
+        </Box>
+        <Box sx={{ px: 2, pb: 2 }}>
+          <Grid container spacing={2}>
+            {featuredPostLoading ? (
+              <RightSideBarSkeletonPost />
+            ) : (featuredPostData?.featuredPosts?.length ?? 0) > 0 ? (
+              featuredPostData?.featuredPosts.map((item, index) => (
                 <Grid size={12} key={index}>
                   <Box
                     sx={{
                       width: "100%",
                       display: "flex",
                       flexDirection: "column",
-                      justifyContent: "start",
-                      alignItems: "start",
-                      pt: "3px",
+                      gap: 1,
                     }}
                   >
                     <Link
-                      href={`/article/${item.id}`}
-                      style={{ textDecoration: "none", color: "text.primary" }}
+                      href={`/posts/${item.id}`}
+                      style={{ textDecoration: "none", width: "100%" }}
                     >
                       <Typography
                         sx={{
-                          color: "font.primary",
+                          color: "primary.main",
                           fontWeight: "550",
-                          ":visited": {
-                            color: "font.primary",
-                          },
+                          fontSize: "14px",
+                          lineHeight: 1.4,
                         }}
                       >
                         {item.title}
@@ -107,172 +102,175 @@ const RightSideBar = () => {
                         justifyContent: "space-between",
                         alignItems: "center",
                         width: "100%",
-                        py: "8px",
                       }}
                     >
                       <Link href={`/profile/${item.authorId}`} style={{ textDecoration: "none" }}>
                         <UserNameProfile
-                          ImageHeight={25}
-                          ImageWidth={25}
-                          NameFontSize={15}
+                          ImageHeight={24}
+                          ImageWidth={24}
+                          NameFontSize={13}
                           NameFontWeight="400"
                           AuthorName={item.authorName}
                           AuthorImage={item.authorProfileImageUrl}
                         />
                       </Link>
-                      <Box
+                      <Chip
+                        label={item.likeCount}
+                        icon={<FavoriteBorderIcon sx={{ fontSize: "16px" }} />}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
+                          height: "24px",
+                          "& .MuiChip-label": {
+                            px: 1,
+                            fontSize: "12px",
+                          },
                         }}
-                      >
-                        <Chip
-                          label={item.likeCount}
-                          icon={<FavoriteBorderIcon />}
-                          sx={{
-                            backgroundColor: "white",
-                          }}
-                        />
-                      </Box>
+                      />
                     </Box>
                   </Box>
                 </Grid>
-              );
-            })
-          ) : (
-            <Typography
-              variant="caption"
-              sx={{
-                textAlign: "center",
-                padding: "10px",
-                margin: "10px",
-              }}
-            >
-              {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_POST}
-            </Typography>
+              ))
+            ) : (
+              <Grid size={12}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "block",
+                    textAlign: "center",
+                    py: 2,
+                  }}
+                >
+                  {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_POST}
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
+          {featuredPostData?.hasMore && (
+            <Box sx={{ mt: 2 }}>
+              <SeeMoreButton onClick={() => handleSeeMore("/featured")} />
+            </Box>
           )}
-          {featuredPostData?.hasMore ? (
-            <SeeMoreButton onClick={() => handleSeeMore("/featured")} />
-          ) : null}
-        </Grid>
+        </Box>
       </Box>
 
       <Box
         sx={{
           backgroundColor: "white",
-          borderRadius: "5px",
-          width: isSmallScreen ? "auto" : "100%",
+          borderRadius: 2,
+          width: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "start",
-          alignItems: "start",
-          px: "12px",
-          py: "8px",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          overflow: "hidden",
         }}
       >
-        <Typography
-          sx={{
-            color: "text.primary",
-            fontSize: "18px",
-            fontWeight: "550",
-            mt: "2px",
-            marginBottom: "10px",
-          }}
-        >
-          Top writers to follow
-        </Typography>
-        <Grid container spacing={2}>
-          {usersToFollowLoading ? (
-            <RightSideBarSkeletonAuthor />
-          ) : (usersToFollowData?.featuredAuthor?.length ?? 0 > 0) ? (
-            usersToFollowData?.featuredAuthor.map((item, index) => {
-              const isFollowing = usersAlreadyFollowing?.includes(item.userId);
-
-              return (
-                <Grid size={12} key={index}>
-                  <Box
-                    sx={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "start",
-                      alignItems: "start",
-                      pt: "3px",
-                    }}
-                  >
-                    <Link
-                      style={{
-                        textDecoration: "none",
-                      }}
-                      href={`/profile/${item.userId}`}
-                    >
-                      <Image
-                        alt="profile picture "
-                        src={item.profileImageUrl}
-                        width={40}
-                        height={40}
-                        style={{
-                          borderRadius: "100%",
-                        }}
-                      ></Image>
-                    </Link>
+        <Box sx={{ p: 2, pb: 1 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: "18px",
+              fontWeight: "550",
+              color: "text.primary",
+            }}
+          >
+            Top writers to follow
+          </Typography>
+        </Box>
+        <Box sx={{ px: 2, pb: 2 }}>
+          <Grid container spacing={2}>
+            {usersToFollowLoading ? (
+              <RightSideBarSkeletonAuthor />
+            ) : (usersToFollowData?.featuredAuthor?.length ?? 0) > 0 ? (
+              usersToFollowData?.featuredAuthor.map((item, index) => {
+                const isFollowing = usersAlreadyFollowing?.includes(item.userId);
+                return (
+                  <Grid size={12} key={index}>
                     <Box
                       sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "start",
-                        alignItems: "start",
                         width: "100%",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 1.5,
                       }}
                     >
                       <Link
+                        href={`/profile/${item.userId}`}
                         style={{
                           textDecoration: "none",
+                          flexShrink: 0,
                         }}
-                        href={`/profile/${item.userId}`}
                       >
-                        <Typography
-                          sx={{
-                            fontSize: "15px",
-                            color: "text.primary",
-                            marginLeft: "8px",
+                        <Image
+                          alt={`${item.name}'s profile picture`}
+                          src={item.profileImageUrl}
+                          width={36}
+                          height={36}
+                          style={{
+                            borderRadius: "50%",
+                            objectFit: "cover",
                           }}
-                        >
-                          {item.name}
-                        </Typography>
+                        />
                       </Link>
-                      <FollowButton
-                        authorProfileLink={item.userId}
-                        style={{
-                          height: "20px",
-                          width: "80px",
-                          padding: "12px",
+                      <Box
+                        sx={{
+                          flex: 1,
+                          minWidth: 0,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 0.5,
                         }}
-                        isFollowing={isFollowing}
-                      />
+                      >
+                        <Link href={`/profile/${item.userId}`} style={{ textDecoration: "none" }}>
+                          <Typography
+                            sx={{
+                              fontSize: "14px",
+                              fontWeight: "500",
+                              color: "text.primary",
+                              "&:hover": {
+                                color: "primary.main",
+                              },
+                            }}
+                          >
+                            {item.name}
+                          </Typography>
+                        </Link>
+                        <FollowButton
+                          authorProfileLink={item.userId}
+                          style={{
+                            height: "28px",
+                            minWidth: "80px",
+                            padding: "4px 12px",
+                            fontSize: "13px",
+                          }}
+                          isFollowing={isFollowing}
+                        />
+                      </Box>
                     </Box>
-                  </Box>
-                </Grid>
-              );
-            })
-          ) : (
-            <Typography
-              variant="caption"
-              sx={{
-                textAlign: "center",
-                padding: "10px",
-                margin: "10px",
-              }}
-            >
-              {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_AUTHOR}
-            </Typography>
+                  </Grid>
+                );
+              })
+            ) : (
+              <Grid size={12}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "block",
+                    textAlign: "center",
+                    py: 2,
+                  }}
+                >
+                  {STATIC_TEXTS.FEATURED_PAGE.MESSAGES.NO_AUTHOR}
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
+          {usersToFollowData?.hasMoreAuthor && (
+            <Box sx={{ mt: 2 }}>
+              <SeeMoreButton onClick={() => handleSeeMore("/featured/author")} />
+            </Box>
           )}
-          {usersToFollowData?.hasMoreAuthor ? (
-            <SeeMoreButton onClick={() => handleSeeMore("/featured/author")} />
-          ) : null}
-        </Grid>
+        </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 

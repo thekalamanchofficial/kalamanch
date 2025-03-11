@@ -7,7 +7,7 @@ import type {
   CreatePostProps,
   UpdatePostDetailsProps,
 } from "~/app/(with-sidebar)/myfeed/types/types";
-import { trpc } from "~/server/client";
+import { trpc } from "../_trpc/client";
 
 type UsePostResponse = {
   publishPost: (postData: CreatePostProps) => Promise<void>;
