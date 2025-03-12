@@ -18,6 +18,7 @@ export const contactUsRouter = router({
         data: {
           userEmail: email,
           message,
+          name,
         },
       });
     } catch (error) {

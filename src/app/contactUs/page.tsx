@@ -28,7 +28,11 @@ const Page = () => {
   const contactUsProcedure = trpc.contactUsRouter.contactUs.useMutation({
     onSuccess: () => {
       setSubmissionStatus("success");
-      reset();
+      reset({
+        name: "",
+        email: "",
+        message: "",
+      });
     },
   });
 

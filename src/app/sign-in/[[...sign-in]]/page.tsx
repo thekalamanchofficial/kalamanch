@@ -30,15 +30,29 @@ const SignInPage = () => {
           px: 6,
           pt: 14,
           pb: 13,
+          backgroundImage: (theme) =>
+            `linear-gradient(to top left, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
         }}
         container
         spacing={2}
       >
-        <Grid size={{ xs: 12, sm: 8, md: 6, lg: 4 }}>
-          <Typography variant="h1" mb={3} color="primary.main">
+        <Grid
+          size={{ xs: 12, sm: 8, md: 6, lg: 4 }}
+          sx={{ textAlign: { xs: "center", sm: "center", md: "center", lg: "left" } }}
+        >
+          <Typography
+            variant="h1"
+            mb={3}
+            color="primary.main"
+            sx={{ fontSize: { xs: "50px", sm: "50px", md: "40px", lg: "100px" } }}
+          >
             {STATIC_TEXTS.APP_TITLE}
           </Typography>
-          <Typography variant="h6" color="text.secondary">
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ fontSize: { xs: "20px", sm: "20px", md: "25px", lg: "30px" } }}
+          >
             Kalamanch helps you hone your writing skills and collaborate with fellow artists.
           </Typography>
         </Grid>

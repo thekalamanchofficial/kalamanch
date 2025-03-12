@@ -11,7 +11,7 @@ const onFailure = async ({
   if (!originalEventData) {
     throw new Error("Failed to send failure notification email: original event data not found");
   }
-  const { userEmail, message } = originalEventData;
+  const { userEmail, message, name } = originalEventData;
 
   try {
     await sendEmail({
@@ -20,7 +20,7 @@ const onFailure = async ({
       template: "contact-us-failure",
       context: {
         message,
-        userEmail,
+        name,
         senderEmail: userEmail,
       },
     });

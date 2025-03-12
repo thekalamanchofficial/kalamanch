@@ -16,6 +16,7 @@ export type ContactUsPayload = {
   data: {
     userEmail: string;
     message: string;
+    name: string;
   };
 };
 

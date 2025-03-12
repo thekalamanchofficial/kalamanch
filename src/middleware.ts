@@ -5,7 +5,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/about(.*)",
-  "/contact(.*)",
+  "/contactUs(.*)",
   "/api/webhooks(.*)",
   "/api/inngest(.*)",
   "/api/trpc/presignedR2Url(.*)",
@@ -14,12 +14,17 @@ const isPublicRoute = createRouteMatcher([
   "/robots.txt",
 ]);
 const isOnboardingRoute = createRouteMatcher(["/onboarding", "/api/trpc(.*)"]);
+const isContactUsRoute = createRouteMatcher(["/contactUs", "/api/trpc/contactUsRouter(.*)"]);
 
 export default clerkMiddleware(async (auth, request) => {
   const { userId, sessionClaims } = auth();
 
   // For users visiting /onboarding or making API calls during onboarding, don't try to redirect
   if (userId && isOnboardingRoute(request)) {
+    return NextResponse.next();
+  }
+
+  if (isContactUsRoute(request)) {
     return NextResponse.next();
   }
 
