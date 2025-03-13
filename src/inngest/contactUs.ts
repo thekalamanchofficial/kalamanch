@@ -37,7 +37,7 @@ export const contactUsViaEmail = inngest.createFunction(
 
     const mailOptions = {
       to: process.env.EMAIL_FROM!,
-      subject: `${userEmail} sent a message`,
+      subject: `${name} sent a message`,
       template: "contact-us",
       text: message,
       context: {
