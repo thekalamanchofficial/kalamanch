@@ -52,6 +52,8 @@ const Page = () => {
         justifyItems: "center",
         alignItems: "center",
         height: `calc(100vh - 77px)`,
+        backgroundImage: (theme) =>
+          `linear-gradient(to top left, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
       }}
     >
       <Grid

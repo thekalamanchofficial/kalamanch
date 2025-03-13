@@ -19,6 +19,7 @@ const SignInPage = () => {
         width: "100%",
         justifyItems: "center",
         alignItems: "center",
+        height: `calc(100vh - 77px)`,
       }}
     >
       <Grid
@@ -27,9 +28,9 @@ const SignInPage = () => {
           justifyContent: "space-around",
           alignItems: "center",
           backgroundColor: "secondary.main",
-          px: 6,
-          pt: 14,
-          pb: 13,
+          height: "100%",
+          overflow: "auto",
+          padding: { xs: 2, sm: 2, md: 0, lg: 0 },
           backgroundImage: (theme) =>
             `linear-gradient(to top left, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
         }}

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
 import OwlSVG from "~/assets/svg/owl.svg";
@@ -10,6 +12,8 @@ const Page = () => {
         width: "100%",
         justifyItems: "center",
         alignItems: "center",
+        backgroundImage: (theme) =>
+          `linear-gradient(to top left, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
       }}
     >
       <Grid
@@ -19,7 +23,6 @@ const Page = () => {
           padding: 4,
           maxWidth: "1200px",
           margin: "auto",
-          backgroundColor: "#FFF",
           textAlign: "center",
         }}
       >

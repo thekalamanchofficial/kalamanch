@@ -17,7 +17,14 @@ const isOnboardingRoute = createRouteMatcher(["/onboarding", "/api/trpc(.*)"]);
 const isContactUsRoute = createRouteMatcher(["/contactUs", "/api/trpc/contactUsRouter(.*)"]);
 
 export default clerkMiddleware(async (auth, request) => {
+  const userAgent = request.headers.get("user-agent") ?? "";
   const { userId, sessionClaims } = auth();
+
+  const isGooglebot = /Googlebot|Bingbot|DuckDuckBot/i.test(userAgent);
+
+  if (isGooglebot && isPublicRoute(request)) {
+    return NextResponse.next();
+  }
 
   // For users visiting /onboarding or making API calls during onboarding, don't try to redirect
   if (userId && isOnboardingRoute(request)) {

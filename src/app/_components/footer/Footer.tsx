@@ -9,7 +9,7 @@ export const Footer = () => {
       sx={{
         width: "100%",
         textAlign: "center",
-        position: "sticky",
+        position: "relative",
         bottom: 0,
         left: 0,
         backgroundColor: "#FFF",
