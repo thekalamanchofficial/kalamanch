@@ -33,7 +33,7 @@ export const contactUsViaEmail = inngest.createFunction(
   { id: "contact-us-via-email", retries: 1, onFailure },
   { event: "contact/conatct-us" },
   async ({ event }) => {
-    const { message, userEmail } = event.data;
+    const { message, userEmail, name } = event.data;
 
     const mailOptions = {
       to: process.env.EMAIL_FROM!,
@@ -44,6 +44,7 @@ export const contactUsViaEmail = inngest.createFunction(
         message,
         userEmail,
         senderEmail: userEmail,
+        name,
       },
     };
 
