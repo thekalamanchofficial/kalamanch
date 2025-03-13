@@ -1,6 +1,9 @@
 # *
 User-agent: *
 Allow: /
+Allow: /about
+Allow: /contactUs
+Disallow: /myfeed
 
 # Host
 Host: https://kalamanch.org
