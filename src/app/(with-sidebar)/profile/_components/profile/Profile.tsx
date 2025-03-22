@@ -59,7 +59,7 @@ const Profile: React.FC<ProfileProps> = ({ userDetails, isOwner }) => {
               likedPosts={likedPosts}
               bookmarkedPosts={bookmarkedPosts}
               setPosts={setPosts}
-              isUserPublishedPostFeed={true}
+              isUserPublishedPostFeed={isOwner}
             />
           ) : (
             <ShowMessage
@@ -127,6 +127,7 @@ const Profile: React.FC<ProfileProps> = ({ userDetails, isOwner }) => {
     userLikedPosts,
     bookmarkedPosts,
     setPosts,
+    isOwner,
   ]);
   return (
     <Grid columns={1}>

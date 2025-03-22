@@ -26,15 +26,20 @@ const createMutationOptions = (successMessage: string) => ({
 
 export const usePost = (): UsePostResponse => {
   const router = useRouter();
-  const addPostMutation = trpc.post.addPost.useMutation(
-    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_PUBLISHED_SUCCESS_MESSAGE),
-  );
-  const deletePostMutation = trpc.post.deletePost.useMutation(
-    createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UNPUBLISHED_SUCCESS_MESSAGE),
-  );
+  const utils = trpc.useUtils();
+
+  const addPostMutation = trpc.post.addPost.useMutation({
+    ...createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_PUBLISHED_SUCCESS_MESSAGE),
+  });
+
+  const deletePostMutation = trpc.post.deletePost.useMutation({
+    ...createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UNPUBLISHED_SUCCESS_MESSAGE),
+  });
+
   const updatePostContentMutation = trpc.post.updatePostContent.useMutation(
     createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UPDATED_SUCCESS_MESSAGE),
   );
+
   const updatePostDetailsMutation = trpc.post.updatePostDetails.useMutation(
     createMutationOptions(STATIC_TEXTS.EDITOR_PAGE.POST_UPDATED_SUCCESS_MESSAGE),
   );
@@ -42,6 +47,7 @@ export const usePost = (): UsePostResponse => {
   const publishPost = async (postData: CreatePostProps) => {
     try {
       await addPostMutation.mutateAsync(postData);
+      await utils.user.getUserDetails.invalidate();
       router.push("/");
     } catch (error) {
       console.error("Failed to publish post:", error);
@@ -51,6 +57,7 @@ export const usePost = (): UsePostResponse => {
   const deletePost = async (postId: string) => {
     try {
       await deletePostMutation.mutateAsync(postId);
+      await utils.user.getUserDetails.invalidate();
     } catch (error) {
       console.error("Failed to delete post:", error);
     }
