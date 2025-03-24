@@ -109,8 +109,8 @@ const Post = memo<PostProps>(
             showBids={true}
             showBookmark={true}
             showShare={true}
-            showEditPublishedPost={pathname === "/profile" && isUserPublishedPostFeed}
-            showUnpublishPost={pathname === "/profile" && isUserPublishedPostFeed}
+            showEditPublishedPost={pathname.includes("/profile") && isUserPublishedPostFeed}
+            showUnpublishPost={pathname.includes("/profile") && isUserPublishedPostFeed}
             handleUnpublishPost={handlePostUnPublishing}
             handleBookmark={handleBookmark}
             handleEditPublishedPost={handleEditPost}
