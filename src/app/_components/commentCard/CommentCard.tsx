@@ -46,7 +46,7 @@ const CommentCard: React.FC<commentCardProps> = ({
         ml: isChildren ? "50px" : "0px",
       }}
     >
-      <Grid size={12}>
+      <Grid size={12} width="100%">
         <Box
           sx={{
             display: "flex",

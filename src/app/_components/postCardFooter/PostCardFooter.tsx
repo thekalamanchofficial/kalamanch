@@ -6,7 +6,14 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
 import ShareIcon from "@mui/icons-material/Share";
 import TollIcon from "@mui/icons-material/Toll";
-import { Button, Grid2 as Grid, useMediaQuery, type Theme } from "@mui/material";
+import {
+  Button,
+  Grid2 as Grid,
+  Popover,
+  Typography,
+  useMediaQuery,
+  type Theme,
+} from "@mui/material";
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import BookmarkPostActionButton from "../postActionButton/BookmarkPostActionButton";
 import PostActionButton from "../postActionButton/PostActionButton";
@@ -37,6 +44,8 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const bidRef = React.useRef<HTMLDivElement>(null);
   const handleAction = (actionType: string) => {
     switch (actionType) {
       case "like":
@@ -114,11 +123,47 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
           />
         )}
         {showBids && (
-          <PostActionButton
-            icon={<TollIcon sx={iconSx} />}
-            label={bids && bids.length > 0 ? bids.length : "0"}
-            onClick={() => handleAction("bid")}
-          />
+          <div ref={bidRef}>
+            <PostActionButton
+              icon={<TollIcon sx={iconSx} />}
+              label={bids && bids.length > 0 ? bids.length : "0"}
+              onClick={() => {
+                handleAction("bid");
+                setAnchorEl(bidRef.current);
+              }}
+            />
+            <Popover
+              open={Boolean(anchorEl)}
+              anchorEl={anchorEl}
+              onClose={() => setAnchorEl(null)}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+              slotProps={{
+                paper: {
+                  sx: {
+                    backgroundColor: "background.paper",
+                    color: "text.primary",
+                    boxShadow: 3,
+                    borderRadius: 2,
+                    p: 2,
+                  },
+                },
+              }}
+            >
+              <Typography variant="body1" sx={{ fontWeight: "bold", color: "primary.main" }}>
+                Coming soon!
+              </Typography>
+              <Typography variant="body2" color="primary.main">
+                User will be able to sell their art.
+              </Typography>
+            </Popover>
+          </div>
         )}
         {showShare && (
           <PostActionButton
