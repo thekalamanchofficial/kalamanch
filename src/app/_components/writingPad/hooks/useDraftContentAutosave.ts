@@ -41,6 +41,7 @@ export const useDraftContentAutosave = ({
 }: UseDraftContentAutosaveProps): UseDraftContentAutosaveReturn => {
   const [content, setContent] = useState(initialContent);
   const [lastSavedContent, setLastSavedContent] = useState(initialContent);
+  const [lastSavedTitle, setLastSavedTitle] = useState(title);
   const { addDraftPost } = useDraftPost();
   const { user } = useUser();
   const router = useRouter();
@@ -91,16 +92,17 @@ export const useDraftContentAutosave = ({
 
   const saveContent = useCallback(
     (data: string, iterationId: string, showToast?: boolean, title?: string) => {
-      if (data === lastSavedContent) {
+      if (data === lastSavedContent && title === lastSavedTitle) {
         if (showToast) {
           toast.success("Draft saved successfully!");
         }
         return;
       }
       setLastSavedContent(data);
+      setLastSavedTitle(title ?? "");
       saveContentToDb(data, iterationId, showToast, title);
     },
-    [lastSavedContent, saveContentToDb],
+    [lastSavedContent, lastSavedTitle, saveContentToDb],
   );
 
   const throttledSave = useRef(
