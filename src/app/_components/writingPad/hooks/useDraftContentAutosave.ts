@@ -112,7 +112,7 @@ export const useDraftContentAutosave = ({
   );
 
   const onContentChange = (data: string, title: string) => {
-    if (postStatus !== PostStatus.DRAFT || data === content) return;
+    if (postStatus !== PostStatus.DRAFT) return;
 
     setContent(data);
 

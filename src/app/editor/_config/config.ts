@@ -9,4 +9,4 @@ export const tabs: { label: string; value: EditorTabsEnum }[] = [
 ];
 
 export const DRAFT_AUTO_CREATE_DEBOUCE_DELAY = 1000;
-export const DRAFT_AUTO_SAVE_THROTTLE_DELAY = 60000;
+export const DRAFT_AUTO_SAVE_THROTTLE_DELAY = 3000;

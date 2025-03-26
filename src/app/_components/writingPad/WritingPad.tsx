@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Controller } from "react-hook-form";
 import { Box, Divider, TextField, Typography } from "@mui/material";
 import { isContentEmpty } from "~/app/_utils/utils";
 import { type PostStatus } from "~/app/editor/types/types";
@@ -37,7 +38,13 @@ const WritingPad: React.FC<WritingPadProps> = ({
   handleSendForReview,
   draftPostId,
 }) => {
-  const { handleSubmit, control, watch, setError } = useContentForm({
+  const {
+    handleSubmit,
+    control,
+    watch,
+    setError,
+    formState: { errors },
+  } = useContentForm({
     defaultValues: {
       content: defaultContentToDisplay,
       title: defaultTitle,
@@ -101,28 +108,40 @@ const WritingPad: React.FC<WritingPadProps> = ({
           Editor
         </Typography>
 
-        <TextField
-          variant="standard"
-          fullWidth
-          placeholder="Enter title of your writing"
-          sx={{
-            flex: 1,
-            backgroundColor: "white",
-            borderRadius: "6px",
-            "& .MuiInputBase-input": {
-              fontWeight: "400",
-              color: "text.primary",
-              padding: "5px 0",
-              border: "none",
-              textAlign: "center",
-            },
-          }}
-          slotProps={{
-            input: {
-              disableUnderline: true,
-            },
-          }}
-          {...control.register("title")}
+        <Controller
+          control={control}
+          name="title"
+          render={({ field: { value, onChange } }) => (
+            <TextField
+              variant="standard"
+              fullWidth
+              placeholder="Enter title of your writing"
+              value={value}
+              onChange={(e) => {
+                onChange(e);
+                onContentChange(content, e.target.value);
+              }}
+              sx={{
+                flex: 1,
+                backgroundColor: "white",
+                borderRadius: "6px",
+                "& .MuiInputBase-input": {
+                  fontWeight: "400",
+                  color: "text.primary",
+                  padding: "5px 0",
+                  border: "none",
+                  textAlign: "center",
+                },
+              }}
+              helperText={errors.title?.message}
+              error={!!errors.title}
+              slotProps={{
+                input: {
+                  disableUnderline: true,
+                },
+              }}
+            />
+          )}
         />
       </Box>
       <Divider />
