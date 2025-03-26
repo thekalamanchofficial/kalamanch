@@ -7,8 +7,13 @@ import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import { Typography } from "@mui/material";
 
+type WritingPadFormValues = {
+  content: string;
+  title: string;
+};
+
 type EditorProps = {
-  control: Control<{ content: string }>;
+  control: Control<WritingPadFormValues>;
   name: "content";
   defaultValue: string;
   onChange: (data: string) => void;
