@@ -5,13 +5,14 @@ import { contentFormSchema } from "../formSchema/schema";
 type ContentFormProps = {
   defaultValues: {
     content: string;
+    title: string;
   };
 };
 
-type ContentForm = (props: ContentFormProps) => UseFormReturn<{ content: string }>;
+type ContentForm = (props: ContentFormProps) => UseFormReturn<{ content: string; title: string }>;
 
 export const useContentForm: ContentForm = ({ defaultValues }) =>
-  useForm<{ content: string }>({
+  useForm<{ content: string; title: string }>({
     mode: "onChange",
     resolver: yupResolver(contentFormSchema),
     defaultValues,

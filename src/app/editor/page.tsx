@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Box, Divider, Grid2 as Grid, TextField, Typography } from "@mui/material";
+import { Box, Grid2 as Grid } from "@mui/material";
 import { EditorAppBar } from "./_components/editorAppBar/EditorAppBar";
 import EditorLeftSideBarForIterations from "./_components/editorLeftSideBar/EditorLeftSideBarForIterations";
 import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
@@ -22,7 +21,6 @@ const WritingPad = dynamic(() => import("../_components/writingPad/WritingPad"),
 
 const Page = () => {
   const { draftPostId, postId, shouldDraftPost } = useQueryParams();
-  const [postTitle, setPostTitle] = useState<string>("");
 
   const {
     draftPost,
@@ -58,14 +56,6 @@ const Page = () => {
     }
     await updatePostContent(content);
   };
-
-  useEffect(() => {
-    if (draftPost) {
-      setPostTitle(draftPost?.title ?? "");
-    } else if (publishedPost) {
-      setPostTitle(publishedPost?.title ?? "");
-    }
-  }, [draftPost, publishedPost]);
 
   return (
     <>
@@ -115,60 +105,16 @@ const Page = () => {
           },
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "start",
-            flexDirection: "column",
-            padding: "8px 10px 0 10px",
-          }}
-        >
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "16px",
-              color: "primary.main",
-              marginInline: "8px",
-              display: { xs: "none", md: "block" },
-            }}
-          >
-            Editor
-          </Typography>
-
-          <TextField
-            variant="standard"
-            fullWidth
-            placeholder="Enter title of your writing"
-            sx={{
-              flex: 1,
-              backgroundColor: "white",
-              borderRadius: "6px",
-              "& .MuiInputBase-input": {
-                fontWeight: "400",
-                color: "text.primary",
-                padding: "5px 0",
-                border: "none",
-                textAlign: "center",
-              },
-            }}
-            slotProps={{
-              input: {
-                disableUnderline: true,
-              },
-            }}
-            value={postTitle}
-            onChange={(e) => setPostTitle(e.target.value)}
-          />
-        </Box>
-        <Divider />
         <Box sx={{ width: "100%" }}>
           <Grid size={12} sx={{ height: "90vh", width: "100%" }}>
             <WritingPad
               key={draftPost ? selectedIteration?.id : publishedPost?.id}
-              title={postTitle}
+              defaultTitle={draftPost?.title ?? publishedPost?.title ?? ""}
               currentIterationId={selectedIteration?.id}
               handleOpen={() => openPublishPostForm()}
-              handlePublish={handlePublish}
+              handlePublish={async (content) => {
+                await handlePublish(content);
+              }}
               defaultContentToDisplay={
                 (draftPost ? selectedIteration?.content : publishedPost?.content) ?? ""
               }

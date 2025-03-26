@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Divider, TextField, Typography } from "@mui/material";
 import { isContentEmpty } from "~/app/_utils/utils";
 import { type PostStatus } from "~/app/editor/types/types";
 import EditorActionsBar from "../editorActionsBar/EditorActionsBar";
@@ -11,7 +11,7 @@ import { useDraftContentAutosave } from "./hooks/useDraftContentAutosave";
 
 type WritingPadProps = {
   handleOpen: () => void;
-  title: string;
+  defaultTitle: string;
   defaultContentToDisplay: string;
   handleEditorContentChange: (
     data: string,
@@ -28,7 +28,7 @@ type WritingPadProps = {
 
 const WritingPad: React.FC<WritingPadProps> = ({
   currentIterationId,
-  title,
+  defaultTitle,
   handleOpen,
   defaultContentToDisplay,
   handleEditorContentChange,
@@ -38,10 +38,14 @@ const WritingPad: React.FC<WritingPadProps> = ({
   draftPostId,
 }) => {
   const { handleSubmit, control, watch, setError } = useContentForm({
-    defaultValues: { content: defaultContentToDisplay },
+    defaultValues: {
+      content: defaultContentToDisplay,
+      title: defaultTitle,
+    },
   });
 
   const content = watch("content");
+  const title = watch("title");
 
   const { onContentChange, saveDraftInstantly } = useDraftContentAutosave({
     currentIterationId,
@@ -77,6 +81,51 @@ const WritingPad: React.FC<WritingPadProps> = ({
         scrollbarWidth: "none",
       }}
     >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "start",
+          flexDirection: "column",
+          padding: "8px 10px 0 10px",
+        }}
+      >
+        <Typography
+          sx={{
+            fontWeight: "bold",
+            fontSize: "16px",
+            color: "primary.main",
+            marginInline: "8px",
+            display: { xs: "none", md: "block" },
+          }}
+        >
+          Editor
+        </Typography>
+
+        <TextField
+          variant="standard"
+          fullWidth
+          placeholder="Enter title of your writing"
+          sx={{
+            flex: 1,
+            backgroundColor: "white",
+            borderRadius: "6px",
+            "& .MuiInputBase-input": {
+              fontWeight: "400",
+              color: "text.primary",
+              padding: "5px 0",
+              border: "none",
+              textAlign: "center",
+            },
+          }}
+          slotProps={{
+            input: {
+              disableUnderline: true,
+            },
+          }}
+          {...control.register("title")}
+        />
+      </Box>
+      <Divider />
       <Box
         sx={{
           flex: 1,
