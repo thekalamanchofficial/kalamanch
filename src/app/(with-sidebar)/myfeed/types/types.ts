@@ -63,6 +63,7 @@ export type Post = {
   actors?: string[];
   tags?: Tag[];
   genres?: Genre[];
+  showThumbnail: boolean;
   thumbnailDetails: ThumbnailDetails;
   likeCount: number;
   likes?: Like[];
@@ -70,15 +71,6 @@ export type Post = {
   bids?: Bid[];
   createdAt: string;
   updatedAt: string;
-};
-
-export type PostDetails = {
-  title: string;
-  postType: string | null;
-  actors: string[];
-  genres: string[];
-  tags: string[];
-  thumbnailDetails: ThumbnailDetails;
 };
 
 export type CreatePostProps = {
@@ -92,6 +84,7 @@ export type CreatePostProps = {
   tags?: string[];
   genres?: string[];
   thumbnailDetails: ThumbnailDetails;
+  showThumbnail: boolean;
 };
 
 export type UpdatePostContentProps = {
@@ -106,6 +99,7 @@ export type UpdatePostDetailsProps = {
   actors?: string[];
   tags?: string[];
   genres?: string[];
+  showThumbnail: boolean;
   thumbnailDetails: ThumbnailDetails;
 };
 
@@ -164,6 +158,7 @@ export type PostCardContentProps = {
   articleThumbnailUrl?: string;
   articleThumbnailContent?: string;
   articleThumbnailTitle?: string;
+  showThumbnail: boolean;
 };
 
 export type FollowButtonProps = {

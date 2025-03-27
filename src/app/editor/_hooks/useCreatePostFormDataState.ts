@@ -15,6 +15,7 @@ type CreatePostFormState = {
     thumbnailUrl?: string;
     thumbnailTitle?: string;
     thumbnailDescription?: string;
+    shoewThumbnail: boolean;
   };
   isPublishPostFormOpen: boolean;
   openPublishPostForm: () => void;
@@ -34,6 +35,7 @@ export const useCreatePostFormDataState = ({
     thumbnailUrl: postDetails?.thumbnailDetails.url ?? "",
     thumbnailTitle: postDetails?.thumbnailDetails.title ?? "",
     thumbnailDescription: postDetails?.thumbnailDetails.content ?? "",
+    shoewThumbnail: postDetails?.showThumbnail ?? false,
   };
   const openPublishPostForm = () => setIsPublishPostFormOpen(true);
   const closePublishPostForm = () => setIsPublishPostFormOpen(false);

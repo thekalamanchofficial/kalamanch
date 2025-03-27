@@ -13,6 +13,7 @@ export type CreatePostFormType = {
   postTypeId?: string;
   tags?: string[];
   actors?: string[];
+  showThumbnail: boolean;
 };
 
 export type Iteration = {

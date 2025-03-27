@@ -15,6 +15,7 @@ import {
   FormHelperText,
   MenuItem,
   Select,
+  Switch,
   TextField,
   Typography,
 } from "@mui/material";
@@ -99,51 +100,87 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
           />
           <Controller
             control={control}
-            name="thumbnailUrl"
-            defaultValue={postFormData?.thumbnailUrl}
-            render={({ field: { onChange, value } }) => (
-              <FormControl fullWidth>
-                <Typography variant="h4">Upload Thumbnail</Typography>
-                <ThumbnailUploader onMediaUpload={onChange} initialMedia={value} />
-              </FormControl>
-            )}
-          />
-          <Controller
-            control={control}
-            name="thumbnailTitle"
-            defaultValue={postFormData?.thumbnailTitle}
+            name="showThumbnail"
+            defaultValue={false}
             render={({ field: { value, onChange } }) => (
               <FormControl fullWidth>
-                <Typography variant="h4">Thumbnail Title</Typography>
-                <TextField
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  placeholder="Enter thumbnail title"
-                  variant="outlined"
-                  fullWidth
-                />
+                <Typography variant="h4">Show thumbnail</Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Typography>No</Typography>
+                  <Switch
+                    checked={value}
+                    onChange={(e) => onChange(e.target.checked)}
+                    inputProps={{ "aria-label": "Show Thumbnail Switch" }}
+                    sx={{
+                      "& .MuiButtonBase-root": {
+                        minHeight: "38px",
+                      },
+                    }}
+                  />
+                  <Typography>Yes</Typography>
+                </Box>
               </FormControl>
             )}
           />
-          <Controller
-            control={control}
-            name="thumbnailDescription"
-            defaultValue={postFormData?.thumbnailDescription}
-            render={({ field: { value, onChange } }) => (
-              <FormControl fullWidth>
-                <Typography variant="h4">Thumbnail Description</Typography>
-                <TextField
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  placeholder="Enter thumbnail description"
-                  variant="outlined"
-                  fullWidth
-                />
-              </FormControl>
-            )}
-          />
+          {watch("showThumbnail") && (
+            <>
+              <Controller
+                control={control}
+                name="thumbnailUrl"
+                defaultValue={postFormData?.thumbnailUrl}
+                render={({ field: { onChange, value } }) => (
+                  <FormControl fullWidth>
+                    <Typography variant="h4">Upload thumbnail</Typography>
+                    <ThumbnailUploader onMediaUpload={onChange} initialMedia={value} />
+                    <FormHelperText error={!!errors?.thumbnailUrl?.message}>
+                      {errors?.thumbnailUrl?.message}
+                    </FormHelperText>
+                  </FormControl>
+                )}
+              />
+              <Controller
+                control={control}
+                name="thumbnailTitle"
+                defaultValue={postFormData?.thumbnailTitle}
+                render={({ field: { value, onChange } }) => (
+                  <FormControl fullWidth>
+                    <Typography variant="h4">Thumbnail title</Typography>
+                    <TextField
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      placeholder="Enter thumbnail title"
+                      variant="outlined"
+                      fullWidth
+                      helperText={errors?.thumbnailTitle?.message}
+                      error={!!errors?.thumbnailTitle?.message}
+                    />
+                  </FormControl>
+                )}
+              />
+              <Controller
+                control={control}
+                name="thumbnailDescription"
+                defaultValue={postFormData?.thumbnailDescription}
+                render={({ field: { value, onChange } }) => (
+                  <FormControl fullWidth>
+                    <Typography variant="h4">Thumbnail description</Typography>
+                    <TextField
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      placeholder="Enter thumbnail description"
+                      variant="outlined"
+                      fullWidth
+                      helperText={errors?.thumbnailDescription?.message}
+                      error={!!errors?.thumbnailDescription?.message}
+                    />
+                  </FormControl>
+                )}
+              />
+            </>
+          )}
+
           <Controller
             control={control}
             name="postTypeId"

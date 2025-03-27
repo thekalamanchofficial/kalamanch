@@ -55,6 +55,7 @@ const PublishPostFormButton = ({
         actors: data.actors ?? [],
         tags: data.tags ?? [],
         genres: data.genres ?? [],
+        showThumbnail: data.showThumbnail,
         thumbnailDetails: {
           url: data.thumbnailUrl ?? "",
           content: data.thumbnailDescription ?? "",
@@ -115,6 +116,7 @@ const PublishPostFormButton = ({
             genres: [],
             tags: [],
             actors: [],
+            showThumbnail: false,
           }}
         />
       )}
