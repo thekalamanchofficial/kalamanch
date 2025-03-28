@@ -200,7 +200,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
               )}
               {!articleThumbnailContent && renderQuillContent(articleContent, true)}
             </Typography>
-            {/* <Grid
+            <Grid
               container
               sx={{
                 display: "flex",
@@ -218,7 +218,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
                   }}
                 />
               ))}
-            </Grid> */}
+            </Grid>
           </Grid>
         </Grid>
       )}

@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Box, Card, CardContent, Chip, Grid2 as Grid } from "@mui/material";
+import { Box, Card, CardContent } from "@mui/material";
 import { type Post as PostType } from "~/app/(with-sidebar)/myfeed/types/types";
 import { usePostUnpublishing } from "~/app/editor/_hooks/usePostUnpublishing";
 import { PostStatus } from "~/app/editor/types/types";
@@ -97,25 +97,6 @@ const Post = memo<PostProps>(
             articleId={post.id}
             showThumbnail={post.showThumbnail ?? false}
           />
-          <Grid
-            container
-            sx={{
-              display: "flex",
-              gap: "10px",
-            }}
-          >
-            {post.tags?.map((tag, index) => (
-              <Chip
-                key={index}
-                label={tag.name}
-                variant="filled"
-                sx={{
-                  color: "font.secondary",
-                  backgroundColor: "common.lightGray",
-                }}
-              />
-            ))}
-          </Grid>
 
           <PostCardFooter
             likes={likeCount}
