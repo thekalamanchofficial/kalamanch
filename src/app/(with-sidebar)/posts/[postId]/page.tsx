@@ -106,7 +106,7 @@ export const generateMetadata = async ({
     authors: [
       {
         name: post.authorName || "Kalamanch",
-        url: `${baseUrl}/authors/${post.authorId || "default"}`,
+        url: `${baseUrl}/profile/${post.authorId || "default"}`,
       },
     ],
     openGraph: {
@@ -117,7 +117,7 @@ export const generateMetadata = async ({
       type: "article",
       publishedTime: post.createdAt.toISOString(),
       modifiedTime: post.updatedAt.toISOString(),
-      authors: [`${baseUrl}/authors/${post.authorId || "default"}`],
+      authors: [`${baseUrl}/profile/${post.authorId || "default"}`],
       images: [
         {
           url: thumbnailUrl,
