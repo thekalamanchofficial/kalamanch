@@ -135,7 +135,7 @@ const FollowersList: React.FC<FollowersListProps> = ({ userId }) => {
           No followers yet
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          When people follow you, they&apos;ll appear here
+          When people follow you, they will appear here
         </Typography>
       </Box>
     );
