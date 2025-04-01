@@ -405,4 +405,106 @@ export const userRouter = router({
         hasMore,
       };
     }),
+
+  getFollowers: protectedProcedure
+    .input(
+      yup.object({
+        userId: yup.string().required(),
+        limit: yup.number().min(1).max(50).default(10),
+        cursor: yup.string().nullable(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const { userId, limit, cursor } = input;
+
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          followers: true,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const followers = await prisma.user.findMany({
+        where: {
+          id: { in: user.followers },
+        },
+        select: {
+          id: true,
+          name: true,
+          profileImageUrl: true,
+          bio: true,
+        },
+        take: limit + 1,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          name: 'asc',
+        },
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (followers.length > limit) {
+        const nextItem = followers.pop();
+        nextCursor = nextItem!.id;
+      }
+
+      return {
+        items: followers,
+        nextCursor,
+      };
+    }),
+
+  getFollowing: protectedProcedure
+    .input(
+      yup.object({
+        userId: yup.string().required(),
+        limit: yup.number().min(1).max(50).default(10),
+        cursor: yup.string().nullable(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const { userId, limit, cursor } = input;
+
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          following: true,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const following = await prisma.user.findMany({
+        where: {
+          id: { in: user.following },
+        },
+        select: {
+          id: true,
+          name: true,
+          profileImageUrl: true,
+          bio: true,
+        },
+        take: limit + 1,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          name: 'asc',
+        },
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (following.length > limit) {
+        const nextItem = following.pop();
+        nextCursor = nextItem!.id;
+      }
+
+      return {
+        items: following,
+        nextCursor,
+      };
+    }),
 });
