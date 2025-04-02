@@ -118,6 +118,7 @@ export type PostsFeedProps = {
 };
 
 export type PostCardFooterProps = {
+  post?: Post;
   likes: number;
   comments: Comment[];
   bids: Bid[];

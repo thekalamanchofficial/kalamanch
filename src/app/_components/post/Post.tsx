@@ -99,6 +99,7 @@ const Post = memo<PostProps>(
           />
 
           <PostCardFooter
+            post={post}
             likes={likeCount}
             comments={comments}
             bids={post.bids ?? []}
