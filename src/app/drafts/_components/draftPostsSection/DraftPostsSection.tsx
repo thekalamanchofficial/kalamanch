@@ -94,6 +94,7 @@ export default function DraftPostsSection({ draftPosts, handleEditDraftPost }: D
                   articleContent={post.iterations[0]?.content ?? ""}
                   articleId={post.id ?? ""}
                   savedDate={post.updatedAt}
+                  showThumbnail={post.showThumbnail ?? false}
                 />
                 <EditPostFooter
                   postStatus={PostStatus.DRAFT}

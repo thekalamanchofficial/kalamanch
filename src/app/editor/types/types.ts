@@ -35,6 +35,7 @@ export type DraftPost = {
   createdAt: string;
   updatedAt: string;
   title: string;
+  showThumbnail?: boolean;
 };
 
 export type PublishDraftPostProps = {
