@@ -130,8 +130,8 @@ const UserFeedCard = () => {
 
         {/* User stats */}
         <Stack direction="row" justifyContent="space-around" sx={{ py: 1 }}>
-          <Stack 
-            alignItems="center" 
+          <Stack
+            alignItems="center"
             sx={{ cursor: "pointer" }}
             onClick={() => router.push("/connections?tab=1")}
           >
@@ -146,8 +146,8 @@ const UserFeedCard = () => {
             </Typography>
           </Stack>
 
-          <Stack 
-            alignItems="center" 
+          <Stack
+            alignItems="center"
             sx={{ cursor: "pointer" }}
             onClick={() => router.push("/connections?tab=0")}
           >
@@ -162,7 +162,11 @@ const UserFeedCard = () => {
             </Typography>
           </Stack>
 
-          <Stack alignItems="center">
+          <Stack
+            alignItems="center"
+            sx={{ cursor: "pointer" }}
+            onClick={() => router.push(`/profile/${user.id}`)}
+          >
             <Stack direction="row" alignItems="center" spacing={0.5}>
               <ArticleIcon fontSize="small" color="primary" />
               <Typography variant="h6" fontWeight="bold" color="text.primary">

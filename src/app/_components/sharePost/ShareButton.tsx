@@ -10,7 +10,7 @@ type ShareButtonProps = {
   post: Post;
   iconSx?: React.CSSProperties;
   shareIconSx?: React.CSSProperties;
-}
+};
 
 const ShareButton: React.FC<ShareButtonProps> = ({
   post,
@@ -36,7 +36,6 @@ const ShareButton: React.FC<ShareButtonProps> = ({
     const tags = post.tags?.map((tag) => tag.name).join(", ") ?? "";
     const genres = post.genres?.map((genre) => genre.name).join(", ") ?? "";
 
-    // Use plain text for better compatibility
     let shareMessage = `Post Title: ${post.title}\n\n`;
     shareMessage += `Author: ${post.authorName}\n\n`;
 
@@ -46,7 +45,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({
 
     if (tags || genres || post.likeCount > 0) {
       shareMessage += `Post Details:\n`;
-      
+
       if (tags) {
         shareMessage += `Tags: ${tags}\n`;
       }
@@ -56,13 +55,21 @@ const ShareButton: React.FC<ShareButtonProps> = ({
       if (post.likeCount > 0) {
         shareMessage += `Likes: ${post.likeCount}\n`;
       }
-      
+
       shareMessage += "\n";
     }
 
     shareMessage += `Read the full post:\n${postUrl}`;
 
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
+    const encodedMessage = encodeURIComponent(shareMessage);
+    let whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (!isMobile) {
+      whatsappUrl = `https://web.whatsapp.com/send?text=${encodedMessage}`;
+    }
+
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     setShareAnchorEl(null);
   };
