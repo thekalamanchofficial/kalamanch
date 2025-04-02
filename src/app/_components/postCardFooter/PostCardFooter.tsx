@@ -4,7 +4,6 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MessageIcon from "@mui/icons-material/Message";
-import ShareIcon from "@mui/icons-material/Share";
 import TollIcon from "@mui/icons-material/Toll";
 import {
   Button,
@@ -17,10 +16,11 @@ import {
 import { type PostCardFooterProps } from "~/app/(with-sidebar)/myfeed/types/types";
 import BookmarkPostActionButton from "../postActionButton/BookmarkPostActionButton";
 import PostActionButton from "../postActionButton/PostActionButton";
-import SharePostDialog from "../sharePostDialog/SharePostDialog";
+import ShareButton from "../sharePost/ShareButton";
 import { STATIC_TEXTS } from "../static/staticText";
 
 const PostCardFooter: React.FC<PostCardFooterProps> = ({
+  post,
   likes,
   comments,
   bids,
@@ -42,10 +42,10 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
   handleEditPublishedPost,
   handleUnpublishPost,
 }) => {
-  const [open, setOpen] = React.useState(false);
   const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [bidAnchorEl, setBidAnchorEl] = React.useState<null | HTMLElement>(null);
   const bidRef = React.useRef<HTMLDivElement>(null);
+
   const handleAction = (actionType: string) => {
     switch (actionType) {
       case "like":
@@ -53,10 +53,6 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
         break;
       case "comment":
         openCommentBox();
-        break;
-      case "share":
-        console.log("share");
-        setOpen(true);
         break;
       case "bid":
         console.log("bid");
@@ -129,13 +125,13 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
               label={bids && bids.length > 0 ? bids.length : "0"}
               onClick={() => {
                 handleAction("bid");
-                setAnchorEl(bidRef.current);
+                setBidAnchorEl(bidRef.current);
               }}
             />
             <Popover
-              open={Boolean(anchorEl)}
-              anchorEl={anchorEl}
-              onClose={() => setAnchorEl(null)}
+              open={Boolean(bidAnchorEl)}
+              anchorEl={bidAnchorEl}
+              onClose={() => setBidAnchorEl(null)}
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "center",
@@ -165,14 +161,7 @@ const PostCardFooter: React.FC<PostCardFooterProps> = ({
             </Popover>
           </div>
         )}
-        {showShare && (
-          <PostActionButton
-            icon={<ShareIcon sx={iconSx} />}
-            label=""
-            onClick={() => handleAction("share")}
-          />
-        )}
-        <SharePostDialog open={open} onClose={() => setOpen(false)} postId={postId} />
+        {!!post && showShare && <ShareButton post={post} iconSx={iconSx} />}
         {showEditPublishedPost && showUnpublishPost && (
           <BookmarkPostActionButton
             isBookmarked={isBookmarked}
