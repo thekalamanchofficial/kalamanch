@@ -29,6 +29,7 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
   articleThumbnailContent,
   articleThumbnailTitle,
   articleTags,
+  showThumbnail,
 }) => {
   const [seeMore, setSeeMore] = useState(false);
   const { formatSavedDate } = useSavedDateFormatter();
@@ -117,108 +118,110 @@ const PostCardContent: React.FC<PostCardContentProps> = ({
 
         {renderQuillContent(articleContent, false)}
       </Box>
-      <Grid
-        container
-        columns={{ xs: 4, sm: 8, md: 12 }}
-        sx={{
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          width: "100%",
-          mb: "16px",
-          backgroundColor: "secondary.main",
-        }}
-      >
-        <Grid size={isSmallScreen ? 12 : 4}>
-          {isVideoUrl(articleThumbnailUrl) ? (
-            <CardMedia
-              component="video"
-              controls
-              height="220"
-              src={articleThumbnailUrl}
-              sx={{
-                maxWidth: "300px",
-              }}
-            />
-          ) : articleThumbnailUrl ? (
-            <CardMedia
-              component="img"
-              height="220"
-              image={articleThumbnailUrl}
-              alt="image content"
-              sx={{
-                maxWidth: "300px",
-              }}
-            />
-          ) : (
-            <ImageNotSupportedOutlinedIcon
-              sx={{
-                fontSize: "220px",
-                color: "text.secondary",
-              }}
-            />
-          )}
-        </Grid>
+      {showThumbnail && (
         <Grid
+          container
+          columns={{ xs: 4, sm: 8, md: 12 }}
           sx={{
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "start",
-            pr: isSmallScreen ? 2 : 10,
-            pl: 2,
+            justifyContent: "start",
+            alignItems: "center",
+            width: "100%",
+            mb: "16px",
+            backgroundColor: "secondary.main",
           }}
-          size={isSmallScreen ? 12 : 8}
         >
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: "bold",
-              py: "10px",
-            }}
-          >
-            {articleThumbnailTitle ? articleThumbnailTitle : articleTitle}
-          </Typography>
-          <Typography
-            sx={{
-              color: "text.secondary",
-              fontSize: "15px",
-              marginBottom: "10px",
-            }}
-            component="div"
-          >
-            {articleThumbnailContent &&
-            articleThumbnailContent?.length > myfeedConfig.SUMMARY_READ_MORE_LENGTH ? (
-              <>
-                {`${articleThumbnailContent?.slice(0, myfeedConfig.SUMMARY_READ_MORE_LENGTH)} ...`}
-                <SeeMoreButton />
-              </>
-            ) : (
-              articleThumbnailContent
-            )}
-            {!articleThumbnailContent && renderQuillContent(articleContent, true)}
-          </Typography>
-          <Grid
-            container
-            sx={{
-              display: "flex",
-              gap: "10px",
-            }}
-          >
-            {articleTags?.map((tag, index) => (
-              <Chip
-                key={index}
-                label={tag.name}
-                variant="filled"
+          <Grid size={isSmallScreen ? 12 : 4}>
+            {isVideoUrl(articleThumbnailUrl) ? (
+              <CardMedia
+                component="video"
+                controls
+                height="220"
+                src={articleThumbnailUrl}
                 sx={{
-                  color: "font.secondary",
-                  backgroundColor: "common.lightGray",
+                  maxWidth: "300px",
                 }}
               />
-            ))}
+            ) : articleThumbnailUrl ? (
+              <CardMedia
+                component="img"
+                height="220"
+                image={articleThumbnailUrl}
+                alt="image content"
+                sx={{
+                  maxWidth: "300px",
+                }}
+              />
+            ) : (
+              <ImageNotSupportedOutlinedIcon
+                sx={{
+                  fontSize: "220px",
+                  color: "text.secondary",
+                }}
+              />
+            )}
+          </Grid>
+          <Grid
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "start",
+              pr: isSmallScreen ? 2 : 10,
+              pl: 2,
+            }}
+            size={isSmallScreen ? 12 : 8}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "bold",
+                py: "10px",
+              }}
+            >
+              {articleThumbnailTitle ? articleThumbnailTitle : articleTitle}
+            </Typography>
+            <Typography
+              sx={{
+                color: "text.secondary",
+                fontSize: "15px",
+                marginBottom: "10px",
+              }}
+              component="div"
+            >
+              {articleThumbnailContent &&
+              articleThumbnailContent?.length > myfeedConfig.SUMMARY_READ_MORE_LENGTH ? (
+                <>
+                  {`${articleThumbnailContent?.slice(0, myfeedConfig.SUMMARY_READ_MORE_LENGTH)} ...`}
+                  <SeeMoreButton />
+                </>
+              ) : (
+                articleThumbnailContent
+              )}
+              {!articleThumbnailContent && renderQuillContent(articleContent, true)}
+            </Typography>
+            <Grid
+              container
+              sx={{
+                display: "flex",
+                gap: "10px",
+              }}
+            >
+              {articleTags?.map((tag, index) => (
+                <Chip
+                  key={index}
+                  label={tag.name}
+                  variant="filled"
+                  sx={{
+                    color: "font.secondary",
+                    backgroundColor: "common.lightGray",
+                  }}
+                />
+              ))}
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      )}
     </>
   );
 };

@@ -206,6 +206,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
     tags,
     genres,
     thumbnailDetails,
+    showThumbnail,
   }: CreatePostProps) => {
     await publishPost({
       content,
@@ -217,6 +218,7 @@ export const useDraftEditorState = ({ draftPostId }: DraftEditorStateProps): Dra
       actors: actors ?? [],
       tags: tags ?? [],
       genres: genres ?? [],
+      showThumbnail: showThumbnail ?? false,
       thumbnailDetails: {
         url: thumbnailDetails.url ?? "",
         content: thumbnailDetails.content ?? "",

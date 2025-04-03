@@ -47,6 +47,7 @@ model Post {
   postTypeId            String?          @db.ObjectId
   postType              PostType?        @relation(fields: [postTypeId], references: [id])
   actors                String[]         @default([])
+  showThumbnail         Boolean
   thumbnailDetails      ThumbnailDetails
   likeCount             Int              @default(0)
   createdAt             DateTime         @default(now())

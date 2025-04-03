@@ -13,6 +13,7 @@ export type CreatePostFormType = {
   postTypeId?: string;
   tags?: string[];
   actors?: string[];
+  showThumbnail: boolean;
 };
 
 export type Iteration = {
@@ -34,6 +35,7 @@ export type DraftPost = {
   createdAt: string;
   updatedAt: string;
   title: string;
+  showThumbnail?: boolean;
 };
 
 export type PublishDraftPostProps = {

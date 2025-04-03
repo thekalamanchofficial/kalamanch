@@ -58,6 +58,7 @@ export const usePublishedPostEditorState = ({
         content: updateFormDetails.thumbnailDescription,
         title: updateFormDetails.thumbnailTitle,
       },
+      showThumbnail: updateFormDetails.showThumbnail,
     };
     const updatedPost = await updatePostDetailsCallBack(publishedPost.id, updatePostDetails);
     if (!updatedPost) return;

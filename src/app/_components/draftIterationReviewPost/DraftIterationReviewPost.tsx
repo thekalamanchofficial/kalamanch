@@ -75,6 +75,7 @@ const DraftIterationReviewPost = memo<DraftIterationReviewPostProps>(
                 ? undefined
                 : draftIterationReviewPost.updatedAt
             }
+            showThumbnail={draftIterationReviewPost.draftPost.showThumbnail ?? false}
           />
           <PostCardFooter
             likes={likeCount}

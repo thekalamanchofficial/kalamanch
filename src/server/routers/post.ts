@@ -14,6 +14,7 @@ const postSchema = yup.object({
   title: yup.string().required("Title is required."),
   postTypeId: yup.string().optional(),
   actors: yup.array(yup.string()).optional(),
+  showThumbnail: yup.boolean().default(false).required(),
   thumbnailDetails: yup
     .object({
       url: yup.string().optional(),
@@ -40,6 +41,7 @@ const updatePostDetailsSchema = yup.object({
   actors: yup.array(yup.string()).optional(),
   tags: yup.array(yup.string()).optional(),
   genres: yup.array(yup.string()).optional(),
+  showThumbnail: yup.boolean().default(false).required(),
   thumbnailDetails: yup
     .object({
       url: yup.string().optional(),
@@ -139,6 +141,7 @@ export const postRouter = router({
           authorProfileImageUrl: sanitizedInput.authorProfileImageUrl ?? "",
           title: sanitizedInput.title,
           actors: sanitizedInput.actors,
+          showThumbnail: sanitizedInput.showThumbnail,
           thumbnailDetails: {
             url: sanitizedInput.thumbnailDetails.url ?? "",
             content: sanitizedInput.thumbnailDetails.content ?? null,
@@ -239,6 +242,7 @@ export const postRouter = router({
           data: {
             title: sanitizedInput.title,
             actors: sanitizedInput.actors,
+            showThumbnail: sanitizedInput.showThumbnail,
             thumbnailDetails: {
               url: sanitizedInput.thumbnailDetails.url ?? "",
               content: sanitizedInput.thumbnailDetails.content,

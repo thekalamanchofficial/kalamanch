@@ -128,7 +128,11 @@ const Page = () => {
             <PublishPostForm
               handleClose={() => closePublishPostForm()}
               open={isPublishPostFormOpen}
-              postFormData={{ ...formData, postTypeId: formData?.postType?.id }}
+              postFormData={{
+                ...formData,
+                postTypeId: formData?.postType?.id,
+                showThumbnail: formData?.shoewThumbnail,
+              }}
               handleFormSubmit={async (details) => {
                 if (publishedPost) {
                   await updatePostDetails(details);
