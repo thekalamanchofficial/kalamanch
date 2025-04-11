@@ -1,13 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
+import { GppBadOutlined } from "@mui/icons-material";
 import FeaturedPlayListOutlinedIcon from "@mui/icons-material/FeaturedPlayListOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
-import editorMockData from "../../mockDataEditor/mockdata";
+import {
+  AppBar,
+  Box,
+  CircularProgress,
+  Drawer,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { type DraftPost } from "../../types/types";
 import EditorLeftSideBarForIterations from "../editorLeftSideBar/EditorLeftSideBarForIterations";
 import EditorRightSideBar from "../editorRightSideBar/EditorRightSideBar";
+import { type EvaluationResult } from "../evaluator/types/types";
 
 type EditorAppBarProps = {
   draftPost: DraftPost | null;
@@ -16,6 +25,10 @@ type EditorAppBarProps = {
   handleIterationSelected: (iterationId: string) => void;
   selectedIterationId: string;
   handleImportText: () => void;
+  evaluationResult: EvaluationResult[];
+  evaluationType: string | null;
+  isEvaluating?: boolean;
+  isEvaluationError?: boolean;
 };
 export const EditorAppBar: React.FC<EditorAppBarProps> = ({
   draftPost,
@@ -24,6 +37,10 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
   handleIterationSelected,
   selectedIterationId,
   handleImportText,
+  evaluationResult,
+  evaluationType,
+  isEvaluating,
+  isEvaluationError,
 }) => {
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
   const [featuredDrawerOpen, setFeaturedDrawerOpen] = useState(false);
@@ -110,7 +127,61 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
             },
           }}
         >
-          <EditorRightSideBar accuracy={editorMockData.accuracy} />
+          {isEvaluating ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : null}
+          {isEvaluationError ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "90vh",
+                spacing: 3,
+                backgroundColor: "white",
+                position: "relative",
+                py: 10,
+                display: "flex",
+                textAlign: "center",
+              }}
+            >
+              <GppBadOutlined color="error" />
+              <Typography variant="body1" color="error">
+                Error occurred while evaluating
+              </Typography>
+            </Box>
+          ) : null}
+          {!isEvaluating && !isEvaluationError && !evaluationResult?.length ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "90vh",
+                spacing: 3,
+                backgroundColor: "white",
+                position: "relative",
+                py: 10,
+                display: "flex",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="body1" color="primary">
+                Click evaluate to analyse your content
+              </Typography>
+            </Box>
+          ) : null}
+          {!isEvaluating && !isEvaluationError && evaluationResult?.length ? (
+            <EditorRightSideBar
+              evaluationResult={evaluationResult}
+              evaluationType={evaluationType}
+            />
+          ) : null}
         </Drawer>
       </>
     </>

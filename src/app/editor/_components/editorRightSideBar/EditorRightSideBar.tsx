@@ -1,19 +1,21 @@
 import React from "react";
-import { Box, Grid2 as Grid, Typography } from "@mui/material";
+import { InfoOutlined } from "@mui/icons-material";
+import { Box, Grid2 as Grid, Popover, Typography } from "@mui/material";
 import PercentageCircle from "~/app/_components/percentageCircle/PercentageCircle";
 import { STATIC_TEXTS } from "~/app/_components/static/staticText";
+import { type EvaluationResult } from "../evaluator/types/types";
 
 type editorRightSideBarProps = {
-  accuracy: Array<{
-    parameterName: string;
-    value: number;
-  }>;
+  evaluationResult: EvaluationResult[];
+  evaluationType: string | null;
 };
-const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({ accuracy }) => {
+const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({ evaluationResult }) => {
+  const [anchorEl, setAnchorEl] = React.useState<Record<number, SVGSVGElement | null>>({});
+
   const getColor = (value: number) => {
-    if (value < 40) {
+    if (value < 4) {
       return "#B71717";
-    } else if (value < 70) {
+    } else if (value < 7) {
       return "#E2AC22";
     } else {
       return "#17B752";
@@ -24,7 +26,8 @@ const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({ accuracy }) => 
       columns={1}
       sx={{
         width: "100%",
-        height: "90vh",
+        maxHeight: "700px",
+        overflowY: "auto",
         spacing: 3,
         backgroundColor: "white",
         position: "relative",
@@ -61,28 +64,74 @@ const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({ accuracy }) => 
           width: "100%",
         }}
       >
-        {accuracy?.map((item: { parameterName: string; value: number }, index: number) => {
-          const color = getColor(item.value);
+        {evaluationResult?.map((item, index) => {
+          const color = getColor(item.score);
+
           return (
             <Box
               key={index}
               sx={{
                 display: "flex",
-                justifyContent: "space-around",
+                justifyContent: "space-between",
                 alignItems: "center",
                 width: "100%",
               }}
             >
-              <Typography
-                sx={{
-                  fontWeight: "550",
-                  fontSize: "14px",
-                }}
-              >
-                {`${item.parameterName} `}
-              </Typography>
+              <Box sx={{ display: "flex", justifyContent: "left", gap: "5px" }}>
+                <Box>
+                  <InfoOutlined
+                    sx={{ color: "primary.main", cursor: "pointer" }}
+                    onClick={(event) =>
+                      setAnchorEl((prev) => ({ ...prev, [index]: event.currentTarget }))
+                    }
+                  />
+                  <Popover
+                    open={Boolean(anchorEl[index])}
+                    anchorEl={anchorEl[index]}
+                    onClose={() => setAnchorEl((prev) => ({ ...prev, [index]: null }))}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "center",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "center",
+                    }}
+                    slotProps={{
+                      paper: {
+                        sx: {
+                          maxWidth: "300px",
+                          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+                        },
+                      },
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: "18px",
+                        color: "text.secondary",
+                        padding: "12px",
+                      }}
+                    >
+                      {`${item.feedback} `}
+                    </Typography>
+                  </Popover>
+                </Box>
+                <Typography
+                  sx={{
+                    fontWeight: "550",
+                    fontSize: "14px",
+                  }}
+                >
+                  {`${item.parameter} `}
+                </Typography>
+              </Box>
 
-              <PercentageCircle variant="determinate" value={item.value} fillColor={color} />
+              <PercentageCircle
+                variant="determinate"
+                value={(item.score * 100) / 10}
+                fillColor={color}
+              />
             </Box>
           );
         })}
