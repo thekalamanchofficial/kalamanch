@@ -26,7 +26,7 @@ const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({ evaluationResul
       columns={1}
       sx={{
         width: "100%",
-        maxHeight: "700px",
+        maxHeight: "810px",
         overflowY: "auto",
         spacing: 3,
         backgroundColor: "white",
