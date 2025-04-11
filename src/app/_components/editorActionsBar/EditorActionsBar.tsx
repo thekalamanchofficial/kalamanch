@@ -40,6 +40,7 @@ type ActionsBarProps = {
   handleSendForReview: () => void;
   draftPostId?: string;
   handleOpenPublishPostForm: () => boolean;
+  handleEvaluate: () => void;
 };
 
 const EditorActionsBar: React.FC<ActionsBarProps> = ({
@@ -52,6 +53,7 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
   handleSendForReview,
   draftPostId,
   handleOpenPublishPostForm,
+  handleEvaluate,
 }) => (
   <Box
     sx={{
@@ -81,9 +83,13 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         xs: "250px",
         sm: "200px",
       },
-      padding: "10px",
+      // padding: "10px",
     }}
   >
+    <Button sx={buttonStyle} onClick={handleEvaluate}>
+      <EditNoteIcon />
+      <Typography sx={textStyle}>Evaluate</Typography>
+    </Button>
     {postStatus == PostStatus.PUBLISHED && (
       <Button sx={buttonStyle} onClick={handleOpen}>
         <EditNoteIcon />

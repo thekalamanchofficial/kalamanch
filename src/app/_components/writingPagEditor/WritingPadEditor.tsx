@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { Controller, type Control } from "react-hook-form";
 import { toolbarConfig } from "../writingPad/config/configs";
 import "react-quill/dist/quill.snow.css";
+import "./editor.css";
 import ReactQuill from "react-quill";
 import { Typography } from "@mui/material";
 
