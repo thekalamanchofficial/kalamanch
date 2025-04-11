@@ -1,8 +1,8 @@
 import { openai } from "~/server/openaiClient";
 import { evaluationParameters, type EvaluationResult, type WritingType } from "../types/types";
 
-export async function detectWritingType(content: string): Promise<WritingType> {
-  const prompt = `Classify the following writing as one of: story, shayari, poem. Reply with one word only.\n\nText:\n${content}`;
+export async function detectWritingType(content: string): Promise<WritingType | null> {
+  const prompt = `Classify the following writing as one of: story, shayari, poem, script, commentary, article. If it's gibberish or cannot be classified, reply with 'unknown'. Reply with one word only.\n\nText:\n${content}`;
 
   const res = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
@@ -12,14 +12,11 @@ export async function detectWritingType(content: string): Promise<WritingType> {
 
   const label: string | undefined = res?.choices?.[0]?.message.content?.toLowerCase().trim();
 
-  if (["story", "shayari", "poem"].includes(label || "")) {
+  if (["story", "shayari", "poem", "script", "commentary", "article"].includes(label || "")) {
     return label as WritingType;
   }
 
-  // Simple fallback heuristics
-  if (content.split("\n").length < 5) return "shayari";
-  if (content.length < 200) return "poem";
-  return "story";
+  return null;
 }
 
 export async function evaluateByType(
@@ -76,8 +73,9 @@ function parseEvaluation(text: string): EvaluationResult[] {
 
 export async function evaluateContent(
   content: string,
-): Promise<{ type: WritingType; evaluations: EvaluationResult[] }> {
-  const type: WritingType = await detectWritingType(content);
+): Promise<{ type: WritingType | null; evaluations: EvaluationResult[] }> {
+  const type: WritingType | null = await detectWritingType(content);
+  if (!type) return { type: null, evaluations: [] };
   const evaluations: EvaluationResult[] = await evaluateByType(type, content);
   return { type, evaluations };
 }

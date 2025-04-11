@@ -29,6 +29,7 @@ const Page = () => {
     data: evaluationData,
     isLoading: isEvaluating,
     isError: isEvaluationError,
+    isFetched: isEvaluationFetched,
   } = trpc.evaluatorRouter.evaluate.useQuery(
     {
       content: content,
@@ -89,9 +90,10 @@ const Page = () => {
         selectedIterationId={selectedIteration?.id ?? ""}
         handleImportText={() => setIsTextUploaderOpen(true)}
         evaluationResult={evaluationData?.evaluations ?? []}
-        evaluationType={type}
+        evaluationType={evaluationData?.type ?? null}
         isEvaluating={isEvaluating}
         isEvaluationError={isEvaluationError}
+        isEvaluationFetched={isEvaluationFetched}
       />
 
       <Grid
@@ -187,7 +189,7 @@ const Page = () => {
           )}
         </Box>
       </Grid>
-
+      {/* TODO:  Simplify this code to a function which returns the ui based on the conditions */}
       <Grid
         size={2}
         sx={{
@@ -238,7 +240,10 @@ const Page = () => {
             </Typography>
           </Box>
         ) : null}
-        {!isEvaluating && !isEvaluationError && !evaluationData?.evaluations?.length ? (
+        {!isEvaluating &&
+        !isEvaluationError &&
+        !isEvaluationFetched &&
+        !evaluationData?.evaluations?.length ? (
           <Box
             sx={{
               width: "100%",
@@ -255,6 +260,26 @@ const Page = () => {
           >
             <Typography variant="body1" color="primary.main">
               Click evaluate to analyse your content
+            </Typography>
+          </Box>
+        ) : null}
+        {!type && isEvaluationFetched && evaluationData?.evaluations?.length === 0 ? (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              spacing: 3,
+              backgroundColor: "white",
+              position: "relative",
+              py: 10,
+              px: 3,
+              display: "flex",
+              textAlign: "center",
+              maxHeight: "700px",
+            }}
+          >
+            <Typography variant="body1" color="primary.main">
+              Writing type is not detected. Please try again.
             </Typography>
           </Box>
         ) : null}

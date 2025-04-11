@@ -29,6 +29,7 @@ type EditorAppBarProps = {
   evaluationType: string | null;
   isEvaluating?: boolean;
   isEvaluationError?: boolean;
+  isEvaluationFetched?: boolean;
 };
 export const EditorAppBar: React.FC<EditorAppBarProps> = ({
   draftPost,
@@ -41,6 +42,7 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
   evaluationType,
   isEvaluating,
   isEvaluationError,
+  isEvaluationFetched,
 }) => {
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
   const [featuredDrawerOpen, setFeaturedDrawerOpen] = useState(false);
@@ -116,6 +118,7 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
             handleImportText={handleImportText}
           />
         </Drawer>
+        {/* TODO:  Simplify this code to a function which returns the ui based on the conditions */}
         <Drawer
           anchor="right"
           open={featuredDrawerOpen}
@@ -158,7 +161,30 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
               </Typography>
             </Box>
           ) : null}
-          {!isEvaluating && !isEvaluationError && !evaluationResult?.length ? (
+          {!evaluationType && isEvaluationFetched && evaluationResult?.length === 0 ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                spacing: 3,
+                backgroundColor: "white",
+                position: "relative",
+                py: 10,
+                px: 3,
+                display: "flex",
+                textAlign: "center",
+                maxHeight: "700px",
+              }}
+            >
+              <Typography variant="body1" color="primary.main">
+                Writing type is not detected. Please try again.
+              </Typography>
+            </Box>
+          ) : null}
+          {!isEvaluating &&
+          !isEvaluationError &&
+          !isEvaluationFetched &&
+          !evaluationResult?.length ? (
             <Box
               sx={{
                 width: "100%",
