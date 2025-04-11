@@ -1,13 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
+import { GppBadOutlined } from "@mui/icons-material";
 import FeaturedPlayListOutlinedIcon from "@mui/icons-material/FeaturedPlayListOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
-import editorMockData from "../../mockDataEditor/mockdata";
+import {
+  AppBar,
+  Box,
+  CircularProgress,
+  Drawer,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { type DraftPost } from "../../types/types";
 import EditorLeftSideBarForIterations from "../editorLeftSideBar/EditorLeftSideBarForIterations";
 import EditorRightSideBar from "../editorRightSideBar/EditorRightSideBar";
+import { type EvaluationResult } from "../evaluator/types/types";
 
 type EditorAppBarProps = {
   draftPost: DraftPost | null;
@@ -16,6 +25,11 @@ type EditorAppBarProps = {
   handleIterationSelected: (iterationId: string) => void;
   selectedIterationId: string;
   handleImportText: () => void;
+  evaluationResult: EvaluationResult[];
+  evaluationType: string | null;
+  isEvaluating?: boolean;
+  isEvaluationError?: boolean;
+  isEvaluationFetched?: boolean;
 };
 export const EditorAppBar: React.FC<EditorAppBarProps> = ({
   draftPost,
@@ -24,6 +38,11 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
   handleIterationSelected,
   selectedIterationId,
   handleImportText,
+  evaluationResult,
+  evaluationType,
+  isEvaluating,
+  isEvaluationError,
+  isEvaluationFetched,
 }) => {
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
   const [featuredDrawerOpen, setFeaturedDrawerOpen] = useState(false);
@@ -99,6 +118,7 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
             handleImportText={handleImportText}
           />
         </Drawer>
+        {/* TODO:  Simplify this code to a function which returns the ui based on the conditions */}
         <Drawer
           anchor="right"
           open={featuredDrawerOpen}
@@ -110,7 +130,84 @@ export const EditorAppBar: React.FC<EditorAppBarProps> = ({
             },
           }}
         >
-          <EditorRightSideBar accuracy={editorMockData.accuracy} />
+          {isEvaluating ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : null}
+          {isEvaluationError ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "90vh",
+                spacing: 3,
+                backgroundColor: "white",
+                position: "relative",
+                py: 10,
+                display: "flex",
+                textAlign: "center",
+              }}
+            >
+              <GppBadOutlined color="error" />
+              <Typography variant="body1" color="error">
+                Error occurred while evaluating
+              </Typography>
+            </Box>
+          ) : null}
+          {!evaluationType && isEvaluationFetched && evaluationResult?.length === 0 ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                spacing: 3,
+                backgroundColor: "white",
+                position: "relative",
+                py: 10,
+                px: 3,
+                display: "flex",
+                textAlign: "center",
+                maxHeight: "700px",
+              }}
+            >
+              <Typography variant="body1" color="primary.main">
+                Writing type is not detected. Please try again.
+              </Typography>
+            </Box>
+          ) : null}
+          {!isEvaluating &&
+          !isEvaluationError &&
+          !isEvaluationFetched &&
+          !evaluationResult?.length ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "90vh",
+                spacing: 3,
+                backgroundColor: "white",
+                position: "relative",
+                py: 10,
+                display: "flex",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="body1" color="primary">
+                Click evaluate to analyse your content
+              </Typography>
+            </Box>
+          ) : null}
+          {!isEvaluating && !isEvaluationError && evaluationResult?.length ? (
+            <EditorRightSideBar
+              evaluationResult={evaluationResult}
+              evaluationType={evaluationType}
+            />
+          ) : null}
         </Drawer>
       </>
     </>

@@ -3,6 +3,7 @@ import { commentRouter } from "./routers/comment";
 import { contactUsRouter } from "./routers/contactUs";
 import { draftPostRouter } from "./routers/draftPost";
 import { draftPostIterationReviewsRouter } from "./routers/draftPostIterationReviews";
+import { evaluatorRouter } from "./routers/evaluators";
 import { featuredPostRouter } from "./routers/featuredPost";
 import { genreTagRouter } from "./routers/genre&Tags";
 import { likeRouter } from "./routers/likes";
@@ -25,6 +26,7 @@ export const appRouter = router({
   presignedR2Url: presignedR2UrlRouter,
   genreTagRouter: genreTagRouter,
   contactUsRouter: contactUsRouter,
+  evaluatorRouter: evaluatorRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -1,7 +1,10 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
-import { Box, Grid2 as Grid } from "@mui/material";
+import { GppBadOutlined } from "@mui/icons-material";
+import { Box, CircularProgress, Grid2 as Grid, Typography } from "@mui/material";
+import { trpc } from "~/server/client";
 import { EditorAppBar } from "./_components/editorAppBar/EditorAppBar";
 import EditorLeftSideBarForIterations from "./_components/editorLeftSideBar/EditorLeftSideBarForIterations";
 import EditorRightSideBar from "./_components/editorRightSideBar/EditorRightSideBar";
@@ -14,12 +17,28 @@ import { usePublishedPostEditorState } from "./_hooks/usePublishedPostEditorStat
 import { useQueryParams } from "./_hooks/useQueryParams";
 import { useSendForReview } from "./_hooks/useSendForReview";
 import useUploadTextFromFile from "./_hooks/useUploadTextFromFile";
-import editorMockData from "./mockDataEditor/mockdata";
 import { PostStatus } from "./types/types";
 
 const WritingPad = dynamic(() => import("../_components/writingPad/WritingPad"), { ssr: false });
 
 const Page = () => {
+  const [type, setType] = useState<string | null>(null);
+  const [content, setContent] = useState<string>("");
+
+  const {
+    data: evaluationData,
+    isLoading: isEvaluating,
+    isError: isEvaluationError,
+    isFetched: isEvaluationFetched,
+  } = trpc.evaluatorRouter.evaluate.useQuery(
+    {
+      content: content,
+    },
+    {
+      enabled: content.length > 0,
+    },
+  );
+
   const { draftPostId, postId, shouldDraftPost } = useQueryParams();
 
   const {
@@ -57,6 +76,10 @@ const Page = () => {
     await updatePostContent(content);
   };
 
+  const handleEvaluate = useCallback((content: string) => {
+    setContent(content);
+  }, []);
+
   return (
     <>
       <EditorAppBar
@@ -66,6 +89,11 @@ const Page = () => {
         handleIterationSelected={handleIterationChange}
         selectedIterationId={selectedIteration?.id ?? ""}
         handleImportText={() => setIsTextUploaderOpen(true)}
+        evaluationResult={evaluationData?.evaluations ?? []}
+        evaluationType={evaluationData?.type ?? null}
+        isEvaluating={isEvaluating}
+        isEvaluationError={isEvaluationError}
+        isEvaluationFetched={isEvaluationFetched}
       />
 
       <Grid
@@ -122,6 +150,7 @@ const Page = () => {
               postStatus={draftPost || shouldDraftPost ? PostStatus.DRAFT : PostStatus.PUBLISHED}
               handleSendForReview={() => setSendForReviewDialogOpen(true)}
               draftPostId={draftPost?.id}
+              handleEvaluate={handleEvaluate}
             />
           </Grid>
           {isPublishPostFormOpen && (
@@ -160,7 +189,7 @@ const Page = () => {
           )}
         </Box>
       </Grid>
-
+      {/* TODO:  Simplify this code to a function which returns the ui based on the conditions */}
       <Grid
         size={2}
         sx={{
@@ -177,7 +206,86 @@ const Page = () => {
           gap: "12px",
         }}
       >
-        <EditorRightSideBar accuracy={editorMockData.accuracy} />
+        {isEvaluating ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              maxHeight: "700px",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : null}
+        {isEvaluationError ? (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              spacing: 3,
+              backgroundColor: "white",
+              position: "relative",
+              py: 10,
+              px: 3,
+              display: "flex",
+              textAlign: "center",
+              maxHeight: "700px",
+            }}
+          >
+            <GppBadOutlined color="error" />
+            <Typography variant="body1" color="error">
+              Error occurred while evaluating
+            </Typography>
+          </Box>
+        ) : null}
+        {!isEvaluating &&
+        !isEvaluationError &&
+        !isEvaluationFetched &&
+        !evaluationData?.evaluations?.length ? (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              spacing: 3,
+              backgroundColor: "white",
+              position: "relative",
+              py: 10,
+              px: 3,
+              display: "flex",
+              textAlign: "center",
+              maxHeight: "700px",
+            }}
+          >
+            <Typography variant="body1" color="primary.main">
+              Click evaluate to analyse your content
+            </Typography>
+          </Box>
+        ) : null}
+        {!type && isEvaluationFetched && evaluationData?.evaluations?.length === 0 ? (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              spacing: 3,
+              backgroundColor: "white",
+              position: "relative",
+              py: 10,
+              px: 3,
+              display: "flex",
+              textAlign: "center",
+              maxHeight: "700px",
+            }}
+          >
+            <Typography variant="body1" color="primary.main">
+              Writing type is not detected. Please try again.
+            </Typography>
+          </Box>
+        ) : null}
+        {!isEvaluating && !isEvaluationError && evaluationData?.evaluations?.length ? (
+          <EditorRightSideBar evaluationResult={evaluationData.evaluations} evaluationType={type} />
+        ) : null}
       </Grid>
     </>
   );

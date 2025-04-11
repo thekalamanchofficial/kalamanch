@@ -194,7 +194,11 @@ export const PublishPostForm: React.FC<PublishPostFormProps> = ({
                   id="postType"
                   variant="outlined"
                   sx={{ height: "50px" }}
-                  placeholder="Select post type"
+                  slotProps={{
+                    input: {
+                      placeholder: "Select post type",
+                    },
+                  }}
                 >
                   {postTypes.map((postType) => (
                     <MenuItem key={postType.id} value={postType.id}>

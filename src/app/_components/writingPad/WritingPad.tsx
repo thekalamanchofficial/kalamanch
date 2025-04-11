@@ -25,6 +25,7 @@ type WritingPadProps = {
   postStatus: PostStatus;
   handleSendForReview: () => void;
   draftPostId?: string;
+  handleEvaluate: (content: string) => void;
 };
 
 const WritingPad: React.FC<WritingPadProps> = ({
@@ -37,6 +38,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
   postStatus,
   handleSendForReview,
   draftPostId,
+  handleEvaluate,
 }) => {
   const {
     handleSubmit,
@@ -169,6 +171,7 @@ const WritingPad: React.FC<WritingPadProps> = ({
         handleSendForReview={handleSendForReview}
         draftPostId={draftPostId}
         handleOpenPublishPostForm={handleOpenPublishPostForm}
+        handleEvaluate={() => handleEvaluate(content)}
       />
     </Box>
   );
