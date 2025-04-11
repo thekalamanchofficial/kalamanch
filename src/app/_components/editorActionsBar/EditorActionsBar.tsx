@@ -83,7 +83,7 @@ const EditorActionsBar: React.FC<ActionsBarProps> = ({
         xs: "250px",
         sm: "200px",
       },
-      // padding: "10px",
+      padding: "10px",
     }}
   >
     <Button sx={buttonStyle} onClick={handleEvaluate}>
