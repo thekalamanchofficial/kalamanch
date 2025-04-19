@@ -4,10 +4,17 @@ export type EvaluationResult = {
   feedback: string;
 };
 
-export type WritingType = "story" | "shayari" | "poem" | "script" | "commentary" | "article";
+export type WritingType =
+  | "Story"
+  | "Short story"
+  | "Shayari"
+  | "Poem"
+  | "Script"
+  | "Commentary"
+  | "Article";
 
 export const evaluationParameters: Record<WritingType, string[]> = {
-  story: [
+  Story: [
     "Structure",
     "Character Development",
     "Worldbuilding",
@@ -18,9 +25,19 @@ export const evaluationParameters: Record<WritingType, string[]> = {
     "Originality",
     "Technical Quality",
   ],
-  shayari: ["Bahr", "Radif", "Qafiya", "Matla and Maqta", "Emotional Depth", "Language Aesthetics"],
-  poem: ["Rhyme", "Theme", "Imagery0", "Emotion", "Language & Word Choice", "Structure", "Impact"],
-  script: [
+  "Short story": [
+    "Structure & flow",
+    "Character Depth",
+    "Narrative hook",
+    "Emotional Impact",
+    "Theme & Message",
+    "Pacing",
+    "Originality",
+    "Ending Effectiveness",
+  ],
+  Shayari: ["Bahr", "Radif", "Qafiya", "Matla and Maqta", "Emotional Depth", "Language Aesthetics"],
+  Poem: ["Rhyme", "Theme", "Imagery0", "Emotion", "Language & Word Choice", "Structure", "Impact"],
+  Script: [
     "Structure & Pacing",
     "Dialogue Quality",
     "Character Development",
@@ -30,7 +47,7 @@ export const evaluationParameters: Record<WritingType, string[]> = {
     "Ending",
     "Originality",
   ],
-  commentary: [
+  Commentary: [
     "Clarity of Thought",
     "Depth of Analysis",
     " Relevance of Examples",
@@ -39,7 +56,7 @@ export const evaluationParameters: Record<WritingType, string[]> = {
     "Language & Expression",
     "Engagement & Impact",
   ],
-  article: [
+  Article: [
     "Clarity of Purpose",
     "Structure & Organization",
     "Depth of Content",

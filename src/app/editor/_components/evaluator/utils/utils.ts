@@ -2,7 +2,7 @@ import { openai } from "~/server/openaiClient";
 import { evaluationParameters, type EvaluationResult, type WritingType } from "../types/types";
 
 export async function detectWritingType(content: string): Promise<WritingType | null> {
-  const prompt = `Classify the following writing as one of: story, shayari, poem, script, commentary, article. If it's gibberish or cannot be classified, reply with 'unknown'. Reply with one word only.\n\nText:\n${content}`;
+  const prompt = `Classify the following writing as one of: Story, Short story, Shayari, Poem, Script, Commentary, Article. If it's gibberish or cannot be classified, reply with 'unknown'. Reply with one word only.\n\nText:\n${content}`;
 
   const res = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
@@ -10,9 +10,13 @@ export async function detectWritingType(content: string): Promise<WritingType | 
     temperature: 0,
   });
 
-  const label: string | undefined = res?.choices?.[0]?.message.content?.toLowerCase().trim();
+  const label: string | undefined = res?.choices?.[0]?.message.content?.trim();
 
-  if (["story", "shayari", "poem", "script", "commentary", "article"].includes(label || "")) {
+  if (
+    ["Story", "Short story", "Shayari", "Poem", "Script", "Commentary", "Article"].includes(
+      label || "",
+    )
+  ) {
     return label as WritingType;
   }
 
