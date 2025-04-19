@@ -284,7 +284,10 @@ const Page = () => {
           </Box>
         ) : null}
         {!isEvaluating && !isEvaluationError && evaluationData?.evaluations?.length ? (
-          <EditorRightSideBar evaluationResult={evaluationData.evaluations} evaluationType={type} />
+          <EditorRightSideBar
+            evaluationResult={evaluationData.evaluations}
+            evaluationType={evaluationData.type}
+          />
         ) : null}
       </Grid>
     </>

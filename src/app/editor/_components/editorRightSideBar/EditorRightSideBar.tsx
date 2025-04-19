@@ -9,7 +9,10 @@ type editorRightSideBarProps = {
   evaluationResult: EvaluationResult[];
   evaluationType: string | null;
 };
-const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({ evaluationResult }) => {
+const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({
+  evaluationResult,
+  evaluationType,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<Record<number, SVGSVGElement | null>>({});
 
   const getColor = (value: number) => {
@@ -51,7 +54,7 @@ const EditorRightSideBar: React.FC<editorRightSideBarProps> = ({ evaluationResul
             fontWeight: "bold",
           }}
         >
-          {STATIC_TEXTS.EDITOR_PAGE.RIGHTSIDEBAR_HEADING}
+          {`${evaluationType} quality score`}
         </Typography>
       </Box>
 
